@@ -1,0 +1,43 @@
+name: EnchantmentTokens
+description: Add some custom enchantments to your world!
+author: Big_Bad_E
+version: 1.0.1
+api-version: 1.14
+main: bigbade.enchantmenttokens.EnchantmentTokens
+depend: [ProtocolLib]
+softdepend: [CrazyCrates]
+commands:
+  adminenchant:
+    description: Enchant an item. (Admin only)
+    usage: /adminenchant (enchant) (level)
+    permission: enchanttoken.admin
+    permission-message: You are not Admin!
+  tokenenchant:
+    description: Enchant an item using gems.
+    usage: /tokenenchant
+    aliases: [customenchants, customenchant, tokenenchants, ce, te, et, enchanttoken, enchanttokens]
+  gembalance:
+    description: Get your current gem balance.
+    usage: /gembalance
+    aliases: [gembal, gbal, gems]
+  addgems:
+    description: Add gems to a player's balance
+    usage: /addgems (player) (amount) or /adddgems (amount)
+    permission: enchanttoken.admin
+    permission-message: You are not Admin!
+  reloadenchants:
+    description: Reload all enchants in the jar
+    usage: /reloadenchants
+    permission: enchanttoken.admin
+    permission-message: You are not Admin!
+  enchantlist:
+    description: Lists all current enchants
+    usage: /enchantlist
+    permission: enchanttoken.list
+    permission-message: You cannot view enchantments!
+permissions:
+  enchanttoken.admin:
+    description: Allows for admins to enchant an item.
+  enchanttoken.list:
+    description: Allows users to view enchantments
+    default: true

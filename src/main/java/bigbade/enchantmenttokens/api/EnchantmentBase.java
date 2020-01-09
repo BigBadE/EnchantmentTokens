@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 
 public abstract class EnchantmentBase extends Enchantment {
     private final String name;
-    private EnchantmentTarget target = EnchantmentTarget.TOOL;
+    private EnchantmentTarget target;
     private final List<Material> targets = new ArrayList<>();
     private boolean treasure = false;
     private final List<Enchantment> conflicts = new ArrayList<>();
@@ -50,6 +50,10 @@ public abstract class EnchantmentBase extends Enchantment {
     @Override
     public EnchantmentTarget getItemTarget() {
         return target;
+    }
+
+    public List<Material> getTargets() {
+        return targets;
     }
 
     @Override

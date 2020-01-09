@@ -8,9 +8,11 @@ import bigbade.enchantmenttokens.listeners.SignClickListener;
 import bigbade.enchantmenttokens.listeners.SignPlaceListener;
 import bigbade.enchantmenttokens.listeners.enchants.BlockBreakListener;
 import bigbade.enchantmenttokens.listeners.enchants.BlockDamageListener;
-import bigbade.enchantmenttokens.listeners.enchants.ItemSwitchListener;
+import bigbade.enchantmenttokens.listeners.enchants.ItemEquipListener;
 import bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
 import bigbade.enchantmenttokens.loader.FileLoader;
+import com.codingforcookies.armorequip.ArmorListener;
+import com.codingforcookies.armorequip.DispenserArmorListener;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
@@ -27,6 +29,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -162,7 +165,7 @@ public class EnchantmentTokens extends JavaPlugin {
                                             break;
                                         }
                                     if (level < base1.getMaxLevel())
-                                        price = base1.getDefaultPrice(level+1) + "G";
+                                        price = base1.getDefaultPrice(level + 1) + "G";
                                     else
                                         price = "Maxed!";
                                 }
@@ -187,8 +190,10 @@ public class EnchantmentTokens extends JavaPlugin {
 
     private void registerListeners() {
         getLogger().info("Registering enchantment listeners.");
+        Bukkit.getPluginManager().registerEvents(new ArmorListener(new ArrayList<>()), this);
+        Bukkit.getPluginManager().registerEvents(new DispenserArmorListener(), this);
         Bukkit.getPluginManager().registerEvents(new BlockBreakListener(enchantListeners.get(ListenerType.BLOCKBREAK), this), this);
-        Bukkit.getPluginManager().registerEvents(new ItemSwitchListener(enchantListeners.get(ListenerType.SWAPFROM), enchantListeners.get(ListenerType.SWAPTO), this), this);
+        Bukkit.getPluginManager().registerEvents(new ItemEquipListener(enchantListeners.get(ListenerType.EQUIP), enchantListeners.get(ListenerType.UNEQUIP), this), this);
         Bukkit.getPluginManager().registerEvents(new BlockDamageListener(enchantListeners.get(ListenerType.BLOCKBREAK)), this);
 
         getLogger().info("Registering sign listeners.");
@@ -238,20 +243,20 @@ public class EnchantmentTokens extends JavaPlugin {
 
         Field modifiersField = null;
         try {
-            modifiersField = Field.class.getDeclaredField( "modifiers" );
+            modifiersField = Field.class.getDeclaredField("modifiers");
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
-        modifiersField.setAccessible( true );
+        modifiersField.setAccessible(true);
         try {
-            modifiersField.setInt( byKey, byKey.getModifiers() & ~Modifier.FINAL );
+            modifiersField.setInt(byKey, byKey.getModifiers() & ~Modifier.FINAL);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
 
-        modifiersField.setAccessible( true );
+        modifiersField.setAccessible(true);
         try {
-            modifiersField.setInt( byName, byName.getModifiers() & ~Modifier.FINAL );
+            modifiersField.setInt(byName, byName.getModifiers() & ~Modifier.FINAL);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -278,8 +283,8 @@ public class EnchantmentTokens extends JavaPlugin {
 
     public EnchantmentAddon getAddon(Class<? extends EnchantmentAddon> clazz) {
         EnchantmentAddon found = null;
-        for(EnchantmentAddon addon : loader.getAddons()) {
-            if(addon.getClass().equals(clazz)) {
+        for (EnchantmentAddon addon : loader.getAddons()) {
+            if (addon.getClass().equals(clazz)) {
                 found = addon;
             }
         }
@@ -327,9 +332,22 @@ public class EnchantmentTokens extends JavaPlugin {
                 if (enchantSection.getBoolean("enabled")) {
                     enchantments.add(enchant);
                     Map<ListenerType, Consumer<Event>> events = enchant.getListeners();
+                    typeCheck:
                     for (ListenerType type : events.keySet()) {
                         try {
                             getLogger().info("Adding event from " + enchant.getKey().getKey() + " to listener " + type.toString());
+                            if (enchant.getItemTarget() != null)
+                                if (type.canTarget(enchant.getItemTarget())) {
+                                    getLogger().warning("Cannot add listener " + type + " to target " + enchant.getItemTarget());
+                                    continue;
+                                }
+                            else
+                                for(Material material : enchant.getTargets()) {
+                                    if(!type.canTarget(material)) {
+                                        getLogger().warning("Cannot add listener " + type + " to target " +material);
+                                    }
+                                    continue typeCheck;
+                                }
                             enchantListeners.get(type).put(enchant, events.get(type));
                         } catch (NullPointerException ignored) {
                         }
@@ -344,8 +362,8 @@ public class EnchantmentTokens extends JavaPlugin {
             }
         }
 
-        Enchantment[] enchantsToRegister = new Enchantment[]{ Enchantment.LOOT_BONUS_BLOCKS };
-        Material[] items = new Material[] { Material.DIAMOND };
+        Enchantment[] enchantsToRegister = new Enchantment[]{Enchantment.LOOT_BONUS_BLOCKS};
+        Material[] items = new Material[]{Material.DIAMOND};
         int i = 0;
         for (Enchantment enchantment : enchantsToRegister) {
             ConfigurationSection enchantSection = section.getConfigurationSection(enchantment.getKey().getKey());

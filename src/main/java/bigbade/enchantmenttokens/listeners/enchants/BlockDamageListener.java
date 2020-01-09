@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 public class BlockDamageListener implements Listener {
     private Map<EnchantmentBase, Consumer<Event>> eventListeners;
 
-    public BlockDamageListener(Map<EnchantmentBase, Consumer<Event>> eventListenersn) {
+    public BlockDamageListener(Map<EnchantmentBase, Consumer<Event>> eventListeners) {
         this.eventListeners = eventListeners;
     }
 

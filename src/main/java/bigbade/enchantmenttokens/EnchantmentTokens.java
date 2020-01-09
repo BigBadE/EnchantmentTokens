@@ -3,7 +3,9 @@ package bigbade.enchantmenttokens;
 import bigbade.enchantmenttokens.api.*;
 import bigbade.enchantmenttokens.commands.*;
 import bigbade.enchantmenttokens.gui.EnchantGUI;
-import bigbade.enchantmenttokens.listeners.*;
+import bigbade.enchantmenttokens.listeners.InventoryMoveListener;
+import bigbade.enchantmenttokens.listeners.SignClickListener;
+import bigbade.enchantmenttokens.listeners.SignPlaceListener;
 import bigbade.enchantmenttokens.listeners.enchants.BlockBreakListener;
 import bigbade.enchantmenttokens.listeners.enchants.BlockDamageListener;
 import bigbade.enchantmenttokens.listeners.enchants.ItemSwitchListener;
@@ -39,7 +41,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class EnchantmentTokens extends JavaPlugin {
-    public Set<Class> enchants = new HashSet<>();
+    public Set<Class<?>> enchants = new HashSet<>();
     private FileConfiguration configuration;
     public List<EnchantmentBase> enchantments = new ArrayList<>();
     public List<VanillaEnchant> vanillaEnchants = new ArrayList<>();

@@ -1,26 +1,26 @@
 package bigbade.enchantmenttokens.api;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class EnchantmentLoader {
-    private Set<Class> enchantments = new HashSet<>();
+    private Set<Class<EnchantmentBase>> enchantments = new HashSet<>();
     private Set<EnchantmentAddon> addons = new HashSet<>();
 
     public EnchantmentLoader(File folder, Logger logger) {
-        try {
-            for (File enchants : folder.listFiles()) {
+        if (folder.listFiles() == null) {
+            logger.info("No enchantments found");
+        } else
+            for (File enchants : Objects.requireNonNull(folder.listFiles())) {
                 if (enchants.getName().endsWith(".jar")) {
                     try {
                         JarFile jarFile = new JarFile(enchants.getAbsolutePath());
@@ -36,11 +36,11 @@ public class EnchantmentLoader {
 
                             String className = file.getName().substring(0, file.getName().length() - 6);
                             className = className.replace('/', '.');
-                            Class clazz = cl.loadClass(className);
+                            Class<?> clazz = cl.loadClass(className);
                             if (clazz.getSuperclass().equals(EnchantmentBase.class)) {
-                                enchantments.add(clazz);
-                            } else if(clazz.getSuperclass().equals(EnchantmentAddon.class)) {
-                               addons.add((EnchantmentAddon) clazz.newInstance());
+                                enchantments.add((Class<EnchantmentBase>) clazz);
+                            } else if (clazz.getSuperclass().equals(EnchantmentAddon.class)) {
+                                addons.add((EnchantmentAddon) clazz.newInstance());
                             }
                         }
                     } catch (Exception e) {
@@ -49,16 +49,13 @@ public class EnchantmentLoader {
                     }
                 }
             }
-        } catch(NullPointerException ignored) {
-
-        }
     }
 
     public Set<EnchantmentAddon> getAddons() {
         return addons;
     }
 
-    public Set<Class> getEnchantments() {
+    public Set<Class<EnchantmentBase>> getEnchantments() {
         return enchantments;
     }
 }

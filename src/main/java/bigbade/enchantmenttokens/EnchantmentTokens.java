@@ -22,6 +22,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
+import org.apache.commons.lang.reflect.FieldUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -327,7 +328,26 @@ public class EnchantmentTokens extends JavaPlugin {
                     getLogger().log(Level.INFO, "Generating config for " + name);
                     enchantSection.set("enabled", true);
                     enchant.config = enchantSection;
-                    enchant.generateDefaultConfig(enchantSection);
+                    for(Field field : clazz.getDeclaredFields()) {
+                        if(field.isAnnotationPresent(ConfigurationField.class)) {
+                            String location = field.getAnnotation(ConfigurationField.class).location();
+                            ConfigurationSection current = enchantSection;
+                            if(location.contains(".")) {
+                                location += "." + field.getName();
+                                String[] next = location.split("\\.");
+                                for(String nextLoc : next) {
+                                    try {
+                                        current = current.getConfigurationSection(nextLoc);
+                                    } catch (NullPointerException ignored) {
+                                        current = current.createSection(nextLoc);
+                                    }
+                                }
+                            } else {
+                                location = field.getName();
+                            }
+                            field.set(enchant, current.get(location));
+                        }
+                    }
                 }
                 if (enchantSection.getBoolean("enabled")) {
                     enchantments.add(enchant);

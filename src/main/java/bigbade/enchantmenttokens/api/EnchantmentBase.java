@@ -24,12 +24,24 @@ public abstract class EnchantmentBase extends Enchantment {
 
     public ConfigurationSection config;
 
+    @ConfigurationField
+    public String priceIncreaseType;
+
     public EnchantmentBase(EnchantmentTokens main, String name, ConfigurationSection config, Material icon) {
         super(new NamespacedKey(main, name.toLowerCase()));
         this.config = config;
         this.main = main;
         this.name = name;
         this.icon = icon;
+    }
+
+    public long getDefaultPrice(int level) {
+        for(PriceIncreaseTypes types : PriceIncreaseTypes.values()) {
+            if(priceIncreaseType.toUpperCase().replace(" ", "").equals(types.name())) {
+                return types.getPrice(level, config);
+            }
+        }
+        return -1;
     }
 
     @Override
@@ -77,46 +89,6 @@ public abstract class EnchantmentBase extends Enchantment {
             return targets.contains(itemStack.getType());
         else
             return target.includes(itemStack.getType());
-    }
-
-    public void generateDefaultConfig(ConfigurationSection section) {
-        section.set("maxLevel", 5);
-        section.set("minLevel", 1);
-        section.set("type", "custom");
-        generateCustomConfig(section);
-    }
-
-    public void generateCustomConfig(ConfigurationSection section) {
-        ConfigurationSection levels = section.createSection("customLevels");
-        for(int i = getStartLevel(); i <= getMaxLevel(); i++) {
-            levels.set("" + (i), (i)*10);
-        }
-    }
-
-    public long getDefaultPrice(int level) {
-        String type = config.getString("type");
-        if(type == null) {
-            config.set("type", "custom");
-            type = "custom";
-            generateCustomConfig(config);
-        }
-        switch(type) {
-            case "custom":
-                return loadCustomConfig(level+1);
-            default:
-                config.set("type", "custom");
-                generateCustomConfig(config);
-                return loadCustomConfig(level+1);
-        }
-    }
-
-    public long loadCustomConfig(int level) {
-        ConfigurationSection section = config.getConfigurationSection("customLevels");
-        if(section == null) {
-            generateCustomConfig(config);
-            section = config.getConfigurationSection("customLevels");
-        }
-        return section.getInt((level-1) + "");
     }
 
     public Map<ListenerType, Consumer<Event>> getListeners() {

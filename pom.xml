@@ -7,7 +7,7 @@
     <groupId>bigbade.enchantmenttokens</groupId>
     <artifactId>EnchantmentTokens</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.0</version>
+    <version>1.1</version>
 
     <repositories>
         <repository>
@@ -35,14 +35,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>1.3.2</version>
-        </dependency>
-        <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib-API</artifactId>
             <version>4.4.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.codingforcookies</groupId>
@@ -73,19 +69,25 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.2.1</version>
-                <configuration>
-                    <artifactSet>
-                        <includes>
-                            <include>com.codingforcookies.armorequip:ArmorEquipEvent:jar</include>
-                        </includes>
-                    </artifactSet>
-                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
+                        <configuration>
+                            <minimizeJar>true</minimizeJar>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/maven/bigbade.enchantmenttokens/EnchantmentTokens/*</exclude>
+                                        <exclude>META-INF/maven/com.codingforcookies/ArmorEquipEvent/*</exclude>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

@@ -1,11 +1,10 @@
 name: EnchantmentTokens
 description: Add some custom enchantments to your world!
 author: Big_Bad_E
-version: 1.0.1
+version: 1.1
 api-version: 1.14
 main: bigbade.enchantmenttokens.EnchantmentTokens
 depend: [ProtocolLib]
-softdepend: [CrazyCrates]
 commands:
   adminenchant:
     description: Enchant an item. (Admin only)

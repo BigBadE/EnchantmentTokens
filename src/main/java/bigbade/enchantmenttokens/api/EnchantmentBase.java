@@ -1,5 +1,22 @@
 package bigbade.enchantmenttokens.api;
 
+/*
+EnchantmentTokens
+Copyright (C) 2019-2020 Big_Bad_E
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 import bigbade.enchantmenttokens.EnchantmentTokens;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -25,7 +42,7 @@ public abstract class EnchantmentBase extends Enchantment {
     public ConfigurationSection config;
 
     @ConfigurationField
-    public String priceIncreaseType;
+    public ConfigurationSection price;
 
     public EnchantmentBase(EnchantmentTokens main, String name, ConfigurationSection config, Material icon) {
         super(new NamespacedKey(main, name.toLowerCase()));
@@ -36,12 +53,14 @@ public abstract class EnchantmentBase extends Enchantment {
     }
 
     public long getDefaultPrice(int level) {
-        for(PriceIncreaseTypes types : PriceIncreaseTypes.values()) {
-            if(priceIncreaseType.toUpperCase().replace(" ", "").equals(types.name())) {
-                return types.getPrice(level, config);
+        String priceIncreaseType = price.getString("type");
+        if (priceIncreaseType != null)
+            for (PriceIncreaseTypes types : PriceIncreaseTypes.values()) {
+                if (priceIncreaseType.toUpperCase().replace(" ", "").equals(types.name())) {
+                    return types.getPrice(level, price);
+                }
             }
-        }
-        return -1;
+        return PriceIncreaseTypes.CUSTOM.getPrice(level, price);
     }
 
     @Override

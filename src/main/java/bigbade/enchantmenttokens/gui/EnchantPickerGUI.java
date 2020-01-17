@@ -69,7 +69,7 @@ public class EnchantPickerGUI {
         inventory.setItem(4, itemStack);
         int i = 0;
 
-        for (VanillaEnchant enchantment : main.vanillaEnchants) {
+        for (VanillaEnchant enchantment : main.getVanillaEnchantments()) {
             if (enchantment.getItemTarget() == target || enchantment.getItemTarget() == EnchantmentTarget.ALL) {
                 ItemStack item = new ItemStack(enchantment.getIcon());
                 for (Map.Entry<Enchantment, Integer> enchantment1 : itemStack.getEnchantments().entrySet()) {
@@ -88,7 +88,7 @@ public class EnchantPickerGUI {
             }
             i += 1;
         }
-        for (EnchantmentBase enchantment : main.enchantments) {
+        for (EnchantmentBase enchantment : main.getEnchantments()) {
             if (enchantment.getItemTarget() == target || enchantment.getItemTarget() == EnchantmentTarget.ALL || enchantment.getTargets().contains(itemStack.getType())) {
                 ItemStack item = new ItemStack(enchantment.getIcon());
                 for (Map.Entry<Enchantment, Integer> enchantment1 : itemStack.getEnchantments().entrySet()) {

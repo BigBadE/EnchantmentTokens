@@ -53,7 +53,7 @@ public class InventoryMoveListener extends BasicEnchantListener implements Liste
         if (event.getInventory().getHolder() == null) return;
         if (event.getInventory().getHolder().equals(event.getWhoClicked())) {
             if (event.getSlot() == event.getWhoClicked().getInventory().getHeldItemSlot()) {
-                for (Location location : main.signs) {
+                for (Location location : main.signHandler.getSigns()) {
                     if (location.getChunk().isLoaded() && location.getWorld() == event.getWhoClicked().getWorld()) {
                         Bukkit.getScheduler().scheduleSyncDelayedTask(main, () ->
                                 ((Player) event.getWhoClicked()).sendSignChange(location, new String[]{"[Enchantment]", ((Sign) location.getBlock().getState()).getLine(1), "", ""}));
@@ -65,7 +65,7 @@ public class InventoryMoveListener extends BasicEnchantListener implements Liste
 
     @EventHandler
     public void onHandSwap(PlayerItemHeldEvent event) {
-        for (Location location : main.signs) {
+        for (Location location : main.signHandler.getSigns()) {
             if (location.getChunk().isLoaded() && location.getWorld() == event.getPlayer().getWorld()) {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(main, () ->
                         event.getPlayer().sendSignChange(location, new String[]{"[Enchantment]", ((Sign) location.getBlock().getState()).getLine(1), "", ""}));

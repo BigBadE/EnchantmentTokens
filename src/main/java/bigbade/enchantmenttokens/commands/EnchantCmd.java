@@ -53,7 +53,7 @@ public class EnchantCmd implements CommandExecutor {
             String name = nameBuilder.toString();
             ItemStack item = ((Player) sender).getInventory().getItemInMainHand();
             EnchantUtils.addEnchantment(item, name, main, (Player) sender, main.getConfig().getConfigurationSection("enchants"), true);
-            for (EnchantmentBase enchant : main.enchantments) {
+            for (EnchantmentBase enchant : main.getVanillaEnchantments()) {
                 if (enchant.getName().equals(args[0])) {
                     item.addEnchantment(enchant, Integer.parseInt(args[args.length - 1]));
                     ItemMeta meta = item.getItemMeta();
@@ -64,7 +64,7 @@ public class EnchantCmd implements CommandExecutor {
                     return true;
                 }
             }
-            for (Enchantment enchantment : main.vanillaEnchants) {
+            for (Enchantment enchantment : main.getVanillaEnchantments()) {
                 if (enchantment.getKey().getKey().equals(name.toLowerCase().replace("_", ""))) {
                     item.addEnchantment(enchantment, Integer.parseInt(args[args.length - 1]));
                     ItemMeta meta = item.getItemMeta();

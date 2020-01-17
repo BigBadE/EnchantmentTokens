@@ -43,12 +43,12 @@ public class EnchantTabCompleter implements TabCompleter {
             }
             String name = nameBuilder.toString();
             List<String> suggestions = new ArrayList<>();
-            for (EnchantmentBase base : main.enchantments) {
+            for (EnchantmentBase base : main.getEnchantments()) {
                 String edited = base.getName();
                 if (edited.contains(name))
                     suggestions.add(edited);
             }
-            for (Enchantment base : main.vanillaEnchants) {
+            for (Enchantment base : main.getVanillaEnchantments()) {
                 String edited = base.getKey().getKey().toLowerCase().replace("_", " ");
                 if (edited.contains(name))
                     suggestions.add(edited);

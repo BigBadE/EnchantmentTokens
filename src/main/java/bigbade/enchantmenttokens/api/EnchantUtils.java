@@ -39,7 +39,7 @@ import java.util.logging.Level;
 
 public class EnchantUtils {
     public static void addEnchantment(ItemStack itemStack, String name, EnchantmentTokens main, Player player, ConfigurationSection section, boolean key) {
-        for (EnchantmentBase base : main.enchantments) {
+        for (EnchantmentBase base : main.getEnchantments()) {
             boolean correct = false;
             if (base.getName().equals(name)) {
                 correct = true;
@@ -87,7 +87,7 @@ public class EnchantUtils {
                         }
                         meta.setLore(lore);
                         itemStack.setItemMeta(meta);
-                        for (Location location : main.signs)
+                        for (Location location : main.signHandler.getSigns())
                             if (level >= base.getMaxLevel())
                                 player.sendSignChange(location, new String[]{"[Enchantment]", base.getName(), "Price: Maxed!", ""});
                             else
@@ -112,7 +112,7 @@ public class EnchantUtils {
                 }
             }
         }
-        for (VanillaEnchant base : main.vanillaEnchants) {
+        for (VanillaEnchant base : main.getVanillaEnchantments()) {
             boolean correct = false;
             if (base.getName().equals(name))
                 correct = true;
@@ -137,7 +137,7 @@ public class EnchantUtils {
                         itemStack.addEnchantment(base, level);
                         ItemMeta meta = itemStack.getItemMeta();
                         meta.getLore().add(base.getName() + ": " + EnchantmentGUIListener.getRomanNumeral(level));
-                        for (Location location : main.signs)
+                        for (Location location : main.signHandler.getSigns())
                             player.sendSignChange(location, new String[]{"[Enchantment]", base.getName(), "", ""});
                     } else {
                         player.sendMessage(ChatColor.RED + "You do not have " + price + "G!");

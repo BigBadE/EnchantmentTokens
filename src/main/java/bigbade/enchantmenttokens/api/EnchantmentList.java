@@ -37,8 +37,8 @@ public class EnchantmentList implements CommandExecutor {
             return true;
         }
         StringBuilder builder = new StringBuilder("Enchantments: ");
-        if(main.enchantments.size() > 0) {
-            main.enchantments.forEach((enchant) -> builder.append(enchant.getName()).append(", "));
+        if(main.getEnchantments().size() > 0) {
+            main.getEnchantments().forEach((enchant) -> builder.append(enchant.getName()).append(", "));
             builder.setLength(builder.length() - 2);
         }
         sender.sendMessage(ChatColor.GREEN + builder.toString());

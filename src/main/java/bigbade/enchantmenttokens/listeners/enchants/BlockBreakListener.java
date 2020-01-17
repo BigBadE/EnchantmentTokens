@@ -47,7 +47,7 @@ public class BlockBreakListener extends BasicEnchantListener implements Listener
         if(event.getBlock().getState() instanceof Sign) {
             Sign sign = (Sign) event.getBlock().getState();
             if(sign.getLine(0).equals("[Enchantment]")) {
-                main.signs.remove(sign.getLocation());
+                main.signHandler.removeSign(sign.getLocation());
             }
         }
     }

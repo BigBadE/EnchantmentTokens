@@ -35,7 +35,7 @@ public class SignPlaceListener implements Listener {
     @EventHandler
     public void onSignChange(SignChangeEvent event) {
         if ("[enchantment]".equalsIgnoreCase(event.getLine(0))) {
-            for (EnchantmentBase base : main.enchantments) {
+            for (EnchantmentBase base : main.getEnchantments()) {
                 if (base.getName().equalsIgnoreCase(event.getLine(1))) {
                     event.getPlayer().sendMessage(ChatColor.GREEN + "Added enchantment " + base.getName());
                     event.setLine(0, "[Enchantment]");
@@ -43,7 +43,7 @@ public class SignPlaceListener implements Listener {
                     return;
                 }
             }
-            for (Enchantment base : main.vanillaEnchants) {
+            for (Enchantment base : main.getVanillaEnchantments()) {
                 if (base.getName().equalsIgnoreCase(event.getLine(1))) {
                     event.getPlayer().sendMessage(ChatColor.GREEN + "Added enchantment " + base.getName());
                     event.setLine(0, "[Enchantment]");

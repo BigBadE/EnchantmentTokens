@@ -25,8 +25,11 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 public class EnchantmentHandler {
@@ -72,6 +75,25 @@ public class EnchantmentHandler {
         }
 
         main.saveConfig();
+    }
+
+    public void unregisterEnchants() {
+        Field byKey = ReflectionManager.getField(Enchantment.class, "byKey");
+        Field byName = ReflectionManager.getField(Enchantment.class, "byName");
+
+        ReflectionManager.removeFinalFromField(byKey);
+        ReflectionManager.removeFinalFromField(byName);
+
+        Map<NamespacedKey, Enchantment> byKeys = (HashMap<NamespacedKey, Enchantment>) ReflectionManager.getValue(byKey, null);
+        for (Enchantment enchantment : enchantments) {
+            byKeys.remove(enchantment.getKey());
+        }
+        ReflectionManager.setValue(byKey, byKeys, null);
+        Map<NamespacedKey, String> byNames = (HashMap<NamespacedKey, String>) ReflectionManager.getValue(byName, null);
+        for (Enchantment enchantment : enchantments) {
+            byNames.remove(enchantment.getName());
+        }
+        ReflectionManager.setValue(byName, byNames, null);
     }
 
     public List<EnchantmentBase> getEnchantments() {

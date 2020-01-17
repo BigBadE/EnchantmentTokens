@@ -93,15 +93,10 @@ public class EnchantmentTokens extends JavaPlugin {
         if (!getDataFolder().exists())
             if (!getDataFolder().mkdir())
                 getLogger().severe("[ERROR] COULD NOT CREATE DATA FOLDER. REPORT THIS, NOT THE NULLPOINTEREXCEPTION.");
-        File data = new File(getDataFolder().getPath() + "\\data");
-        if (!data.exists())
-            if (!data.mkdir())
-                getLogger().warning("[ERROR] Could not create folder " + getDataFolder().getPath() + "\\data");
+        ConfigurationManager.createFolder(getDataFolder().getPath() + "\\data");
         getLogger().info("Looking for enchantments");
-        File enchantFolder = new File(getDataFolder().getPath() + "\\enchantments");
-        if (!enchantFolder.exists())
-            if (!enchantFolder.mkdir())
-                getLogger().warning("[ERROR] Could not create folder enchantments at " + enchantFolder.getPath());
+
+        ConfigurationManager.createFolder(getDataFolder().getPath() + "\\enchantments");
 
         getLogger().info("Registering enchants");
 
@@ -115,6 +110,7 @@ public class EnchantmentTokens extends JavaPlugin {
             registerCommands();
             registerListeners();
         }
+
         ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
         getLogger().info("Registering sign listener");
         signHandler = new SignPacketHandler(protocolManager, this, enchantmentHandler.getEnchantments());
@@ -172,22 +168,7 @@ public class EnchantmentTokens extends JavaPlugin {
     }
 
     public void unregisterEnchants() {
-        Field byKey = ReflectionManager.getField(Enchantment.class, "byKey");
-        Field byName = ReflectionManager.getField(Enchantment.class, "byName");
-
-        ReflectionManager.removeFinalFromField(byKey);
-        ReflectionManager.removeFinalFromField(byName);
-
-        Map<NamespacedKey, Enchantment> byKeys = (HashMap<NamespacedKey, Enchantment>) ReflectionManager.getValue(byKey, null);
-        for (Enchantment enchantment : enchantmentHandler.getEnchantments()) {
-            byKeys.remove(enchantment.getKey());
-        }
-        ReflectionManager.setValue(byKey, byKeys, null);
-        Map<NamespacedKey, String> byNames = (HashMap<NamespacedKey, String>) ReflectionManager.getValue(byName, null);
-        for (Enchantment enchantment : enchantmentHandler.getEnchantments()) {
-            byNames.remove(enchantment.getKey());
-        }
-        ReflectionManager.setValue(byName, byNames, null);
+        enchantmentHandler.unregisterEnchants();
     }
 
     public Map<EnchantmentBase, Method> getListeners(ListenerType type) {

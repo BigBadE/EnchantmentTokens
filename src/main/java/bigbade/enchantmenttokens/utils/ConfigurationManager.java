@@ -109,4 +109,11 @@ public class ConfigurationManager {
             });
         }
     }
+
+    public static void createFolder(String path) {
+        File data = new File(path);
+        if (!data.exists())
+            if (!data.mkdir())
+                EnchantmentTokens.LOGGER.log(Level.SEVERE, "[ERROR] Could not create folder " + path);
+    }
 }

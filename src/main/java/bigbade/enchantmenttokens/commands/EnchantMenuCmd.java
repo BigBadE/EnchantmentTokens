@@ -37,6 +37,11 @@ public class EnchantMenuCmd implements CommandExecutor {
     public Map<Player, Inventory> inventories = new HashMap<>();
 
     private ItemStack glassPane = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
+    private int version;
+
+    public EnchantMenuCmd(int version) {
+        this.version = version;
+    }
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {
@@ -66,10 +71,26 @@ public class EnchantMenuCmd implements CommandExecutor {
         meta.setLore(lore);
         item.setItemMeta(meta);
         inventory.setItem(4, item);
-        inventory.setItem(11, makeItem(Material.DIAMOND_PICKAXE, ChatColor.GREEN + "Pickaxe Enchants"));
+        inventory.setItem(11, makeItem(Material.DIAMOND_PICKAXE, ChatColor.GREEN + "Tool Enchants"));
         inventory.setItem(12, makeItem(Material.DIAMOND_SWORD, ChatColor.GREEN + "Sword Enchants"));
+
         inventory.setItem(14, makeItem(Material.DIAMOND_CHESTPLATE, ChatColor.GREEN + "Armor Enchants"));
         inventory.setItem(15, makeItem(Material.BOW, ChatColor.GREEN + "Bow Enchants"));
+
+        if (version >= 14) {
+            inventory.setItem(9, makeItem(Material.CROSSBOW, ChatColor.GREEN + "Crossbow Enchants"));
+            inventory.setItem(10, makeItem(Material.TRIDENT, ChatColor.GREEN + "Trident Enchants"));
+            inventory.setItem(16, makeItem(Material.FISHING_ROD, ChatColor.GREEN + "Fishing Rod Enchants"));
+            inventory.setItem(17, makeItem(Material.SHIELD, ChatColor.GREEN + "Shield Enchants"));
+        } else if (version >= 13) {
+            inventory.setItem(10, makeItem(Material.TRIDENT, ChatColor.GREEN + "Trident Enchants"));
+            inventory.setItem(13, makeItem(Material.FISHING_ROD, ChatColor.GREEN + "Fishing Rod Enchants"));
+            inventory.setItem(16, makeItem(Material.SHIELD, ChatColor.GREEN + "Shield Enchants"));
+        } else if (version >= 9) {
+            inventory.setItem(10, makeItem(Material.FISHING_ROD, ChatColor.GREEN + "Fishing Rod Enchants"));
+            inventory.setItem(16, makeItem(Material.SHIELD, ChatColor.GREEN + "Shield Enchants"));
+        } else
+            inventory.setItem(13, makeItem(Material.FISHING_ROD, ChatColor.GREEN + "Fishing Rod Enchants"));
         inventory.setItem(21, makeItem(Material.EMERALD_BLOCK, ChatColor.GREEN + "Enchant"));
         inventory.setItem(23, makeItem(Material.REDSTONE_BLOCK, ChatColor.RED + "Cancel"));
         int i = inventory.firstEmpty();

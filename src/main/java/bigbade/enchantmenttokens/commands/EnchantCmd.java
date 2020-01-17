@@ -41,8 +41,12 @@ public class EnchantCmd implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length >= 2 && sender instanceof Player) {
-            StringBuilder nameBuilder = new StringBuilder(args[1]);
+        if(!sender.hasPermission("enchanttoken.admin") && !sender.isOp()) {
+            sender.sendMessage(ChatColor.RED + "You do not have permission to run this command");
+            return true;
+        }
+        if (args.length >= 1 && sender instanceof Player) {
+            StringBuilder nameBuilder = new StringBuilder(args[0]);
             for (int i = 1; i < args.length - 1; i++) {
                 nameBuilder.append(args[i]);
             }

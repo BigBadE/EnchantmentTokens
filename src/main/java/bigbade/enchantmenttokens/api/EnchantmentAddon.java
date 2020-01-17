@@ -19,8 +19,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import java.io.File;
 
-public abstract class EnchantmentAddon {
+public class EnchantmentAddon {
     private String name;
+
+    public EnchantmentAddon(String name) {
+        this.name = name;
+    }
 
     public void onEnable() {
 

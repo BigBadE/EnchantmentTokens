@@ -1,0 +1,13 @@
+metrics: true
+
+vanillaEnchantments: { }
+
+enchants:
+  Example:
+    icon: "DIAMOND"
+    price:
+      type: custom
+      prices:
+        1: 10
+        2: 20
+        3: 30

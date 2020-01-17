@@ -19,19 +19,28 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.EnchantmentTarget;
+import org.bukkit.event.Event;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDamageEvent;
 
 import java.util.Arrays;
 import java.util.List;
 
 public enum ListenerType {
+    //On plugin disable
+    SERVERSTOP(EnchantmentTarget.ALL),
     //On block starting hit
     BLOCKDAMAGED(EnchantmentTarget.TOOL),
     //On block destroyed
     BLOCKBREAK(EnchantmentTarget.TOOL),
+    //Armor equipped
+    EQUIP(EnchantmentTarget.ARMOR),
+    //Armor unequipped
+    UNEQUIP(EnchantmentTarget.ARMOR),
     //Item swapped to
-    EQUIP(EnchantmentTarget.ALL),
+    HELD(EnchantmentTarget.ALL),
     //Item swapped off
-    UNEQUIP(EnchantmentTarget.ALL),
+    SWAPPED(EnchantmentTarget.ALL),
     //On current enchantment applied to an item
     ENCHANT(EnchantmentTarget.ALL);
     //TODO
@@ -43,7 +52,11 @@ public enum ListenerType {
     }
 
     public boolean canTarget(EnchantmentTarget target) {
-        return targets.contains(target);
+        if(target == EnchantmentTarget.ALL) return true;
+        for(EnchantmentTarget found : targets)
+            if(found == target)
+                return true;
+        return false;
     }
 
     public boolean canTarget(Material material) {

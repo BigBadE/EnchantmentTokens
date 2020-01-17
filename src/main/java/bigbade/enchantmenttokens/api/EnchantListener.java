@@ -1,5 +1,10 @@
 package bigbade.enchantmenttokens.api;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /*
 EnchantmentTokens
 Copyright (C) 2019-2020 Big_Bad_E
@@ -17,24 +22,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import org.bukkit.Material;
-import org.bukkit.enchantments.EnchantmentTarget;
-import org.bukkit.inventory.Inventory;
-
-public class SubInventory {
-    private Inventory inventory;
-    private int material;
-
-    public SubInventory(Inventory inventory, int material) {
-        this.inventory = inventory;
-        this.material = material;
-    }
-
-    public Inventory getInventory() {
-        return inventory;
-    }
-
-    public int getMaterial() {
-        return material;
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface EnchantListener {
+    public ListenerType type();
 }

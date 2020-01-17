@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import bigbade.enchantmenttokens.EnchantmentTokens;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
@@ -30,24 +29,27 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public abstract class EnchantmentBase extends Enchantment {
-    private final String name;
+
     private EnchantmentTarget target;
     private final List<Material> targets = new ArrayList<>();
     private boolean treasure = false;
     private final List<Enchantment> conflicts = new ArrayList<>();
     private final Map<ListenerType, Consumer<Event>> listeners = new HashMap<>();
     private final Material icon;
-    public EnchantmentTokens main;
 
-    public ConfigurationSection config;
+    @ConfigurationField
+    public String name;
+
+    @ConfigurationField
+    public int maxLevel = 3;
+    @ConfigurationField
+    public int minLevel = 1;
 
     @ConfigurationField
     public ConfigurationSection price;
 
-    public EnchantmentBase(EnchantmentTokens main, String name, ConfigurationSection config, Material icon) {
-        super(new NamespacedKey(main, name.toLowerCase()));
-        this.config = config;
-        this.main = main;
+    public EnchantmentBase(String name, Material icon) {
+        super(new NamespacedKey("enchantmenttokens", name.toLowerCase()));
         this.name = name;
         this.icon = icon;
     }
@@ -63,6 +65,19 @@ public abstract class EnchantmentBase extends Enchantment {
         return PriceIncreaseTypes.CUSTOM.getPrice(level, price);
     }
 
+    public void loadConfig() {
+        String priceIncreaseType = price.getString("type");
+        if (priceIncreaseType != null)
+            for (PriceIncreaseTypes types : PriceIncreaseTypes.values()) {
+                if (priceIncreaseType.toUpperCase().replace(" ", "").equals(types.name())) {
+                    types.loadConfig(this);
+                    return;
+                }
+            }
+        price.set("type", PriceIncreaseTypes.CUSTOM.name().toLowerCase());
+        PriceIncreaseTypes.CUSTOM.loadConfig(this);
+    }
+
     @Override
     public String getName() {
         return name;
@@ -70,12 +85,12 @@ public abstract class EnchantmentBase extends Enchantment {
 
     @Override
     public int getMaxLevel() {
-        return config.getInt("maxLevel");
+        return maxLevel;
     }
 
     @Override
     public int getStartLevel() {
-        return config.getInt("minLevel");
+        return minLevel;
     }
 
     @Override
@@ -106,16 +121,10 @@ public abstract class EnchantmentBase extends Enchantment {
     public boolean canEnchantItem(ItemStack itemStack) {
         if (targets.size() > 0)
             return targets.contains(itemStack.getType());
-        else
+        else if (target != null)
             return target.includes(itemStack.getType());
-    }
-
-    public Map<ListenerType, Consumer<Event>> getListeners() {
-        return listeners;
-    }
-
-    protected void registerListener(ListenerType type, Consumer<Event> consumer) {
-        listeners.put(type, consumer);
+        else
+            return false;
     }
 
     protected void setTarget(EnchantmentTarget target) {

@@ -9,8 +9,6 @@ commands:
   adminenchant:
     description: Enchant an item. (Admin only)
     usage: /adminenchant (enchant) (level)
-    permission: enchanttoken.admin
-    permission-message: You are not Admin!
   tokenenchant:
     description: Enchant an item using gems.
     usage: /tokenenchant
@@ -22,21 +20,16 @@ commands:
   addgems:
     description: Add gems to a player's balance
     usage: /addgems (player) (amount) or /adddgems (amount)
-    permission: enchanttoken.admin
-    permission-message: You are not Admin!
   reloadenchants:
     description: Reload all enchants in the jar
     usage: /reloadenchants
-    permission: enchanttoken.admin
-    permission-message: You are not Admin!
   enchantlist:
     description: Lists all current enchants
     usage: /enchantlist
-    permission: enchanttoken.list
-    permission-message: You cannot view enchantments!
 permissions:
   enchanttoken.admin:
     description: Allows for admins to enchant an item.
+    default: false
   enchanttoken.list:
     description: Allows users to view enchantments
     default: true

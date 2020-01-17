@@ -18,10 +18,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import bigbade.enchantmenttokens.EnchantmentTokens;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class RecompileEnchantsCmd implements CommandExecutor {
@@ -33,9 +35,13 @@ public class RecompileEnchantsCmd implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if(!sender.hasPermission("enchanttoken.admin") && !sender.isOp()) {
+            sender.sendMessage(ChatColor.RED + "You do not have permission to run this command");
+            return true;
+        }
         main.unregisterEnchants();
-        main.enchants = new HashSet<>();
-        main.enchants.addAll(main.loader.getEnchantments());
+        main.enchants = new HashMap<>();
+        main.enchants = main.loader.getEnchantments();
         main.registerEnchants();
         return true;
     }

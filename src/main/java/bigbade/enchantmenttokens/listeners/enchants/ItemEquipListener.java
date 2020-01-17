@@ -18,60 +18,60 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import bigbade.enchantmenttokens.EnchantmentTokens;
-import bigbade.enchantmenttokens.api.ArmorType;
 import bigbade.enchantmenttokens.api.EnchantmentBase;
 import com.codingforcookies.armorequip.ArmorEquipEvent;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.block.Sign;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockDispenseArmorEvent;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.function.Consumer;
+import java.util.logging.Level;
 
-public class ItemEquipListener implements Listener {
-    private Map<EnchantmentBase, Consumer<Event>> oldItemListeners;
-    private Map<EnchantmentBase, Consumer<Event>> newItemListeners;
-    private EnchantmentTokens main;
+public class ItemEquipListener extends BasicEnchantListener implements Listener {
+    private Map<EnchantmentBase, Method> oldItemListeners;
+    private Map<EnchantmentBase, Method> newItemListeners;
 
-    public ItemEquipListener(Map<EnchantmentBase, Consumer<Event>> oldItemListeners, Map<EnchantmentBase, Consumer<Event>> newItemListeners, EnchantmentTokens main) {
+    public ItemEquipListener(Map<EnchantmentBase, Method> oldItemListeners, Map<EnchantmentBase, Method> newItemListeners) {
+        super(null);
         this.oldItemListeners = oldItemListeners;
         this.newItemListeners = newItemListeners;
-        this.main = main;
     }
 
     @EventHandler
     public void onArmorEquip(ArmorEquipEvent event) {
         ItemStack item = event.getOldArmorPiece();
         if(item != null) {
-            for (Map.Entry<EnchantmentBase, Consumer<Event>> enchantment : oldItemListeners.entrySet()) {
-                for (Enchantment enchantment1 : item.getEnchantments().keySet()) {
-                    if (enchantment1.getKey().getNamespace().equals("enchantmenttokens") && enchantment1.equals(enchantment.getKey())) {
-                        enchantment.getValue().accept(event);
+            for (Map.Entry<EnchantmentBase, Method> enchantment : oldItemListeners.entrySet()) {
+                if (item.containsEnchantment(enchantment.getKey())) {
+                    try {
+                        enchantment.getValue().invoke(enchantment.getKey(), event);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        if (e instanceof IllegalAccessException) {
+                            EnchantmentTokens.LOGGER.log(Level.SEVERE, "Did not have permission " + enchantment.getValue().getName() + " for enchantment " + enchantment.getKey().name + ", make sure it isn't private/protected", e
+                            );
+                        } else {
+                            EnchantmentTokens.LOGGER.log(Level.SEVERE, "Could not invoke " + enchantment.getValue().getName() + ", check arguments.", e);
+                        }
                     }
                 }
             }
         }
         item = event.getNewArmorPiece();
         if(item != null) {
-            for (Map.Entry<EnchantmentBase, Consumer<Event>> enchantment : newItemListeners.entrySet()) {
-                for (Enchantment enchantment1 : item.getEnchantments().keySet()) {
-                    if (enchantment1.getKey().getNamespace().equals("enchantmenttokens") && enchantment1.equals(enchantment.getKey())) {
-                        enchantment.getValue().accept(event);
+            for (Map.Entry<EnchantmentBase, Method> enchantment : newItemListeners.entrySet()) {
+                if (item.containsEnchantment(enchantment.getKey())) {
+                    try {
+                        enchantment.getValue().invoke(enchantment.getKey(), event);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        if (e instanceof IllegalAccessException) {
+                            EnchantmentTokens.LOGGER.log(Level.SEVERE, "Did not have permission " + enchantment.getValue().getName() + " for enchantment " + enchantment.getKey().name + ", make sure it isn't private/protected", e
+                            );
+                        } else {
+                            EnchantmentTokens.LOGGER.log(Level.SEVERE, "Could not invoke " + enchantment.getValue().getName() + ", check arguments.", e);
+                        }
                     }
                 }
             }

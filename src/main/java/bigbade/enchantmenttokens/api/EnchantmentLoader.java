@@ -1,12 +1,10 @@
 package bigbade.enchantmenttokens.api;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
@@ -30,7 +28,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 public class EnchantmentLoader {
-    private Set<Class<EnchantmentBase>> enchantments = new HashSet<>();
+    private Map<String, Set<Class<EnchantmentBase>>> enchantments = new HashMap<>();
     private Set<EnchantmentAddon> addons = new HashSet<>();
 
     public EnchantmentLoader(File folder, Logger logger) {
@@ -45,6 +43,8 @@ public class EnchantmentLoader {
 
                         URL[] urls = {new URL("jar:file:" + enchants.getAbsolutePath() + "!/")};
                         URLClassLoader cl = new URLClassLoader(urls, getClass().getClassLoader());
+                        EnchantmentAddon addon = null;
+                        Set<Class<EnchantmentBase>> enchantClasses = new HashSet<>();
                         while (enumerator.hasMoreElements()) {
                             JarEntry file = enumerator.nextElement();
                             if (file.isDirectory() || !file.getName().endsWith(".class")) {
@@ -54,15 +54,26 @@ public class EnchantmentLoader {
                             String className = file.getName().substring(0, file.getName().length() - 6);
                             className = className.replace('/', '.');
                             Class<?> clazz = cl.loadClass(className);
-                            if (clazz.getSuperclass().equals(EnchantmentBase.class)) {
-                                enchantments.add((Class<EnchantmentBase>) clazz);
-                            } else if (clazz.getSuperclass().equals(EnchantmentAddon.class)) {
-                                addons.add((EnchantmentAddon) clazz.newInstance());
+                            if (EnchantmentBase.class.equals(clazz.getSuperclass())) {
+                                enchantClasses.add((Class<EnchantmentBase>) clazz);
+                            } else if (EnchantmentAddon.class.equals(clazz.getSuperclass())) {
+                                addon = (EnchantmentAddon) clazz.newInstance();
+                                addons.add(addon);
                             }
                         }
-                    } catch (Exception e) {
-                        logger.severe("Could not load jar at path: " + enchants.getPath());
-                        logger.log(Level.SEVERE, e, () -> "Error:");
+                        if (addon == null) {
+                            logger.log(Level.SEVERE, "Jar " + enchants.getName() + " has no EnchantmentAddon class, skipping loading enchants");
+                        } else
+                            enchantments.put(addon.getName(), enchantClasses);
+                    } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+                        logger.log(Level.SEVERE, "Could not load jar at path: " + enchants.getPath(), e);
+                        if(e instanceof IOException) {
+                            logger.log(Level.SEVERE, "Jar is invalid/corrupted, inform the creator.");
+                        } else if(e instanceof ClassNotFoundException) {
+                            logger.log(Level.SEVERE, "Problem loading class, please report this.");
+                        } else if(e instanceof IllegalAccessException) {
+                            logger.log(Level.SEVERE, "A class set to private, set all enchantments to public");
+                        }
                     }
                 }
             }
@@ -72,7 +83,7 @@ public class EnchantmentLoader {
         return addons;
     }
 
-    public Set<Class<EnchantmentBase>> getEnchantments() {
+    public Map<String, Set<Class<EnchantmentBase>>> getEnchantments() {
         return enchantments;
     }
 }

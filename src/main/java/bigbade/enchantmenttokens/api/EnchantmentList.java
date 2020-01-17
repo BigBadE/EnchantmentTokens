@@ -32,6 +32,10 @@ public class EnchantmentList implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if(!sender.hasPermission("enchanttoken.list") && !sender.isOp()) {
+            sender.sendMessage(ChatColor.RED + "You do not have permission to run this command");
+            return true;
+        }
         StringBuilder builder = new StringBuilder("Enchantments: ");
         if(main.enchantments.size() > 0) {
             main.enchantments.forEach((enchant) -> builder.append(enchant.getName()).append(", "));

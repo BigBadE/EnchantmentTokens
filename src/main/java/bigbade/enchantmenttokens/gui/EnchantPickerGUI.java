@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantmentBase;
+import bigbade.enchantmenttokens.api.SubInventory;
 import bigbade.enchantmenttokens.api.VanillaEnchant;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -33,14 +34,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 import java.util.Map;
 
-public class EnchantGUI {
+public class EnchantPickerGUI {
     private EnchantmentTokens main;
     private ConfigurationSection section;
 
     private ItemStack greyPlane = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
     private ItemStack exit;
 
-    public EnchantGUI(EnchantmentTokens main) {
+    public EnchantPickerGUI(EnchantmentTokens main) {
         this.main = main;
         section = main.getConfig().getConfigurationSection("enchants");
         exit = new ItemStack(Material.BARRIER);
@@ -49,6 +50,7 @@ public class EnchantGUI {
         exit.setItemMeta(meta);
     }
 
+    //Null target means no EnchantmentTarget class, defaults to material checking.
     public Inventory generateGUI(EnchantmentTarget target, ItemStack itemStack, String name) {
         Inventory inventory = Bukkit.createInventory(null, 54, "Enchantments for " + name);
 
@@ -87,7 +89,7 @@ public class EnchantGUI {
             i += 1;
         }
         for (EnchantmentBase enchantment : main.enchantments) {
-            if (enchantment.getItemTarget() == target || enchantment.getItemTarget() == EnchantmentTarget.ALL) {
+            if (enchantment.getItemTarget() == target || enchantment.getItemTarget() == EnchantmentTarget.ALL || enchantment.getTargets().contains(itemStack.getType())) {
                 ItemStack item = new ItemStack(enchantment.getIcon());
                 for (Map.Entry<Enchantment, Integer> enchantment1 : itemStack.getEnchantments().entrySet()) {
                     if (enchantment1.getKey().getKey().equals(enchantment.getKey())) {

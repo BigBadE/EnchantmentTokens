@@ -29,10 +29,13 @@ import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 
 public class EnchantUtils {
     public static void addEnchantment(ItemStack itemStack, String name, EnchantmentTokens main, Player player, ConfigurationSection section, boolean key) {
@@ -91,9 +94,18 @@ public class EnchantUtils {
                                 player.sendSignChange(location, new String[]{"[Enchantment]", base.getName(), "Price: " + base.getDefaultPrice(level) + "G", ""});
                     } else
                         player.sendMessage(ChatColor.RED + "You do not have " + price + "G!");
-                    for (Map.Entry<EnchantmentBase, Consumer<Event>> enchantment : main.getListeners(ListenerType.ENCHANT).entrySet()) {
+                    for (Map.Entry<EnchantmentBase, Method> enchantment : main.getListeners(ListenerType.ENCHANT).entrySet()) {
                         if(enchantment.getKey().equals(base)) {
-                            enchantment.getValue().accept(new EnchantmentApplyEvent(itemStack, player));
+                            try {
+                                enchantment.getValue().invoke(enchantment.getKey(), new EnchantmentApplyEvent(itemStack, player));
+                            } catch (IllegalAccessException | InvocationTargetException e) {
+                                if (e instanceof IllegalAccessException) {
+                                    EnchantmentTokens.LOGGER.log(Level.SEVERE, "Did not have permission " + enchantment.getValue().getName() + " for enchantment " + enchantment.getKey().name + ", make sure it isn't private/protected", e
+                                    );
+                                } else {
+                                    EnchantmentTokens.LOGGER.log(Level.SEVERE, "Could not invoke " + enchantment.getValue().getName() + ", check arguments.", e);
+                                }
+                            }
                         }
                     }
                     return;
@@ -108,16 +120,16 @@ public class EnchantUtils {
                 if (base.canEnchantItem(itemStack)) {
                     long price;
                     int level = 1;
-                    for (Map.Entry<Enchantment, Integer> enchats : itemStack.getEnchantments().entrySet())
-                        if (enchats.getKey().getKey().equals(base.getKey())) {
-                            level = enchats.getValue() + 1;
+                    for (Map.Entry<Enchantment, Integer> enchants : itemStack.getEnchantments().entrySet())
+                        if (enchants.getKey().getKey().equals(base.getKey())) {
+                            level = enchants.getValue() + 1;
                             break;
                         }
                     if (level > base.getMaxLevel()) {
                         player.sendMessage(ChatColor.RED + "You already have the max level enchantment!");
                         return;
                     }
-                    price = section.getConfigurationSection(base.getKey().getKey()).getConfigurationSection("prices").getLong(level + "");
+                    price = base.getDefaultPrice(level);
                     EnchantmentPlayer player1 = main.fileLoader.loadPlayer(player);
                     if (player1.getGems() >= price) {
                         player1.addGems(-price);

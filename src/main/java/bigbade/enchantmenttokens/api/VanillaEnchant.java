@@ -17,21 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import bigbade.enchantmenttokens.EnchantmentTokens;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 
 public class VanillaEnchant extends EnchantmentBase {
     public Enchantment enchantment;
 
-    public VanillaEnchant(EnchantmentTokens main, ConfigurationSection config, Material icon, Enchantment enchantment) {
-        super(main, enchantment.getName(), config, icon);
+    public VanillaEnchant(Material icon, Enchantment enchantment) {
+        super(enchantment.getName(), icon);
         this.enchantment = enchantment;
-    }
-
-    public VanillaEnchant loadConfig(ConfigurationSection section) {
-
-        return this;
     }
 }

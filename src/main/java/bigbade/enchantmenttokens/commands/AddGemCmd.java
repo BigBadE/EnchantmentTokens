@@ -34,6 +34,10 @@ public class AddGemCmd implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if(!sender.hasPermission("enchanttoken.admin") && !sender.isOp()) {
+            sender.sendMessage(ChatColor.RED + "You do not have permission to run this command");
+            return true;
+        }
         if (args.length == 1) {
             if (sender instanceof Player)
                 try {

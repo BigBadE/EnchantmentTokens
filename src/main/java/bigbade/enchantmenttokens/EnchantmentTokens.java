@@ -19,7 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import bigbade.enchantmenttokens.api.*;
 import bigbade.enchantmenttokens.commands.*;
-import bigbade.enchantmenttokens.gui.EnchantGUI;
+import bigbade.enchantmenttokens.gui.EnchantPickerGUI;
 import bigbade.enchantmenttokens.listeners.InventoryMoveListener;
 import bigbade.enchantmenttokens.listeners.SignClickListener;
 import bigbade.enchantmenttokens.listeners.SignPlaceListener;
@@ -46,30 +46,30 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.FileConfigurationOptions;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.nio.file.Files;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+//import org.bstats.bukkit.Metrics;
+
 public class EnchantmentTokens extends JavaPlugin {
-    public Set<Class<?>> enchants = new HashSet<>();
-    private FileConfiguration configuration;
+    public Map<String, Set<Class<EnchantmentBase>>> enchants;
     public List<EnchantmentBase> enchantments = new ArrayList<>();
     public List<VanillaEnchant> vanillaEnchants = new ArrayList<>();
-    private Map<ListenerType, Map<EnchantmentBase, Consumer<Event>>> enchantListeners = new HashMap<>();
-    private EnchantGUI enchantGUI;
+    private Map<ListenerType, Map<EnchantmentBase, Method>> enchantListeners = new HashMap<>();
+    private EnchantPickerGUI enchantPickerGUI;
     public static Logger LOGGER;
 
     private EnchantMenuCmd menuCmd;
@@ -78,11 +78,33 @@ public class EnchantmentTokens extends JavaPlugin {
     public EnchantmentLoader loader;
     public Set<Location> signs = new HashSet<>();
 
+    private int version;
+
     @Override
     public void onEnable() {
         LOGGER = getLogger();
+        getConfig().options().copyHeader(true).header("#Add all vanilla enchantments used in here!\nCheck configurationguide.txt for names/versions.");
         saveDefaultConfig();
-        configuration = getConfig();
+        version = Integer.parseInt(Bukkit.getVersion().split("\\.")[1]);
+
+        if (!getConfig().isSet("metrics"))
+            getConfig().set("metrics", true);
+        boolean metrics = getConfig().getBoolean("metics");
+        if (metrics) {
+            //Metrics metrics = new Metrics(this);
+        }
+        File configGuide = new File(getDataFolder().getPath() + "/configurationguide.txt");
+        if (!configGuide.exists()) {
+            Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+                try {
+                    InputStream stream = Objects.requireNonNull(getResource("configurationguide.txt"));
+                    byte[] data = new byte[stream.available()];
+                    Files.write(configGuide.toPath(), data);
+                } catch (IOException e) {
+                    getLogger().log(Level.SEVERE, "Could not create new configurationguide file!");
+                }
+            });
+        }
         fileLoader = new FileLoader(this);
         if (!getDataFolder().exists())
             if (!getDataFolder().mkdir())
@@ -91,25 +113,22 @@ public class EnchantmentTokens extends JavaPlugin {
         if (!data.exists())
             if (!data.mkdir())
                 getLogger().warning("[ERROR] Could not create folder " + getDataFolder().getPath() + "\\data");
-        getLogger().info("Looking for enchantments!");
+        getLogger().info("Looking for enchantments");
         File enchantFolder = new File(getDataFolder().getPath() + "\\enchantments");
         if (!enchantFolder.exists())
             if (!enchantFolder.mkdir())
                 getLogger().warning("[ERROR] Could not create folder enchantments at " + enchantFolder.getPath());
         loader = new EnchantmentLoader(enchantFolder, getLogger());
-        enchants.addAll(loader.getEnchantments());
-        getLogger().info("Registering enchants!");
+        enchants = loader.getEnchantments();
+        getLogger().info("Registering enchants");
         registerEnchants();
         if (Bukkit.getPluginManager().isPluginEnabled(this)) {
-            enchantGUI = new EnchantGUI(this);
-            getLogger().info("Registering commands!");
+            enchantPickerGUI = new EnchantPickerGUI(this);
             registerCommands();
-            getLogger().info("Registering listeners!");
             registerListeners();
         }
-        getLogger().info("Creating ProtocolLib instance!");
         ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
-        getLogger().info("Registering sign listener!");
+        getLogger().info("Registering sign listener");
         protocolManager.addPacketListener(new PacketAdapter(this, ListenerPriority.NORMAL, PacketType.Play.Server.MAP_CHUNK) {
             @Override
             public void onPacketSending(PacketEvent event) {
@@ -201,15 +220,16 @@ public class EnchantmentTokens extends JavaPlugin {
 
             FileConfiguration configuration = new YamlConfiguration();
             try {
-                if(!config.exists())
-                    config.createNewFile();
+                if (!config.exists())
+                    if (!config.createNewFile())
+                        getLogger().log(Level.SEVERE, "Could not make new enchantment configuration folder, make sure the folder is accessible by programs");
                 configuration.load(config);
             } catch (IOException | InvalidConfigurationException e) {
                 getLogger().log(Level.SEVERE, "could not load enchantment configuration", e);
             }
 
-            for(Field field : addon.getClass().getDeclaredFields()) {
-                if(field.isAnnotationPresent(ConfigurationField.class)) {
+            for (Field field : addon.getClass().getDeclaredFields()) {
+                if (field.isAnnotationPresent(ConfigurationField.class)) {
                     try {
                         field.setAccessible(true);
                         field.set(addon, configuration.get(field.getName()));
@@ -236,20 +256,17 @@ public class EnchantmentTokens extends JavaPlugin {
     }
 
     private void registerListeners() {
-        getLogger().info("Registering enchantment listeners.");
         Bukkit.getPluginManager().registerEvents(new ArmorListener(new ArrayList<>()), this);
         Bukkit.getPluginManager().registerEvents(new DispenserArmorListener(), this);
         Bukkit.getPluginManager().registerEvents(new BlockBreakListener(enchantListeners.get(ListenerType.BLOCKBREAK), this), this);
-        Bukkit.getPluginManager().registerEvents(new ItemEquipListener(enchantListeners.get(ListenerType.EQUIP), enchantListeners.get(ListenerType.UNEQUIP), this), this);
-        Bukkit.getPluginManager().registerEvents(new BlockDamageListener(enchantListeners.get(ListenerType.BLOCKBREAK)), this);
+        Bukkit.getPluginManager().registerEvents(new ItemEquipListener(enchantListeners.get(ListenerType.EQUIP), enchantListeners.get(ListenerType.UNEQUIP)), this);
+        Bukkit.getPluginManager().registerEvents(new BlockDamageListener(enchantListeners.get(ListenerType.BLOCKDAMAGED)), this);
 
-        getLogger().info("Registering sign listeners.");
         Bukkit.getPluginManager().registerEvents(new SignPlaceListener(this), this);
         Bukkit.getPluginManager().registerEvents(new SignClickListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new InventoryMoveListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new InventoryMoveListener(enchantListeners.get(ListenerType.HELD), enchantListeners.get(ListenerType.SWAPPED), this), this);
 
-        getLogger().info("Registering GUI listeners.");
-        Bukkit.getPluginManager().registerEvents(new EnchantmentGUIListener(this, enchantGUI, menuCmd), this);
+        Bukkit.getPluginManager().registerEvents(new EnchantmentGUIListener(this, enchantPickerGUI, menuCmd, version), this);
     }
 
     private void registerCommands() {
@@ -259,7 +276,7 @@ public class EnchantmentTokens extends JavaPlugin {
         Objects.requireNonNull(getCommand("addgems")).setExecutor(new AddGemCmd(this));
         Objects.requireNonNull(getCommand("addgems")).setTabCompleter(new AddGemTabCompleter());
 
-        menuCmd = new EnchantMenuCmd();
+        menuCmd = new EnchantMenuCmd(version);
         Objects.requireNonNull(getCommand("tokenenchant")).setExecutor(menuCmd);
         Objects.requireNonNull(getCommand("tokenenchant")).setTabCompleter(new GenericTabCompleter());
 
@@ -294,6 +311,7 @@ public class EnchantmentTokens extends JavaPlugin {
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
+        assert modifiersField != null;
         modifiersField.setAccessible(true);
         try {
             modifiersField.setInt(byKey, byKey.getModifiers() & ~Modifier.FINAL);
@@ -309,7 +327,7 @@ public class EnchantmentTokens extends JavaPlugin {
         }
 
         try {
-            Map<NamespacedKey, Enchantment> byKeys = (HashMap) byKey.get(null);
+            Map<NamespacedKey, Enchantment> byKeys = (HashMap<NamespacedKey, Enchantment>) byKey.get(null);
             for (Enchantment enchantment : enchantments) {
                 byKeys.remove(enchantment.getKey());
             }
@@ -318,7 +336,7 @@ public class EnchantmentTokens extends JavaPlugin {
             e.printStackTrace();
         }
         try {
-            Map<NamespacedKey, String> byNames = (HashMap) byKey.get(null);
+            Map<NamespacedKey, String> byNames = (HashMap<NamespacedKey, String>) byKey.get(null);
             for (Enchantment enchantment : enchantments) {
                 byNames.remove(enchantment.getKey());
             }
@@ -328,17 +346,7 @@ public class EnchantmentTokens extends JavaPlugin {
         }
     }
 
-    public EnchantmentAddon getAddon(Class<? extends EnchantmentAddon> clazz) {
-        EnchantmentAddon found = null;
-        for (EnchantmentAddon addon : loader.getAddons()) {
-            if (addon.getClass().equals(clazz)) {
-                found = addon;
-            }
-        }
-        return found;
-    }
-
-    public Map<EnchantmentBase, Consumer<Event>> getListeners(ListenerType type) {
+    public Map<EnchantmentBase, Method> getListeners(ListenerType type) {
         return enchantListeners.get(type);
     }
 
@@ -354,87 +362,97 @@ public class EnchantmentTokens extends JavaPlugin {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        for (Class clazz : enchants) {
-            File config = new File(new File(clazz.getResource(clazz.getSimpleName() + ".class").getPath().replace("jar:file:/", "")).getParentFile().getPath() + "/config.yml");
+        for (Map.Entry<String, Set<Class<EnchantmentBase>>> entry : enchants.entrySet()) {
+            for (Class<EnchantmentBase> clazz : entry.getValue()) {
+                File config = new File(getDataFolder().getPath() + "\\enchantments\\" + entry.getKey() + ".yml");
 
-            FileConfiguration configuration = new YamlConfiguration();
-            try {
-                if(!config.exists())
-                    config.createNewFile();
-                configuration.load(config);
-            } catch (IOException | InvalidConfigurationException e) {
-                getLogger().log(Level.SEVERE, "could not load enchantment configuration", e);
-            }
-
-            ConfigurationSection section = configuration.getConfigurationSection("enchants");
-            if(section == null)
-                section = configuration.createSection("enchants");
-            try {
-                String name = clazz.getSimpleName();
-                ConfigurationSection enchantSection = configuration.getConfigurationSection(name);
-                EnchantmentBase enchant = null;
+                FileConfiguration configuration = new YamlConfiguration();
                 try {
-                    enchant = (EnchantmentBase) clazz.getDeclaredConstructor(this.getClass(), ConfigurationSection.class).newInstance(this, enchantSection);
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
+                    if (!config.exists())
+                        if (!config.createNewFile())
+                            getLogger().log(Level.SEVERE, "Problem creating config file at " + config.getPath());
+                    configuration.load(config);
+                } catch (IOException | InvalidConfigurationException e) {
+                    getLogger().log(Level.SEVERE, "could not load enchantment configuration", e);
                 }
-                if (enchantSection == null) {
-                    enchantSection = section.createSection(name.toLowerCase());
-                    getLogger().log(Level.INFO, "Generating config for " + name);
-                    enchantSection.set("enabled", true);
-                    enchant.config = enchantSection;
-                    for(Field field : clazz.getDeclaredFields()) {
+
+                ConfigurationSection section = configuration.getConfigurationSection("enchants");
+                if (section == null)
+                    section = configuration.createSection("enchants");
+                try {
+                    String name = clazz.getSimpleName();
+                    ConfigurationSection enchantSection = configuration.getConfigurationSection(name);
+                    final EnchantmentBase enchant = clazz.newInstance();
+                    if (enchantSection == null) {
+                        enchantSection = section.createSection(name.toLowerCase());
+                        enchantSection.set("enabled", true);
+                    }
+                    for (Field field : clazz.getDeclaredFields()) {
                         loadConfigForField(field, enchantSection, enchant);
                     }
-                    for(Field field : clazz.getSuperclass().getDeclaredFields()) {
+                    for (Field field : clazz.getSuperclass().getDeclaredFields()) {
                         loadConfigForField(field, enchantSection, enchant);
                     }
-                }
-                if (enchantSection.getBoolean("enabled")) {
-                    enchantments.add(enchant);
-                    Map<ListenerType, Consumer<Event>> events = enchant.getListeners();
-                    typeCheck:
-                    for (ListenerType type : events.keySet()) {
-                        try {
-                            getLogger().info("Adding event from " + enchant.getKey().getKey() + " to listener " + type.toString());
-                            if (enchant.getItemTarget() != null)
-                                if (type.canTarget(enchant.getItemTarget())) {
-                                    getLogger().warning("Cannot add listener " + type + " to target " + enchant.getItemTarget());
-                                    continue;
-                                }
-                            else
-                                for(Material material : enchant.getTargets()) {
-                                    if(!type.canTarget(material)) {
-                                        getLogger().warning("Cannot add listener " + type + " to target " +material);
+                    boolean enabled;
+                    try {
+                        enabled = enchantSection.getBoolean("enabled");
+                    } catch (NullPointerException e) {
+                        enabled = true;
+                        enchantSection.set("enabled", true);
+                    }
+                    if (enabled) {
+                        enchant.loadConfig();
+                        enchantments.add(enchant);
+                        methodCheck:
+                        for (Method method : clazz.getDeclaredMethods()) {
+                            if (method.isAnnotationPresent(EnchantListener.class)) {
+                                ListenerType type = method.getAnnotation(EnchantListener.class).type();
+                                if (enchant.getItemTarget() != null) {
+                                    if (!type.canTarget(enchant.getItemTarget())) {
+                                        getLogger().warning("Cannot add listener " + type + " to target " + enchant.getItemTarget());
+                                        continue;
                                     }
-                                    continue typeCheck;
-                                }
-                            enchantListeners.get(type).put(enchant, events.get(type));
-                        } catch (NullPointerException ignored) {
+                                } else
+                                    for (Material material : enchant.getTargets()) {
+                                        if (!type.canTarget(material)) {
+                                            getLogger().warning("Cannot add listener " + type + " to target " + material);
+                                        }
+                                        continue methodCheck;
+                                    }
+                                enchantListeners.get(type).put(enchant, method);
+                            }
                         }
+                        Enchantment.registerEnchantment(enchant);
                     }
-                    getLogger().log(Level.INFO, "Enchantment " + enchant.getKey().getKey() + " registering to Namespace " + enchant.getKey().getNamespace());
-                    Enchantment.registerEnchantment(enchant);
+                } catch (IllegalArgumentException | InstantiationException | IllegalAccessException e) {
+                    if (e instanceof IllegalAccessException) {
+                        getLogger().log(Level.SEVERE, "Enchantment class " + clazz.getSimpleName() + "is set to private/Configuration field is set to final!");
+                    } else if (e instanceof InstantiationException) {
+                        getLogger().log(Level.SEVERE, "Could not create new enchantment " + clazz.getSimpleName() + ", make sure your have no constructor arguments");
+                    } else {
+                        getLogger().log(Level.SEVERE, "Incorrect arguments on enchantment " + clazz.getSimpleName());
+                    }
+                    getLogger().log(Level.SEVERE, "Failed to register! Please do not report this to BigBadE, report this to the creator of " + clazz.getSimpleName(), e);
+                    return;
                 }
-            } catch (IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                if(e instanceof IllegalAccessException) {
-                    getLogger().log(Level.SEVERE, "Enchantment class is set to private/Configuration field is set to final!");
-                } else if(e instanceof InstantiationException) {
-                    getLogger().log(Level.SEVERE, "Could not create new enchantment, make sure your arguments are EnchantmentTokens and ConfigurationSection.");
+                try {
+                    if (config.exists() && !config.delete())
+                        getLogger().log(Level.SEVERE, "Could not save configuration");
+                    Files.write(config.toPath(), configuration.saveToString().getBytes());
+                } catch (IOException e) {
+                    getLogger().log(Level.SEVERE, "Could not save configuration", e);
                 }
-                getLogger().log(Level.SEVERE, "Failed to register!", e);
-                Bukkit.getPluginManager().disablePlugin(this);
-                return;
             }
         }
         List<Enchantment> enchantsToRegister = new ArrayList<>();
         ConfigurationSection section = getConfig().getConfigurationSection("enchants");
-        if(section == null)
+        if (section == null)
             section = getConfig().createSection("enchants");
 
-        for(String name : section.getStringList("vanillaEnchants")) {
-            Enchantment enchantment = Enchantment.getByName(name);
-            if(enchantment != null) enchantsToRegister.add(enchantment);
+        for (String name : section.getStringList("vanillaEnchants")) {
+            Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(name.toLowerCase().replace(" ", "_")));
+            if (enchantment != null) enchantsToRegister.add(enchantment);
+            else getLogger().log(Level.SEVERE, "Could not find an enchantment by the name " + name);
         }
 
         for (Enchantment enchantment : enchantsToRegister) {
@@ -442,16 +460,16 @@ public class EnchantmentTokens extends JavaPlugin {
             if (enchantSection == null)
                 enchantSection = section.createSection(enchantment.getKey().getKey());
             String iconName = enchantSection.getString("icon");
-            if(iconName == null)
+            if (iconName == null)
                 iconName = "BEDROCK";
             Material icon = Material.getMaterial(iconName);
 
             try {
                 if (enchantSection.getBoolean("enabled"))
-                    vanillaEnchants.add(new VanillaEnchant(this, enchantSection, icon, enchantment).loadConfig(enchantSection));
+                    vanillaEnchants.add(new VanillaEnchant(icon, enchantment));
             } catch (NullPointerException e) {
                 enchantSection.set("enabled", true);
-                vanillaEnchants.add(new VanillaEnchant(this, enchantSection, icon, enchantment).loadConfig(enchantSection));
+                vanillaEnchants.add(new VanillaEnchant(icon, enchantment));
             }
         }
 
@@ -467,27 +485,45 @@ public class EnchantmentTokens extends JavaPlugin {
     }
 
     private void loadConfigForField(Field field, ConfigurationSection section, Object target) {
-        if(field.isAnnotationPresent(ConfigurationField.class)) {
+        if (field.isAnnotationPresent(ConfigurationField.class)) {
             String location = field.getAnnotation(ConfigurationField.class).value();
             ConfigurationSection current = section;
-            if(location.contains(".")) {
+            if (location.contains(".")) {
                 String[] next = location.split("\\.");
-                for(String nextLoc : next) {
+                for (String nextLoc : next) {
                     try {
-                        current = Objects.requireNonNull(current).getConfigurationSection(nextLoc);
+                        ConfigurationSection newSection = Objects.requireNonNull(current).getConfigurationSection(nextLoc);
+                        if (newSection == null)
+                            current = current.createSection(nextLoc);
+                        else
+                            current = newSection;
                     } catch (NullPointerException ignored) {
+                        assert current != null;
                         current = current.createSection(nextLoc);
                     }
                 }
-                location = field.getName();
-            } else {
-                location = field.getName();
             }
+            location = field.getName();
             try {
                 field.setAccessible(true);
-                field.set(target, Objects.requireNonNull(current).get(location));
+                if (field.getType().equals(ConfigurationSection.class)) {
+                    System.out.println(current.getCurrentPath());
+                    ConfigurationSection newSection = current.getConfigurationSection(location);
+                    if (newSection == null)
+                        newSection = current.createSection(location);
+                    field.set(target, newSection);
+                } else {
+                    Object value = Objects.requireNonNull(current).get(location);
+                    if (value == null)
+                        if (field.getType().equals(ConfigurationSection.class))
+                            field.set(target, current.createSection(location));
+                        else
+                            current.set(location, field.get(target));
+                    else
+                        field.set(target, value);
+                }
             } catch (NullPointerException | IllegalAccessException e) {
-                if(e instanceof NullPointerException) {
+                if (e instanceof NullPointerException) {
                     field.setAccessible(true);
                     try {
                         Objects.requireNonNull(current).set(location, field.get(target));

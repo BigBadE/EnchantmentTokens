@@ -20,36 +20,27 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import bigbade.enchantmenttokens.api.*;
 import bigbade.enchantmenttokens.commands.*;
 import bigbade.enchantmenttokens.gui.EnchantPickerGUI;
-import bigbade.enchantmenttokens.listeners.InventoryMoveListener;
 import bigbade.enchantmenttokens.listeners.SignClickListener;
 import bigbade.enchantmenttokens.listeners.SignPacketHandler;
 import bigbade.enchantmenttokens.listeners.SignPlaceListener;
-import bigbade.enchantmenttokens.listeners.enchants.BlockBreakListener;
-import bigbade.enchantmenttokens.listeners.enchants.BlockDamageListener;
-import bigbade.enchantmenttokens.listeners.enchants.ItemEquipListener;
 import bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
 import bigbade.enchantmenttokens.loader.FileLoader;
 import bigbade.enchantmenttokens.utils.ConfigurationManager;
 import bigbade.enchantmenttokens.utils.EnchantmentHandler;
 import bigbade.enchantmenttokens.utils.ListenerHandler;
-import bigbade.enchantmenttokens.utils.ReflectionManager;
 import com.codingforcookies.armorequip.ArmorListener;
 import com.codingforcookies.armorequip.DispenserArmorListener;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 //import org.bstats.bukkit.Metrics;
@@ -85,7 +76,7 @@ public class EnchantmentTokens extends JavaPlugin {
         boolean metrics = getConfig().getBoolean("metics");
 
         if (metrics) {
-            Metrics metrics = new Metrics(this);
+            Metrics bstats = new Metrics(this, 6283);
         }
 
         ConfigurationManager.saveConfigurationGuide(this, getDataFolder().getPath() + "/configurationguide.txt", getClassLoader());

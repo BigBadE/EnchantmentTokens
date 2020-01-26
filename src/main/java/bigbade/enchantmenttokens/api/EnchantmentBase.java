@@ -22,11 +22,11 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
-import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public abstract class EnchantmentBase extends Enchantment {
 
@@ -34,7 +34,6 @@ public abstract class EnchantmentBase extends Enchantment {
     private final List<Material> targets = new ArrayList<>();
     private boolean treasure = false;
     private final List<Enchantment> conflicts = new ArrayList<>();
-    private final Map<ListenerType, Consumer<Event>> listeners = new HashMap<>();
     private final Material icon;
 
     @ConfigurationField
@@ -50,6 +49,12 @@ public abstract class EnchantmentBase extends Enchantment {
 
     public EnchantmentBase(String name, Material icon) {
         super(new NamespacedKey("enchantmenttokens", name.toLowerCase()));
+        this.name = name;
+        this.icon = icon;
+    }
+
+    public EnchantmentBase(String name, Material icon, String namespace) {
+        super(new NamespacedKey(namespace, name.toLowerCase()));
         this.name = name;
         this.icon = icon;
     }

@@ -43,8 +43,6 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.logging.Logger;
 
-//import org.bstats.bukkit.Metrics;
-
 public class EnchantmentTokens extends JavaPlugin {
     public Map<String, Set<Class<EnchantmentBase>>> enchants;
 

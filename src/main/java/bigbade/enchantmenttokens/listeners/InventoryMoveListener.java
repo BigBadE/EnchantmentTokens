@@ -19,29 +19,28 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantmentBase;
+import bigbade.enchantmenttokens.events.EnchantmentEvent;
 import bigbade.enchantmenttokens.listeners.enchants.BasicEnchantListener;
+import bigbade.enchantmenttokens.listeners.enchants.EnchantmentListener;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.logging.Level;
 
-public class InventoryMoveListener extends BasicEnchantListener implements Listener {
+public class InventoryMoveListener extends BasicEnchantListener<Event> implements Listener {
     private EnchantmentTokens main;
 
-    private Map<EnchantmentBase, Method> swapOn;
-    private Map<EnchantmentBase, Method> swapOff;
+    private Map<EnchantmentBase, EnchantmentListener<EnchantmentEvent<Event>>> swapOn;
+    private Map<EnchantmentBase, EnchantmentListener<EnchantmentEvent<Event>>> swapOff;
 
-    public InventoryMoveListener(Map<EnchantmentBase, Method> swapOn, Map<EnchantmentBase, Method> swapOff, EnchantmentTokens main) {
+    public InventoryMoveListener(Map<EnchantmentBase, EnchantmentListener<EnchantmentEvent<Event>>> swapOn, Map<EnchantmentBase, EnchantmentListener<EnchantmentEvent<Event>>> swapOff, EnchantmentTokens main) {
         super(null);
         this.main = main;
         this.swapOn = swapOn;
@@ -51,16 +50,18 @@ public class InventoryMoveListener extends BasicEnchantListener implements Liste
     @EventHandler
     public void onInventorySwap(InventoryClickEvent event) {
         if (event.getInventory().getHolder() == null) return;
-        if (event.getInventory().getHolder().equals(event.getWhoClicked())) {
+        if (event.getInventory().getHolder().equals(event.getWhoClicked()))
             if (event.getSlot() == event.getWhoClicked().getInventory().getHeldItemSlot()) {
-                for (Location location : main.signHandler.getSigns()) {
-                    if (location.getChunk().isLoaded() && location.getWorld() == event.getWhoClicked().getWorld()) {
+                for (Location location : main.signHandler.getSigns())
+                    if (location.getChunk().isLoaded() && location.getWorld() == event.getWhoClicked().getWorld())
                         Bukkit.getScheduler().scheduleSyncDelayedTask(main, () ->
                                 ((Player) event.getWhoClicked()).sendSignChange(location, new String[]{"[Enchantment]", ((Sign) location.getBlock().getState()).getLine(1), "", ""}));
-                    }
+                if(event.getCurrentItem() != null) {
+                    EnchantmentEvent<Event> enchantmentEvent = new EnchantmentEvent<Event>(event).setUser(event.getWhoClicked()).setItem(event.getCurrentItem());
+                    callListeners();
                 }
+
             }
-        }
     }
 
     @EventHandler
@@ -69,34 +70,7 @@ public class InventoryMoveListener extends BasicEnchantListener implements Liste
             if (location.getChunk().isLoaded() && location.getWorld() == event.getPlayer().getWorld()) {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(main, () ->
                         event.getPlayer().sendSignChange(location, new String[]{"[Enchantment]", ((Sign) location.getBlock().getState()).getLine(1), "", ""}));
-                for (Map.Entry<EnchantmentBase, Method> enchantment : swapOn.entrySet()) {
-                    if (event.getPlayer().getInventory().getItemInMainHand().containsEnchantment(enchantment.getKey())) {
-                        try {
-                            enchantment.getValue().invoke(enchantment.getKey(), event);
-                        } catch (IllegalAccessException | InvocationTargetException e) {
-                            if (e instanceof IllegalAccessException) {
-                                EnchantmentTokens.LOGGER.log(Level.SEVERE, "Did not have permission " + enchantment.getValue().getName() + " for enchantment " + enchantment.getKey().name + ", make sure it isn't private/protected", e
-                                );
-                            } else {
-                                EnchantmentTokens.LOGGER.log(Level.SEVERE, "Could not invoke " + enchantment.getValue().getName() + ", check arguments.", e);
-                            }
-                        }
-                    }
-                }
-                for (Map.Entry<EnchantmentBase, Method> enchantment : swapOff.entrySet()) {
-                    if (event.getPlayer().getInventory().getItem(event.getPreviousSlot()).containsEnchantment(enchantment.getKey())) {
-                        try {
-                            enchantment.getValue().invoke(enchantment.getKey(), event);
-                        } catch (IllegalAccessException | InvocationTargetException e) {
-                            if (e instanceof IllegalAccessException) {
-                                EnchantmentTokens.LOGGER.log(Level.SEVERE, "Did not have permission " + enchantment.getValue().getName() + " for enchantment " + enchantment.getKey().name + ", make sure it isn't private/protected", e
-                                );
-                            } else {
-                                EnchantmentTokens.LOGGER.log(Level.SEVERE, "Could not invoke " + enchantment.getValue().getName() + ", check arguments.", e);
-                            }
-                        }
-                    }
-                }
+
             }
         }
     }

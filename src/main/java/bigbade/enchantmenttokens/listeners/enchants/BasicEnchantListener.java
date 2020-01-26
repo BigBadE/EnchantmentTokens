@@ -1,16 +1,11 @@
 package bigbade.enchantmenttokens.listeners.enchants;
 
-import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantmentBase;
-import org.bukkit.enchantments.Enchantment;
+import bigbade.enchantmenttokens.events.EnchantmentEvent;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 
 /*
 EnchantmentTokens
@@ -29,26 +24,25 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-public class BasicEnchantListener {
-    private Map<EnchantmentBase, Method> listeners = new HashMap<>();
+public class BasicEnchantListener<T extends Event> {
+    private Map<EnchantmentBase, EnchantmentListener<EnchantmentEvent<T>>> listeners;
 
-    public BasicEnchantListener(Map<EnchantmentBase, Method> listeners) {
+    public BasicEnchantListener(Map<EnchantmentBase, EnchantmentListener<EnchantmentEvent<T>>> listeners) {
         this.listeners = listeners;
     }
 
-    public void callListeners(ItemStack item, Event event) {
-        for (Map.Entry<EnchantmentBase, Method> enchantment : listeners.entrySet()) {
+    public void callListeners(ItemStack item, EnchantmentEvent<T> event) {
+        for (Map.Entry<EnchantmentBase, EnchantmentListener<EnchantmentEvent<T>>> enchantment : listeners.entrySet()) {
             if (item.containsEnchantment(enchantment.getKey())) {
-                try {
-                    enchantment.getValue().invoke(enchantment.getKey(), event);
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    if (e instanceof IllegalAccessException) {
-                        EnchantmentTokens.LOGGER.log(Level.SEVERE, "Did not have permission " + enchantment.getValue().getName() + " for enchantment " + enchantment.getKey().name + ", make sure it isn't private/protected", e
-                        );
-                    } else {
-                        EnchantmentTokens.LOGGER.log(Level.SEVERE, "Could not invoke " + enchantment.getValue().getName() + ", check arguments.", e);
-                    }
-                }
+                enchantment.getValue().apply(event);
+            }
+        }
+    }
+
+    public void callListeners(ItemStack item, EnchantmentEvent<T> event, Map<EnchantmentBase, EnchantmentListener<EnchantmentEvent<T>>> listeners) {
+        for (Map.Entry<EnchantmentBase, EnchantmentListener<EnchantmentEvent<T>>> enchantment : listeners.entrySet()) {
+            if (item.containsEnchantment(enchantment.getKey())) {
+                enchantment.getValue().apply(event);
             }
         }
     }

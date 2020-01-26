@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantmentBase;
+import bigbade.enchantmenttokens.events.EnchantmentEvent;
 import org.bukkit.block.Sign;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.Event;
@@ -42,7 +43,8 @@ public class BlockBreakListener extends BasicEnchantListener implements Listener
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
-        callListeners(item, event);
+        EnchantmentEvent<BlockBreakEvent> enchantmentEvent = new EnchantmentEvent<>(event).setItem(item).setTargetBlock(event.getBlock()).setUser(event.getPlayer());
+        callListeners(item, enchantmentEvent);
 
         if(event.getBlock().getState() instanceof Sign) {
             Sign sign = (Sign) event.getBlock().getState();

@@ -24,7 +24,7 @@ import bigbade.enchantmenttokens.api.ListenerType;
 import bigbade.enchantmenttokens.listeners.InventoryMoveListener;
 import bigbade.enchantmenttokens.listeners.enchants.BlockBreakListener;
 import bigbade.enchantmenttokens.listeners.enchants.BlockDamageListener;
-import bigbade.enchantmenttokens.listeners.enchants.ItemEquipListener;
+import bigbade.enchantmenttokens.listeners.enchants.ArmorEquipListener;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -49,7 +49,7 @@ public class ListenerHandler {
 
     public void registerListeners() {
         Bukkit.getPluginManager().registerEvents(new BlockBreakListener(enchantListeners.get(ListenerType.BLOCKBREAK), main), main);
-        Bukkit.getPluginManager().registerEvents(new ItemEquipListener(enchantListeners.get(ListenerType.EQUIP), enchantListeners.get(ListenerType.UNEQUIP)), main);
+        Bukkit.getPluginManager().registerEvents(new ArmorEquipListener(enchantListeners.get(ListenerType.EQUIP), enchantListeners.get(ListenerType.UNEQUIP)), main);
         Bukkit.getPluginManager().registerEvents(new BlockDamageListener(enchantListeners.get(ListenerType.BLOCKDAMAGED)), main);
         Bukkit.getPluginManager().registerEvents(new InventoryMoveListener(enchantListeners.get(ListenerType.HELD), enchantListeners.get(ListenerType.SWAPPED), main), main);
     }

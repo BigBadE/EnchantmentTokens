@@ -83,8 +83,9 @@ public class EnchantmentTokens extends JavaPlugin {
             getConfig().set("metrics", true);
 
         boolean metrics = getConfig().getBoolean("metics");
+
         if (metrics) {
-            //Metrics metrics = new Metrics(this);
+            Metrics metrics = new Metrics(this);
         }
 
         ConfigurationManager.saveConfigurationGuide(this, getDataFolder().getPath() + "/configurationguide.txt", getClassLoader());

@@ -72,7 +72,7 @@ public class ConfigurationManager {
             if (field.getType().equals(ConfigurationSection.class)) {
                 ConfigurationSection newSection = current.getConfigurationSection(location);
                 if (newSection == null)
-                    newSection = current.createSection(location);
+                     newSection = current.createSection(location);
                 ReflectionManager.setValue(field, newSection, target);
             } else {
                 Object value = Objects.requireNonNull(current).get(location);

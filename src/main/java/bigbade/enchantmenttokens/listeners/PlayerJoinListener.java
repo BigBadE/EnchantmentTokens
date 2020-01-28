@@ -1,14 +1,10 @@
 package bigbade.enchantmenttokens.listeners;
 
-import bigbade.enchantmenttokens.EnchantmentTokens;
-import bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import bigbade.enchantmenttokens.utils.EnchantmentPlayerHandler;
 import bigbade.enchantmenttokens.utils.currency.CurrencyHandler;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 /*
 EnchantmentTokens
@@ -27,30 +23,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-public class PlayerLeaveListener implements Listener {
+public class PlayerJoinListener implements Listener {
+
     private EnchantmentPlayerHandler playerHandler;
     private CurrencyHandler currencyHandler;
-    private EnchantmentTokens main;
 
-    public PlayerLeaveListener(EnchantmentTokens main) {
-        this.playerHandler = main.getPlayerHandler();
-        this.currencyHandler = main.getCurrencyHandler();
-        this.main = main;
+    public PlayerJoinListener(EnchantmentPlayerHandler handler, CurrencyHandler currencyHandler) {
+        playerHandler = handler;
+        this.currencyHandler = currencyHandler;
     }
 
     @EventHandler
-    public void onPlayerLeave(PlayerQuitEvent event) {
-        savePlayer(event.getPlayer());
-    }
-
-    @EventHandler
-    public void onPlayerKick(PlayerKickEvent event) {
-        savePlayer(event.getPlayer());
-    }
-
-    private void savePlayer(Player player) {
-        EnchantmentPlayer enchantmentPlayer = playerHandler.getPlayer(player, currencyHandler);
-        enchantmentPlayer.save();
-        playerHandler.removePlayer(enchantmentPlayer);
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        playerHandler.loadPlayer(event.getPlayer(), currencyHandler);
     }
 }

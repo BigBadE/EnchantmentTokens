@@ -29,15 +29,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FileLoader {
     private EnchantmentTokens main;
     private ByteUtils utils = new ByteUtils();
-    private HashMap<UUID, Long> cache = new HashMap<>();
-
-    private long lastSave = System.currentTimeMillis();
-
-    private static final long SAVETIME = 1000*60*5;
+    private Map<UUID, Long> cache = new ConcurrentHashMap<>();
 
     public FileLoader(EnchantmentTokens main) {
         this.main = main;
@@ -47,7 +44,6 @@ public class FileLoader {
         for (Map.Entry<UUID, Long> entrySet : cache.entrySet())
             if (entrySet.getKey().equals(player.getUniqueId()))
                 return entrySet.getValue();
-        if (cache.size() > 50 || System.currentTimeMillis() > lastSave + SAVETIME) saveCache();
         return loadGems(player);
     }
 
@@ -122,14 +118,6 @@ public class FileLoader {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public void saveCache() {
-        EnchantmentTokens.LOGGER.info("Saving player cache!");
-        lastSave = System.currentTimeMillis();
-        for (Map.Entry<UUID, Long> saving : cache.entrySet())
-            savePlayer(Bukkit.getPlayer(saving.getKey()), saving.getValue());
-        cache.clear();
     }
 
     public ByteUtils getUtils() {

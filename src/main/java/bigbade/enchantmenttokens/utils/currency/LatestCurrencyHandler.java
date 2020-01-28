@@ -1,11 +1,10 @@
 package bigbade.enchantmenttokens.utils.currency;
 
 import bigbade.enchantmenttokens.EnchantmentTokens;
-import bigbade.enchantmenttokens.loader.FileLoader;
-import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
-
-import java.util.concurrent.*;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 /*
 EnchantmentTokens
@@ -24,29 +23,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-public class GemCurrencyHandler implements CurrencyHandler {
-    private long gems = -1;
-    private FileLoader fileLoader;
-    private EnchantmentTokens main;
+public class LatestCurrencyHandler implements CurrencyHandler {
+    private long gems;
 
-    public GemCurrencyHandler(EnchantmentTokens main) {
-        fileLoader = new FileLoader(main);
-        this.main = main;
+    private static NamespacedKey key;
+
+    public LatestCurrencyHandler(EnchantmentTokens main) {
+        key = new NamespacedKey(main, "gems");
     }
 
-    public GemCurrencyHandler(Player player, FileLoader fileLoader, EnchantmentTokens main) {
-        this.fileLoader = fileLoader;
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Callable<Long> callable = () -> fileLoader.getGems(player);
-        Future<Long> future = executor.submit(callable);
-        Bukkit.getScheduler().runTaskAsynchronously(main, () -> {
-            try {
-                gems = future.get();
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-        });
-        executor.shutdown();
+    public LatestCurrencyHandler(Player player) {
+        PersistentDataContainer dataContainer = player.getPersistentDataContainer();
+        gems = dataContainer.getOrDefault(key, PersistentDataType.LONG, 0L);
     }
 
     @Override
@@ -71,11 +59,12 @@ public class GemCurrencyHandler implements CurrencyHandler {
 
     @Override
     public CurrencyHandler newInstance(Player player) {
-        return new GemCurrencyHandler(player, fileLoader, main);
+        return new LatestCurrencyHandler(player);
     }
 
     @Override
     public void savePlayer(Player player) {
-        CompletableFuture.runAsync(() -> fileLoader.removePlayer(player));
+        System.out.println("Saving");
+        player.getPersistentDataContainer().set(key, PersistentDataType.LONG, gems);
     }
 }

@@ -42,6 +42,7 @@ public class EnchantmentPlayerHandler {
     }
 
     public void removePlayer(EnchantmentPlayer player) {
+        System.out.println("Safely removed");
         players.remove(player);
     }
 }

@@ -1,6 +1,5 @@
 package bigbade.enchantmenttokens.utils.currency;
 
-import bigbade.enchantmenttokens.EnchantmentTokens;
 import org.bukkit.entity.Player;
 
 /*
@@ -31,7 +30,5 @@ public interface CurrencyHandler {
 
     CurrencyHandler newInstance(Player player);
 
-    void save();
-
-    void savePlayer(Player player, EnchantmentTokens main);
+    void savePlayer(Player player);
 }

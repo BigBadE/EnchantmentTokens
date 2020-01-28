@@ -22,10 +22,13 @@ import bigbade.enchantmenttokens.commands.*;
 import bigbade.enchantmenttokens.gui.EnchantmentPickerManager;
 import bigbade.enchantmenttokens.listeners.*;
 import bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
-import bigbade.enchantmenttokens.loader.FileLoader;
-import bigbade.enchantmenttokens.utils.*;
+import bigbade.enchantmenttokens.utils.ConfigurationManager;
+import bigbade.enchantmenttokens.utils.EnchantmentHandler;
+import bigbade.enchantmenttokens.utils.EnchantmentPlayerHandler;
+import bigbade.enchantmenttokens.utils.ListenerHandler;
 import bigbade.enchantmenttokens.utils.currency.CurrencyHandler;
 import bigbade.enchantmenttokens.utils.currency.GemCurrencyHandler;
+import bigbade.enchantmenttokens.utils.currency.LatestCurrencyHandler;
 import com.codingforcookies.armorequip.ArmorListener;
 import com.codingforcookies.armorequip.DispenserArmorListener;
 import com.comphenix.protocol.ProtocolLibrary;
@@ -37,7 +40,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 public class EnchantmentTokens extends JavaPlugin {
@@ -45,7 +50,6 @@ public class EnchantmentTokens extends JavaPlugin {
     public static Logger LOGGER;
 
     private EnchantMenuCmd menuCmd;
-    public FileLoader fileLoader;
 
     public EnchantmentLoader loader;
 
@@ -73,15 +77,18 @@ public class EnchantmentTokens extends JavaPlugin {
         if (!getConfig().isSet("metrics"))
             getConfig().set("metrics", true);
 
-        if(!getConfig().isSet("currency"))
+        if (!getConfig().isSet("currency"))
             getConfig().set("currency", "gems");
 
         playerHandler = new EnchantmentPlayerHandler();
 
         String currency = getConfig().getString("currency");
 
-        if("gems".equalsIgnoreCase(currency)) {
-            currencyHandler = new GemCurrencyHandler(this);
+        if ("gems".equalsIgnoreCase(currency)) {
+            if (version >= 14)
+                currencyHandler = new LatestCurrencyHandler(this);
+            else
+                currencyHandler = new GemCurrencyHandler(this);
         }
 
         boolean metrics = getConfig().getBoolean("metics");
@@ -92,7 +99,6 @@ public class EnchantmentTokens extends JavaPlugin {
 
         ConfigurationManager.saveConfigurationGuide(this, getDataFolder().getPath() + "/configurationguide.txt", getClassLoader());
 
-        fileLoader = new FileLoader(this);
         if (!getDataFolder().exists())
             if (!getDataFolder().mkdir())
                 getLogger().severe("[ERROR] COULD NOT CREATE DATA FOLDER. REPORT THIS, NOT THE NULLPOINTEREXCEPTION.");
@@ -132,7 +138,6 @@ public class EnchantmentTokens extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        fileLoader.saveCache();
         saveConfig();
         loader.getAddons().forEach(EnchantmentAddon::onDisable);
     }
@@ -148,6 +153,7 @@ public class EnchantmentTokens extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new ChunkUnloadListener(signHandler.getSigns()), this);
         Bukkit.getPluginManager().registerEvents(new PlayerLeaveListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(playerHandler, currencyHandler), this);
         listenerHandler.registerListeners();
     }
 

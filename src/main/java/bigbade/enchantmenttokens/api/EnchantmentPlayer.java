@@ -22,6 +22,7 @@ import bigbade.enchantmenttokens.gui.EnchantmentGUI;
 import bigbade.enchantmenttokens.utils.ByteUtils;
 import bigbade.enchantmenttokens.utils.currency.CurrencyHandler;
 import org.bukkit.entity.Player;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.io.*;
 
@@ -40,8 +41,8 @@ public class EnchantmentPlayer implements Serializable {
         return new EnchantmentPlayer(player);
     }
 
-    public void save(EnchantmentTokens main) {
-        handler.savePlayer(player, main);
+    public void save() {
+        handler.savePlayer(player);
     }
 
     public Player getPlayer() {

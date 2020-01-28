@@ -1,20 +1,20 @@
 ---
 name: Feature request
-about: Suggest an idea for this project
-title: ''
-labels: ''
-assignees: ''
+about: Suggest a feature
+title: "[FEATURE] "
+labels: feature
+assignees: BigBadE
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+**Feature name**
+A simple name to organize this by
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+**Description of the feature**
+What the feature should do
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+**Refactoring**
+Will this directly affect the users?
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+**Examples**
+If there is an existing example of this, link/show it here

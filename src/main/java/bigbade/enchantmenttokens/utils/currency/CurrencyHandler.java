@@ -1,4 +1,7 @@
-package bigbade.enchantmenttokens.listeners.enchants;
+package bigbade.enchantmenttokens.utils.currency;
+
+import bigbade.enchantmenttokens.EnchantmentTokens;
+import org.bukkit.entity.Player;
 
 /*
 EnchantmentTokens
@@ -17,10 +20,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import bigbade.enchantmenttokens.events.EnchantmentEvent;
-import org.bukkit.event.Event;
+public interface CurrencyHandler {
+    long getAmount();
 
-@FunctionalInterface
-public interface EnchantmentListener<T extends EnchantmentEvent<? extends Event>> {
-    void apply(T event);
+    void setAmount(long amount);
+
+    void removeAmount(long amount);
+
+    void addAmount(long amount);
+
+    CurrencyHandler newInstance(Player player);
+
+    void save();
+
+    void savePlayer(Player player, EnchantmentTokens main);
 }

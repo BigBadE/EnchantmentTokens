@@ -19,18 +19,20 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import bigbade.enchantmenttokens.api.EnchantmentBase;
 import bigbade.enchantmenttokens.events.EnchantmentEvent;
+import bigbade.enchantmenttokens.utils.ListenerManager;
 import com.codingforcookies.armorequip.ArmorEquipEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
 import java.util.Map;
 
 public class ArmorEquipListener extends BasicEnchantListener<ArmorEquipEvent> implements Listener {
-    private Map<EnchantmentBase, EnchantmentListener<EnchantmentEvent<ArmorEquipEvent>>> oldArmorListeners;
-    private Map<EnchantmentBase, EnchantmentListener<EnchantmentEvent<ArmorEquipEvent>>> newArmorListeners;
+    private ListenerManager oldArmorListeners;
+    private ListenerManager newArmorListeners;
 
-    public ArmorEquipListener(Map<EnchantmentBase, EnchantmentListener<EnchantmentEvent<ArmorEquipEvent>>> oldArmorListeners, Map<EnchantmentBase, EnchantmentListener<EnchantmentEvent<ArmorEquipEvent>>> newItemListeners) {
+    public ArmorEquipListener(ListenerManager oldArmorListeners, ListenerManager newItemListeners) {
         super(null);
         this.oldArmorListeners = oldArmorListeners;
         this.newArmorListeners = newItemListeners;
@@ -40,13 +42,13 @@ public class ArmorEquipListener extends BasicEnchantListener<ArmorEquipEvent> im
     public void onArmorEquip(ArmorEquipEvent event) {
         ItemStack item = event.getOldArmorPiece();
         if(item != null) {
-            EnchantmentEvent<ArmorEquipEvent> enchantmentEvent = new EnchantmentEvent<>(event).setItem(item).setUser(event.getPlayer());
-            callListeners(item, enchantmentEvent, oldArmorListeners);
+            EnchantmentEvent<ArmorEquipEvent> enchantmentEvent = new EnchantmentEvent<>(event, item).setUser(event.getPlayer());
+            callListeners(enchantmentEvent, oldArmorListeners);
         }
         item = event.getNewArmorPiece();
         if(item != null) {
-            EnchantmentEvent<ArmorEquipEvent> enchantmentEvent = new EnchantmentEvent<>(event).setItem(item).setUser(event.getPlayer());
-            callListeners(item, enchantmentEvent, newArmorListeners);
+            EnchantmentEvent<ArmorEquipEvent> enchantmentEvent = new EnchantmentEvent<>(event, item).setUser(event.getPlayer());
+            callListeners(enchantmentEvent, newArmorListeners);
         }
     }
 }

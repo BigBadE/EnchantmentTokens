@@ -17,18 +17,25 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import org.bukkit.Material;
-import org.bukkit.enchantments.EnchantmentTarget;
+import bigbade.enchantmenttokens.gui.EnchantmentGUI;
 import org.bukkit.inventory.Inventory;
 
-public class SubInventory {
+public class SubInventory extends EnchantmentGUI {
     private Inventory inventory;
     private int material;
+    private boolean closing;
 
     public SubInventory(Inventory inventory, int material) {
+        super(inventory);
         this.inventory = inventory;
         this.material = material;
     }
+
+    public void close() {
+        closing = true;
+    }
+
+    public boolean isClosing() { return closing; }
 
     public Inventory getInventory() {
         return inventory;

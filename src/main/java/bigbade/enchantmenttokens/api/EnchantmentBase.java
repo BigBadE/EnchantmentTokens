@@ -113,13 +113,13 @@ public abstract class EnchantmentBase extends Enchantment {
     }
 
     @Override
-    public boolean isCursed() {
-        return false;
+    public boolean conflictsWith(Enchantment enchantment) {
+        return conflicts.contains(enchantment);
     }
 
     @Override
-    public boolean conflictsWith(Enchantment enchantment) {
-        return conflicts.contains(enchantment);
+    public boolean isCursed() {
+        return false;
     }
 
     @Override

@@ -17,6 +17,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import bigbade.enchantmenttokens.EnchantmentTokens;
+import bigbade.enchantmenttokens.api.EnchantmentPlayer;
+import bigbade.enchantmenttokens.gui.EnchantmentGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -29,18 +32,16 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class EnchantMenuCmd implements CommandExecutor {
-    public Map<Player, Inventory> inventories = new HashMap<>();
-
     private ItemStack glassPane = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
     private int version;
+    private EnchantmentTokens main;
 
-    public EnchantMenuCmd(int version) {
+    public EnchantMenuCmd(int version, EnchantmentTokens main) {
         this.version = version;
+        this.main = main;
     }
 
     @Override
@@ -55,7 +56,7 @@ public class EnchantMenuCmd implements CommandExecutor {
         return true;
     }
 
-    private Inventory genInventory(Player player) {
+    public Inventory genInventory(Player player) {
         Inventory inventory = Bukkit.createInventory(null, 27, "Enchantments");
         ItemStack item = player.getInventory().getItemInMainHand().clone();
         ItemMeta meta = item.getItemMeta();
@@ -64,6 +65,7 @@ public class EnchantMenuCmd implements CommandExecutor {
                 return null;
             else
                 meta = Bukkit.getItemFactory().getItemMeta(item.getType());
+        assert meta != null;
         List<String> lore = meta.getLore();
         if (lore == null)
             lore = new ArrayList<>();
@@ -98,13 +100,15 @@ public class EnchantMenuCmd implements CommandExecutor {
             inventory.setItem(i, glassPane);
             i = inventory.firstEmpty();
         }
-        inventories.put(player, inventory);
+        EnchantmentPlayer enchantPlayer = main.getPlayerHandler().loadPlayer(player, main.getCurrencyHandler());
+        enchantPlayer.setCurrentGUI(new EnchantmentGUI(inventory));
         return inventory;
     }
 
     private ItemStack makeItem(Material material, String name) {
         ItemStack stack = new ItemStack(material);
         ItemMeta meta = stack.getItemMeta();
+        assert meta != null;
         meta.setDisplayName(name);
         stack.setItemMeta(meta);
         return stack;

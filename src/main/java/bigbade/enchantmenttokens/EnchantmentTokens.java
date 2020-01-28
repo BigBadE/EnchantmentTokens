@@ -20,14 +20,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import bigbade.enchantmenttokens.api.*;
 import bigbade.enchantmenttokens.commands.*;
 import bigbade.enchantmenttokens.gui.EnchantPickerGUI;
-import bigbade.enchantmenttokens.listeners.SignClickListener;
-import bigbade.enchantmenttokens.listeners.SignPacketHandler;
-import bigbade.enchantmenttokens.listeners.SignPlaceListener;
+import bigbade.enchantmenttokens.listeners.*;
 import bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
 import bigbade.enchantmenttokens.loader.FileLoader;
-import bigbade.enchantmenttokens.utils.ConfigurationManager;
-import bigbade.enchantmenttokens.utils.EnchantmentHandler;
-import bigbade.enchantmenttokens.utils.ListenerHandler;
+import bigbade.enchantmenttokens.utils.*;
+import bigbade.enchantmenttokens.utils.currency.CurrencyHandler;
+import bigbade.enchantmenttokens.utils.currency.GemCurrencyHandler;
 import com.codingforcookies.armorequip.ArmorListener;
 import com.codingforcookies.armorequip.DispenserArmorListener;
 import com.comphenix.protocol.ProtocolLibrary;
@@ -39,7 +37,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -61,6 +58,9 @@ public class EnchantmentTokens extends JavaPlugin {
     private EnchantmentHandler enchantmentHandler;
     private ListenerHandler listenerHandler;
 
+    private CurrencyHandler currencyHandler;
+    private EnchantmentPlayerHandler playerHandler;
+
     @Override
     public void onEnable() {
         LOGGER = getLogger();
@@ -70,6 +70,17 @@ public class EnchantmentTokens extends JavaPlugin {
 
         if (!getConfig().isSet("metrics"))
             getConfig().set("metrics", true);
+
+        if(!getConfig().isSet("currency"))
+            getConfig().set("currency", "gems");
+
+        playerHandler = new EnchantmentPlayerHandler();
+
+        String currency = getConfig().getString("currency");
+
+        if("gems".equalsIgnoreCase(currency)) {
+            currencyHandler = new GemCurrencyHandler(this);
+        }
 
         boolean metrics = getConfig().getBoolean("metics");
 
@@ -133,6 +144,8 @@ public class EnchantmentTokens extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new EnchantmentGUIListener(this, enchantPickerGUI, menuCmd, version), this);
 
+        Bukkit.getPluginManager().registerEvents(new ChunkUnloadListener(signHandler.getSigns()), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerLeaveListener(this), this);
         listenerHandler.registerListeners();
     }
 
@@ -143,7 +156,7 @@ public class EnchantmentTokens extends JavaPlugin {
         Objects.requireNonNull(getCommand("addgems")).setExecutor(new AddGemCmd(this));
         Objects.requireNonNull(getCommand("addgems")).setTabCompleter(new AddGemTabCompleter());
 
-        menuCmd = new EnchantMenuCmd(version);
+        menuCmd = new EnchantMenuCmd(version, this);
         Objects.requireNonNull(getCommand("tokenenchant")).setExecutor(menuCmd);
         Objects.requireNonNull(getCommand("tokenenchant")).setTabCompleter(new GenericTabCompleter());
 
@@ -161,7 +174,7 @@ public class EnchantmentTokens extends JavaPlugin {
         enchantmentHandler.unregisterEnchants();
     }
 
-    public Map<EnchantmentBase, Method> getListeners(ListenerType type) {
+    public ListenerManager getListeners(ListenerType type) {
         return listenerHandler.getEnchantListeners().get(type);
     }
 
@@ -177,5 +190,13 @@ public class EnchantmentTokens extends JavaPlugin {
         loader = new EnchantmentLoader(new File(getDataFolder().getPath() + "\\enchantments"), getLogger());
         enchants = loader.getEnchantments();
         enchantmentHandler.registerEnchants(listenerHandler.loadEnchantments(enchants));
+    }
+
+    public EnchantmentPlayerHandler getPlayerHandler() {
+        return playerHandler;
+    }
+
+    public CurrencyHandler getCurrencyHandler() {
+        return currencyHandler;
     }
 }

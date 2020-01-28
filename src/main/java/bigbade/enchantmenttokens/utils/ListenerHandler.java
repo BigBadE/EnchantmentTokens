@@ -21,29 +21,33 @@ import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantListener;
 import bigbade.enchantmenttokens.api.EnchantmentBase;
 import bigbade.enchantmenttokens.api.ListenerType;
+import bigbade.enchantmenttokens.events.EnchantmentEvent;
 import bigbade.enchantmenttokens.listeners.InventoryMoveListener;
 import bigbade.enchantmenttokens.listeners.enchants.BlockBreakListener;
 import bigbade.enchantmenttokens.listeners.enchants.BlockDamageListener;
 import bigbade.enchantmenttokens.listeners.enchants.ArmorEquipListener;
+import bigbade.enchantmenttokens.listeners.enchants.EnchantmentListener;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.event.Event;
+import org.bukkit.event.block.BlockBreakEvent;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 
 public class ListenerHandler {
-    private Map<ListenerType, Map<EnchantmentBase, Method>> enchantListeners = new HashMap<>();
+    private Map<ListenerType, ListenerManager> enchantListeners = new HashMap<>();
     private EnchantmentTokens main;
 
     public ListenerHandler(EnchantmentTokens main) {
         this.main = main;
     }
 
-    public Map<ListenerType, Map<EnchantmentBase, Method>> getEnchantListeners() {
+    public Map<ListenerType, ListenerManager> getEnchantListeners() {
         return enchantListeners;
     }
 
@@ -59,7 +63,7 @@ public class ListenerHandler {
         List<EnchantmentBase> enchantments = new ArrayList<>();
 
         for (ListenerType type : ListenerType.values()) {
-            enchantListeners.put(type, new HashMap<>());
+            enchantListeners.put(type, new ListenerManager());
         }
 
         ReflectionManager.setValue(ReflectionManager.getField(Enchantment.class, "acceptingNew"), true, Enchantment.class);
@@ -100,7 +104,7 @@ public class ListenerHandler {
                         enchantments.add(enchant);
                         methodCheck:
                         for (Method method : clazz.getDeclaredMethods()) {
-                            if (method.isAnnotationPresent(EnchantListener.class)) {
+                            if (method.isAnnotationPresent(EnchantListener.class) && method.getReturnType() == EnchantmentListener.class) {
                                 ListenerType type = method.getAnnotation(EnchantListener.class).type();
                                 if (enchant.getItemTarget() != null) {
                                     if (!type.canTarget(enchant.getItemTarget())) {
@@ -114,7 +118,7 @@ public class ListenerHandler {
                                         }
                                         continue methodCheck;
                                     }
-                                enchantListeners.get(type).put(enchant, method);
+                                enchantListeners.get(type).add((EnchantmentListener<EnchantmentEvent<? extends Event>>) ReflectionManager.invoke(method, enchant), enchant);
                             }
                         }
                         Enchantment.registerEnchantment(enchant);

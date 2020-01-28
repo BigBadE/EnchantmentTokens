@@ -20,6 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import bigbade.enchantmenttokens.EnchantmentTokens;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.logging.Level;
 
@@ -81,6 +83,15 @@ public class ReflectionManager {
             return clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             EnchantmentTokens.LOGGER.log(Level.SEVERE, "Could not instantiate class " + clazz.getSimpleName());
+        }
+        return null;
+    }
+
+    public static Object invoke(Method method, Object instance, Object... args) {
+        try {
+            return method.invoke(instance, args);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
         }
         return null;
     }

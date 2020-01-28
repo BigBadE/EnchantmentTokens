@@ -20,22 +20,24 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantmentBase;
 import bigbade.enchantmenttokens.events.EnchantmentEvent;
+import bigbade.enchantmenttokens.utils.ListenerManager;
 import org.bukkit.block.Sign;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class BlockBreakListener extends BasicEnchantListener implements Listener {
+public class BlockBreakListener extends BasicEnchantListener<BlockBreakEvent> implements Listener {
     private EnchantmentTokens main;
 
-    public BlockBreakListener(Map<EnchantmentBase, Method> enchantListeners, EnchantmentTokens main) {
+    public BlockBreakListener(ListenerManager enchantListeners, EnchantmentTokens main) {
         super(enchantListeners);
         this.main = main;
     }
@@ -43,8 +45,8 @@ public class BlockBreakListener extends BasicEnchantListener implements Listener
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
-        EnchantmentEvent<BlockBreakEvent> enchantmentEvent = new EnchantmentEvent<>(event).setItem(item).setTargetBlock(event.getBlock()).setUser(event.getPlayer());
-        callListeners(item, enchantmentEvent);
+        EnchantmentEvent<BlockBreakEvent> enchantmentEvent = new EnchantmentEvent<>(event, item).setTargetBlock(event.getBlock()).setUser(event.getPlayer());
+        callListeners(enchantmentEvent);
 
         if(event.getBlock().getState() instanceof Sign) {
             Sign sign = (Sign) event.getBlock().getState();

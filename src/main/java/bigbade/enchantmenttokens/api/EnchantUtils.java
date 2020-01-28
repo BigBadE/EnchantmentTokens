@@ -18,27 +18,21 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import bigbade.enchantmenttokens.EnchantmentTokens;
-import bigbade.enchantmenttokens.events.EnchantmentApplyEvent;
 import bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
-import java.util.logging.Level;
 
 public class EnchantUtils {
-    public static void addEnchantment(ItemStack itemStack, String name, EnchantmentTokens main, Player player, ConfigurationSection section, boolean key) {
+    public static void addEnchantment(ItemStack itemStack, String name, EnchantmentTokens main, Player player, boolean key) {
         for (EnchantmentBase base : main.getEnchantments()) {
             boolean correct = false;
             if (base.getName().equals(name)) {
@@ -59,12 +53,13 @@ public class EnchantUtils {
                         return;
                     }
                     price = base.getDefaultPrice(level);
-                    EnchantmentPlayer player1 = main.fileLoader.loadPlayer(player);
+                    EnchantmentPlayer player1 = main.getPlayerHandler().loadPlayer(player, main.getCurrencyHandler());
                     if (player1.getGems() >= price) {
                         if (key)
                             player1.addGems(-price);
                         player.sendMessage(ChatColor.GREEN + "Successfully bought " + base.getName() + " level " + level + ".");
                         ItemMeta meta = itemStack.getItemMeta();
+                        assert meta != null;
                         meta.addEnchant(base, level+1, true);
                         List<String> lore;
                         lore = meta.getLore();
@@ -94,20 +89,7 @@ public class EnchantUtils {
                                 player.sendSignChange(location, new String[]{"[Enchantment]", base.getName(), "Price: " + base.getDefaultPrice(level) + "G", ""});
                     } else
                         player.sendMessage(ChatColor.RED + "You do not have " + price + "G!");
-                    for (Map.Entry<EnchantmentBase, Method> enchantment : main.getListeners(ListenerType.ENCHANT).entrySet()) {
-                        if(enchantment.getKey().equals(base)) {
-                            try {
-                                enchantment.getValue().invoke(enchantment.getKey(), new EnchantmentApplyEvent(itemStack, player));
-                            } catch (IllegalAccessException | InvocationTargetException e) {
-                                if (e instanceof IllegalAccessException) {
-                                    EnchantmentTokens.LOGGER.log(Level.SEVERE, "Did not have permission " + enchantment.getValue().getName() + " for enchantment " + enchantment.getKey().name + ", make sure it isn't private/protected", e
-                                    );
-                                } else {
-                                    EnchantmentTokens.LOGGER.log(Level.SEVERE, "Could not invoke " + enchantment.getValue().getName() + ", check arguments.", e);
-                                }
-                            }
-                        }
-                    }
+
                     return;
                 }
             }
@@ -130,13 +112,19 @@ public class EnchantUtils {
                         return;
                     }
                     price = base.getDefaultPrice(level);
-                    EnchantmentPlayer player1 = main.fileLoader.loadPlayer(player);
+                    EnchantmentPlayer player1 = main.getPlayerHandler().loadPlayer(player, main.getCurrencyHandler());
                     if (player1.getGems() >= price) {
                         player1.addGems(-price);
                         player.sendMessage(ChatColor.GREEN + "Successfully bought " + base.getName() + " level " + level + ".");
                         itemStack.addEnchantment(base, level);
                         ItemMeta meta = itemStack.getItemMeta();
-                        meta.getLore().add(base.getName() + ": " + EnchantmentGUIListener.getRomanNumeral(level));
+                        assert meta != null;
+                        List<String> lore = meta.getLore();
+                        if(lore == null)
+                            lore = new ArrayList<>();
+                        lore.add(base.getName() + ": " + EnchantmentGUIListener.getRomanNumeral(level));
+                        meta.setLore(lore);
+                        itemStack.setItemMeta(meta);
                         for (Location location : main.signHandler.getSigns())
                             player.sendSignChange(location, new String[]{"[Enchantment]", base.getName(), "", ""});
                     } else {

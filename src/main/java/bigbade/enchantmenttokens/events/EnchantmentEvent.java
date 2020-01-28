@@ -12,8 +12,9 @@ public class EnchantmentEvent<T extends Event> {
     private Block targetBlock;
     private ItemStack item;
 
-    public EnchantmentEvent(T event) {
+    public EnchantmentEvent(T event, ItemStack item) {
         this.event = event;
+        this.item = item;
     }
 
     public T getEvent() {
@@ -54,10 +55,5 @@ public class EnchantmentEvent<T extends Event> {
 
     public ItemStack getItem() {
         return item;
-    }
-
-    public EnchantmentEvent<T> setItem(ItemStack item) {
-        this.item = item;
-        return this;
     }
 }

@@ -22,6 +22,7 @@ import bigbade.enchantmenttokens.api.EnchantmentBase;
 import bigbade.enchantmenttokens.events.EnchantmentEvent;
 import bigbade.enchantmenttokens.listeners.enchants.BasicEnchantListener;
 import bigbade.enchantmenttokens.listeners.enchants.EnchantmentListener;
+import bigbade.enchantmenttokens.utils.ListenerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
@@ -31,16 +32,17 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
 
 public class InventoryMoveListener extends BasicEnchantListener<Event> implements Listener {
     private EnchantmentTokens main;
 
-    private Map<EnchantmentBase, EnchantmentListener<EnchantmentEvent<Event>>> swapOn;
-    private Map<EnchantmentBase, EnchantmentListener<EnchantmentEvent<Event>>> swapOff;
+    private ListenerManager swapOn;
+    private ListenerManager swapOff;
 
-    public InventoryMoveListener(Map<EnchantmentBase, EnchantmentListener<EnchantmentEvent<Event>>> swapOn, Map<EnchantmentBase, EnchantmentListener<EnchantmentEvent<Event>>> swapOff, EnchantmentTokens main) {
+    public InventoryMoveListener(ListenerManager swapOn, ListenerManager swapOff, EnchantmentTokens main) {
         super(null);
         this.main = main;
         this.swapOn = swapOn;
@@ -57,10 +59,14 @@ public class InventoryMoveListener extends BasicEnchantListener<Event> implement
                         Bukkit.getScheduler().scheduleSyncDelayedTask(main, () ->
                                 ((Player) event.getWhoClicked()).sendSignChange(location, new String[]{"[Enchantment]", ((Sign) location.getBlock().getState()).getLine(1), "", ""}));
                 if(event.getCurrentItem() != null) {
-                    EnchantmentEvent<Event> enchantmentEvent = new EnchantmentEvent<Event>(event).setUser(event.getWhoClicked()).setItem(event.getCurrentItem());
-                    callListeners();
+                    EnchantmentEvent<Event> enchantmentEvent = new EnchantmentEvent<Event>(event, event.getCurrentItem()).setUser(event.getWhoClicked());
+                    callListeners(enchantmentEvent, swapOn);
                 }
 
+                if(event.getCursor() != null) {
+                    EnchantmentEvent<Event> enchantmentEvent = new EnchantmentEvent<Event>(event, event.getCursor()).setUser(event.getWhoClicked());
+                    callListeners(enchantmentEvent, swapOff);
+                }
             }
     }
 
@@ -70,8 +76,19 @@ public class InventoryMoveListener extends BasicEnchantListener<Event> implement
             if (location.getChunk().isLoaded() && location.getWorld() == event.getPlayer().getWorld()) {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(main, () ->
                         event.getPlayer().sendSignChange(location, new String[]{"[Enchantment]", ((Sign) location.getBlock().getState()).getLine(1), "", ""}));
-
             }
+        }
+
+        ItemStack item = event.getPlayer().getInventory().getItem(event.getPreviousSlot());
+        if(item != null) {
+            EnchantmentEvent<Event> enchantmentEvent = new EnchantmentEvent<Event>(event, item).setUser(event.getPlayer());
+            callListeners(enchantmentEvent, swapOff);
+        }
+
+        item = event.getPlayer().getInventory().getItem(event.getNewSlot());
+        if(item != null) {
+            EnchantmentEvent<Event> enchantmentEvent = new EnchantmentEvent<Event>(event, item).setUser(event.getPlayer());
+            callListeners(enchantmentEvent, swapOn);
         }
     }
 }

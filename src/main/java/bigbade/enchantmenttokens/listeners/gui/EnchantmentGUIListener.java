@@ -23,6 +23,7 @@ import bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import bigbade.enchantmenttokens.api.SubInventory;
 import bigbade.enchantmenttokens.commands.EnchantMenuCmd;
 import bigbade.enchantmenttokens.gui.EnchantPickerGUI;
+import bigbade.enchantmenttokens.gui.EnchantmentGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.EnchantmentTarget;
@@ -31,16 +32,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.*;
+import java.util.List;
 
 public class EnchantmentGUIListener implements Listener {
     private EnchantPickerGUI enchantPickerGUI;
-    private Map<Player, SubInventory> subInventories = new HashMap<>();
-    private Set<Player> removing = new HashSet<>();
     private EnchantMenuCmd cmd;
     private EnchantmentTokens main;
     private int version;
@@ -61,6 +59,8 @@ public class EnchantmentGUIListener implements Listener {
 
     private void handleClick(ItemStack item, Player player, int id) {
         SubInventory inventory = null;
+        EnchantmentPlayer enchantPlayer = main.getPlayerHandler().loadPlayer(player, main.getCurrencyHandler());
+
         switch (id) {
             case 1:
                 if (version >= 14 && EnchantmentTarget.CROSSBOW.includes(item.getType())) {
@@ -121,53 +121,52 @@ public class EnchantmentGUIListener implements Listener {
                 break;
             case 13:
                 ItemMeta meta = item.getItemMeta();
-                String line = meta.getLore().get(meta.getLore().size() - 1);
-                long price = Long.parseLong(line.substring(9).replace("G", ""));
-                List<String> lore = meta.getLore();
-                lore.remove(meta.getLore().size() - 1);
-                meta.setLore(lore);
-                EnchantmentPlayer enchantPlayer = main.fileLoader.loadPlayer(player);
+                assert meta != null;
+                if(meta.getLore() != null) {
+                    String line = meta.getLore().get(meta.getLore().size() - 1);
+                    long price = Long.parseLong(line.substring(9).replace("G", ""));
+                    List<String> lore = meta.getLore();
+                    lore.remove(meta.getLore().size() - 1);
+                    meta.setLore(lore);
 
-                item.setItemMeta(meta);
-                enchantPlayer.addGems(-price);
-                player.getPlayer().getInventory().setItemInMainHand(item);
-                removing.add(player);
-                player.closeInventory();
+                    item.setItemMeta(meta);
+                    enchantPlayer.addGems(-price);
+                    player.getInventory().setItemInMainHand(item);
+                }
+                enchantPlayer.getCurrentGUI().close(player);
                 break;
             case 15:
-                removing.add(player);
-                player.closeInventory();
+                enchantPlayer.getCurrentGUI().close(player);
         }
         if (inventory != null) {
-            removing.add(player);
-            player.closeInventory();
-            player.openInventory(inventory.getInventory());
-            subInventories.put(player, inventory);
+            enchantPlayer.getCurrentGUI().close(player);
+            enchantPlayer.setCurrentGUI(inventory);
         }
     }
-    
+
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         try {
-            if (event.getInventory().equals(cmd.inventories.get(event.getWhoClicked()))) {
+            Player player = (Player) event.getWhoClicked();
+            EnchantmentPlayer enchantPlayer = main.getPlayerHandler().loadPlayer(player, main.getCurrencyHandler());
+            if(enchantPlayer.getCurrentGUI() == null) return;
+            if (event.getInventory().equals(enchantPlayer.getCurrentGUI().getInventory())) {
                 event.setCancelled(true);
-                handleClick(event.getInventory().getItem(4), (Player) event.getWhoClicked(), event.getSlot()-8);
-            } else if (event.getInventory().equals(subInventories.get(event.getWhoClicked()).getInventory())) {
+                handleClick(event.getInventory().getItem(4), (Player) event.getWhoClicked(), event.getSlot() - 8);
+            } else if (event.getInventory().equals(enchantPlayer.getCurrentGUI().getInventory())) {
                 event.setCancelled(true);
                 ItemStack clicked = event.getCurrentItem();
-                if(clicked != null) {
+                if (clicked != null) {
                     if (clicked.getType() == Material.BARRIER) {
-                        Inventory inventory = cmd.inventories.get(event.getWhoClicked());
-                        inventory.setItem(4, event.getClickedInventory().getItem(4));
-                        cmd.inventories.replace((Player) event.getWhoClicked(), inventory);
-                        removing.add((Player) event.getWhoClicked());
-                        subInventories.remove(event.getWhoClicked());
-                        event.getWhoClicked().closeInventory();
-                        event.getWhoClicked().openInventory(inventory);
+                        EnchantmentGUI current = enchantPlayer.getCurrentGUI();
+                        EnchantmentGUI gui = new EnchantmentGUI(cmd.genInventory(player));
+                        gui.getInventory().setItem(4, current.getInventory().getItem(4));
+                        current.close(player);
+                        enchantPlayer.setCurrentGUI(gui);
                     } else {
                         if (event.getCurrentItem() != null) {
-                            SubInventory inventory = subInventories.get(event.getWhoClicked());
-                            EnchantUtils.addEnchantment(event.getInventory().getItem(4), event.getCurrentItem().getItemMeta().getDisplayName(), main, (Player) event.getWhoClicked(), main.getConfig().getConfigurationSection("enchants"), false);
+                            SubInventory inventory = (SubInventory) enchantPlayer.getCurrentGUI();
+                            EnchantUtils.addEnchantment(event.getInventory().getItem(4), event.getCurrentItem().getItemMeta().getDisplayName(), main, (Player) event.getWhoClicked(), false);
                             handleClick(event.getInventory().getItem(4), (Player) event.getWhoClicked(), inventory.getMaterial());
                         }
                     }
@@ -179,23 +178,11 @@ public class EnchantmentGUIListener implements Listener {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
+        EnchantmentPlayer enchantPlayer = main.getPlayerHandler().loadPlayer((Player) event.getPlayer(), main.getCurrencyHandler());
         Bukkit.getScheduler().scheduleSyncDelayedTask(main, () -> {
-            try {
-                if (cmd.inventories.get(event.getPlayer()).equals(event.getInventory())) {
-                    if (removing.contains(event.getPlayer())) {
-                        removing.remove(event.getPlayer());
-                    } else {
-                        event.getPlayer().openInventory(event.getInventory());
-                    }
-                } else if (subInventories.get(event.getPlayer()).getInventory().equals(event.getInventory())) {
-                    if (removing.contains(event.getPlayer()))
-                        removing.remove(event.getPlayer());
-                    else {
-                        event.getPlayer().openInventory(event.getInventory());
-                    }
-                }
-            } catch (NullPointerException ignored) {
-            }
+            if (enchantPlayer.getCurrentGUI() != null && enchantPlayer.getCurrentGUI().getInventory().equals(event.getInventory()))
+                if (enchantPlayer.getCurrentGUI().isClosing())
+                    event.getPlayer().openInventory(event.getInventory());
         });
     }
 

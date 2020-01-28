@@ -129,7 +129,8 @@ class SignPacketUpdateAdapter extends PacketAdapter {
                 } catch (IndexOutOfBoundsException ignored) {
                 }
             }
-            if (text.size() != 2) return;
+            if (text.size() != 2)
+                return;
             if (text.get(0).equals("[Enchantment]")) {
                 for (EnchantmentBase base1 : enchantments) {
                     if (base1.getName().equals(text.get(1))) {

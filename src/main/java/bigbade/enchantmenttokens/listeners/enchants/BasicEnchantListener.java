@@ -2,6 +2,7 @@ package bigbade.enchantmenttokens.listeners.enchants;
 
 import bigbade.enchantmenttokens.api.EnchantmentBase;
 import bigbade.enchantmenttokens.events.EnchantmentEvent;
+import bigbade.enchantmenttokens.utils.ListenerManager;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 
@@ -25,25 +26,17 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 public class BasicEnchantListener<T extends Event> {
-    private Map<EnchantmentBase, EnchantmentListener<EnchantmentEvent<T>>> listeners;
+    private ListenerManager listeners;
 
-    public BasicEnchantListener(Map<EnchantmentBase, EnchantmentListener<EnchantmentEvent<T>>> listeners) {
+    public BasicEnchantListener(ListenerManager listeners) {
         this.listeners = listeners;
     }
 
-    public void callListeners(ItemStack item, EnchantmentEvent<T> event) {
-        for (Map.Entry<EnchantmentBase, EnchantmentListener<EnchantmentEvent<T>>> enchantment : listeners.entrySet()) {
-            if (item.containsEnchantment(enchantment.getKey())) {
-                enchantment.getValue().apply(event);
-            }
-        }
+    public void callListeners(EnchantmentEvent<T> event) {
+        listeners.callEvent(event);
     }
 
-    public void callListeners(ItemStack item, EnchantmentEvent<T> event, Map<EnchantmentBase, EnchantmentListener<EnchantmentEvent<T>>> listeners) {
-        for (Map.Entry<EnchantmentBase, EnchantmentListener<EnchantmentEvent<T>>> enchantment : listeners.entrySet()) {
-            if (item.containsEnchantment(enchantment.getKey())) {
-                enchantment.getValue().apply(event);
-            }
-        }
+    public void callListeners(EnchantmentEvent<T> event, ListenerManager listeners) {
+        listeners.callEvent(event);
     }
 }

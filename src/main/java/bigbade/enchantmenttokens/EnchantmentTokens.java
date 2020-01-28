@@ -19,7 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import bigbade.enchantmenttokens.api.*;
 import bigbade.enchantmenttokens.commands.*;
-import bigbade.enchantmenttokens.gui.EnchantPickerGUI;
+import bigbade.enchantmenttokens.gui.EnchantmentPickerManager;
 import bigbade.enchantmenttokens.listeners.*;
 import bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
 import bigbade.enchantmenttokens.loader.FileLoader;
@@ -41,9 +41,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 public class EnchantmentTokens extends JavaPlugin {
-    public Map<String, Set<Class<EnchantmentBase>>> enchants;
-
-    private EnchantPickerGUI enchantPickerGUI;
+    private EnchantmentPickerManager enchantmentPickerManager;
     public static Logger LOGGER;
 
     private EnchantMenuCmd menuCmd;
@@ -53,6 +51,7 @@ public class EnchantmentTokens extends JavaPlugin {
 
     public SignPacketHandler signHandler;
 
+    //Minecraft version
     private int version;
 
     private EnchantmentHandler enchantmentHandler;
@@ -61,6 +60,9 @@ public class EnchantmentTokens extends JavaPlugin {
     private CurrencyHandler currencyHandler;
     private EnchantmentPlayerHandler playerHandler;
 
+    /**
+     * Everything is set up here
+     */
     @Override
     public void onEnable() {
         LOGGER = getLogger();
@@ -85,7 +87,7 @@ public class EnchantmentTokens extends JavaPlugin {
         boolean metrics = getConfig().getBoolean("metics");
 
         if (metrics) {
-            Metrics bstats = new Metrics(this, 6283);
+            new Metrics(this, 6283);
         }
 
         ConfigurationManager.saveConfigurationGuide(this, getDataFolder().getPath() + "/configurationguide.txt", getClassLoader());
@@ -106,15 +108,15 @@ public class EnchantmentTokens extends JavaPlugin {
 
         registerEnchants();
 
-        if (Bukkit.getPluginManager().isPluginEnabled(this)) {
-            enchantPickerGUI = new EnchantPickerGUI(this);
-            registerCommands();
-            registerListeners();
-        }
-
         ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
         getLogger().info("Registering sign listener");
         signHandler = new SignPacketHandler(protocolManager, this, enchantmentHandler.getEnchantments());
+
+        if (Bukkit.getPluginManager().isPluginEnabled(this)) {
+            enchantmentPickerManager = new EnchantmentPickerManager(this);
+            registerCommands();
+            registerListeners();
+        }
 
         for (EnchantmentAddon addon : loader.getAddons()) {
             FileConfiguration configuration = ConfigurationManager.loadConfigurationFile(getDataFolder().getPath() + "\\enchantments\\" + addon.getName() + ".yml");
@@ -142,7 +144,7 @@ public class EnchantmentTokens extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new SignPlaceListener(this), this);
         Bukkit.getPluginManager().registerEvents(new SignClickListener(this), this);
 
-        Bukkit.getPluginManager().registerEvents(new EnchantmentGUIListener(this, enchantPickerGUI, menuCmd, version), this);
+        Bukkit.getPluginManager().registerEvents(new EnchantmentGUIListener(this, enchantmentPickerManager, menuCmd, version), this);
 
         Bukkit.getPluginManager().registerEvents(new ChunkUnloadListener(signHandler.getSigns()), this);
         Bukkit.getPluginManager().registerEvents(new PlayerLeaveListener(this), this);
@@ -174,10 +176,6 @@ public class EnchantmentTokens extends JavaPlugin {
         enchantmentHandler.unregisterEnchants();
     }
 
-    public ListenerManager getListeners(ListenerType type) {
-        return listenerHandler.getEnchantListeners().get(type);
-    }
-
     public List<EnchantmentBase> getEnchantments() {
         return enchantmentHandler.getEnchantments();
     }
@@ -188,8 +186,7 @@ public class EnchantmentTokens extends JavaPlugin {
 
     public void registerEnchants() {
         loader = new EnchantmentLoader(new File(getDataFolder().getPath() + "\\enchantments"), getLogger());
-        enchants = loader.getEnchantments();
-        enchantmentHandler.registerEnchants(listenerHandler.loadEnchantments(enchants));
+        enchantmentHandler.registerEnchants(listenerHandler.loadEnchantments(loader.getEnchantments()));
     }
 
     public EnchantmentPlayerHandler getPlayerHandler() {

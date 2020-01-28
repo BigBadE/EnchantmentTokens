@@ -19,7 +19,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantmentBase;
-import bigbade.enchantmenttokens.api.SubInventory;
 import bigbade.enchantmenttokens.api.VanillaEnchant;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -34,23 +33,39 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 import java.util.Map;
 
-public class EnchantPickerGUI {
+public class EnchantmentPickerManager {
+    //Main class
     private EnchantmentTokens main;
+    //Configuration section for vanilla enchantments
     private ConfigurationSection section;
 
-    private ItemStack greyPlane = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
-    private ItemStack exit;
+    //Basic grey pane used for populating the GUI.
+    private ItemStack greyPlane = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+    //Barrier used for exiting the GUI
+    private ItemStack exit = new ItemStack(Material.BARRIER);
 
-    public EnchantPickerGUI(EnchantmentTokens main) {
+    /**
+     * Manager class for the enchantment picking GUI.
+     * @param main Main plugin class
+     */
+    public EnchantmentPickerManager(EnchantmentTokens main) {
+        //Set variables
         this.main = main;
         section = main.getConfig().getConfigurationSection("enchants");
-        exit = new ItemStack(Material.BARRIER);
+        //Setup exit item
         ItemMeta meta = exit.getItemMeta();
+        assert meta != null;
         meta.setDisplayName(ChatColor.GREEN + "Back to enchantments");
         exit.setItemMeta(meta);
     }
 
-    //Null target means no EnchantmentTarget class, defaults to material checking.
+    /**
+     * Generate the GUI with every enchantment in it
+     * @param target target item to generate the GUI for. If this is null, it checks by them item type
+     * @param itemStack ItemStack that items are being added to
+     * @param name Name of the material
+     * @return Generated enchantment inventory
+     */
     public Inventory generateGUI(EnchantmentTarget target, ItemStack itemStack, String name) {
         Inventory inventory = Bukkit.createInventory(null, 54, "Enchantments for " + name);
 
@@ -67,7 +82,6 @@ public class EnchantPickerGUI {
         }
 
         inventory.setItem(4, itemStack);
-        int i = 0;
 
         for (VanillaEnchant enchantment : main.getVanillaEnchantments()) {
             if (enchantment.getItemTarget() == target || enchantment.getItemTarget() == EnchantmentTarget.ALL) {
@@ -81,12 +95,12 @@ public class EnchantPickerGUI {
                     }
                 }
                 ItemMeta meta = item.getItemMeta();
+                assert meta != null;
                 meta.setDisplayName(ChatColor.GREEN + enchantment.getName());
                 meta.setLore(Arrays.asList(ChatColor.GRAY + "Price: " + section.getConfigurationSection(enchantment.getName()).getConfigurationSection("prices").getLong("" + item.getAmount()), ChatColor.GRAY + "Level: " + item.getAmount()));
                 item.setItemMeta(meta);
                 inventory.addItem(item);
             }
-            i += 1;
         }
         for (EnchantmentBase enchantment : main.getEnchantments()) {
             if (enchantment.getItemTarget() == target || enchantment.getItemTarget() == EnchantmentTarget.ALL || enchantment.getTargets().contains(itemStack.getType())) {
@@ -100,18 +114,16 @@ public class EnchantPickerGUI {
                     }
                 }
                 ItemMeta meta = item.getItemMeta();
+                assert meta != null;
                 meta.setDisplayName(enchantment.getName());
-                //Here
                 if (item.getAmount() > 0) {
                     meta.setLore(Arrays.asList(ChatColor.GRAY + "Price: " + enchantment.getDefaultPrice(item.getAmount()), ChatColor.GRAY + "Level: " + item.getAmount()));
                 } else
                     meta.setLore(Arrays.asList(ChatColor.GRAY + "MAXED"));
-                //To here
                 item.setItemMeta(meta);
                 inventory.addItem(item);
 
             }
-            i += 1;
         }
         inventory.setItem(49, exit);
         return inventory;

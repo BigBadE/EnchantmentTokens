@@ -23,9 +23,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-import java.util.HashMap;
-import java.util.HashSet;
-
 public class RecompileEnchantsCmd implements CommandExecutor {
     private EnchantmentTokens main;
 
@@ -40,8 +37,6 @@ public class RecompileEnchantsCmd implements CommandExecutor {
             return true;
         }
         main.unregisterEnchants();
-        main.enchants = new HashMap<>();
-        main.enchants = main.loader.getEnchantments();
         main.registerEnchants();
         return true;
     }

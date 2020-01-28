@@ -22,7 +22,7 @@ import bigbade.enchantmenttokens.api.EnchantUtils;
 import bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import bigbade.enchantmenttokens.api.SubInventory;
 import bigbade.enchantmenttokens.commands.EnchantMenuCmd;
-import bigbade.enchantmenttokens.gui.EnchantPickerGUI;
+import bigbade.enchantmenttokens.gui.EnchantmentPickerManager;
 import bigbade.enchantmenttokens.gui.EnchantmentGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -38,7 +38,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.List;
 
 public class EnchantmentGUIListener implements Listener {
-    private EnchantPickerGUI enchantPickerGUI;
+    private EnchantmentPickerManager enchantmentPickerManager;
     private EnchantMenuCmd cmd;
     private EnchantmentTokens main;
     private int version;
@@ -50,8 +50,8 @@ public class EnchantmentGUIListener implements Listener {
     private static String[] i = {"", "I", "II", "III", "IV", "V",
             "VI", "VII", "VIII", "IX"};
 
-    public EnchantmentGUIListener(EnchantmentTokens main, EnchantPickerGUI enchantPickerGUI, EnchantMenuCmd cmd, int version) {
-        this.enchantPickerGUI = enchantPickerGUI;
+    public EnchantmentGUIListener(EnchantmentTokens main, EnchantmentPickerManager enchantmentPickerManager, EnchantMenuCmd cmd, int version) {
+        this.enchantmentPickerManager = enchantmentPickerManager;
         this.cmd = cmd;
         this.main = main;
         this.version = version;
@@ -64,58 +64,58 @@ public class EnchantmentGUIListener implements Listener {
         switch (id) {
             case 1:
                 if (version >= 14 && EnchantmentTarget.CROSSBOW.includes(item.getType())) {
-                    inventory = new SubInventory(enchantPickerGUI.generateGUI(EnchantmentTarget.CROSSBOW, item, "Crossbow"), 1);
+                    inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.CROSSBOW, item, "Crossbow"), 1);
                 }
                 break;
             case 2:
                 if (version >= 13) {
                     if (EnchantmentTarget.TRIDENT.includes(item.getType())) {
-                        inventory = new SubInventory(enchantPickerGUI.generateGUI(EnchantmentTarget.TRIDENT, item, "Trident"), 2);
+                        inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.TRIDENT, item, "Trident"), 2);
                     } else if (version >= 9) {
                         if (EnchantmentTarget.FISHING_ROD.includes(item.getType())) {
-                            inventory = new SubInventory(enchantPickerGUI.generateGUI(EnchantmentTarget.FISHING_ROD, item, "Fishing Rod"), 2);
+                            inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.FISHING_ROD, item, "Fishing Rod"), 2);
                         }
                     }
                 }
                 break;
             case 3:
                 if (EnchantmentTarget.TOOL.includes(item.getType()))
-                    inventory = new SubInventory(enchantPickerGUI.generateGUI(EnchantmentTarget.TOOL, item, "Tools"), 3);
+                    inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.TOOL, item, "Tools"), 3);
                 break;
             case 4:
                 if (EnchantmentTarget.WEAPON.includes(item.getType())) {
-                    inventory = new SubInventory(enchantPickerGUI.generateGUI(EnchantmentTarget.WEAPON, item, "Swords"), 4);
+                    inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.WEAPON, item, "Swords"), 4);
                 }
                 break;
             case 5:
                 if (version == 13 || version <= 8) {
                     if (EnchantmentTarget.FISHING_ROD.includes(item.getType())) {
-                        inventory = new SubInventory(enchantPickerGUI.generateGUI(EnchantmentTarget.FISHING_ROD, item, "Fishing Rod"), 4);
+                        inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.FISHING_ROD, item, "Fishing Rod"), 4);
                     }
                 }
             case 6:
                 if (EnchantmentTarget.ARMOR.includes(item.getType()))
-                    inventory = new SubInventory(enchantPickerGUI.generateGUI(EnchantmentTarget.ARMOR, item, "Armor"), 6);
+                    inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.ARMOR, item, "Armor"), 6);
                 break;
             case 7:
                 if (EnchantmentTarget.BOW.includes(item.getType()))
-                    inventory = new SubInventory(enchantPickerGUI.generateGUI(EnchantmentTarget.BOW, item, "Bow"), 7);
+                    inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.BOW, item, "Bow"), 7);
                 break;
             case 8:
                 if (version >= 14) {
                     if (EnchantmentTarget.TRIDENT.includes(item.getType())) {
-                        inventory = new SubInventory(enchantPickerGUI.generateGUI(EnchantmentTarget.TRIDENT, item, "crossbow"), 8);
+                        inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.TRIDENT, item, "crossbow"), 8);
                     }
                 } else if (version >= 9) {
                     if (item.getType() == Material.SHIELD) {
-                        inventory = new SubInventory(enchantPickerGUI.generateGUI(null, item, "Shield"), 8);
+                        inventory = new SubInventory(enchantmentPickerManager.generateGUI(null, item, "Shield"), 8);
                     }
                 }
                 break;
             case 9:
                 if (version >= 14) {
                     if (item.getType() == Material.SHIELD) {
-                        inventory = new SubInventory(enchantPickerGUI.generateGUI(null, item, "Shield"), 9);
+                        inventory = new SubInventory(enchantmentPickerManager.generateGUI(null, item, "Shield"), 9);
                     }
                 }
                 break;

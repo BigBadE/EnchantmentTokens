@@ -85,8 +85,14 @@ public class EnchantmentTokens extends JavaPlugin {
         String currency = getConfig().getString("currency");
 
         if ("gems".equalsIgnoreCase(currency)) {
-            if (version >= 14)
-                currencyHandler = new LatestCurrencyHandler(this);
+            if (version >= 14) {
+                if (!getConfig().isSet("usePersistentData"))
+                    getConfig().set("usePersistentData", true);
+                if (getConfig().getBoolean("usePersistentData"))
+                    currencyHandler = new LatestCurrencyHandler(this);
+                else
+                    currencyHandler = new GemCurrencyHandler(this);
+            }
             else
                 currencyHandler = new GemCurrencyHandler(this);
         }

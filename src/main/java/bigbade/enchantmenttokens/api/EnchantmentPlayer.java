@@ -17,14 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.gui.EnchantmentGUI;
-import bigbade.enchantmenttokens.utils.ByteUtils;
 import bigbade.enchantmenttokens.utils.currency.CurrencyHandler;
 import org.bukkit.entity.Player;
-import org.bukkit.persistence.PersistentDataType;
 
-import java.io.*;
+import java.io.Serializable;
 
 public class EnchantmentPlayer implements Serializable {
     private Player player;

@@ -21,7 +21,6 @@ import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -34,11 +33,7 @@ import java.util.Map;
 public class EnchantUtils {
     public static void addEnchantment(ItemStack itemStack, String name, EnchantmentTokens main, Player player, boolean key) {
         for (EnchantmentBase base : main.getEnchantments()) {
-            boolean correct = false;
-            if (base.getName().equals(name)) {
-                correct = true;
-            }
-            if (correct) {
+            if (base.getName().equals(name))
                 if (base.canEnchantItem(itemStack)) {
                     long price;
                     int level = base.getStartLevel();
@@ -60,7 +55,7 @@ public class EnchantUtils {
                         player.sendMessage(ChatColor.GREEN + "Successfully bought " + base.getName() + " level " + level + ".");
                         ItemMeta meta = itemStack.getItemMeta();
                         assert meta != null;
-                        meta.addEnchant(base, level+1, true);
+                        meta.addEnchant(base, level + 1, true);
                         List<String> lore;
                         lore = meta.getLore();
                         if (lore == null)
@@ -73,11 +68,11 @@ public class EnchantUtils {
                             }
                         }
                         if (level != 0)
-                            lore.remove(ChatColor.GRAY + base.getName() + " " + EnchantmentGUIListener.getRomanNumeral(level-1));
+                            lore.remove(ChatColor.GRAY + base.getName() + " " + EnchantmentGUIListener.getRomanNumeral(level - 1));
                         lore.add(ChatColor.GRAY + base.getName() + " " + EnchantmentGUIListener.getRomanNumeral(level));
                         if (temp != null) {
-                            int currentPrice = Integer.parseInt(temp.substring(9, temp.length()-1));
-                            temp = ChatColor.GRAY + "Price: " + (currentPrice+base.getDefaultPrice(level)) + "G";
+                            int currentPrice = Integer.parseInt(temp.substring(9, temp.length() - 1));
+                            temp = ChatColor.GRAY + "Price: " + (currentPrice + base.getDefaultPrice(level)) + "G";
                             lore.add(temp);
                         }
                         meta.setLore(lore);
@@ -92,7 +87,6 @@ public class EnchantUtils {
 
                     return;
                 }
-            }
         }
         for (VanillaEnchant base : main.getVanillaEnchantments()) {
             boolean correct = false;
@@ -120,7 +114,7 @@ public class EnchantUtils {
                         ItemMeta meta = itemStack.getItemMeta();
                         assert meta != null;
                         List<String> lore = meta.getLore();
-                        if(lore == null)
+                        if (lore == null)
                             lore = new ArrayList<>();
                         lore.add(base.getName() + ": " + EnchantmentGUIListener.getRomanNumeral(level));
                         meta.setLore(lore);

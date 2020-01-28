@@ -23,9 +23,9 @@ import bigbade.enchantmenttokens.api.EnchantmentBase;
 import bigbade.enchantmenttokens.api.ListenerType;
 import bigbade.enchantmenttokens.events.EnchantmentEvent;
 import bigbade.enchantmenttokens.listeners.InventoryMoveListener;
+import bigbade.enchantmenttokens.listeners.enchants.ArmorEquipListener;
 import bigbade.enchantmenttokens.listeners.enchants.BlockBreakListener;
 import bigbade.enchantmenttokens.listeners.enchants.BlockDamageListener;
-import bigbade.enchantmenttokens.listeners.enchants.ArmorEquipListener;
 import bigbade.enchantmenttokens.listeners.enchants.EnchantmentListener;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -33,7 +33,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.Event;
-import org.bukkit.event.block.BlockBreakEvent;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

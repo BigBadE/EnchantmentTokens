@@ -5,12 +5,16 @@ Current features:
     - Armor
     - Swords
     - Bows
-- Future additions:
     - Tridents
     - Crossbows
+    - Shields
+    - Tools
+    - Fishing Rod
+    
 - Allows for enchantments to be bought through:
     - Command GUI
     - Signs
+    
 - Currently supports the events:
     - All:
         - Equip
@@ -19,8 +23,26 @@ Current features:
     - Pickaxe:
         - Block break
         - Block damage
-        
     - Armor:
         
     - Sword:
         
+    - Shield:
+    
+    - Fishing Rod:
+    
+    - Trident:
+    
+    - Bow/Crossbow
+    
+- Supported Currencies:
+    - Gems (custom currency)
+    - Planned:
+        - Vault
+
+- Save methods:
+    - PersistentData
+    - Flat files
+    - Planned save methods:
+        - MySQL
+        - MongoDB

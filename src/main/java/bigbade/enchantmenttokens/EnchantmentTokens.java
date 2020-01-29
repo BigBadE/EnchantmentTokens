@@ -140,6 +140,17 @@ public class EnchantmentTokens extends JavaPlugin {
             }
         }
         loader.getAddons().forEach(EnchantmentAddon::onEnable);
+
+        int autosaveTime = 15;
+
+        if(getConfig().isSet("autosaveTime"))
+            autosaveTime = getConfig().getInt("autosaveTime");
+        else
+            getConfig().set("autosaveTime", autosaveTime);
+
+        autosaveTime *= 20*60;
+
+        Bukkit.getScheduler().runTaskTimer(this, () -> playerHandler.autosave(this), autosaveTime, autosaveTime);
     }
 
     @Override

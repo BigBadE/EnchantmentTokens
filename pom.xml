@@ -98,7 +98,7 @@
                                 <filter>
                                     <artifact>*:*</artifact>
                                     <excludes>
-                                        <exclude>META-INF/maven/bigbade.enchantmenttokens/EnchantmentTokens/*</exclude>
+                                        <!--<exclude>META-INF/maven/bigbade.enchantmenttokens/EnchantmentTokens/*</exclude>-->
                                         <exclude>META-INF/maven/com.codingforcookies/ArmorEquipEvent/*</exclude>
                                         <exclude>META-INF/maven/org.bstats/bstats-bukkit/*</exclude>
                                         <exclude>META-INF/MANIFEST.MF</exclude>

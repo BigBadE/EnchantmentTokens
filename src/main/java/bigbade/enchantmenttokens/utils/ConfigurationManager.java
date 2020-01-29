@@ -56,23 +56,19 @@ public class ConfigurationManager {
             if (location.contains(".")) {
                 String[] next = location.split("\\.");
                 for (String nextLoc : next) {
-                    try {
-                        ConfigurationSection newSection = Objects.requireNonNull(current).getConfigurationSection(nextLoc);
-                        if (newSection == null)
-                            current = current.createSection(nextLoc);
-                        else
-                            current = newSection;
-                    } catch (NullPointerException ignored) {
-                        assert current != null;
+                    assert current != null;
+                    ConfigurationSection newSection = current.getConfigurationSection(nextLoc);
+                    if (newSection == null)
                         current = current.createSection(nextLoc);
-                    }
+                    else
+                        current = newSection;
                 }
             }
             location = field.getName();
             if (field.getType().equals(ConfigurationSection.class)) {
                 ConfigurationSection newSection = current.getConfigurationSection(location);
                 if (newSection == null)
-                     newSection = current.createSection(location);
+                    newSection = current.createSection(location);
                 ReflectionManager.setValue(field, newSection, target);
             } else {
                 Object value = Objects.requireNonNull(current).get(location);

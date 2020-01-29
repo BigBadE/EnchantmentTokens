@@ -1,11 +1,14 @@
 package bigbade.enchantmenttokens.utils;
 
+import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import bigbade.enchantmenttokens.utils.currency.CurrencyHandler;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /*
 EnchantmentTokens
@@ -42,7 +45,11 @@ public class EnchantmentPlayerHandler {
     }
 
     public void removePlayer(EnchantmentPlayer player) {
-        System.out.println("Safely removed");
         players.remove(player);
+    }
+
+    public void autosave(EnchantmentTokens main) {
+        AtomicInteger saving = new AtomicInteger(0);
+        Bukkit.getScheduler().runTaskTimer(main, () -> players.get(saving.getAndIncrement()).save(), 0, 5);
     }
 }

@@ -1,4 +1,23 @@
+BUG REPORTING:
+
+Bugs do exist, this is a large plugin, they happen sometimes.
+If you find a bug, please report it to https://www.Github.com/BigBadE/EnchantmentTokens
+Open an issue in the "Issues" tab.
+
 CONFIGURATION GUIDE:
+
+CURRENCY METHOD:
+
+There are a multitude of ways EnchantmentTokens handles currency.
+Currently you can only use "gems". It is planned to add Vault support.
+There are currently 2 methods of saving, persistent data and flat file.
+Persistent data is only available for 1.14+.
+Flat file saves all data to a separate file in the data folder.
+MySQL and MongoDB support is planned.
+
+AUTOSAVE TIME:
+
+If you are using gems, player gem count will be automatically saved after this amount of minutes.
 
 VANILLA ENCHANTMENTS:
 

@@ -18,10 +18,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import bigbade.enchantmenttokens.EnchantmentTokens;
-import bigbade.enchantmenttokens.api.EnchantmentBase;
 import bigbade.enchantmenttokens.events.EnchantmentEvent;
 import bigbade.enchantmenttokens.listeners.enchants.BasicEnchantListener;
-import bigbade.enchantmenttokens.listeners.enchants.EnchantmentListener;
 import bigbade.enchantmenttokens.utils.ListenerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -33,8 +31,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Map;
 
 public class InventoryMoveListener extends BasicEnchantListener<Event> implements Listener {
     private EnchantmentTokens main;

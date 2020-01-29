@@ -49,7 +49,11 @@ public class EnchantmentPlayerHandler {
     }
 
     public void autosave(EnchantmentTokens main) {
-        AtomicInteger saving = new AtomicInteger(0);
-        Bukkit.getScheduler().runTaskTimer(main, () -> players.get(saving.getAndIncrement()).save(), 0, 5);
+        if (players.size() > 0) {
+            AtomicInteger saving = new AtomicInteger(0);
+            Bukkit.getScheduler().runTaskTimer(main, () -> {
+                if (saving.get() > players.size()) players.get(saving.getAndIncrement()).save();
+            }, 0, 5);
+        }
     }
 }

@@ -35,6 +35,6 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        playerHandler.loadPlayer(event.getPlayer(), currencyHandler);
+        playerHandler.getPlayer(event.getPlayer(), currencyHandler);
     }
 }

@@ -35,7 +35,7 @@ public class BalanceCmd implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if(commandSender instanceof Player)
-            commandSender.sendMessage(ChatColor.GREEN + "Your balance: " + main.getPlayerHandler().loadPlayer((Player) commandSender, main.getCurrencyHandler()).getGems() + "G");
+            commandSender.sendMessage(ChatColor.GREEN + "Your balance: " + main.getPlayerHandler().getPlayer((Player) commandSender, main.getCurrencyHandler()).getGems() + "G");
         return true;
     }
 }

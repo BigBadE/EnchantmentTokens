@@ -1,6 +1,5 @@
 package bigbade.enchantmenttokens.gui;
 
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 /*
@@ -22,19 +21,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 public class EnchantmentGUI {
     private Inventory inventory;
-    private boolean closing = false;
 
     public EnchantmentGUI(Inventory inventory) {
         this.inventory = inventory;
-    }
-
-    public void close(Player player) {
-        closing = true;
-        player.closeInventory();
-    }
-
-    public boolean isClosing() {
-        return closing;
     }
 
     public Inventory getInventory() {

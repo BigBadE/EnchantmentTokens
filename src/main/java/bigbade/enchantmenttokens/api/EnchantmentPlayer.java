@@ -59,7 +59,6 @@ public class EnchantmentPlayer implements Serializable {
     }
 
     public void setCurrentGUI(EnchantmentGUI currentGUI) {
-        player.openInventory(currentGUI.getInventory());
         this.currentGUI = currentGUI;
     }
 

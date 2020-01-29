@@ -50,8 +50,6 @@ public class EnchantMenuCmd implements CommandExecutor {
             Inventory inv = genInventory((Player) commandSender);
             if (inv == null)
                 commandSender.sendMessage(ChatColor.RED + "You must hold an item to enchant!");
-            else
-                ((Player) commandSender).openInventory(inv);
         }
         return true;
     }
@@ -100,7 +98,8 @@ public class EnchantMenuCmd implements CommandExecutor {
             inventory.setItem(i, glassPane);
             i = inventory.firstEmpty();
         }
-        EnchantmentPlayer enchantPlayer = main.getPlayerHandler().loadPlayer(player, main.getCurrencyHandler());
+        EnchantmentPlayer enchantPlayer = main.getPlayerHandler().getPlayer(player, main.getCurrencyHandler());
+        player.openInventory(inventory);
         enchantPlayer.setCurrentGUI(new EnchantmentGUI(inventory));
         return inventory;
     }

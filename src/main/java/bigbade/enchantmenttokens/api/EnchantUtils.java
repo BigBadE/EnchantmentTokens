@@ -48,7 +48,7 @@ public class EnchantUtils {
                         return;
                     }
                     price = base.getDefaultPrice(level);
-                    EnchantmentPlayer player1 = main.getPlayerHandler().loadPlayer(player, main.getCurrencyHandler());
+                    EnchantmentPlayer player1 = main.getPlayerHandler().getPlayer(player, main.getCurrencyHandler());
                     if (player1.getGems() >= price) {
                         if (key)
                             player1.addGems(-price);
@@ -106,7 +106,7 @@ public class EnchantUtils {
                         return;
                     }
                     price = base.getDefaultPrice(level);
-                    EnchantmentPlayer player1 = main.getPlayerHandler().loadPlayer(player, main.getCurrencyHandler());
+                    EnchantmentPlayer player1 = main.getPlayerHandler().getPlayer(player, main.getCurrencyHandler());
                     if (player1.getGems() >= price) {
                         player1.addGems(-price);
                         player.sendMessage(ChatColor.GREEN + "Successfully bought " + base.getName() + " level " + level + ".");

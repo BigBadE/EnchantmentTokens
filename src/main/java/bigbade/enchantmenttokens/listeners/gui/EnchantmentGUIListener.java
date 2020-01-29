@@ -22,9 +22,8 @@ import bigbade.enchantmenttokens.api.EnchantUtils;
 import bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import bigbade.enchantmenttokens.api.SubInventory;
 import bigbade.enchantmenttokens.commands.EnchantMenuCmd;
-import bigbade.enchantmenttokens.gui.EnchantmentPickerManager;
 import bigbade.enchantmenttokens.gui.EnchantmentGUI;
-import org.bukkit.Bukkit;
+import bigbade.enchantmenttokens.gui.EnchantmentPickerManager;
 import org.bukkit.Material;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.entity.Player;
@@ -59,7 +58,7 @@ public class EnchantmentGUIListener implements Listener {
 
     private void handleClick(ItemStack item, Player player, int id) {
         SubInventory inventory = null;
-        EnchantmentPlayer enchantPlayer = main.getPlayerHandler().loadPlayer(player, main.getCurrencyHandler());
+        EnchantmentPlayer enchantPlayer = main.getPlayerHandler().getPlayer(player, main.getCurrencyHandler());
 
         switch (id) {
             case 1:
@@ -122,7 +121,7 @@ public class EnchantmentGUIListener implements Listener {
             case 13:
                 ItemMeta meta = item.getItemMeta();
                 assert meta != null;
-                if(meta.getLore() != null) {
+                if (meta.getLore() != null) {
                     String line = meta.getLore().get(meta.getLore().size() - 1);
                     long price = Long.parseLong(line.substring(9).replace("G", ""));
                     List<String> lore = meta.getLore();
@@ -133,35 +132,38 @@ public class EnchantmentGUIListener implements Listener {
                     enchantPlayer.addGems(-price);
                     player.getInventory().setItemInMainHand(item);
                 }
-                enchantPlayer.getCurrentGUI().close(player);
+                enchantPlayer.setCurrentGUI(null);
+                player.closeInventory();
                 break;
             case 15:
-                enchantPlayer.getCurrentGUI().close(player);
+                enchantPlayer.setCurrentGUI(null);
+                player.closeInventory();
         }
         if (inventory != null) {
-            enchantPlayer.getCurrentGUI().close(player);
+            enchantPlayer.setCurrentGUI(null);
+            player.openInventory(inventory.getInventory());
             enchantPlayer.setCurrentGUI(inventory);
         }
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        try {
-            Player player = (Player) event.getWhoClicked();
-            EnchantmentPlayer enchantPlayer = main.getPlayerHandler().loadPlayer(player, main.getCurrencyHandler());
-            if(enchantPlayer.getCurrentGUI() == null) return;
-            if (event.getInventory().equals(enchantPlayer.getCurrentGUI().getInventory())) {
-                event.setCancelled(true);
+        Player player = (Player) event.getWhoClicked();
+        EnchantmentPlayer enchantPlayer = main.getPlayerHandler().getPlayer(player, main.getCurrencyHandler());
+        if (enchantPlayer.getCurrentGUI() == null) return;
+        if (event.getInventory().equals(enchantPlayer.getCurrentGUI().getInventory())) {
+            event.setCancelled(true);
+            if (!(enchantPlayer.getCurrentGUI() instanceof SubInventory)) {
                 handleClick(event.getInventory().getItem(4), (Player) event.getWhoClicked(), event.getSlot() - 8);
-            } else if (event.getInventory().equals(enchantPlayer.getCurrentGUI().getInventory())) {
-                event.setCancelled(true);
+            } else {
                 ItemStack clicked = event.getCurrentItem();
                 if (clicked != null) {
                     if (clicked.getType() == Material.BARRIER) {
                         EnchantmentGUI current = enchantPlayer.getCurrentGUI();
                         EnchantmentGUI gui = new EnchantmentGUI(cmd.genInventory(player));
                         gui.getInventory().setItem(4, current.getInventory().getItem(4));
-                        current.close(player);
+                        enchantPlayer.setCurrentGUI(null);
+                        player.openInventory(gui.getInventory());
                         enchantPlayer.setCurrentGUI(gui);
                     } else {
                         if (event.getCurrentItem() != null) {
@@ -172,18 +174,17 @@ public class EnchantmentGUIListener implements Listener {
                     }
                 }
             }
-        } catch (NullPointerException ignored) {
         }
     }
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
-        EnchantmentPlayer enchantPlayer = main.getPlayerHandler().loadPlayer((Player) event.getPlayer(), main.getCurrencyHandler());
-        Bukkit.getScheduler().scheduleSyncDelayedTask(main, () -> {
-            if (enchantPlayer.getCurrentGUI() != null && enchantPlayer.getCurrentGUI().getInventory().equals(event.getInventory()))
-                if (enchantPlayer.getCurrentGUI().isClosing())
-                    event.getPlayer().openInventory(event.getInventory());
-        });
+        EnchantmentPlayer enchantPlayer = main.getPlayerHandler().getPlayer((Player) event.getPlayer(), main.getCurrencyHandler());
+        if (enchantPlayer.getCurrentGUI() != null && enchantPlayer.getCurrentGUI().getInventory().equals(event.getInventory())) {
+            enchantPlayer.setCurrentGUI(null);
+            event.getPlayer().openInventory(event.getInventory());
+            enchantPlayer.setCurrentGUI(new EnchantmentGUI(event.getInventory()));
+        }
     }
 
     public static String getRomanNumeral(int level) {

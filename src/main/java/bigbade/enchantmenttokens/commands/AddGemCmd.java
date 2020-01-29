@@ -41,7 +41,7 @@ public class AddGemCmd implements CommandExecutor {
         if (args.length == 1) {
             if (sender instanceof Player)
                 try {
-                    main.getPlayerHandler().loadPlayer((Player) sender, main.getCurrencyHandler()).addGems(Integer.parseInt(args[0]));
+                    main.getPlayerHandler().getPlayer((Player) sender, main.getCurrencyHandler()).addGems(Integer.parseInt(args[0]));
                     sender.sendMessage(ChatColor.GREEN + "Added " + args[0] + "G!");
                 } catch (NumberFormatException e) {
                     sender.sendMessage(ChatColor.RED + args[0] + " is not an Integer!");
@@ -50,7 +50,7 @@ public class AddGemCmd implements CommandExecutor {
             Player target = Bukkit.getPlayer(args[0]);
             if (target != null) {
                 try {
-                    main.getPlayerHandler().loadPlayer(target, main.getCurrencyHandler()).addGems(Integer.parseInt(args[1]));
+                    main.getPlayerHandler().getPlayer(target, main.getCurrencyHandler()).addGems(Integer.parseInt(args[1]));
                     sender.sendMessage(ChatColor.GREEN + "Added " + args[1] + "G!");
                 } catch (NumberFormatException e) {
                     sender.sendMessage(ChatColor.RED + args[1] + " is not an Integer!");

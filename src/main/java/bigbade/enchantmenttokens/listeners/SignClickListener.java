@@ -36,7 +36,8 @@ public class SignClickListener implements Listener {
 
     @EventHandler
     public void onSignInteract(PlayerInteractEvent event) {
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getHand() == EquipmentSlot.HAND)
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getHand() == EquipmentSlot.HAND) {
+            assert event.getClickedBlock() != null;
             if (event.getClickedBlock().getState() instanceof Sign) {
                 Sign sign = (Sign) event.getClickedBlock().getState();
                 if (sign.getLine(0).equals("[Enchantment]")) {
@@ -45,5 +46,6 @@ public class SignClickListener implements Listener {
                     event.getPlayer().sendSignChange(event.getClickedBlock().getLocation(), new String[]{"[Enchantment]", sign.getLine(1), "", ""});
                 }
             }
+        }
     }
 }

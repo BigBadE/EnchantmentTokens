@@ -31,14 +31,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.Event;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.logging.Level;
 
 public class ListenerHandler {
@@ -47,10 +47,6 @@ public class ListenerHandler {
 
     public ListenerHandler(EnchantmentTokens main) {
         this.main = main;
-    }
-
-    public Map<ListenerType, ListenerManager> getEnchantListeners() {
-        return enchantListeners;
     }
 
     public void registerListeners() {
@@ -68,9 +64,15 @@ public class ListenerHandler {
             enchantListeners.put(type, new ListenerManager());
         }
 
+        Map<String, FileConfiguration> configs = new HashMap<>();
         for (Map.Entry<String, Set<Class<EnchantmentBase>>> entry : enchants.entrySet()) {
             for (Class<EnchantmentBase> clazz : entry.getValue()) {
-                FileConfiguration configuration = ConfigurationManager.loadConfigurationFile(main.getDataFolder().getAbsolutePath() + "\\enchantments\\" + entry.getKey() + ".yml");
+                FileConfiguration configuration = configs.get(entry.getKey());
+
+                if (configuration == null) {
+                    configuration = ConfigurationManager.loadConfigurationFile(main.getDataFolder().getAbsolutePath() + "\\enchantments\\" + entry.getKey() + ".yml");
+                    configs.put(entry.getKey(), configuration);
+                }
 
                 ConfigurationSection section = configuration.getConfigurationSection("enchants");
                 if (section == null)
@@ -122,12 +124,14 @@ public class ListenerHandler {
                         }
                     }
                 }
-                ConfigurationManager.saveConfiguration(main.getDataFolder().getAbsolutePath() + "\\enchantments\\" + entry.getKey() + ".yml", configuration);
             }
         }
         Bukkit.getScheduler().runTask(main, () -> {
             main.getLogger().log(Level.INFO, "Finishing loading enchantments");
             main.getEnchantmentHandler().registerEnchants(enchantments);
         });
+        for (Map.Entry<String, FileConfiguration> configuration : configs.entrySet()) {
+            ConfigurationManager.saveConfiguration(main.getDataFolder().getAbsolutePath() + "\\enchantments\\" + configuration.getKey() + ".yml", configuration.getValue());
+        }
     }
 }

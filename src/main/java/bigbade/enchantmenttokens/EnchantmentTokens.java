@@ -107,6 +107,7 @@ public class EnchantmentTokens extends JavaPlugin {
         if (!getDataFolder().exists())
             if (!getDataFolder().mkdir())
                 getLogger().severe("[ERROR] COULD NOT CREATE DATA FOLDER. REPORT THIS, NOT THE NULLPOINTEREXCEPTION.");
+
         ConfigurationManager.createFolder(getDataFolder().getPath() + "\\data");
         getLogger().info("Looking for enchantments");
 

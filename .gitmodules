@@ -1,3 +1,6 @@
 [submodule "EnchantmentTokensLocalization"]
 	path = EnchantmentTokensLocalization
 	url = https://github.com/BigBadE/EnchantmentTokensLocalization
+[submodule "EnchantmentTokens.wiki"]
+	path = EnchantmentTokens.wiki
+	url = https://github.com/BigBadE/EnchantmentTokens.wiki.git

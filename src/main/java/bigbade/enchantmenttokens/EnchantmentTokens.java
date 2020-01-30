@@ -103,7 +103,7 @@ public class EnchantmentTokens extends JavaPlugin {
             new Metrics(this, 6283);
         }
 
-        ConfigurationManager.saveConfigurationGuide(this, getDataFolder().getPath() + "/configurationguide.txt", getClassLoader());
+        ConfigurationManager.saveConfigurationGuide(this, getDataFolder().getPath() + "/configurationguide.txt");
 
         if (!getDataFolder().exists())
             if (!getDataFolder().mkdir())

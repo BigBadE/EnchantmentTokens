@@ -25,9 +25,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.util.Objects;
@@ -91,14 +89,18 @@ public class ConfigurationManager {
         }
     }
 
-    public static void saveConfigurationGuide(EnchantmentTokens main, String path, ClassLoader loader) {
+    public static void saveConfigurationGuide(EnchantmentTokens main, String path) {
         File configGuide = new File(path);
         if (!configGuide.exists()) {
             Bukkit.getScheduler().runTaskAsynchronously(main, () -> {
                 try {
-                    InputStream stream = Objects.requireNonNull(loader.getResourceAsStream("configurationguide.txt"));
-                    byte[] data = new byte[stream.available()];
-                    Files.write(configGuide.toPath(), data);
+                    InputStream stream = Objects.requireNonNull(ConfigurationManager.class.getClassLoader().getResourceAsStream("configurationguide.txt"));
+                    int readBytes;
+                    byte[] buffer = new byte[4096];
+                    OutputStream out = new FileOutputStream(path);
+                    while ((readBytes = stream.read(buffer)) > 0) {
+                        out.write(buffer, 0, readBytes);
+                    }
                 } catch (IOException e) {
                     EnchantmentTokens.LOGGER.log(Level.SEVERE, "Could not create new configurationguide file!");
                 }

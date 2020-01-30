@@ -19,8 +19,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantListener;
+import bigbade.enchantmenttokens.api.EnchantmentAddon;
 import bigbade.enchantmenttokens.api.EnchantmentBase;
 import bigbade.enchantmenttokens.api.ListenerType;
+import bigbade.enchantmenttokens.events.EnchantmentApplyEvent;
 import bigbade.enchantmenttokens.events.EnchantmentEvent;
 import bigbade.enchantmenttokens.listeners.InventoryMoveListener;
 import bigbade.enchantmenttokens.listeners.enchants.ArmorEquipListener;
@@ -31,18 +33,19 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 
 public class ListenerHandler {
-    private Map<ListenerType, ListenerManager> enchantListeners = new HashMap<>();
+    private Map<ListenerType, ListenerManager> enchantListeners = new ConcurrentHashMap<>();
     private EnchantmentTokens main;
 
     public ListenerHandler(EnchantmentTokens main) {
@@ -56,6 +59,29 @@ public class ListenerHandler {
         Bukkit.getPluginManager().registerEvents(new InventoryMoveListener(enchantListeners.get(ListenerType.HELD), enchantListeners.get(ListenerType.SWAPPED), main), main);
     }
 
+    public void onEnchant(ItemStack item, EnchantmentBase base, Player player) {
+        ListenerManager manager = enchantListeners.get(ListenerType.ENCHANT);
+        EnchantmentEvent<EnchantmentApplyEvent> enchantmentEvent = new EnchantmentEvent<>(new EnchantmentApplyEvent(item, player), item).setUser(player);
+        manager.callEvent(enchantmentEvent, base);
+    }
+
+    public void loadAddons(Collection<EnchantmentAddon> addons) {
+        for (EnchantmentAddon addon : addons) {
+            FileConfiguration configuration = ConfigurationManager.loadConfigurationFile(main.getDataFolder().getAbsolutePath() + "\\enchantments\\" + addon.getName() + ".yml");
+
+            for (Field field : addon.getClass().getDeclaredFields()) {
+                ConfigurationManager.loadConfigForField(field, configuration, addon);
+            }
+
+            addon.loadConfig(configuration);
+            for (Method method : addon.getClass().getDeclaredMethods()) {
+                if (method.isAnnotationPresent(EnchantListener.class) && method.getReturnType() == EnchantmentListener.class) {
+                    ListenerType type = method.getAnnotation(EnchantListener.class).type();
+                    enchantListeners.get(type).add((EnchantmentListener<EnchantmentEvent<? extends Event>>) ReflectionManager.invoke(method, addon), addon);
+                }
+            }
+        }
+    }
 
     public void loadEnchantments(Map<String, Set<Class<EnchantmentBase>>> enchants) {
         ConcurrentLinkedQueue<EnchantmentBase> enchantments = new ConcurrentLinkedQueue<>();
@@ -130,6 +156,9 @@ public class ListenerHandler {
             main.getLogger().log(Level.INFO, "Finishing loading enchantments");
             main.getEnchantmentHandler().registerEnchants(enchantments);
         });
+
+        registerListeners();
+
         for (Map.Entry<String, FileConfiguration> configuration : configs.entrySet()) {
             ConfigurationManager.saveConfiguration(main.getDataFolder().getAbsolutePath() + "\\enchantments\\" + configuration.getKey() + ".yml", configuration.getValue());
         }

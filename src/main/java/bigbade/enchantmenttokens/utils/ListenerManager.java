@@ -20,22 +20,37 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import bigbade.enchantmenttokens.api.EnchantmentBase;
 import bigbade.enchantmenttokens.events.EnchantmentEvent;
 import bigbade.enchantmenttokens.listeners.enchants.EnchantmentListener;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.Event;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ListenerManager {
-    private Map<EnchantmentBase, EnchantmentListener<EnchantmentEvent<? extends Event>>> listeners = new HashMap<>();
+    private Map<Object, EnchantmentListener<EnchantmentEvent<? extends Event>>> listeners = new HashMap<>();
 
-    public void add(EnchantmentListener<EnchantmentEvent<? extends Event>> listener, EnchantmentBase base) {
+    public void add(EnchantmentListener<EnchantmentEvent<? extends Event>> listener, Object base) {
         listeners.put(base, listener);
     }
 
-    public void callEvent(EnchantmentEvent<? extends Event> event) {
-        for(Map.Entry<EnchantmentBase, EnchantmentListener<EnchantmentEvent<? extends Event>>> listenerEntry : listeners.entrySet()) {
-            if(event.getItem().containsEnchantment(listenerEntry.getKey()))
+    public void callEvent(EnchantmentEvent<? extends Event> event, EnchantmentBase base) {
+        for (Map.Entry<Object, EnchantmentListener<EnchantmentEvent<? extends Event>>> listenerEntry : listeners.entrySet()) {
+            if(listenerEntry.getKey().equals(base)) {
                 listenerEntry.getValue().apply(event);
+            }
+        }
+    }
+
+    public void callEvent(EnchantmentEvent<? extends Event> event) {
+        for (Map.Entry<Object, EnchantmentListener<EnchantmentEvent<? extends Event>>> listenerEntry : listeners.entrySet()) {
+            if (listenerEntry.getKey() instanceof EnchantmentBase) {
+                for (Enchantment enchantment : event.getItem().getEnchantments().keySet()) {
+                    if (enchantment.getKey().equals(((EnchantmentBase) listenerEntry.getKey()).getKey()))
+                        listenerEntry.getValue().apply(event);
+                }
+            } else {
+                listenerEntry.getValue().apply(event);
+            }
         }
     }
 }

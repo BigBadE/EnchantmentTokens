@@ -1,12 +1,8 @@
 package bigbade.enchantmenttokens.listeners.enchants;
 
-import bigbade.enchantmenttokens.api.EnchantmentBase;
 import bigbade.enchantmenttokens.events.EnchantmentEvent;
 import bigbade.enchantmenttokens.utils.ListenerManager;
 import org.bukkit.event.Event;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.Map;
 
 /*
 EnchantmentTokens

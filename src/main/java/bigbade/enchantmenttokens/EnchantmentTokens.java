@@ -17,7 +17,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import bigbade.enchantmenttokens.api.*;
+import bigbade.enchantmenttokens.api.EnchantmentAddon;
+import bigbade.enchantmenttokens.api.EnchantmentBase;
+import bigbade.enchantmenttokens.api.EnchantmentLoader;
+import bigbade.enchantmenttokens.api.VanillaEnchant;
 import bigbade.enchantmenttokens.commands.*;
 import bigbade.enchantmenttokens.gui.EnchantmentPickerManager;
 import bigbade.enchantmenttokens.listeners.*;
@@ -35,11 +38,9 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -130,15 +131,6 @@ public class EnchantmentTokens extends JavaPlugin {
             registerListeners();
         }
 
-        for (EnchantmentAddon addon : loader.getAddons()) {
-            FileConfiguration configuration = ConfigurationManager.loadConfigurationFile(getDataFolder().getPath() + "\\enchantments\\" + addon.getName() + ".yml");
-
-            for (Field field : addon.getClass().getDeclaredFields()) {
-                if (field.isAnnotationPresent(ConfigurationField.class)) {
-                    ConfigurationManager.loadConfigForField(field, configuration, addon);
-                }
-            }
-        }
         loader.getAddons().forEach(EnchantmentAddon::onEnable);
 
         int autosaveTime = 15;
@@ -157,6 +149,7 @@ public class EnchantmentTokens extends JavaPlugin {
     public void onDisable() {
         saveConfig();
         loader.getAddons().forEach(EnchantmentAddon::onDisable);
+        enchantmentHandler.getEnchantments().forEach(EnchantmentBase::onDisable);
     }
 
     private void registerListeners() {
@@ -171,7 +164,6 @@ public class EnchantmentTokens extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new ChunkUnloadListener(signHandler.getSigns()), this);
         Bukkit.getPluginManager().registerEvents(new PlayerLeaveListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(playerHandler, currencyHandler), this);
-        listenerHandler.registerListeners();
     }
 
     private void registerCommands() {

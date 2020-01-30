@@ -15,25 +15,8 @@ Current features:
     - Command GUI
     - Signs
     
-- Currently supports the events:
-    - All:
-        - Equip
-        - Unequip
-        - Enchanted
-    - Pickaxe:
-        - Block break
-        - Block damage
-    - Armor:
-        
-    - Sword:
-        
-    - Shield:
-    
-    - Fishing Rod:
-    
-    - Trident:
-    
-    - Bow/Crossbow
+- Currently supported events:
+    - See [Events.md](development/Events.md)
     
 - Supported Currencies:
     - Gems (custom currency)

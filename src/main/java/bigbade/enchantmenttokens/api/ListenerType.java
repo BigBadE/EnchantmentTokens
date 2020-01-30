@@ -19,16 +19,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.EnchantmentTarget;
-import org.bukkit.event.Event;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockDamageEvent;
 
 import java.util.Arrays;
 import java.util.List;
 
 public enum ListenerType {
-    //On plugin disable
-    SERVERSTOP(EnchantmentTarget.ALL),
     //On block starting hit
     BLOCKDAMAGED(EnchantmentTarget.TOOL),
     //On block destroyed

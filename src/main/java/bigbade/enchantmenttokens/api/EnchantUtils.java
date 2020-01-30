@@ -82,6 +82,7 @@ public class EnchantUtils {
                                 player.sendSignChange(location, new String[]{"[Enchantment]", base.getName(), "Price: Maxed!", ""});
                             else
                                 player.sendSignChange(location, new String[]{"[Enchantment]", base.getName(), "Price: " + base.getDefaultPrice(level) + "G", ""});
+                            main.getListenerHandler().onEnchant(itemStack, base, player);
                     } else
                         player.sendMessage(ChatColor.RED + "You do not have " + price + "G!");
 

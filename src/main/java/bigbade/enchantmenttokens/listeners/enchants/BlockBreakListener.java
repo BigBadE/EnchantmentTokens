@@ -18,21 +18,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import bigbade.enchantmenttokens.EnchantmentTokens;
-import bigbade.enchantmenttokens.api.EnchantmentBase;
 import bigbade.enchantmenttokens.events.EnchantmentEvent;
 import bigbade.enchantmenttokens.utils.ListenerManager;
 import org.bukkit.block.Sign;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.function.Consumer;
 
 public class BlockBreakListener extends BasicEnchantListener<BlockBreakEvent> implements Listener {
     private EnchantmentTokens main;

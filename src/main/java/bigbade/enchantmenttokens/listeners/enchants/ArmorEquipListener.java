@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import bigbade.enchantmenttokens.api.EnchantmentBase;
 import bigbade.enchantmenttokens.events.EnchantmentEvent;
 import bigbade.enchantmenttokens.utils.ListenerManager;
 import com.codingforcookies.armorequip.ArmorEquipEvent;
@@ -25,17 +24,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
-import java.util.Map;
-
 public class ArmorEquipListener extends BasicEnchantListener<ArmorEquipEvent> implements Listener {
     private ListenerManager oldArmorListeners;
     private ListenerManager newArmorListeners;
 
-    public ArmorEquipListener(ListenerManager oldArmorListeners, ListenerManager newItemListeners) {
+    public ArmorEquipListener(ListenerManager oldArmorListeners, ListenerManager newArmorListeners) {
         super(null);
         this.oldArmorListeners = oldArmorListeners;
-        this.newArmorListeners = newItemListeners;
+        this.newArmorListeners = newArmorListeners;
     }
 
     @EventHandler

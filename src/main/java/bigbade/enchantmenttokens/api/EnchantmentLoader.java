@@ -11,6 +11,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
@@ -35,7 +36,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 public class EnchantmentLoader {
     private Map<String, Set<Class<EnchantmentBase>>> enchantments = new ConcurrentHashMap<>();
-    private Set<EnchantmentAddon> addons = new HashSet<>();
+    private Collection<EnchantmentAddon> addons = new ConcurrentLinkedQueue<>();
 
     public EnchantmentLoader(File folder, Logger logger, EnchantmentTokens main) {
         Bukkit.getScheduler().runTaskAsynchronously(main, () -> {
@@ -85,11 +86,12 @@ public class EnchantmentLoader {
                     }
                 }
             ReflectionManager.setValue(ReflectionManager.getField(Enchantment.class, "acceptingNew"), true, Enchantment.class);
+                main.getListenerHandler().loadAddons(addons);
             main.getListenerHandler().loadEnchantments(enchantments);
         });
     }
 
-    public Set<EnchantmentAddon> getAddons() {
+    public Collection<EnchantmentAddon> getAddons() {
         return addons;
     }
 

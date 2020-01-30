@@ -47,6 +47,9 @@ public abstract class EnchantmentBase extends Enchantment {
     @ConfigurationField
     public ConfigurationSection price;
 
+    @ConfigurationField("price")
+    public String type = "custom";
+
     public EnchantmentBase(String name, Material icon) {
         super(new NamespacedKey("enchantmenttokens", name.toLowerCase()));
         this.name = name;
@@ -59,26 +62,26 @@ public abstract class EnchantmentBase extends Enchantment {
         this.icon = icon;
     }
 
+    public void onDisable() {
+
+    }
+
     public long getDefaultPrice(int level) {
-        String priceIncreaseType = price.getString("type");
-        if (priceIncreaseType != null)
-            for (PriceIncreaseTypes types : PriceIncreaseTypes.values()) {
-                if (priceIncreaseType.toUpperCase().replace(" ", "").equals(types.name())) {
-                    return types.getPrice(level, price);
-                }
+        for (PriceIncreaseTypes types : PriceIncreaseTypes.values()) {
+            if (type.toUpperCase().replace(" ", "").equals(types.name())) {
+                return types.getPrice(level, price);
             }
+        }
         return PriceIncreaseTypes.CUSTOM.getPrice(level, price);
     }
 
     public void loadConfig() {
-        String priceIncreaseType = price.getString("type");
-        if (priceIncreaseType != null)
-            for (PriceIncreaseTypes types : PriceIncreaseTypes.values()) {
-                if (priceIncreaseType.toUpperCase().replace(" ", "").equals(types.name())) {
-                    types.loadConfig(this);
-                    return;
-                }
+        for (PriceIncreaseTypes types : PriceIncreaseTypes.values()) {
+            if (type.toUpperCase().replace(" ", "").equals(types.name())) {
+                types.loadConfig(this);
+                return;
             }
+        }
         price.set("type", PriceIncreaseTypes.CUSTOM.name().toLowerCase());
         PriceIncreaseTypes.CUSTOM.loadConfig(this);
     }

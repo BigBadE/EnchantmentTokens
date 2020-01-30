@@ -92,8 +92,7 @@ public class EnchantmentTokens extends JavaPlugin {
                     currencyHandler = new LatestCurrencyHandler(this);
                 else
                     currencyHandler = new GemCurrencyHandler(this);
-            }
-            else
+            } else
                 currencyHandler = new GemCurrencyHandler(this);
         }
 
@@ -143,12 +142,12 @@ public class EnchantmentTokens extends JavaPlugin {
 
         int autosaveTime = 15;
 
-        if(getConfig().isSet("autosaveTime"))
+        if (getConfig().isSet("autosaveTime"))
             autosaveTime = getConfig().getInt("autosaveTime");
         else
             getConfig().set("autosaveTime", autosaveTime);
 
-        autosaveTime *= 20*60;
+        autosaveTime *= 20 * 60;
 
         Bukkit.getScheduler().runTaskTimer(this, () -> playerHandler.autosave(this), autosaveTime, autosaveTime);
     }
@@ -188,7 +187,7 @@ public class EnchantmentTokens extends JavaPlugin {
         Objects.requireNonNull(getCommand("gembal")).setExecutor(new BalanceCmd(this));
         Objects.requireNonNull(getCommand("gembal")).setTabCompleter(new GenericTabCompleter());
 
-        Objects.requireNonNull(getCommand("enchantlist")).setExecutor(new EnchantmentList(this));
+        Objects.requireNonNull(getCommand("enchantlist")).setExecutor(new EnchantmentListCommand(this));
         Objects.requireNonNull(getCommand("enchantlist")).setTabCompleter(new GenericTabCompleter());
 
         Objects.requireNonNull(getCommand("reloadenchants")).setExecutor(new RecompileEnchantsCmd(this));
@@ -208,9 +207,14 @@ public class EnchantmentTokens extends JavaPlugin {
     }
 
     public void registerEnchants() {
-        loader = new EnchantmentLoader(new File(getDataFolder().getPath() + "\\enchantments"), getLogger());
-        enchantmentHandler.registerEnchants(listenerHandler.loadEnchantments(loader.getEnchantments()));
+        loader = new EnchantmentLoader(new File(getDataFolder().getPath() + "\\enchantments"), getLogger(), this);
     }
+
+    public EnchantmentHandler getEnchantmentHandler() {
+        return enchantmentHandler;
+    }
+
+    public ListenerHandler getListenerHandler() { return listenerHandler; }
 
     public EnchantmentPlayerHandler getPlayerHandler() {
         return playerHandler;

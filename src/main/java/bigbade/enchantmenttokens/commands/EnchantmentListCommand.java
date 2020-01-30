@@ -1,4 +1,4 @@
-package bigbade.enchantmenttokens.api;
+package bigbade.enchantmenttokens.commands;
 
 /*
 EnchantmentTokens
@@ -23,10 +23,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-public class EnchantmentList implements CommandExecutor {
+public class EnchantmentListCommand implements CommandExecutor {
     private EnchantmentTokens main;
 
-    public EnchantmentList(EnchantmentTokens main) {
+    public EnchantmentListCommand(EnchantmentTokens main) {
         this.main = main;
     }
 

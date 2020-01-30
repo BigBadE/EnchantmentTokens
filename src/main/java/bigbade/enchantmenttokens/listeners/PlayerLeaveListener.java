@@ -30,12 +30,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 public class PlayerLeaveListener implements Listener {
     private EnchantmentPlayerHandler playerHandler;
     private CurrencyHandler currencyHandler;
-    private EnchantmentTokens main;
 
     public PlayerLeaveListener(EnchantmentTokens main) {
         this.playerHandler = main.getPlayerHandler();
         this.currencyHandler = main.getCurrencyHandler();
-        this.main = main;
     }
 
     @EventHandler

@@ -26,14 +26,11 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 
 public class EnchantmentHandler {
-    private List<EnchantmentBase> enchantments;
+    private List<EnchantmentBase> enchantments = new ArrayList<>();
     private List<VanillaEnchant> vanillaEnchants = new ArrayList<>();
 
     private EnchantmentTokens main;
@@ -42,9 +39,7 @@ public class EnchantmentHandler {
         this.main = main;
     }
 
-    public void registerEnchants(List<EnchantmentBase> enchantments) {
-        this.enchantments = enchantments;
-
+    public void registerEnchants(Collection<EnchantmentBase> enchantments) {
         List<Enchantment> enchantsToRegister = new ArrayList<>();
         ConfigurationSection section = main.getConfig().getConfigurationSection("enchants");
         if (section == null)
@@ -65,16 +60,22 @@ public class EnchantmentHandler {
                 iconName = "BEDROCK";
             Material icon = Material.getMaterial(iconName);
 
-            try {
+            if (enchantSection.isSet("enabled"))
                 if (enchantSection.getBoolean("enabled"))
                     vanillaEnchants.add(new VanillaEnchant(icon, enchantment));
-            } catch (NullPointerException e) {
-                enchantSection.set("enabled", true);
-                vanillaEnchants.add(new VanillaEnchant(icon, enchantment));
-            }
+                else {
+                    enchantSection.set("enabled", true);
+                    vanillaEnchants.add(new VanillaEnchant(icon, enchantment));
+                }
         }
 
         main.saveConfig();
+
+        for (EnchantmentBase enchantment : enchantments) {
+            this.enchantments.add(enchantment);
+            Enchantment.registerEnchantment(enchantment);
+        }
+        main.getLogger().log(Level.INFO, "Registered enchantments");
     }
 
     public void unregisterEnchants() {
@@ -85,13 +86,15 @@ public class EnchantmentHandler {
         ReflectionManager.removeFinalFromField(byName);
 
         Map<NamespacedKey, Enchantment> byKeys = (HashMap<NamespacedKey, Enchantment>) ReflectionManager.getValue(byKey, null);
+        assert byKeys != null;
         for (Enchantment enchantment : enchantments) {
             byKeys.remove(enchantment.getKey());
         }
         ReflectionManager.setValue(byKey, byKeys, null);
         Map<NamespacedKey, String> byNames = (HashMap<NamespacedKey, String>) ReflectionManager.getValue(byName, null);
+        assert byNames != null;
         for (Enchantment enchantment : enchantments) {
-            byNames.remove(enchantment.getName());
+            byNames.remove(enchantment.getKey());
         }
         ReflectionManager.setValue(byName, byNames, null);
     }

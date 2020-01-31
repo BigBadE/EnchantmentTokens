@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantmentBase;
+import bigbade.enchantmenttokens.localization.TranslatedMessage;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.ListenerPriority;
@@ -38,9 +39,9 @@ import java.util.Map;
 public class SignPacketHandler {
     private List<Location> signs = new ArrayList<>();
 
-    public SignPacketHandler(ProtocolManager manager, EnchantmentTokens main, List<EnchantmentBase> enchantments) {
-        manager.addPacketListener(new SignPacketLoadAdapter(main, signs, enchantments));
-        manager.addPacketListener(new SignPacketUpdateAdapter(main, signs, enchantments));
+    public SignPacketHandler(ProtocolManager manager, EnchantmentTokens main, List<EnchantmentBase> enchantments, boolean gems) {
+        manager.addPacketListener(new SignPacketLoadAdapter(main, signs, enchantments, gems));
+        manager.addPacketListener(new SignPacketUpdateAdapter(main, signs, enchantments, gems));
     }
 
     public void removeSign(Location location) {
@@ -55,11 +56,13 @@ public class SignPacketHandler {
 class SignPacketLoadAdapter extends PacketAdapter {
     private List<EnchantmentBase> enchantments;
     private List<Location> signs;
+    private boolean gems;
 
-    public SignPacketLoadAdapter(EnchantmentTokens main, List<Location> signs, List<EnchantmentBase> enchantments) {
+    public SignPacketLoadAdapter(EnchantmentTokens main, List<Location> signs, List<EnchantmentBase> enchantments, boolean gems) {
         super(main, ListenerPriority.NORMAL, PacketType.Play.Server.MAP_CHUNK);
         this.enchantments = enchantments;
         this.signs = signs;
+        this.gems = gems;
     }
 
     @Override
@@ -77,23 +80,26 @@ class SignPacketLoadAdapter extends PacketAdapter {
                     }
                 }
                 if (text.size() != 2) return;
-                if (text.get(0).equals("[Enchantment]")) {
+                if (text.get(0).equals("[" + TranslatedMessage.translate("enchantment") + "]")) {
                     for (EnchantmentBase base1 : enchantments) {
                         if (base1.getName().equals(text.get(1))) {
                             signs.add(new Location(event.getPlayer().getWorld(), compound.getInteger("x"), compound.getInteger("y"), compound.getInteger("z")));
-                            String price = "N/A";
+                            String price = TranslatedMessage.translate("enchantment.notapplicable");
                             ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
                             if (base1.canEnchantItem(itemStack)) {
                                 int level = base1.getStartLevel();
-                                for (Map.Entry<Enchantment, Integer> enchats : itemStack.getEnchantments().entrySet())
-                                    if (enchats.getKey().getKey().equals(base1.getKey())) {
-                                        level = enchats.getValue();
+                                for (Map.Entry<Enchantment, Integer> enchants : itemStack.getEnchantments().entrySet())
+                                    if (enchants.getKey().getKey().equals(base1.getKey())) {
+                                        level = enchants.getValue();
                                         break;
                                     }
                                 if (level <= base1.getMaxLevel())
-                                    price = base1.getDefaultPrice(level) + "G";
+                                    if (gems)
+                                        price = base1.getDefaultPrice(level) + "G";
+                                    else
+                                        price = TranslatedMessage.translate("dollar.symbol") + base1.getDefaultPrice(level);
                                 else
-                                    price = "Maxed!";
+                                    price = TranslatedMessage.translate("enchantment.max");
                             }
                             compound.put("Text3", "{\"extra\":[{\"text\":\"" + price + "\"}],\"text\":\"\"}");
                             compounds.set(i, compound);
@@ -110,11 +116,13 @@ class SignPacketLoadAdapter extends PacketAdapter {
 class SignPacketUpdateAdapter extends PacketAdapter {
     private List<EnchantmentBase> enchantments;
     private List<Location> signs;
+    private boolean gems;
 
-    public SignPacketUpdateAdapter(EnchantmentTokens main, List<Location> signs, List<EnchantmentBase> enchantments) {
+    public SignPacketUpdateAdapter(EnchantmentTokens main, List<Location> signs, List<EnchantmentBase> enchantments, boolean gems) {
         super(main, ListenerPriority.NORMAL, PacketType.Play.Server.TILE_ENTITY_DATA);
         this.enchantments = enchantments;
         this.signs = signs;
+        this.gems = gems;
     }
 
     @Override
@@ -135,7 +143,7 @@ class SignPacketUpdateAdapter extends PacketAdapter {
                 for (EnchantmentBase base1 : enchantments) {
                     if (base1.getName().equals(text.get(1))) {
                         signs.add(new Location(event.getPlayer().getWorld(), base.getInteger("x"), base.getInteger("y"), base.getInteger("z")));
-                        String price = "N/A";
+                        String price = TranslatedMessage.translate("enchantment.notapplicable");
                         ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
                         if (base1.canEnchantItem(itemStack)) {
                             int level = base1.getStartLevel();
@@ -145,9 +153,12 @@ class SignPacketUpdateAdapter extends PacketAdapter {
                                     break;
                                 }
                             if (level <= base1.getMaxLevel())
-                                price = base1.getDefaultPrice(level) + "G";
+                                if (gems)
+                                    price = base1.getDefaultPrice(level) + "G";
+                                else
+                                    price = TranslatedMessage.translate("dollar.symbol") + base1.getDefaultPrice(level);
                             else
-                                price = "Maxed!";
+                                price = TranslatedMessage.translate("enchantment.max");
                         }
                         base.put("Text3", "{\"extra\":[{\"text\":\"Price: " + price + "\"}],\"text\":\"\"}");
                         container.getNbtModifier().write(0, base);

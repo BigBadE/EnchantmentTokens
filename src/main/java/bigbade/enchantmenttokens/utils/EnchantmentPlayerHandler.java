@@ -2,7 +2,6 @@ package bigbade.enchantmenttokens.utils;
 
 import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantmentPlayer;
-import bigbade.enchantmenttokens.utils.currency.CurrencyHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -29,19 +28,24 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 public class EnchantmentPlayerHandler {
     private List<EnchantmentPlayer> players = new ArrayList<>();
+    private EnchantmentTokens main;
 
-    public EnchantmentPlayer loadPlayer(Player player, CurrencyHandler handler) {
+    public EnchantmentPlayerHandler(EnchantmentTokens main) {
+        this.main = main;
+    }
+
+    public EnchantmentPlayer loadPlayer(Player player) {
         EnchantmentPlayer enchantmentPlayer = EnchantmentPlayer.loadPlayer(player);
-        enchantmentPlayer.setHandler(handler);
+        enchantmentPlayer.setHandler(main.getCurrencyHandler());
         players.add(enchantmentPlayer);
         return enchantmentPlayer;
     }
 
-    public EnchantmentPlayer getPlayer(Player player, CurrencyHandler handler) {
+    public EnchantmentPlayer getPlayer(Player player) {
         for (EnchantmentPlayer enchantmentPlayer : players)
             if (enchantmentPlayer.getPlayer().getUniqueId().equals(player.getUniqueId()))
                 return enchantmentPlayer;
-        return loadPlayer(player, handler);
+        return loadPlayer(player);
     }
 
     public void removePlayer(EnchantmentPlayer player) {

@@ -19,6 +19,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import bigbade.enchantmenttokens.gui.EnchantmentGUI;
 import bigbade.enchantmenttokens.utils.currency.CurrencyHandler;
+import bigbade.enchantmenttokens.utils.currency.GemCurrencyHandler;
+import bigbade.enchantmenttokens.utils.currency.LatestCurrencyHandler;
 import org.bukkit.entity.Player;
 
 import java.io.Serializable;
@@ -52,6 +54,10 @@ public class EnchantmentPlayer implements Serializable {
 
     public void addGems(long amount) {
         handler.addAmount(amount);
+    }
+
+    public boolean usingGems() {
+        return (handler instanceof GemCurrencyHandler || handler instanceof LatestCurrencyHandler);
     }
 
     public EnchantmentGUI getCurrentGUI() {

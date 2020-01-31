@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantmentBase;
+import bigbade.enchantmenttokens.localization.TranslatedMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
@@ -37,21 +38,21 @@ public class SignPlaceListener implements Listener {
         if ("[enchantment]".equalsIgnoreCase(event.getLine(0))) {
             for (EnchantmentBase base : main.getEnchantments()) {
                 if (base.getName().equalsIgnoreCase(event.getLine(1))) {
-                    event.getPlayer().sendMessage(ChatColor.GREEN + "Added enchantment " + base.getName());
-                    event.setLine(0, "[Enchantment]");
+                    event.getPlayer().sendMessage(TranslatedMessage.translate(EnchantmentTokens.NAME, "enchantment.add", base.getName()));
+                    event.setLine(0, "[" + TranslatedMessage.translate(EnchantmentTokens.NAME, "enchantment") + "]");
                     event.setLine(1, base.getName());
                     return;
                 }
             }
             for (Enchantment base : main.getVanillaEnchantments()) {
                 if (base.getName().equalsIgnoreCase(event.getLine(1))) {
-                    event.getPlayer().sendMessage(ChatColor.GREEN + "Added enchantment " + base.getName());
-                    event.setLine(0, "[Enchantment]");
+                    event.getPlayer().sendMessage(TranslatedMessage.translate(EnchantmentTokens.NAME, "enchantment.add", base.getName()));
+                    event.setLine(0, "[" + TranslatedMessage.translate(EnchantmentTokens.NAME, "enchantment") + "]");
                     event.setLine(1, base.getName());
                     return;
                 }
             }
-            event.getPlayer().sendMessage(ChatColor.RED + "Could not find that enchantment!");
+            event.getPlayer().sendMessage(TranslatedMessage.translate(EnchantmentTokens.NAME, "enchantment.add.fail"));
         }
     }
 }

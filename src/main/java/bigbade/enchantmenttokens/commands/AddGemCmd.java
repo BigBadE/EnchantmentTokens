@@ -18,6 +18,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import bigbade.enchantmenttokens.EnchantmentTokens;
+import bigbade.enchantmenttokens.api.EnchantmentPlayer;
+import bigbade.enchantmenttokens.localization.TranslatedMessage;
+import com.comphenix.protocol.PacketType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -34,17 +37,16 @@ public class AddGemCmd implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if(!sender.hasPermission("enchanttoken.admin") && !sender.isOp()) {
-            sender.sendMessage(ChatColor.RED + "You do not have permission to run this command");
+        if (!sender.hasPermission("enchanttoken.admin") && !sender.isOp()) {
+            sender.sendMessage(TranslatedMessage.translate("command.permission"));
             return true;
         }
         if (args.length == 1) {
             if (sender instanceof Player)
                 try {
-                    main.getPlayerHandler().getPlayer((Player) sender, main.getCurrencyHandler()).addGems(Integer.parseInt(args[0]));
-                    sender.sendMessage(ChatColor.GREEN + "Added " + args[0] + "G!");
+                    addGems((Player) sender);
                 } catch (NumberFormatException e) {
-                    sender.sendMessage(ChatColor.RED + args[0] + " is not an Integer!");
+                    sender.sendMessage(TranslatedMessage.translate("command.add.notint", args[0]));
                 }
         } else if (args.length == 2) {
             Player target = Bukkit.getPlayer(args[0]);
@@ -60,5 +62,9 @@ public class AddGemCmd implements CommandExecutor {
             }
         }
         return true;
+    }
+
+    private void addGems(Player player) {
+
     }
 }

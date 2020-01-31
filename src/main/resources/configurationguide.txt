@@ -6,6 +6,14 @@ Open an issue in the "Issues" tab.
 
 CONFIGURATION GUIDE:
 
+COUNTRY-LANGUAGE:
+
+This is the country used for Internalization. If no supported language files are found, this defaults to US.
+
+Supported: US
+
+If your language of choice is not supported, you can create a translation at https://github.com/BigBadE/EnchantmentTokensLocalization.
+
 CURRENCY METHOD:
 
 There are a multitude of ways EnchantmentTokens handles currency.

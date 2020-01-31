@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
+import bigbade.enchantmenttokens.localization.TranslatedMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.enchantments.Enchantment;
@@ -44,15 +45,20 @@ public class EnchantUtils {
                         }
                     }
                     if (level > base.getMaxLevel()) {
-                        player.sendMessage(ChatColor.RED + "You already have the max level enchantment!");
+                        player.sendMessage(TranslatedMessage.translate("enchantment.max.message"));
                         return;
                     }
                     price = base.getDefaultPrice(level);
                     EnchantmentPlayer player1 = main.getPlayerHandler().getPlayer(player, main.getCurrencyHandler());
+                    String priceString;
+                    if (player1.usingGems())
+                        priceString = TranslatedMessage.translate("enchantment.max") + " " + base.getDefaultPrice(level) + "G";
+                    else
+                        priceString = TranslatedMessage.translate("dollar.symbol") + TranslatedMessage.translate("enchantment.max") + " " + base.getDefaultPrice(level);
                     if (player1.getGems() >= price) {
                         if (key)
                             player1.addGems(-price);
-                        player.sendMessage(ChatColor.GREEN + "Successfully bought " + base.getName() + " level " + level + ".");
+                        player.sendMessage(TranslatedMessage.translate("enchantment.bought.success", base.getName(), "" + level));
                         ItemMeta meta = itemStack.getItemMeta();
                         assert meta != null;
                         meta.addEnchant(base, level + 1, true);
@@ -61,8 +67,9 @@ public class EnchantUtils {
                         if (lore == null)
                             lore = new ArrayList<>();
                         String temp = null;
+                        String priceMessage = TranslatedMessage.translate("enchantment.price");
                         if (!key) {
-                            if (lore.get(lore.size() - 1).substring(0, 9).equals(ChatColor.GRAY + "Price: ")) {
+                            if (lore.get(lore.size() - 1).startsWith(priceMessage)) {
                                 temp = lore.get(lore.size() - 1);
                                 lore.remove(temp);
                             }
@@ -72,19 +79,24 @@ public class EnchantUtils {
                         lore.add(ChatColor.GRAY + base.getName() + " " + EnchantmentGUIListener.getRomanNumeral(level));
                         if (temp != null) {
                             int currentPrice = Integer.parseInt(temp.substring(9, temp.length() - 1));
-                            temp = ChatColor.GRAY + "Price: " + (currentPrice + base.getDefaultPrice(level)) + "G";
+                            if (player1.usingGems())
+                                temp = priceMessage + (currentPrice + base.getDefaultPrice(level)) + "G";
+                            else
+                                temp = priceMessage + TranslatedMessage.translate("dollar.symbol") + (currentPrice + base.getDefaultPrice(level));
                             lore.add(temp);
                         }
                         meta.setLore(lore);
                         itemStack.setItemMeta(meta);
                         for (Location location : main.signHandler.getSigns())
                             if (level >= base.getMaxLevel())
-                                player.sendSignChange(location, new String[]{"[Enchantment]", base.getName(), "Price: Maxed!", ""});
-                            else
-                                player.sendSignChange(location, new String[]{"[Enchantment]", base.getName(), "Price: " + base.getDefaultPrice(level) + "G", ""});
-                            main.getListenerHandler().onEnchant(itemStack, base, player);
+                                player.sendSignChange(location, new String[]{"[" + TranslatedMessage.translate("enchantment") + "]", base.getName(), "Price: Maxed!", ""});
+                            else {
+                                player.sendSignChange(location, new String[]{"[" + TranslatedMessage.translate("enchantment") + "]", base.getName(), priceString, ""});
+                            }
+                        main.getListenerHandler().onEnchant(itemStack, base, player);
                     } else
-                        player.sendMessage(ChatColor.RED + "You do not have " + price + "G!");
+
+                        player.sendMessage(TranslatedMessage.translate("enchantment.bought.fail", priceString));
 
                     return;
                 }
@@ -103,14 +115,14 @@ public class EnchantUtils {
                             break;
                         }
                     if (level > base.getMaxLevel()) {
-                        player.sendMessage(ChatColor.RED + "You already have the max level enchantment!");
+                        player.sendMessage(TranslatedMessage.translate("enchantment.bought.max"));
                         return;
                     }
                     price = base.getDefaultPrice(level);
                     EnchantmentPlayer player1 = main.getPlayerHandler().getPlayer(player, main.getCurrencyHandler());
                     if (player1.getGems() >= price) {
                         player1.addGems(-price);
-                        player.sendMessage(ChatColor.GREEN + "Successfully bought " + base.getName() + " level " + level + ".");
+                        player.sendMessage(TranslatedMessage.translate("enchantment.bought.success", base.getName(), "" + level));
                         itemStack.addEnchantment(base, level);
                         ItemMeta meta = itemStack.getItemMeta();
                         assert meta != null;
@@ -121,13 +133,18 @@ public class EnchantUtils {
                         meta.setLore(lore);
                         itemStack.setItemMeta(meta);
                         for (Location location : main.signHandler.getSigns())
-                            player.sendSignChange(location, new String[]{"[Enchantment]", base.getName(), "", ""});
+                            player.sendSignChange(location, new String[]{"[" + TranslatedMessage.translate("enchantment") + "]", base.getName(), "", ""});
                     } else {
-                        player.sendMessage(ChatColor.RED + "You do not have " + price + "G!");
+                        String priceString;
+                        if(player1.usingGems())
+                            priceString = price + "G";
+                        else
+                            priceString = TranslatedMessage.translate("dollar.symbol") + price;
+                        player.sendMessage(TranslatedMessage.translate("enchantment.bought.fail", priceString));
                     }
                     return;
                 }
         }
-        player.sendMessage(ChatColor.RED + "Could not find that enchantment!");
+        player.sendMessage(TranslatedMessage.translate("enchantment.add.fail"));
     }
 }

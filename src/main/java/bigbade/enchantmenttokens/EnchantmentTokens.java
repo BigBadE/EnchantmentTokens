@@ -25,6 +25,7 @@ import bigbade.enchantmenttokens.commands.*;
 import bigbade.enchantmenttokens.gui.EnchantmentPickerManager;
 import bigbade.enchantmenttokens.listeners.*;
 import bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
+import bigbade.enchantmenttokens.localization.TranslatedMessage;
 import bigbade.enchantmenttokens.utils.ConfigurationManager;
 import bigbade.enchantmenttokens.utils.EnchantmentHandler;
 import bigbade.enchantmenttokens.utils.EnchantmentPlayerHandler;
@@ -41,12 +42,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class EnchantmentTokens extends JavaPlugin {
+    public static final String NAME = "enchantmenttokens";
+
     private EnchantmentPickerManager enchantmentPickerManager;
     public static Logger LOGGER;
 
@@ -79,7 +82,10 @@ public class EnchantmentTokens extends JavaPlugin {
             getConfig().set("metrics", true);
 
         if (!getConfig().isSet("currency"))
-            getConfig().set("currency", "gems");
+            getConfig().set("currency", "Gems");
+
+        if (!getConfig().isSet("country-language"))
+            getConfig().set("country-language", "US");
 
         playerHandler = new EnchantmentPlayerHandler();
 
@@ -123,7 +129,7 @@ public class EnchantmentTokens extends JavaPlugin {
 
         ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
         getLogger().info("Registering sign listener");
-        signHandler = new SignPacketHandler(protocolManager, this, enchantmentHandler.getEnchantments());
+        signHandler = new SignPacketHandler(protocolManager, this, enchantmentHandler.getEnchantments(), getConfig().getString("currency").equalsIgnoreCase("gems"));
 
         if (Bukkit.getPluginManager().isPluginEnabled(this)) {
             enchantmentPickerManager = new EnchantmentPickerManager(this);
@@ -142,7 +148,35 @@ public class EnchantmentTokens extends JavaPlugin {
 
         autosaveTime *= 20 * 60;
 
+        Locale locale = Locale.US;
+        String language = getConfig().getString("country-language");
+        for (Locale foundLocale : Locale.getAvailableLocales())
+            if (foundLocale.getDisplayCountry().equals(language))
+                locale = foundLocale;
+        updateLocale(locale);
         Bukkit.getScheduler().runTaskTimer(this, () -> playerHandler.autosave(this), autosaveTime, autosaveTime);
+    }
+
+    public void updateLocale(Locale locale) {
+        try {
+            Map<String, ResourceBundle> resources = new HashMap<>();
+            resources.put(NAME, new PropertyResourceBundle(getStream("messages", locale)));
+
+            for(EnchantmentAddon addon : loader.getAddons()) {
+                resources.put(addon.getName(), new PropertyResourceBundle(getStream(addon.getName(), locale)));
+            }
+
+            TranslatedMessage.updateBundles(resources);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private InputStream getStream(String name, Locale locale) {
+        InputStream languageStream = EnchantmentTokens.class.getResourceAsStream(name + "-" + locale.toLanguageTag() + "_" + locale.getCountry() + ".properties");
+        if(languageStream == null)
+            languageStream = EnchantmentTokens.class.getResourceAsStream("messages-en_US.properties");
+        return languageStream;
     }
 
     @Override
@@ -207,7 +241,9 @@ public class EnchantmentTokens extends JavaPlugin {
         return enchantmentHandler;
     }
 
-    public ListenerHandler getListenerHandler() { return listenerHandler; }
+    public ListenerHandler getListenerHandler() {
+        return listenerHandler;
+    }
 
     public EnchantmentPlayerHandler getPlayerHandler() {
         return playerHandler;

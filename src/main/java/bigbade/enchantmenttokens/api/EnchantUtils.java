@@ -49,7 +49,7 @@ public class EnchantUtils {
                         return;
                     }
                     price = base.getDefaultPrice(level);
-                    EnchantmentPlayer player1 = main.getPlayerHandler().getPlayer(player, main.getCurrencyHandler());
+                    EnchantmentPlayer player1 = main.getPlayerHandler().getPlayer(player);
                     String priceString;
                     if (player1.usingGems())
                         priceString = TranslatedMessage.translate("enchantment.max") + " " + base.getDefaultPrice(level) + "G";
@@ -119,7 +119,7 @@ public class EnchantUtils {
                         return;
                     }
                     price = base.getDefaultPrice(level);
-                    EnchantmentPlayer player1 = main.getPlayerHandler().getPlayer(player, main.getCurrencyHandler());
+                    EnchantmentPlayer player1 = main.getPlayerHandler().getPlayer(player);
                     if (player1.getGems() >= price) {
                         player1.addGems(-price);
                         player.sendMessage(TranslatedMessage.translate("enchantment.bought.success", base.getName(), "" + level));

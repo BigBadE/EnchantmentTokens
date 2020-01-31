@@ -52,7 +52,7 @@ public class AddGemCmd implements CommandExecutor {
             Player target = Bukkit.getPlayer(args[0]);
             if (target != null) {
                 try {
-                    main.getPlayerHandler().getPlayer(target, main.getCurrencyHandler()).addGems(Integer.parseInt(args[1]));
+                    main.getPlayerHandler().getPlayer(target).addGems(Integer.parseInt(args[1]));
                     sender.sendMessage(ChatColor.GREEN + "Added " + args[1] + "G!");
                 } catch (NumberFormatException e) {
                     sender.sendMessage(ChatColor.RED + args[1] + " is not an Integer!");

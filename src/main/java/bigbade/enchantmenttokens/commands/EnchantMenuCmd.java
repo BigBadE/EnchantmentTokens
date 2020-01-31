@@ -98,7 +98,7 @@ public class EnchantMenuCmd implements CommandExecutor {
             inventory.setItem(i, glassPane);
             i = inventory.firstEmpty();
         }
-        EnchantmentPlayer enchantPlayer = main.getPlayerHandler().getPlayer(player, main.getCurrencyHandler());
+        EnchantmentPlayer enchantPlayer = main.getPlayerHandler().getPlayer(player);
         player.openInventory(inventory);
         enchantPlayer.setCurrentGUI(new EnchantmentGUI(inventory));
         return inventory;

@@ -87,7 +87,7 @@ public class EnchantmentTokens extends JavaPlugin {
         if (!getConfig().isSet("country-language"))
             getConfig().set("country-language", "US");
 
-        playerHandler = new EnchantmentPlayerHandler();
+        playerHandler = new EnchantmentPlayerHandler(this);
 
         String currency = getConfig().getString("currency");
 

@@ -58,7 +58,7 @@ public class EnchantmentGUIListener implements Listener {
 
     private void handleClick(ItemStack item, Player player, int id) {
         SubInventory inventory = null;
-        EnchantmentPlayer enchantPlayer = main.getPlayerHandler().getPlayer(player, main.getCurrencyHandler());
+        EnchantmentPlayer enchantPlayer = main.getPlayerHandler().getPlayer(player);
 
         switch (id) {
             case 1:
@@ -149,7 +149,7 @@ public class EnchantmentGUIListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
-        EnchantmentPlayer enchantPlayer = main.getPlayerHandler().getPlayer(player, main.getCurrencyHandler());
+        EnchantmentPlayer enchantPlayer = main.getPlayerHandler().getPlayer(player);
         if (enchantPlayer.getCurrentGUI() == null) return;
         if (event.getInventory().equals(enchantPlayer.getCurrentGUI().getInventory())) {
             event.setCancelled(true);
@@ -179,7 +179,7 @@ public class EnchantmentGUIListener implements Listener {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
-        EnchantmentPlayer enchantPlayer = main.getPlayerHandler().getPlayer((Player) event.getPlayer(), main.getCurrencyHandler());
+        EnchantmentPlayer enchantPlayer = main.getPlayerHandler().getPlayer((Player) event.getPlayer());
         if (enchantPlayer.getCurrentGUI() != null && enchantPlayer.getCurrentGUI().getInventory().equals(event.getInventory())) {
             enchantPlayer.setCurrentGUI(null);
             event.getPlayer().openInventory(event.getInventory());

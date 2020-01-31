@@ -5,20 +5,19 @@ import bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import bigbade.enchantmenttokens.localization.TranslatedMessage;
 import org.bukkit.entity.Player;
 
-public class CurrencyHandler {
+public class CurrencyAdditionHandler {
     public static void addGems(Player player, long amount, EnchantmentTokens main) {
-        main.getPlayerHandler().getPlayer((Player) sender, main.getCurrencyHandler());
+        addGems(main.getPlayerHandler().getPlayer(player), amount, main);
     }
 
     public static void addGems(EnchantmentPlayer player, long amount, EnchantmentTokens main) {
-        EnchantmentPlayer enchantmentPlayer =
-        enchantmentPlayer.addGems(Integer.parseInt(args[0]));
+        player.addGems(amount);
 
         String priceStr;
-        if (enchantmentPlayer.usingGems())
-            priceStr = args[0] + "G";
+        if (player.usingGems())
+            priceStr = amount + "G";
         else
-            priceStr = TranslatedMessage.translate("dollar.symbol") + args[0];
-        sender.sendMessage(TranslatedMessage.translate("command.add", priceStr));
+            priceStr = TranslatedMessage.translate("dollar.symbol", "" + amount);
+        player.getPlayer().sendMessage(TranslatedMessage.translate("command.add", priceStr));
     }
 }

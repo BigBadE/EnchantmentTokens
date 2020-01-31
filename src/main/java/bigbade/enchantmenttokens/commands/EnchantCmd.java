@@ -21,7 +21,7 @@ import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantUtils;
 import bigbade.enchantmenttokens.api.EnchantmentBase;
 import bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
-import org.bukkit.ChatColor;
+import bigbade.enchantmenttokens.localization.TranslatedMessage;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -42,7 +42,7 @@ public class EnchantCmd implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!sender.hasPermission("enchanttoken.admin") && !sender.isOp()) {
-            sender.sendMessage(ChatColor.RED + "You do not have permission to run this command");
+            sender.sendMessage(TranslatedMessage.translate("command.permission"));
             return true;
         }
         if (args.length >= 1 && sender instanceof Player) {
@@ -60,7 +60,7 @@ public class EnchantCmd implements CommandExecutor {
                     if(meta.getLore() == null)
                         meta.setLore(new ArrayList<>());
                     meta.getLore().add(enchant.getName() + ": " + EnchantmentGUIListener.getRomanNumeral(Integer.parseInt(args[args.length - 1])));
-                    sender.sendMessage(ChatColor.GREEN + "Added Enchant " + name);
+                    sender.sendMessage(TranslatedMessage.translate("command.add", name));
                     return true;
                 }
             }
@@ -71,13 +71,13 @@ public class EnchantCmd implements CommandExecutor {
                     if(meta.getLore() == null)
                         meta.setLore(new ArrayList<>());
                     meta.getLore().add(enchantment.getName() + ": " + EnchantmentGUIListener.getRomanNumeral(Integer.parseInt(args[args.length - 1])));
-                    sender.sendMessage(ChatColor.GREEN + "Added Enchant " + name);
+                    sender.sendMessage(TranslatedMessage.translate("command.add", name));
                     return true;
                 }
             }
-            sender.sendMessage(ChatColor.RED + "Could not find that enchant!");
+            sender.sendMessage(TranslatedMessage.translate("command.enchant.notfound"));
         } else
-            sender.sendMessage("Usage: /adminenchant (enchant) (level)");
+            sender.sendMessage(TranslatedMessage.translate("command.enchant.usage"));
         return true;
     }
 }

@@ -3,7 +3,6 @@ package bigbade.enchantmenttokens.listeners;
 import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import bigbade.enchantmenttokens.utils.EnchantmentPlayerHandler;
-import bigbade.enchantmenttokens.utils.currency.CurrencyHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,11 +28,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 public class PlayerLeaveListener implements Listener {
     private EnchantmentPlayerHandler playerHandler;
-    private CurrencyHandler currencyHandler;
 
     public PlayerLeaveListener(EnchantmentTokens main) {
         this.playerHandler = main.getPlayerHandler();
-        this.currencyHandler = main.getCurrencyHandler();
     }
 
     @EventHandler
@@ -47,7 +44,7 @@ public class PlayerLeaveListener implements Listener {
     }
 
     private void savePlayer(Player player) {
-        EnchantmentPlayer enchantmentPlayer = playerHandler.getPlayer(player, currencyHandler);
+        EnchantmentPlayer enchantmentPlayer = playerHandler.getPlayer(player);
         enchantmentPlayer.save();
         playerHandler.removePlayer(enchantmentPlayer);
     }

@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import bigbade.enchantmenttokens.EnchantmentTokens;
+import bigbade.enchantmenttokens.localization.TranslatedMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -36,7 +37,7 @@ public class EnchantmentListCommand implements CommandExecutor {
             sender.sendMessage(ChatColor.RED + "You do not have permission to run this command");
             return true;
         }
-        StringBuilder builder = new StringBuilder("Enchantments: ");
+        StringBuilder builder = new StringBuilder(TranslatedMessage.translate("command.list"));
         if(main.getEnchantments().size() > 0) {
             main.getEnchantments().forEach((enchant) -> builder.append(enchant.getName()).append(", "));
             builder.setLength(builder.length() - 2);

@@ -87,7 +87,14 @@ public class EnchantmentTokens extends JavaPlugin {
         if (!getConfig().isSet("country-language"))
             getConfig().set("country-language", "US");
 
-        playerHandler = new EnchantmentPlayerHandler();
+        Locale locale = Locale.US;
+        String language = getConfig().getString("country-language");
+        for (Locale foundLocale : Locale.getAvailableLocales())
+            if (foundLocale.getDisplayCountry().equals(language))
+                locale = foundLocale;
+        updateLocale(locale);
+
+        playerHandler = new EnchantmentPlayerHandler(this);
 
         String currency = getConfig().getString("currency");
 
@@ -129,7 +136,7 @@ public class EnchantmentTokens extends JavaPlugin {
 
         ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
         getLogger().info("Registering sign listener");
-        signHandler = new SignPacketHandler(protocolManager, this, enchantmentHandler.getEnchantments(), getConfig().getString("currency").equalsIgnoreCase("gems"));
+        signHandler = new SignPacketHandler(protocolManager, this, enchantmentHandler.getEnchantments(), Objects.requireNonNull(getConfig().getString("currency")).equalsIgnoreCase("gems"));
 
         if (Bukkit.getPluginManager().isPluginEnabled(this)) {
             enchantmentPickerManager = new EnchantmentPickerManager(this);
@@ -148,12 +155,6 @@ public class EnchantmentTokens extends JavaPlugin {
 
         autosaveTime *= 20 * 60;
 
-        Locale locale = Locale.US;
-        String language = getConfig().getString("country-language");
-        for (Locale foundLocale : Locale.getAvailableLocales())
-            if (foundLocale.getDisplayCountry().equals(language))
-                locale = foundLocale;
-        updateLocale(locale);
         Bukkit.getScheduler().runTaskTimer(this, () -> playerHandler.autosave(this), autosaveTime, autosaveTime);
     }
 
@@ -197,7 +198,7 @@ public class EnchantmentTokens extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new ChunkUnloadListener(signHandler.getSigns()), this);
         Bukkit.getPluginManager().registerEvents(new PlayerLeaveListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(playerHandler, currencyHandler), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(playerHandler), this);
     }
 
     private void registerCommands() {

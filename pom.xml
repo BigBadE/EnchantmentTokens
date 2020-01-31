@@ -92,6 +92,10 @@
                                     <pattern>org.bstats</pattern>
                                     <shadedPattern>bigbade.enchantmenttokens</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>EnchantmentTokensLocalization</pattern>
+                                    <shadedPattern>Localization</shadedPattern>
+                                </relocation>
                             </relocations>
                             <minimizeJar>true</minimizeJar>
                             <filters>

@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import bigbade.enchantmenttokens.gui.EnchantmentGUI;
+import bigbade.enchantmenttokens.localization.TranslatedMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -49,7 +50,7 @@ public class EnchantMenuCmd implements CommandExecutor {
         if (commandSender instanceof Player) {
             Inventory inv = genInventory((Player) commandSender);
             if (inv == null)
-                commandSender.sendMessage(ChatColor.RED + "You must hold an item to enchant!");
+                commandSender.sendMessage(TranslatedMessage.translate("command.enchant.held"));
         }
         return true;
     }
@@ -67,7 +68,11 @@ public class EnchantMenuCmd implements CommandExecutor {
         List<String> lore = meta.getLore();
         if (lore == null)
             lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY + "Price: 0G");
+        EnchantmentPlayer enchantPlayer = main.getPlayerHandler().getPlayer(player);
+        if (enchantPlayer.usingGems())
+            lore.add(TranslatedMessage.translate("enchantment.price") + "0G");
+        else
+            lore.add(TranslatedMessage.translate("enchantment.price") + " " + TranslatedMessage.translate("dollar.symbol", "0"));
         meta.setLore(lore);
         item.setItemMeta(meta);
         inventory.setItem(4, item);
@@ -98,7 +103,6 @@ public class EnchantMenuCmd implements CommandExecutor {
             inventory.setItem(i, glassPane);
             i = inventory.firstEmpty();
         }
-        EnchantmentPlayer enchantPlayer = main.getPlayerHandler().getPlayer(player, main.getCurrencyHandler());
         player.openInventory(inventory);
         enchantPlayer.setCurrentGUI(new EnchantmentGUI(inventory));
         return inventory;

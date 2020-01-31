@@ -18,7 +18,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import bigbade.enchantmenttokens.EnchantmentTokens;
-import org.bukkit.ChatColor;
+import bigbade.enchantmenttokens.api.EnchantmentPlayer;
+import bigbade.enchantmenttokens.localization.TranslatedMessage;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -34,8 +35,15 @@ public class BalanceCmd implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if(commandSender instanceof Player)
-            commandSender.sendMessage(ChatColor.GREEN + "Your balance: " + main.getPlayerHandler().getPlayer((Player) commandSender, main.getCurrencyHandler()).getGems() + "G");
+        if(commandSender instanceof Player) {
+            String priceString;
+            EnchantmentPlayer player = main.getPlayerHandler().loadPlayer((Player) commandSender);
+            if(player.usingGems())
+                priceString = player.getGems() + "G";
+            else
+                priceString = TranslatedMessage.translate("dollar.symbol", "" + player.getGems());
+            commandSender.sendMessage(TranslatedMessage.translate("command.balance", priceString));
+        }
         return true;
     }
 }

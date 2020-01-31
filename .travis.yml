@@ -1,0 +1,9 @@
+language: java
+
+before_install:
+  - mvn install:install-file -Dfile=./libs/ArmorEquipEvent-1.7.3.jar -DgroupId=com.codingforcookies -DartifactId=ArmorEquipEvent -Dversion=1.7.3 -Dpackaging=jar
+env:		
+    global:		
+        - JAVA_TOOL_OPTIONS=-Dhttps.protocols=TLSv1.2
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

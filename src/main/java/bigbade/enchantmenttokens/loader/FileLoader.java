@@ -21,10 +21,7 @@ import bigbade.enchantmenttokens.utils.ByteUtils;
 import bigbade.enchantmenttokens.utils.ConfigurationManager;
 import org.bukkit.entity.Player;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -53,19 +50,10 @@ public class FileLoader {
         } else {
             try {
                 FileInputStream stream = new FileInputStream(playerFile);
-                for (int i = 0; i < stream.available(); i += 24) {
-                    byte[] temp = new byte[8];
-                    stream.read(temp);
-                    long mostSigBits = utils.bytesToLong(temp);
-                    if (mostSigBits == player.getUniqueId().getMostSignificantBits()) {
-                        stream.read(temp);
-                        long leastSigBits = utils.bytesToLong(temp);
-                        if (leastSigBits == player.getUniqueId().getLeastSignificantBits()) {
-                            stream.read(temp);
-                            return utils.bytesToLong(temp);
-                        }
-                    }
-                }
+                int offset = getOffset(stream, player.getUniqueId());
+                byte[] gems = new byte[8];
+                stream.read(gems, offset, 8);
+                return utils.bytesToLong(gems);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -87,15 +75,26 @@ public class FileLoader {
         File playerFile = new File(path + "\\data\\" + player.getUniqueId().toString().substring(0, 2) + "\\data.dat");
         try {
             FileInputStream stream = new FileInputStream(playerFile);
+            int passed = getOffset(stream, player.getUniqueId());
+
+            FileOutputStream output = new FileOutputStream(playerFile);
+            output.write(utils.longToBytes(gems), passed, 8);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private int getOffset(InputStream stream, UUID id) {
+        try {
             int passed = 0;
-            for (int i = 0; i < stream.available() / 24; i += 1) {
+            for (; passed < stream.available(); passed += 24) {
                 byte[] temp = new byte[8];
                 stream.read(temp);
                 long mostSigBits = utils.bytesToLong(temp);
-                if (mostSigBits == player.getUniqueId().getMostSignificantBits()) {
+                if (mostSigBits == id.getMostSignificantBits()) {
                     stream.read(temp);
                     long leastSigBits = utils.bytesToLong(temp);
-                    if (leastSigBits == player.getUniqueId().getLeastSignificantBits()) {
+                    if (leastSigBits == id.getLeastSignificantBits()) {
                         passed += 16;
                         break;
                     } else {
@@ -104,14 +103,12 @@ public class FileLoader {
                 } else {
                     stream.skip(16);
                 }
-                passed += 24;
             }
-
-            FileOutputStream output = new FileOutputStream(playerFile);
-            output.write(utils.longToBytes(gems), passed, 8);
+            return passed;
         } catch (IOException e) {
-            e.printStackTrace();
+
         }
+        return -1;
     }
 
     public ByteUtils getUtils() {

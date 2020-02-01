@@ -17,10 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import bigbade.enchantmenttokens.api.EnchantmentAddon;
-import bigbade.enchantmenttokens.api.EnchantmentBase;
-import bigbade.enchantmenttokens.api.EnchantmentLoader;
-import bigbade.enchantmenttokens.api.VanillaEnchant;
+import bigbade.enchantmenttokens.api.*;
 import bigbade.enchantmenttokens.commands.*;
 import bigbade.enchantmenttokens.gui.EnchantmentPickerManager;
 import bigbade.enchantmenttokens.listeners.SignPacketHandler;
@@ -36,7 +33,6 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -65,6 +61,8 @@ public class EnchantmentTokens extends JavaPlugin {
 
     private CurrencyHandler currencyHandler;
     private EnchantmentPlayerHandler playerHandler;
+
+    private EnchantUtils utils;
 
     /**
      * Everything is set up here
@@ -136,10 +134,11 @@ public class EnchantmentTokens extends JavaPlugin {
         getLogger().info("Registering sign listener");
         signHandler = new SignPacketHandler(protocolManager, this, enchantmentHandler.getEnchantments(), Objects.requireNonNull(getConfig().getString("currency")).equalsIgnoreCase("gems"));
 
+        utils = new EnchantUtils(enchantmentHandler, playerHandler, listenerHandler, signHandler.getSigns());
+
         if (Bukkit.getPluginManager().isPluginEnabled(this)) {
             enchantmentPickerManager = new EnchantmentPickerManager(enchantmentHandler, getConfig().getConfigurationSection("enchants"));
             registerCommands();
-            registerListeners();
         }
 
         loader.getAddons().forEach(EnchantmentAddon::onEnable);
@@ -190,7 +189,7 @@ public class EnchantmentTokens extends JavaPlugin {
     }
 
     private void registerCommands() {
-        Objects.requireNonNull(getCommand("adminenchant")).setExecutor(new EnchantCmd(this));
+        Objects.requireNonNull(getCommand("adminenchant")).setExecutor(new EnchantCmd(enchantmentHandler, utils));
         Objects.requireNonNull(getCommand("adminenchant")).setTabCompleter(new EnchantTabCompleter(this));
 
         Objects.requireNonNull(getCommand("addgems")).setExecutor(new AddGemCmd(this));
@@ -248,5 +247,9 @@ public class EnchantmentTokens extends JavaPlugin {
 
     public int getVersion() { return version; }
 
-    public List<Location> getSigns() { return signHandler.getSigns(); }
+    public SignPacketHandler getSignHandler() { return signHandler; }
+
+    public EnchantUtils getUtils() {
+        return utils;
+    }
 }

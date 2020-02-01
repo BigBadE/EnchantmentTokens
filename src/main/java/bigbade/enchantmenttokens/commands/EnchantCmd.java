@@ -17,11 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantUtils;
 import bigbade.enchantmenttokens.api.EnchantmentBase;
 import bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
 import bigbade.enchantmenttokens.localization.TranslatedMessage;
+import bigbade.enchantmenttokens.utils.EnchantmentHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -33,10 +33,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 
 public class EnchantCmd implements CommandExecutor {
-    private EnchantmentTokens main;
+    private EnchantmentHandler handler;
+    private EnchantUtils utils;
 
-    public EnchantCmd(EnchantmentTokens main) {
-        this.main = main;
+    public EnchantCmd(EnchantmentHandler handler, EnchantUtils utils) {
+        this.handler = handler;
+        this.utils = utils;
     }
 
     @Override
@@ -52,14 +54,14 @@ public class EnchantCmd implements CommandExecutor {
             }
             String name = nameBuilder.toString();
             ItemStack item = ((Player) sender).getInventory().getItemInMainHand();
-            EnchantUtils.addEnchantment(item, name, main, (Player) sender, true);
-            for (EnchantmentBase enchant : main.getVanillaEnchantments()) {
+            utils.addEnchantment(item, name, (Player) sender, true);
+            for (EnchantmentBase enchant : handler.getVanillaEnchants()) {
                 if (enchant.getName().equals(args[0])) {
                     addEnchant((Player) sender, item, enchant, Integer.parseInt(args[args.length - 1]), name);
                     return true;
                 }
             }
-            for (Enchantment enchantment : main.getVanillaEnchantments()) {
+            for (Enchantment enchantment : handler.getEnchantments()) {
                 if (enchantment.getKey().getKey().equals(name.toLowerCase().replace("_", ""))) {
                     addEnchant((Player) sender, item, enchantment, Integer.parseInt(args[args.length - 1]), name);
                     return true;

@@ -1,6 +1,5 @@
 package bigbade.enchantmenttokens.listeners;
 
-import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import bigbade.enchantmenttokens.utils.EnchantmentPlayerHandler;
 import org.bukkit.entity.Player;
@@ -29,8 +28,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 public class PlayerLeaveListener implements Listener {
     private EnchantmentPlayerHandler playerHandler;
 
-    public PlayerLeaveListener(EnchantmentTokens main) {
-        this.playerHandler = main.getPlayerHandler();
+    public PlayerLeaveListener(EnchantmentPlayerHandler handler) {
+        this.playerHandler = handler;
     }
 
     @EventHandler

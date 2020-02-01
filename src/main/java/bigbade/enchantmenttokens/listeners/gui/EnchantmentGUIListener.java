@@ -17,13 +17,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantUtils;
 import bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import bigbade.enchantmenttokens.api.SubInventory;
 import bigbade.enchantmenttokens.commands.EnchantMenuCmd;
 import bigbade.enchantmenttokens.gui.EnchantmentGUI;
 import bigbade.enchantmenttokens.gui.EnchantmentPickerManager;
+import bigbade.enchantmenttokens.utils.EnchantmentPlayerHandler;
 import org.bukkit.Material;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.entity.Player;
@@ -38,7 +38,9 @@ import java.util.List;
 
 public class EnchantmentGUIListener implements Listener {
     private EnchantmentPickerManager enchantmentPickerManager;
-    private EnchantmentTokens main;
+    private EnchantmentPlayerHandler handler;
+    private EnchantUtils utils;
+
     private int version;
 
     private static String[] c = {"", "C", "CC", "CCC", "CD", "D",
@@ -48,15 +50,16 @@ public class EnchantmentGUIListener implements Listener {
     private static String[] i = {"", "I", "II", "III", "IV", "V",
             "VI", "VII", "VIII", "IX"};
 
-    public EnchantmentGUIListener(EnchantmentTokens main, EnchantmentPickerManager enchantmentPickerManager, int version) {
+    public EnchantmentGUIListener(EnchantmentPlayerHandler handler, EnchantmentPickerManager enchantmentPickerManager, EnchantUtils utils, int version) {
         this.enchantmentPickerManager = enchantmentPickerManager;
-        this.main = main;
+        this.handler = handler;
         this.version = version;
+        this.utils = utils;
     }
 
     private void handleClick(ItemStack item, Player player, int id) {
         SubInventory inventory = null;
-        EnchantmentPlayer enchantPlayer = main.getPlayerHandler().getPlayer(player);
+        EnchantmentPlayer enchantPlayer = handler.getPlayer(player);
 
         switch (id) {
             case 1:
@@ -147,7 +150,7 @@ public class EnchantmentGUIListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
-        EnchantmentPlayer enchantPlayer = main.getPlayerHandler().getPlayer(player);
+        EnchantmentPlayer enchantPlayer = handler.getPlayer(player);
         if (enchantPlayer.getCurrentGUI() == null) return;
         if (event.getInventory().equals(enchantPlayer.getCurrentGUI().getInventory())) {
             event.setCancelled(true);
@@ -158,7 +161,7 @@ public class EnchantmentGUIListener implements Listener {
                 if (clicked != null) {
                     if (clicked.getType() == Material.BARRIER) {
                         EnchantmentGUI current = enchantPlayer.getCurrentGUI();
-                        EnchantmentGUI gui = new EnchantmentGUI(EnchantMenuCmd.genInventory(player, main.getPlayerHandler(), main.getVersion()));
+                        EnchantmentGUI gui = new EnchantmentGUI(EnchantMenuCmd.genInventory(player, handler, version));
                         gui.getInventory().setItem(4, current.getInventory().getItem(4));
                         enchantPlayer.setCurrentGUI(null);
                         player.openInventory(gui.getInventory());
@@ -166,7 +169,7 @@ public class EnchantmentGUIListener implements Listener {
                     } else {
                         if (event.getCurrentItem() != null) {
                             SubInventory inventory = (SubInventory) enchantPlayer.getCurrentGUI();
-                            EnchantUtils.addEnchantment(event.getInventory().getItem(4), event.getCurrentItem().getItemMeta().getDisplayName(), main, (Player) event.getWhoClicked(), false);
+                            utils.addEnchantment(event.getInventory().getItem(4), event.getCurrentItem().getItemMeta().getDisplayName(), (Player) event.getWhoClicked(), false);
                             handleClick(event.getInventory().getItem(4), (Player) event.getWhoClicked(), inventory.getMaterial());
                         }
                     }
@@ -177,7 +180,7 @@ public class EnchantmentGUIListener implements Listener {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
-        EnchantmentPlayer enchantPlayer = main.getPlayerHandler().getPlayer((Player) event.getPlayer());
+        EnchantmentPlayer enchantPlayer = handler.getPlayer((Player) event.getPlayer());
         if (enchantPlayer.getCurrentGUI() != null && enchantPlayer.getCurrentGUI().getInventory().equals(event.getInventory())) {
             enchantPlayer.setCurrentGUI(null);
             event.getPlayer().openInventory(event.getInventory());

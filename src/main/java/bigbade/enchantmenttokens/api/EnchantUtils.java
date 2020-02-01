@@ -17,9 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
 import bigbade.enchantmenttokens.localization.TranslatedMessage;
+import bigbade.enchantmenttokens.utils.EnchantmentHandler;
+import bigbade.enchantmenttokens.utils.EnchantmentPlayerHandler;
+import bigbade.enchantmenttokens.utils.ListenerHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.enchantments.Enchantment;
@@ -32,30 +34,42 @@ import java.util.List;
 import java.util.Map;
 
 public class EnchantUtils {
-    public static void addEnchantment(ItemStack itemStack, String name, EnchantmentTokens main, Player player, boolean simulate) {
-        for (EnchantmentBase base : main.getEnchantments()) {
+    private EnchantmentHandler handler;
+    private EnchantmentPlayerHandler playerHandler;
+    private ListenerHandler listenerHandler;
+    private List<Location> signs;
+
+    public EnchantUtils(EnchantmentHandler handler, EnchantmentPlayerHandler playerHandler, ListenerHandler listenerHandler, List<Location> signs) {
+        this.handler = handler;
+        this.playerHandler = playerHandler;
+        this.listenerHandler = listenerHandler;
+        this.signs = signs;
+    }
+
+    public void addEnchantment(ItemStack itemStack, String name, Player player, boolean simulate) {
+        for (EnchantmentBase base : handler.getEnchantments()) {
             if (base.getName().equals(name))
                 if (base.canEnchantItem(itemStack)) {
-                    addEnchantment(itemStack, base, player, main, simulate);
+                    addEnchantment(itemStack, base, player, simulate);
                 }
         }
-        for (VanillaEnchant base : main.getVanillaEnchantments()) {
+        for (VanillaEnchant base : handler.getVanillaEnchants()) {
             if (base.getName().equals(name))
                 if (base.canEnchantItem(itemStack)) {
-                    addEnchantment(itemStack, base, player, main, simulate);
+                    addEnchantment(itemStack, base, player, simulate);
                 }
         }
         player.sendMessage(TranslatedMessage.translate("enchantment.add.fail"));
     }
 
-    private static void addEnchantment(ItemStack item, EnchantmentBase base, Player player, EnchantmentTokens main, boolean simulate) {
+    private void addEnchantment(ItemStack item, EnchantmentBase base, Player player, boolean simulate) {
         int level = getLevel(item, base);
         if (level > base.getMaxLevel()) {
             player.sendMessage(TranslatedMessage.translate("enchantment.max.message"));
             return;
         }
         long price = base.getDefaultPrice(level);
-        EnchantmentPlayer enchantmentPlayer = main.getPlayerHandler().getPlayer(player);
+        EnchantmentPlayer enchantmentPlayer = playerHandler.getPlayer(player);
         if (enchantmentPlayer.getGems() >= price) {
             if (!simulate)
                 enchantmentPlayer.addGems(-price);
@@ -87,8 +101,8 @@ public class EnchantUtils {
             }
             meta.setLore(lore);
             item.setItemMeta(meta);
-            updateSigns(level, base, main.getSigns(), enchantmentPlayer);
-            main.getListenerHandler().onEnchant(item, base, player);
+            updateSigns(level, base, signs, enchantmentPlayer);
+            listenerHandler.onEnchant(item, base, player);
         } else
             player.sendMessage(TranslatedMessage.translate("enchantment.bought.fail", getPriceString(enchantmentPlayer, level, base)));
     }

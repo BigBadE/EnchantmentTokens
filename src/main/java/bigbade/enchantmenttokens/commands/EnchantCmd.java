@@ -57,13 +57,13 @@ public class EnchantCmd implements CommandExecutor {
             utils.addEnchantment(item, name, (Player) sender, true);
             for (EnchantmentBase enchant : handler.getVanillaEnchants()) {
                 if (enchant.getName().equals(args[0])) {
-                    addEnchant((Player) sender, item, enchant, Integer.parseInt(args[args.length - 1]), name);
+                    addEnchant((Player) sender, item, enchant, Integer.parseInt(args[args.length - 1]));
                     return true;
                 }
             }
             for (Enchantment enchantment : handler.getEnchantments()) {
                 if (enchantment.getKey().getKey().equals(name.toLowerCase().replace("_", ""))) {
-                    addEnchant((Player) sender, item, enchantment, Integer.parseInt(args[args.length - 1]), name);
+                    addEnchant((Player) sender, item, enchantment, Integer.parseInt(args[args.length - 1]));
                     return true;
                 }
             }
@@ -73,13 +73,13 @@ public class EnchantCmd implements CommandExecutor {
         return true;
     }
 
-    private void addEnchant(Player player, ItemStack item, Enchantment base, int level, String name) {
+    private void addEnchant(Player player, ItemStack item, Enchantment base, int level) {
         item.addEnchantment(base, level);
         ItemMeta meta = item.getItemMeta();
         assert meta != null;
         if(meta.getLore() == null)
             meta.setLore(new ArrayList<>());
         meta.getLore().add(base.getName() + ": " + EnchantmentGUIListener.getRomanNumeral(level));
-        player.sendMessage(TranslatedMessage.translate("command.add", name));
+        player.sendMessage(TranslatedMessage.translate("command.add", base.getName()));
     }
 }

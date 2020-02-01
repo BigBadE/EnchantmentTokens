@@ -67,7 +67,7 @@ public class ListenerHandler {
         Bukkit.getPluginManager().registerEvents(new ChunkUnloadListener(main.getSignHandler().getSigns()), main);
         Bukkit.getPluginManager().registerEvents(new PlayerLeaveListener(main.getPlayerHandler()), main);
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(main.getPlayerHandler()), main);
-        
+
         Bukkit.getPluginManager().registerEvents(new BlockBreakListener(enchantListeners.get(ListenerType.BLOCKBREAK), main.getSignHandler()), main);
         Bukkit.getPluginManager().registerEvents(new ArmorEquipListener(enchantListeners.get(ListenerType.EQUIP), enchantListeners.get(ListenerType.UNEQUIP)), main);
         Bukkit.getPluginManager().registerEvents(new BlockDamageListener(enchantListeners.get(ListenerType.BLOCKDAMAGED)), main);
@@ -90,10 +90,10 @@ public class ListenerHandler {
 
             addon.loadConfig(configuration);
             for (Method method : addon.getClass().getDeclaredMethods()) {
-                if (method.isAnnotationPresent(EnchantListener.class) && method.getReturnType() == EnchantmentListener.class) {
-                    ListenerType type = method.getAnnotation(EnchantListener.class).type();
-                    enchantListeners.get(type).add((EnchantmentListener<EnchantmentEvent<? extends Event>>) ReflectionManager.invoke(method, addon), addon);
-                }
+                if (!method.isAnnotationPresent(EnchantListener.class) || method.getReturnType() != EnchantmentListener.class)
+                    continue;
+                ListenerType type = method.getAnnotation(EnchantListener.class).type();
+                enchantListeners.get(type).add((EnchantmentListener<EnchantmentEvent<? extends Event>>) ReflectionManager.invoke(method, addon), addon);
             }
         }
     }
@@ -141,29 +141,28 @@ public class ListenerHandler {
                     enchantSection.set("enabled", true);
                 }
 
-                if (enabled) {
-                    assert enchant != null;
-                    enchant.loadConfig();
-                    enchantments.add(enchant);
-                    methodCheck:
-                    for (Method method : clazz.getDeclaredMethods()) {
-                        if (method.isAnnotationPresent(EnchantListener.class) && method.getReturnType() == EnchantmentListener.class) {
-                            ListenerType type = method.getAnnotation(EnchantListener.class).type();
-                            if (enchant.getItemTarget() != null) {
-                                if (!type.canTarget(enchant.getItemTarget())) {
-                                    main.getLogger().warning("Cannot add listener " + type + " to target " + enchant.getItemTarget());
-                                    continue;
-                                }
-                            } else
-                                for (Material material : enchant.getTargets()) {
-                                    if (!type.canTarget(material)) {
-                                        main.getLogger().warning("Cannot add listener " + type + " to target " + material);
-                                    }
-                                    continue methodCheck;
-                                }
-                            enchantListeners.get(type).add((EnchantmentListener<EnchantmentEvent<? extends Event>>) ReflectionManager.invoke(method, enchant), enchant);
+                if (!enabled) continue;
+                assert enchant != null;
+                enchant.loadConfig();
+                enchantments.add(enchant);
+                methodCheck:
+                for (Method method : clazz.getDeclaredMethods()) {
+                    if (!method.isAnnotationPresent(EnchantListener.class) || method.getReturnType() != EnchantmentListener.class)
+                        continue;
+                    ListenerType type = method.getAnnotation(EnchantListener.class).type();
+                    if (enchant.getItemTarget() != null) {
+                        if (!type.canTarget(enchant.getItemTarget())) {
+                            main.getLogger().warning("Cannot add listener " + type + " to target " + enchant.getItemTarget());
+                            continue;
                         }
-                    }
+                    } else
+                        for (Material material : enchant.getTargets()) {
+                            if (!type.canTarget(material)) {
+                                main.getLogger().warning("Cannot add listener " + type + " to target " + material);
+                            }
+                            continue methodCheck;
+                        }
+                    enchantListeners.get(type).add((EnchantmentListener<EnchantmentEvent<? extends Event>>) ReflectionManager.invoke(method, enchant), enchant);
                 }
             }
         }

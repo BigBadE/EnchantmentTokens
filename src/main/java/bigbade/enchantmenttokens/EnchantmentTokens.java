@@ -132,7 +132,7 @@ public class EnchantmentTokens extends JavaPlugin {
 
         ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
         getLogger().info("Registering sign listener");
-        signHandler = new SignPacketHandler(protocolManager, this, enchantmentHandler.getEnchantments(), Objects.requireNonNull(getConfig().getString("currency")).equalsIgnoreCase("gems"));
+        signHandler = new SignPacketHandler(protocolManager, this, Objects.requireNonNull(getConfig().getString("currency")).equalsIgnoreCase("gems"));
 
         utils = new EnchantUtils(enchantmentHandler, playerHandler, listenerHandler, signHandler.getSigns());
 

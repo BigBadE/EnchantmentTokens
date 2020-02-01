@@ -73,4 +73,9 @@ public class GemCurrencyHandler implements CurrencyHandler {
     public void savePlayer(Player player) {
         CompletableFuture.runAsync(() -> fileLoader.removePlayer(player));
     }
+
+    @Override
+    public String name() {
+        return "gemsOld";
+    }
 }

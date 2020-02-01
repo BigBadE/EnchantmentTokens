@@ -128,11 +128,10 @@ public class EnchantmentGUIListener implements Listener {
                 enchantPlayer.setCurrentGUI(null);
                 player.closeInventory();
         }
-        if (inventory != null) {
-            enchantPlayer.setCurrentGUI(null);
-            player.openInventory(inventory.getInventory());
-            enchantPlayer.setCurrentGUI(inventory);
-        }
+        if (inventory == null) return;
+        enchantPlayer.setCurrentGUI(null);
+        player.openInventory(inventory.getInventory());
+        enchantPlayer.setCurrentGUI(inventory);
     }
 
     @EventHandler
@@ -142,8 +141,8 @@ public class EnchantmentGUIListener implements Listener {
         assert clicked.getItemMeta() != null;
         Player player = (Player) event.getWhoClicked();
         EnchantmentPlayer enchantPlayer = handler.getPlayer(player);
-        if (enchantPlayer.getCurrentGUI() == null) return;
-        if (!event.getInventory().equals(enchantPlayer.getCurrentGUI().getInventory())) return;
+        if (enchantPlayer.getCurrentGUI() == null || !event.getInventory().equals(enchantPlayer.getCurrentGUI().getInventory()))
+            return;
         event.setCancelled(true);
         if (!(enchantPlayer.getCurrentGUI() instanceof SubInventory)) {
             handleClick(event.getInventory().getItem(4), (Player) event.getWhoClicked(), event.getSlot() - 8);
@@ -158,7 +157,6 @@ public class EnchantmentGUIListener implements Listener {
             player.openInventory(gui.getInventory());
             enchantPlayer.setCurrentGUI(gui);
         } else {
-            if (event.getCurrentItem() == null) return;
             SubInventory inventory = (SubInventory) enchantPlayer.getCurrentGUI();
             utils.addEnchantment(event.getInventory().getItem(4), clicked.getItemMeta().getDisplayName(), (Player) event.getWhoClicked(), false);
             handleClick(event.getInventory().getItem(4), (Player) event.getWhoClicked(), inventory.getMaterial());

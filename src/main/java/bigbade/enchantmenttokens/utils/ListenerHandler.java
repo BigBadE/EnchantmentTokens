@@ -95,6 +95,8 @@ public class ListenerHandler {
                 ListenerType type = method.getAnnotation(EnchantListener.class).type();
                 enchantListeners.get(type).add((EnchantmentListener<EnchantmentEvent<? extends Event>>) ReflectionManager.invoke(method, addon), addon);
             }
+
+            addon.onEnable();
         }
     }
 

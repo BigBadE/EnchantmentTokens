@@ -1,6 +1,6 @@
 EnchantmentTokens is a plugin allowing for easy addition of custom enchantments into Minecraft.
 
-[![Coverage Status](https://coveralls.io/repos/github/BigBadE/EnchantmentTokens/badge.svg?branch=master)](https://coveralls.io/github/BigBadE/EnchantmentTokens?branch=master)
+[![BCH compliance](https://bettercodehub.com/edge/badge/BigBadE/EnchantmentTokens?branch=master)](https://bettercodehub.com/)
 
 [![CodeScene general](https://codescene.io/images/analyzed-by-codescene-badge.svg)](https://codescene.io/projects/6865)
 [![CodeScene Code Health](https://codescene.io/projects/6865/status-badges/code-health)](https://codescene.io/projects/6865)

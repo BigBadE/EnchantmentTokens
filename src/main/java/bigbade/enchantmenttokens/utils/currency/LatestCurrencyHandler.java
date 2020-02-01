@@ -61,4 +61,9 @@ public class LatestCurrencyHandler implements CurrencyHandler {
     public void savePlayer(Player player) {
         player.getPersistentDataContainer().set(key, PersistentDataType.LONG, gems);
     }
+
+    @Override
+    public String name() {
+        return "gemsNew";
+    }
 }

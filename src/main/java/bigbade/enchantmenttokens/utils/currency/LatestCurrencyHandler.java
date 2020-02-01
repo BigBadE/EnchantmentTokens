@@ -48,11 +48,6 @@ public class LatestCurrencyHandler implements CurrencyHandler {
     }
 
     @Override
-    public void removeAmount(long amount) {
-        gems -= amount;
-    }
-
-    @Override
     public void addAmount(long amount) {
         gems += amount;
     }

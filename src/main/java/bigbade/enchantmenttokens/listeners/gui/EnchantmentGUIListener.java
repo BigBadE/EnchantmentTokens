@@ -38,7 +38,6 @@ import java.util.List;
 
 public class EnchantmentGUIListener implements Listener {
     private EnchantmentPickerManager enchantmentPickerManager;
-    private EnchantMenuCmd cmd;
     private EnchantmentTokens main;
     private int version;
 
@@ -49,9 +48,8 @@ public class EnchantmentGUIListener implements Listener {
     private static String[] i = {"", "I", "II", "III", "IV", "V",
             "VI", "VII", "VIII", "IX"};
 
-    public EnchantmentGUIListener(EnchantmentTokens main, EnchantmentPickerManager enchantmentPickerManager, EnchantMenuCmd cmd, int version) {
+    public EnchantmentGUIListener(EnchantmentTokens main, EnchantmentPickerManager enchantmentPickerManager, int version) {
         this.enchantmentPickerManager = enchantmentPickerManager;
-        this.cmd = cmd;
         this.main = main;
         this.version = version;
     }
@@ -160,7 +158,7 @@ public class EnchantmentGUIListener implements Listener {
                 if (clicked != null) {
                     if (clicked.getType() == Material.BARRIER) {
                         EnchantmentGUI current = enchantPlayer.getCurrentGUI();
-                        EnchantmentGUI gui = new EnchantmentGUI(cmd.genInventory(player));
+                        EnchantmentGUI gui = new EnchantmentGUI(EnchantMenuCmd.genInventory(player, main.getPlayerHandler(), main.getVersion()));
                         gui.getInventory().setItem(4, current.getInventory().getItem(4));
                         enchantPlayer.setCurrentGUI(null);
                         player.openInventory(gui.getInventory());

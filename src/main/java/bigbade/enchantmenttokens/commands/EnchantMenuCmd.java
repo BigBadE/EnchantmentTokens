@@ -17,10 +17,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import bigbade.enchantmenttokens.gui.EnchantmentGUI;
 import bigbade.enchantmenttokens.localization.TranslatedMessage;
+import bigbade.enchantmenttokens.utils.EnchantmentPlayerHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -36,26 +36,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EnchantMenuCmd implements CommandExecutor {
-    private ItemStack glassPane = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
+    private static ItemStack glassPane = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
     private int version;
-    private EnchantmentTokens main;
+    private EnchantmentPlayerHandler handler;
 
-    public EnchantMenuCmd(int version, EnchantmentTokens main) {
+    public EnchantMenuCmd(int version, EnchantmentPlayerHandler handler) {
         this.version = version;
-        this.main = main;
+        this.handler = handler;
     }
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {
         if (commandSender instanceof Player) {
-            Inventory inv = genInventory((Player) commandSender);
+            Inventory inv = genInventory((Player) commandSender, handler, version);
             if (inv == null)
                 commandSender.sendMessage(TranslatedMessage.translate("command.enchant.held"));
         }
         return true;
     }
 
-    public Inventory genInventory(Player player) {
+    public static Inventory genInventory(Player player, EnchantmentPlayerHandler handler, int version) {
         Inventory inventory = Bukkit.createInventory(null, 27, "Enchantments");
         ItemStack item = player.getInventory().getItemInMainHand().clone();
         ItemMeta meta = item.getItemMeta();
@@ -68,7 +68,7 @@ public class EnchantMenuCmd implements CommandExecutor {
         List<String> lore = meta.getLore();
         if (lore == null)
             lore = new ArrayList<>();
-        EnchantmentPlayer enchantPlayer = main.getPlayerHandler().getPlayer(player);
+        EnchantmentPlayer enchantPlayer = handler.getPlayer(player);
         if (enchantPlayer.usingGems())
             lore.add(TranslatedMessage.translate("enchantment.price") + "0G");
         else
@@ -108,7 +108,7 @@ public class EnchantMenuCmd implements CommandExecutor {
         return inventory;
     }
 
-    private ItemStack makeItem(Material material, String name) {
+    private static ItemStack makeItem(Material material, String name) {
         ItemStack stack = new ItemStack(material);
         ItemMeta meta = stack.getItemMeta();
         assert meta != null;

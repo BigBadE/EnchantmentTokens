@@ -23,8 +23,7 @@ import bigbade.enchantmenttokens.api.EnchantmentLoader;
 import bigbade.enchantmenttokens.api.VanillaEnchant;
 import bigbade.enchantmenttokens.commands.*;
 import bigbade.enchantmenttokens.gui.EnchantmentPickerManager;
-import bigbade.enchantmenttokens.listeners.*;
-import bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
+import bigbade.enchantmenttokens.listeners.SignPacketHandler;
 import bigbade.enchantmenttokens.localization.TranslatedMessage;
 import bigbade.enchantmenttokens.utils.ConfigurationManager;
 import bigbade.enchantmenttokens.utils.EnchantmentHandler;
@@ -33,12 +32,11 @@ import bigbade.enchantmenttokens.utils.ListenerHandler;
 import bigbade.enchantmenttokens.utils.currency.CurrencyHandler;
 import bigbade.enchantmenttokens.utils.currency.GemCurrencyHandler;
 import bigbade.enchantmenttokens.utils.currency.LatestCurrencyHandler;
-import com.codingforcookies.armorequip.ArmorListener;
-import com.codingforcookies.armorequip.DispenserArmorListener;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -139,7 +137,7 @@ public class EnchantmentTokens extends JavaPlugin {
         signHandler = new SignPacketHandler(protocolManager, this, enchantmentHandler.getEnchantments(), Objects.requireNonNull(getConfig().getString("currency")).equalsIgnoreCase("gems"));
 
         if (Bukkit.getPluginManager().isPluginEnabled(this)) {
-            enchantmentPickerManager = new EnchantmentPickerManager(this);
+            enchantmentPickerManager = new EnchantmentPickerManager(enchantmentHandler, getConfig().getConfigurationSection("enchants"));
             registerCommands();
             registerListeners();
         }
@@ -188,17 +186,7 @@ public class EnchantmentTokens extends JavaPlugin {
     }
 
     private void registerListeners() {
-        Bukkit.getPluginManager().registerEvents(new ArmorListener(new ArrayList<>()), this);
-        Bukkit.getPluginManager().registerEvents(new DispenserArmorListener(), this);
 
-        Bukkit.getPluginManager().registerEvents(new SignPlaceListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new SignClickListener(this), this);
-
-        Bukkit.getPluginManager().registerEvents(new EnchantmentGUIListener(this, enchantmentPickerManager, menuCmd, version), this);
-
-        Bukkit.getPluginManager().registerEvents(new ChunkUnloadListener(signHandler.getSigns()), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerLeaveListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(playerHandler), this);
     }
 
     private void registerCommands() {
@@ -208,7 +196,7 @@ public class EnchantmentTokens extends JavaPlugin {
         Objects.requireNonNull(getCommand("addgems")).setExecutor(new AddGemCmd(this));
         Objects.requireNonNull(getCommand("addgems")).setTabCompleter(new AddGemTabCompleter());
 
-        menuCmd = new EnchantMenuCmd(version, this);
+        menuCmd = new EnchantMenuCmd(version, playerHandler);
         Objects.requireNonNull(getCommand("tokenenchant")).setExecutor(menuCmd);
         Objects.requireNonNull(getCommand("tokenenchant")).setTabCompleter(new GenericTabCompleter());
 
@@ -242,6 +230,10 @@ public class EnchantmentTokens extends JavaPlugin {
         return enchantmentHandler;
     }
 
+    public EnchantmentPickerManager getEnchantmentPickerManager() {
+        return enchantmentPickerManager;
+    }
+
     public ListenerHandler getListenerHandler() {
         return listenerHandler;
     }
@@ -253,4 +245,8 @@ public class EnchantmentTokens extends JavaPlugin {
     public CurrencyHandler getCurrencyHandler() {
         return currencyHandler;
     }
+
+    public int getVersion() { return version; }
+
+    public List<Location> getSigns() { return signHandler.getSigns(); }
 }

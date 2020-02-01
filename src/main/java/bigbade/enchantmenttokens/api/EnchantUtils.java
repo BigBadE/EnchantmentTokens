@@ -32,119 +32,89 @@ import java.util.List;
 import java.util.Map;
 
 public class EnchantUtils {
-    public static void addEnchantment(ItemStack itemStack, String name, EnchantmentTokens main, Player player, boolean key) {
+    public static void addEnchantment(ItemStack itemStack, String name, EnchantmentTokens main, Player player, boolean simulate) {
         for (EnchantmentBase base : main.getEnchantments()) {
             if (base.getName().equals(name))
                 if (base.canEnchantItem(itemStack)) {
-                    long price;
-                    int level = base.getStartLevel();
-                    for (Map.Entry<Enchantment, Integer> enchants : itemStack.getEnchantments().entrySet()) {
-                        if (enchants.getKey().getKey().equals(base.getKey())) {
-                            level = enchants.getValue();
-                            break;
-                        }
-                    }
-                    if (level > base.getMaxLevel()) {
-                        player.sendMessage(TranslatedMessage.translate("enchantment.max.message"));
-                        return;
-                    }
-                    price = base.getDefaultPrice(level);
-                    EnchantmentPlayer player1 = main.getPlayerHandler().getPlayer(player);
-                    String priceString;
-                    if (player1.usingGems())
-                        priceString = base.getDefaultPrice(level) + "G";
-                    else
-                        priceString = TranslatedMessage.translate("dollar.symbol", "" + base.getDefaultPrice(level));
-                    if (player1.getGems() >= price) {
-                        if (key)
-                            player1.addGems(-price);
-                        player.sendMessage(TranslatedMessage.translate("enchantment.bought.success", base.getName(), "" + level));
-                        ItemMeta meta = itemStack.getItemMeta();
-                        assert meta != null;
-                        meta.addEnchant(base, level + 1, true);
-                        List<String> lore;
-                        lore = meta.getLore();
-                        if (lore == null)
-                            lore = new ArrayList<>();
-                        String temp = null;
-                        String priceMessage = TranslatedMessage.translate("enchantment.price");
-                        if (!key) {
-                            if (lore.get(lore.size() - 1).startsWith(priceMessage)) {
-                                temp = lore.get(lore.size() - 1);
-                                lore.remove(temp);
-                            }
-                        }
-                        if (level != 0)
-                            lore.remove(ChatColor.GRAY + base.getName() + " " + EnchantmentGUIListener.getRomanNumeral(level - 1));
-                        lore.add(ChatColor.GRAY + base.getName() + " " + EnchantmentGUIListener.getRomanNumeral(level));
-                        if (temp != null) {
-                            int currentPrice = Integer.parseInt(temp.substring(9, temp.length() - 1));
-                            if (player1.usingGems())
-                                temp = priceMessage + (currentPrice + base.getDefaultPrice(level)) + "G";
-                            else
-                                temp = priceMessage + TranslatedMessage.translate("dollar.symbol", "" + (currentPrice + base.getDefaultPrice(level)));
-                            lore.add(temp);
-                        }
-                        meta.setLore(lore);
-                        itemStack.setItemMeta(meta);
-                        for (Location location : main.signHandler.getSigns())
-                            if (level >= base.getMaxLevel())
-                                player.sendSignChange(location, new String[]{"[" + TranslatedMessage.translate("enchantment") + "]", base.getName(), TranslatedMessage.translate("enchantment.price.maxed"), ""});
-                            else {
-                                player.sendSignChange(location, new String[]{"[" + TranslatedMessage.translate("enchantment") + "]", base.getName(), priceString, ""});
-                            }
-                        main.getListenerHandler().onEnchant(itemStack, base, player);
-                    } else
-
-                        player.sendMessage(TranslatedMessage.translate("enchantment.bought.fail", priceString));
-
-                    return;
+                    addEnchantment(itemStack, base, player, main, simulate);
                 }
         }
         for (VanillaEnchant base : main.getVanillaEnchantments()) {
-            boolean correct = false;
             if (base.getName().equals(name))
-                correct = true;
-            if (correct)
                 if (base.canEnchantItem(itemStack)) {
-                    long price;
-                    int level = 1;
-                    for (Map.Entry<Enchantment, Integer> enchants : itemStack.getEnchantments().entrySet())
-                        if (enchants.getKey().getKey().equals(base.getKey())) {
-                            level = enchants.getValue() + 1;
-                            break;
-                        }
-                    if (level > base.getMaxLevel()) {
-                        player.sendMessage(TranslatedMessage.translate("enchantment.bought.max"));
-                        return;
-                    }
-                    price = base.getDefaultPrice(level);
-                    EnchantmentPlayer player1 = main.getPlayerHandler().getPlayer(player);
-                    if (player1.getGems() >= price) {
-                        player1.addGems(-price);
-                        player.sendMessage(TranslatedMessage.translate("enchantment.bought.success", base.getName(), "" + level));
-                        itemStack.addEnchantment(base, level);
-                        ItemMeta meta = itemStack.getItemMeta();
-                        assert meta != null;
-                        List<String> lore = meta.getLore();
-                        if (lore == null)
-                            lore = new ArrayList<>();
-                        lore.add(base.getName() + ": " + EnchantmentGUIListener.getRomanNumeral(level));
-                        meta.setLore(lore);
-                        itemStack.setItemMeta(meta);
-                        for (Location location : main.signHandler.getSigns())
-                            player.sendSignChange(location, new String[]{"[" + TranslatedMessage.translate("enchantment") + "]", base.getName(), "", ""});
-                    } else {
-                        String priceString;
-                        if(player1.usingGems())
-                            priceString = price + "G";
-                        else
-                            priceString = TranslatedMessage.translate("dollar.symbol") + price;
-                        player.sendMessage(TranslatedMessage.translate("enchantment.bought.fail", priceString));
-                    }
-                    return;
+                    addEnchantment(itemStack, base, player, main, simulate);
                 }
         }
         player.sendMessage(TranslatedMessage.translate("enchantment.add.fail"));
+    }
+
+    private static void addEnchantment(ItemStack item, EnchantmentBase base, Player player, EnchantmentTokens main, boolean simulate) {
+        int level = getLevel(item, base);
+        if (level > base.getMaxLevel()) {
+            player.sendMessage(TranslatedMessage.translate("enchantment.max.message"));
+            return;
+        }
+        long price = base.getDefaultPrice(level);
+        EnchantmentPlayer enchantmentPlayer = main.getPlayerHandler().getPlayer(player);
+        if (enchantmentPlayer.getGems() >= price) {
+            if (!simulate)
+                enchantmentPlayer.addGems(-price);
+            player.sendMessage(TranslatedMessage.translate("enchantment.bought.success", base.getName(), "" + level));
+            ItemMeta meta = item.getItemMeta();
+            assert meta != null;
+            meta.addEnchant(base, level + 1, true);
+            List<String> lore;
+            lore = meta.getLore();
+            if (lore == null)
+                lore = new ArrayList<>();
+            String temp = null;
+            String priceMessage = TranslatedMessage.translate("enchantment.price");
+            if (lore.size() > 0)
+                if (lore.get(lore.size() - 1).startsWith(priceMessage)) {
+                    temp = lore.get(lore.size() - 1);
+                    lore.remove(temp);
+                }
+            if (level != 0)
+                lore.remove(ChatColor.GRAY + base.getName() + " " + EnchantmentGUIListener.getRomanNumeral(level - 1));
+            lore.add(ChatColor.GRAY + base.getName() + " " + EnchantmentGUIListener.getRomanNumeral(level));
+            if (temp != null) {
+                int currentPrice = Integer.parseInt(temp.substring(9, temp.length() - 1));
+                if (enchantmentPlayer.usingGems())
+                    temp = priceMessage + (currentPrice + base.getDefaultPrice(level)) + "G";
+                else
+                    temp = priceMessage + TranslatedMessage.translate("dollar.symbol", "" + (currentPrice + base.getDefaultPrice(level)));
+                lore.add(temp);
+            }
+            meta.setLore(lore);
+            item.setItemMeta(meta);
+            updateSigns(level, base, main.getSigns(), enchantmentPlayer);
+            main.getListenerHandler().onEnchant(item, base, player);
+        } else
+            player.sendMessage(TranslatedMessage.translate("enchantment.bought.fail", getPriceString(enchantmentPlayer, level, base)));
+    }
+
+    private static int getLevel(ItemStack item, EnchantmentBase enchantment) {
+        for (Map.Entry<Enchantment, Integer> entry : item.getEnchantments().entrySet()) {
+            if (entry.getKey().getKey().equals(enchantment.getKey())) {
+                return entry.getValue();
+            }
+        }
+        return enchantment.getStartLevel();
+    }
+
+    private static String getPriceString(EnchantmentPlayer player, int level, EnchantmentBase base) {
+        if (player.usingGems())
+            return base.getDefaultPrice(level) + "G";
+        else
+            return TranslatedMessage.translate("dollar.symbol", "" + base.getDefaultPrice(level));
+    }
+
+    private static void updateSigns(int level, EnchantmentBase base, List<Location> signs, EnchantmentPlayer player) {
+        for (Location location : signs)
+            if (level >= base.getMaxLevel())
+                player.getPlayer().sendSignChange(location, new String[]{"[" + TranslatedMessage.translate("enchantment") + "]", base.getName(), TranslatedMessage.translate("enchantment.price.maxed"), ""});
+            else {
+                player.getPlayer().sendSignChange(location, new String[]{"[" + TranslatedMessage.translate("enchantment") + "]", base.getName(), getPriceString(player, level, base), ""});
+            }
     }
 }

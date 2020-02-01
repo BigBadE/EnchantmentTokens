@@ -24,11 +24,14 @@ import bigbade.enchantmenttokens.api.EnchantmentBase;
 import bigbade.enchantmenttokens.api.ListenerType;
 import bigbade.enchantmenttokens.events.EnchantmentApplyEvent;
 import bigbade.enchantmenttokens.events.EnchantmentEvent;
-import bigbade.enchantmenttokens.listeners.InventoryMoveListener;
+import bigbade.enchantmenttokens.listeners.*;
 import bigbade.enchantmenttokens.listeners.enchants.ArmorEquipListener;
 import bigbade.enchantmenttokens.listeners.enchants.BlockBreakListener;
 import bigbade.enchantmenttokens.listeners.enchants.BlockDamageListener;
 import bigbade.enchantmenttokens.listeners.enchants.EnchantmentListener;
+import bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
+import com.codingforcookies.armorequip.ArmorListener;
+import com.codingforcookies.armorequip.DispenserArmorListener;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -53,6 +56,18 @@ public class ListenerHandler {
     }
 
     public void registerListeners() {
+        Bukkit.getPluginManager().registerEvents(new ArmorListener(new ArrayList<>()), main);
+        Bukkit.getPluginManager().registerEvents(new DispenserArmorListener(), main);
+
+        Bukkit.getPluginManager().registerEvents(new SignPlaceListener(main.getEnchantmentHandler()), main);
+        Bukkit.getPluginManager().registerEvents(new SignClickListener(main), main);
+
+        Bukkit.getPluginManager().registerEvents(new EnchantmentGUIListener(main, main.getEnchantmentPickerManager(), main.getVersion()), main);
+
+        Bukkit.getPluginManager().registerEvents(new ChunkUnloadListener(main.getSigns()), main);
+        Bukkit.getPluginManager().registerEvents(new PlayerLeaveListener(main), main);
+        Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(main.getPlayerHandler()), main);
+        
         Bukkit.getPluginManager().registerEvents(new BlockBreakListener(enchantListeners.get(ListenerType.BLOCKBREAK), main), main);
         Bukkit.getPluginManager().registerEvents(new ArmorEquipListener(enchantListeners.get(ListenerType.EQUIP), enchantListeners.get(ListenerType.UNEQUIP)), main);
         Bukkit.getPluginManager().registerEvents(new BlockDamageListener(enchantListeners.get(ListenerType.BLOCKDAMAGED)), main);
@@ -152,6 +167,7 @@ public class ListenerHandler {
                 }
             }
         }
+
         Bukkit.getScheduler().runTask(main, () -> {
             main.getLogger().log(Level.INFO, "Finishing loading enchantments");
             main.getEnchantmentHandler().registerEnchants(enchantments);

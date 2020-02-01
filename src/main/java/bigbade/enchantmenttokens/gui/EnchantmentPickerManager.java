@@ -17,9 +17,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantmentBase;
 import bigbade.enchantmenttokens.api.VanillaEnchant;
+import bigbade.enchantmenttokens.utils.EnchantmentHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -31,11 +31,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
 public class EnchantmentPickerManager {
     //Main class
-    private EnchantmentTokens main;
+    private EnchantmentHandler handler;
     //Configuration section for vanilla enchantments
     private ConfigurationSection section;
 
@@ -44,14 +45,9 @@ public class EnchantmentPickerManager {
     //Barrier used for exiting the GUI
     private ItemStack exit = new ItemStack(Material.BARRIER);
 
-    /**
-     * Manager class for the enchantment picking GUI.
-     * @param main Main plugin class
-     */
-    public EnchantmentPickerManager(EnchantmentTokens main) {
-        //Set variables
-        this.main = main;
-        section = main.getConfig().getConfigurationSection("enchants");
+    public EnchantmentPickerManager(EnchantmentHandler handler, ConfigurationSection section) {
+        this.handler = handler;
+        this.section = section;
         //Setup exit item
         ItemMeta meta = exit.getItemMeta();
         assert meta != null;
@@ -83,7 +79,7 @@ public class EnchantmentPickerManager {
 
         inventory.setItem(4, itemStack);
 
-        for (VanillaEnchant enchantment : main.getVanillaEnchantments()) {
+        for (VanillaEnchant enchantment : handler.getVanillaEnchants()) {
             if (enchantment.getItemTarget() == target || enchantment.getItemTarget() == EnchantmentTarget.ALL) {
                 ItemStack item = new ItemStack(enchantment.getIcon());
                 for (Map.Entry<Enchantment, Integer> enchantment1 : itemStack.getEnchantments().entrySet()) {
@@ -102,7 +98,8 @@ public class EnchantmentPickerManager {
                 inventory.addItem(item);
             }
         }
-        for (EnchantmentBase enchantment : main.getEnchantments()) {
+        //TODO translate
+        for (EnchantmentBase enchantment : handler.getEnchantments()) {
             if (enchantment.getItemTarget() == target || enchantment.getItemTarget() == EnchantmentTarget.ALL || enchantment.getTargets().contains(itemStack.getType())) {
                 ItemStack item = new ItemStack(enchantment.getIcon());
                 for (Map.Entry<Enchantment, Integer> enchantment1 : itemStack.getEnchantments().entrySet()) {
@@ -119,7 +116,7 @@ public class EnchantmentPickerManager {
                 if (item.getAmount() > 0) {
                     meta.setLore(Arrays.asList(ChatColor.GRAY + "Price: " + enchantment.getDefaultPrice(item.getAmount()), ChatColor.GRAY + "Level: " + item.getAmount()));
                 } else
-                    meta.setLore(Arrays.asList(ChatColor.GRAY + "MAXED"));
+                    meta.setLore(Collections.singletonList(ChatColor.GRAY + "MAXED"));
                 item.setItemMeta(meta);
                 inventory.addItem(item);
 

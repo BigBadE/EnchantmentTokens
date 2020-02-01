@@ -5,6 +5,8 @@ before_install:
 env:		
     global:		
         - JAVA_TOOL_OPTIONS=-Dhttps.protocols=TLSv1.2
-
+jdk:
+  - oraclejdk8
+  
 after_success:
   - bash <(curl -s https://codecov.io/bash)

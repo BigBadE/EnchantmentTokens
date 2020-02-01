@@ -75,6 +75,18 @@ public class EnchantMenuCmd implements CommandExecutor {
             lore.add(TranslatedMessage.translate("enchantment.price") + " " + TranslatedMessage.translate("dollar.symbol", "0"));
         meta.setLore(lore);
         item.setItemMeta(meta);
+        populate(inventory, item, version);
+        int i = inventory.firstEmpty();
+        while (i > -1 && i < 28) {
+            inventory.setItem(i, glassPane);
+            i = inventory.firstEmpty();
+        }
+        player.openInventory(inventory);
+        enchantPlayer.setCurrentGUI(new EnchantmentGUI(inventory));
+        return inventory;
+    }
+
+    private static void populate(Inventory inventory, ItemStack item, int version) {
         inventory.setItem(4, item);
         inventory.setItem(11, makeItem(Material.DIAMOND_PICKAXE, ChatColor.GREEN + "Tool Enchants"));
         inventory.setItem(12, makeItem(Material.DIAMOND_SWORD, ChatColor.GREEN + "Sword Enchants"));
@@ -98,14 +110,6 @@ public class EnchantMenuCmd implements CommandExecutor {
             inventory.setItem(13, makeItem(Material.FISHING_ROD, ChatColor.GREEN + "Fishing Rod Enchants"));
         inventory.setItem(21, makeItem(Material.EMERALD_BLOCK, ChatColor.GREEN + "Enchant"));
         inventory.setItem(23, makeItem(Material.REDSTONE_BLOCK, ChatColor.RED + "Cancel"));
-        int i = inventory.firstEmpty();
-        while (i > -1 && i < 28) {
-            inventory.setItem(i, glassPane);
-            i = inventory.firstEmpty();
-        }
-        player.openInventory(inventory);
-        enchantPlayer.setCurrentGUI(new EnchantmentGUI(inventory));
-        return inventory;
     }
 
     private static ItemStack makeItem(Material material, String name) {

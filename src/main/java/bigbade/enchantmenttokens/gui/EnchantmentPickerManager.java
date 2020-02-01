@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import bigbade.enchantmenttokens.api.EnchantmentBase;
 import bigbade.enchantmenttokens.api.VanillaEnchant;
+import bigbade.enchantmenttokens.localization.TranslatedMessage;
 import bigbade.enchantmenttokens.utils.EnchantmentHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -57,9 +58,10 @@ public class EnchantmentPickerManager {
 
     /**
      * Generate the GUI with every enchantment in it
-     * @param target target item to generate the GUI for. If this is null, it checks by them item type
+     *
+     * @param target    target item to generate the GUI for. If this is null, it checks by them item type
      * @param itemStack ItemStack that items are being added to
-     * @param name Name of the material
+     * @param name      Name of the material
      * @return Generated enchantment inventory
      */
     public Inventory generateGUI(EnchantmentTarget target, ItemStack itemStack, String name) {
@@ -80,49 +82,40 @@ public class EnchantmentPickerManager {
         inventory.setItem(4, itemStack);
 
         for (VanillaEnchant enchantment : handler.getVanillaEnchants()) {
-            if (enchantment.getItemTarget() == target || enchantment.getItemTarget() == EnchantmentTarget.ALL) {
-                ItemStack item = new ItemStack(enchantment.getIcon());
-                for (Map.Entry<Enchantment, Integer> enchantment1 : itemStack.getEnchantments().entrySet()) {
-                    if (enchantment1.getKey().getKey().equals(enchantment.getKey())) {
-                        item.setAmount(enchantment1.getValue() + 1);
-                        if (item.getAmount() > enchantment.getMaxLevel())
-                            item.setAmount(0);
-                        break;
-                    }
-                }
-                ItemMeta meta = item.getItemMeta();
-                assert meta != null;
-                meta.setDisplayName(ChatColor.GREEN + enchantment.getName());
-                meta.setLore(Arrays.asList(ChatColor.GRAY + "Price: " + section.getConfigurationSection(enchantment.getName()).getConfigurationSection("prices").getLong("" + item.getAmount()), ChatColor.GRAY + "Level: " + item.getAmount()));
-                item.setItemMeta(meta);
-                inventory.addItem(item);
-            }
-        }
-        //TODO translate
-        for (EnchantmentBase enchantment : handler.getEnchantments()) {
-            if (enchantment.getItemTarget() == target || enchantment.getItemTarget() == EnchantmentTarget.ALL || enchantment.getTargets().contains(itemStack.getType())) {
-                ItemStack item = new ItemStack(enchantment.getIcon());
-                for (Map.Entry<Enchantment, Integer> enchantment1 : itemStack.getEnchantments().entrySet()) {
-                    if (enchantment1.getKey().getKey().equals(enchantment.getKey())) {
-                        item.setAmount(enchantment1.getValue());
-                        if (item.getAmount() > enchantment.getMaxLevel())
-                            item.setAmount(0);
-                        break;
-                    }
-                }
-                ItemMeta meta = item.getItemMeta();
-                assert meta != null;
-                meta.setDisplayName(enchantment.getName());
-                if (item.getAmount() > 0) {
-                    meta.setLore(Arrays.asList(ChatColor.GRAY + "Price: " + enchantment.getDefaultPrice(item.getAmount()), ChatColor.GRAY + "Level: " + item.getAmount()));
-                } else
-                    meta.setLore(Collections.singletonList(ChatColor.GRAY + "MAXED"));
-                item.setItemMeta(meta);
-                inventory.addItem(item);
+            if (enchantment.getItemTarget() != target && enchantment.getItemTarget() != EnchantmentTarget.ALL)
+                continue;
 
-            }
+            updateItem(enchantment, itemStack, inventory);
+        }
+
+        for (EnchantmentBase enchantment : handler.getEnchantments()) {
+            if (enchantment.getItemTarget() != target && enchantment.getItemTarget() != EnchantmentTarget.ALL && !enchantment.getTargets().contains(itemStack.getType()))
+                continue;
+
+            updateItem(enchantment, itemStack, inventory);
         }
         inventory.setItem(49, exit);
         return inventory;
+    }
+
+    private void updateItem(EnchantmentBase enchantment, ItemStack target, Inventory inventory) {
+        ItemStack item = new ItemStack(enchantment.getIcon());
+        for (Map.Entry<Enchantment, Integer> enchantment1 : target.getEnchantments().entrySet()) {
+            if (enchantment1.getKey().getKey().equals(enchantment.getKey())) {
+                item.setAmount(enchantment1.getValue());
+                if (item.getAmount() > enchantment.getMaxLevel())
+                    item.setAmount(0);
+                break;
+            }
+        }
+        ItemMeta meta = item.getItemMeta();
+        assert meta != null;
+        meta.setDisplayName(enchantment.getName());
+        if (item.getAmount() > 0) {
+            meta.setLore(Arrays.asList(TranslatedMessage.translate("enchantment.price") + enchantment.getDefaultPrice(item.getAmount()), TranslatedMessage.translate("enchantment.level") + item.getAmount()));
+        } else
+            meta.setLore(Collections.singletonList(TranslatedMessage.translate("enchantment.price.maxed")));
+        item.setItemMeta(meta);
+        inventory.addItem(item);
     }
 }

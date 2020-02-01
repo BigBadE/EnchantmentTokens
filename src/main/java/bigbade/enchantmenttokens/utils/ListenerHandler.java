@@ -110,32 +110,11 @@ public class ListenerHandler {
         Map<String, FileConfiguration> configs = new HashMap<>();
         for (Map.Entry<String, Set<Class<EnchantmentBase>>> entry : enchants.entrySet()) {
             for (Class<EnchantmentBase> clazz : entry.getValue()) {
-                FileConfiguration configuration = configs.get(entry.getKey());
-
-                if (configuration == null) {
-                    configuration = ConfigurationManager.loadConfigurationFile(main.getDataFolder().getAbsolutePath() + "\\enchantments\\" + entry.getKey() + ".yml");
-                    configs.put(entry.getKey(), configuration);
-                }
-
-                ConfigurationSection section = ConfigurationManager.getSectionOrCreate(configuration, "enchants");
-
                 String name = clazz.getSimpleName();
 
-                final EnchantmentBase enchant = (EnchantmentBase) ReflectionManager.instantiate(clazz);
+                EnchantmentBase enchant = loadConfiguration(clazz, configs, entry.getKey());
 
-                ConfigurationSection enchantSection = ConfigurationManager.getSectionOrCreate(section, name.toLowerCase());
-
-                for (Field field : clazz.getDeclaredFields()) {
-                    ConfigurationManager.loadConfigForField(field, enchantSection, enchant);
-                }
-                for (Field field : clazz.getSuperclass().getDeclaredFields()) {
-                    ConfigurationManager.loadConfigForField(field, enchantSection, enchant);
-                }
-
-                boolean enabled = (boolean) ConfigurationManager.getValueOrDefault("enabled", enchantSection, true);
-
-                if (!enabled) continue;
-                assert enchant != null;
+                if (enchant == null) continue;
                 enchant.loadConfig();
                 enchantments.add(enchant);
                 methodCheck:
@@ -169,5 +148,31 @@ public class ListenerHandler {
         for (Map.Entry<String, FileConfiguration> configuration : configs.entrySet()) {
             ConfigurationManager.saveConfiguration(main.getDataFolder().getAbsolutePath() + "\\enchantments\\" + configuration.getKey() + ".yml", configuration.getValue());
         }
+    }
+
+    private EnchantmentBase loadConfiguration(Class<EnchantmentBase> clazz, Map<String, FileConfiguration> configs, String addon) {
+        FileConfiguration configuration = configs.get(addon);
+
+        if (configuration == null) {
+            configuration = ConfigurationManager.loadConfigurationFile(main.getDataFolder().getAbsolutePath() + "\\enchantments\\" + addon + ".yml");
+            configs.put(addon, configuration);
+        }
+
+        ConfigurationSection section = ConfigurationManager.getSectionOrCreate(configuration, "enchants");
+
+        final EnchantmentBase enchant = (EnchantmentBase) ReflectionManager.instantiate(clazz);
+
+        ConfigurationSection enchantSection = ConfigurationManager.getSectionOrCreate(section, clazz.getName().toLowerCase());
+
+        for (Field field : clazz.getDeclaredFields()) {
+            ConfigurationManager.loadConfigForField(field, enchantSection, enchant);
+        }
+        for (Field field : clazz.getSuperclass().getDeclaredFields()) {
+            ConfigurationManager.loadConfigForField(field, enchantSection, enchant);
+        }
+
+        boolean enabled = (boolean) ConfigurationManager.getValueOrDefault("enabled", enchantSection, true);
+
+        return (enabled) ? enchant : null;
     }
 }

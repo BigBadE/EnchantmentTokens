@@ -47,14 +47,17 @@ public enum ListenerType {
     }
 
     public boolean canTarget(EnchantmentTarget target) {
-        if(target == EnchantmentTarget.ALL) return true;
-        for(EnchantmentTarget found : targets)
-            if(found == target)
+        if (target == EnchantmentTarget.ALL) return true;
+        for (EnchantmentTarget found : targets)
+            if (found == target)
                 return true;
         return false;
     }
 
-    public boolean canTarget(Material material) {
-        return targets.stream().anyMatch((type) -> type.includes(material));
+    public boolean canTarget(List<Material> materials) {
+        return targets.stream().anyMatch((type) -> {
+            for (Material material : materials) if (type.includes(material)) return true;
+            return false;
+        });
     }
 }

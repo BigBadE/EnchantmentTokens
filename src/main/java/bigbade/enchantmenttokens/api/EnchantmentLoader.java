@@ -15,7 +15,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /*
 EnchantmentTokens
@@ -38,10 +37,10 @@ public class EnchantmentLoader {
     private Map<String, Set<Class<EnchantmentBase>>> enchantments = new ConcurrentHashMap<>();
     private Collection<EnchantmentAddon> addons = new ConcurrentLinkedQueue<>();
 
-    public EnchantmentLoader(File folder, Logger logger, EnchantmentTokens main) {
+    public EnchantmentLoader(File folder, EnchantmentTokens main) {
+        ReflectionManager.setValue(ReflectionManager.getField(Enchantment.class, "acceptingNew"), true, Enchantment.class);
         Bukkit.getScheduler().runTaskAsynchronously(main, () -> {
             if (folder.listFiles() == null) {
-                logger.info("No enchantments found");
                 return;
             }
             for (File enchants : Objects.requireNonNull(folder.listFiles())) {
@@ -49,7 +48,7 @@ public class EnchantmentLoader {
                     continue;
                 loadJar(enchants);
             }
-            ReflectionManager.setValue(ReflectionManager.getField(Enchantment.class, "acceptingNew"), true, Enchantment.class);
+
             main.getListenerHandler().loadAddons(addons);
             main.getListenerHandler().loadEnchantments(enchantments);
         });

@@ -33,7 +33,6 @@ import bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
 import com.codingforcookies.armorequip.ArmorListener;
 import com.codingforcookies.armorequip.DispenserArmorListener;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -131,7 +130,6 @@ public class ListenerHandler {
     }
 
     private void checkMethods(EnchantmentBase enchant, Class<EnchantmentBase> clazz) {
-        methodCheck:
         for (Method method : clazz.getDeclaredMethods()) {
             if (!method.isAnnotationPresent(EnchantListener.class) || method.getReturnType() != EnchantmentListener.class)
                 continue;
@@ -141,13 +139,10 @@ public class ListenerHandler {
                     main.getLogger().warning("Cannot add listener " + type + " to target " + enchant.getItemTarget());
                     continue;
                 }
-            } else
-                for (Material material : enchant.getTargets()) {
-                    if (!type.canTarget(material)) {
-                        main.getLogger().warning("Cannot add listener " + type + " to target " + material);
-                    }
-                    continue methodCheck;
-                }
+            } else if (!type.canTarget(enchant.getTargets())) {
+                main.getLogger().warning("Cannot add listener " + type + " to targets " + enchant.getTargets());
+                continue;
+            }
             enchantListeners.get(type).add((EnchantmentListener<EnchantmentEvent<? extends Event>>) ReflectionManager.invoke(method, enchant), enchant);
         }
     }

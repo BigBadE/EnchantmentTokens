@@ -151,7 +151,7 @@ public class EnchantmentTokens extends JavaPlugin {
     }
 
     public void registerEnchants() {
-        loader = new EnchantmentLoader(new File(getDataFolder().getPath() + "\\enchantments"), getLogger(), this);
+        loader = new EnchantmentLoader(new File(getDataFolder().getPath() + "\\enchantments"), this);
     }
 
     public EnchantmentHandler getEnchantmentHandler() {

@@ -88,12 +88,7 @@ public class ListenerHandler {
             }
 
             addon.loadConfig();
-            for (Method method : addon.getClass().getDeclaredMethods()) {
-                if (!method.isAnnotationPresent(EnchantListener.class) || method.getReturnType() != EnchantmentListener.class)
-                    continue;
-                ListenerType type = method.getAnnotation(EnchantListener.class).type();
-                enchantListeners.get(type).add((EnchantmentListener<EnchantmentEvent<? extends Event>>) ReflectionManager.invoke(method, addon), addon);
-            }
+            checkMethods(null, addon.getClass());
 
             addon.onEnable();
         }
@@ -129,20 +124,21 @@ public class ListenerHandler {
         }
     }
 
-    private void checkMethods(EnchantmentBase enchant, Class<EnchantmentBase> clazz) {
+    private void checkMethods(EnchantmentBase enchant, Class<?> clazz) {
         for (Method method : clazz.getDeclaredMethods()) {
             if (!method.isAnnotationPresent(EnchantListener.class) || method.getReturnType() != EnchantmentListener.class)
                 continue;
             ListenerType type = method.getAnnotation(EnchantListener.class).type();
-            if (enchant.getItemTarget() != null) {
-                if (!type.canTarget(enchant.getItemTarget())) {
-                    main.getLogger().warning("Cannot add listener " + type + " to target " + enchant.getItemTarget());
+            if (enchant != null)
+                if (enchant.getItemTarget() != null) {
+                    if (!type.canTarget(enchant.getItemTarget())) {
+                        main.getLogger().warning("Cannot add listener " + type + " to target " + enchant.getItemTarget());
+                        continue;
+                    }
+                } else if (!type.canTarget(enchant.getTargets())) {
+                    main.getLogger().warning("Cannot add listener " + type + " to targets " + enchant.getTargets());
                     continue;
                 }
-            } else if (!type.canTarget(enchant.getTargets())) {
-                main.getLogger().warning("Cannot add listener " + type + " to targets " + enchant.getTargets());
-                continue;
-            }
             enchantListeners.get(type).add((EnchantmentListener<EnchantmentEvent<? extends Event>>) ReflectionManager.invoke(method, enchant), enchant);
         }
     }

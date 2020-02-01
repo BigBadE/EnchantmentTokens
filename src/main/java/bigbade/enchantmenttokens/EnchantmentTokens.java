@@ -17,8 +17,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import bigbade.enchantmenttokens.api.*;
-import bigbade.enchantmenttokens.commands.*;
+import bigbade.enchantmenttokens.api.EnchantUtils;
+import bigbade.enchantmenttokens.api.EnchantmentAddon;
+import bigbade.enchantmenttokens.api.EnchantmentBase;
+import bigbade.enchantmenttokens.api.EnchantmentLoader;
 import bigbade.enchantmenttokens.gui.EnchantmentPickerManager;
 import bigbade.enchantmenttokens.listeners.SignPacketHandler;
 import bigbade.enchantmenttokens.utils.*;
@@ -28,10 +30,10 @@ import bigbade.enchantmenttokens.utils.currency.LatestCurrencyHandler;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -67,32 +69,22 @@ public class EnchantmentTokens extends JavaPlugin {
         saveDefaultConfig();
         version = Integer.parseInt(Bukkit.getVersion().split("\\.")[1]);
 
-        if (!getConfig().isSet("metrics"))
-            getConfig().set("metrics", true);
-
-        if (!getConfig().isSet("currency"))
-            getConfig().set("currency", "Gems");
-
-        if (!getConfig().isSet("country-language"))
-            getConfig().set("country-language", "US");
-
         playerHandler = new EnchantmentPlayerHandler(this);
 
-        String currency = getConfig().getString("currency");
+        String currency = (String) ConfigurationManager.getValueOrDefault("currency", getConfig(), "gems");
 
         if ("gems".equalsIgnoreCase(currency)) {
             if (version >= 14) {
-                if (!getConfig().isSet("usePersistentData"))
-                    getConfig().set("usePersistentData", true);
-                if (getConfig().getBoolean("usePersistentData"))
-                    currencyHandler = new LatestCurrencyHandler(this);
+                boolean persistent = (boolean) ConfigurationManager.getValueOrDefault("usePersistentData", getConfig(), true);
+                if (persistent)
+                    currencyHandler = new LatestCurrencyHandler(new NamespacedKey(this, "gems"));
                 else
                     currencyHandler = new GemCurrencyHandler(this);
             } else
                 currencyHandler = new GemCurrencyHandler(this);
         }
 
-        boolean metrics = getConfig().getBoolean("metics");
+        boolean metrics = (boolean) ConfigurationManager.getValueOrDefault("metrics", getConfig(), true);
 
         if (metrics) {
             new MetricManager(this);
@@ -100,9 +92,7 @@ public class EnchantmentTokens extends JavaPlugin {
 
         ConfigurationManager.saveConfigurationGuide(this, getDataFolder().getPath() + "/configurationguide.txt");
 
-        if (!getDataFolder().exists())
-            if (!getDataFolder().mkdir())
-                getLogger().severe("[ERROR] COULD NOT CREATE DATA FOLDER. REPORT THIS, NOT THE NULLPOINTEREXCEPTION.");
+        ConfigurationManager.createFolder(getDataFolder());
 
         ConfigurationManager.createFolder(getDataFolder().getPath() + "\\data");
         getLogger().info("Looking for enchantments");
@@ -117,7 +107,8 @@ public class EnchantmentTokens extends JavaPlugin {
         registerEnchants();
 
         Locale locale = Locale.US;
-        String language = getConfig().getString("country-language");
+        String language = (String) ConfigurationManager.getValueOrDefault("country-language", getConfig(), "US");
+
         for (Locale foundLocale : Locale.getAvailableLocales())
             if (foundLocale.getDisplayCountry().equals(language))
                 locale = foundLocale;
@@ -132,15 +123,16 @@ public class EnchantmentTokens extends JavaPlugin {
 
         if (Bukkit.getPluginManager().isPluginEnabled(this)) {
             enchantmentPickerManager = new EnchantmentPickerManager(enchantmentHandler, getConfig().getConfigurationSection("enchants"));
-            registerCommands();
+            new CommandManager(this);
         }
 
-        int autosaveTime = 15;
-
-        if (getConfig().isSet("autosaveTime"))
-            autosaveTime = getConfig().getInt("autosaveTime");
-        else
-            getConfig().set("autosaveTime", autosaveTime);
+        int autosaveTime;
+        try {
+            autosaveTime = Integer.parseInt((String) ConfigurationManager.getValueOrDefault("autosaveTime", getConfig(), 15));
+        } catch (NumberFormatException e) {
+            getConfig().set("autosaveTime", 15);
+            autosaveTime = 15;
+        }
 
         autosaveTime *= 20 * 60;
 
@@ -154,37 +146,8 @@ public class EnchantmentTokens extends JavaPlugin {
         enchantmentHandler.getEnchantments().forEach(EnchantmentBase::onDisable);
     }
 
-    private void registerCommands() {
-        Objects.requireNonNull(getCommand("adminenchant")).setExecutor(new EnchantCmd(enchantmentHandler, utils));
-        Objects.requireNonNull(getCommand("adminenchant")).setTabCompleter(new EnchantTabCompleter(this));
-
-        Objects.requireNonNull(getCommand("addgems")).setExecutor(new AddGemCmd(this));
-        Objects.requireNonNull(getCommand("addgems")).setTabCompleter(new AddGemTabCompleter());
-
-        EnchantMenuCmd menuCmd = new EnchantMenuCmd(version, playerHandler);
-        Objects.requireNonNull(getCommand("tokenenchant")).setExecutor(menuCmd);
-        Objects.requireNonNull(getCommand("tokenenchant")).setTabCompleter(new GenericTabCompleter());
-
-        Objects.requireNonNull(getCommand("gembal")).setExecutor(new BalanceCmd(this));
-        Objects.requireNonNull(getCommand("gembal")).setTabCompleter(new GenericTabCompleter());
-
-        Objects.requireNonNull(getCommand("enchantlist")).setExecutor(new EnchantmentListCommand(this));
-        Objects.requireNonNull(getCommand("enchantlist")).setTabCompleter(new GenericTabCompleter());
-
-        Objects.requireNonNull(getCommand("reloadenchants")).setExecutor(new RecompileEnchantsCmd(this));
-        Objects.requireNonNull(getCommand("reloadenchants")).setTabCompleter(new GenericTabCompleter());
-    }
-
     public void unregisterEnchants() {
         enchantmentHandler.unregisterEnchants();
-    }
-
-    public List<EnchantmentBase> getEnchantments() {
-        return enchantmentHandler.getEnchantments();
-    }
-
-    public List<VanillaEnchant> getVanillaEnchantments() {
-        return enchantmentHandler.getVanillaEnchants();
     }
 
     public void registerEnchants() {
@@ -211,9 +174,13 @@ public class EnchantmentTokens extends JavaPlugin {
         return currencyHandler;
     }
 
-    public int getVersion() { return version; }
+    public int getVersion() {
+        return version;
+    }
 
-    public SignPacketHandler getSignHandler() { return signHandler; }
+    public SignPacketHandler getSignHandler() {
+        return signHandler;
+    }
 
     public EnchantUtils getUtils() {
         return utils;

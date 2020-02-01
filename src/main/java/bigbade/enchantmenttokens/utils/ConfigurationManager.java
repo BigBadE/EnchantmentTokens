@@ -114,4 +114,36 @@ public class ConfigurationManager {
             if (!data.mkdir())
                 EnchantmentTokens.LOGGER.log(Level.SEVERE, "[ERROR] Could not create folder " + path);
     }
+
+    public static void createFolder(File file) {
+        if (!file.exists())
+            if (!file.mkdir())
+                EnchantmentTokens.LOGGER.log(Level.SEVERE, "[ERROR] Could not create folder " + file.getPath());
+    }
+
+    public static void createFile(File file) {
+        try {
+            if (!file.exists())
+                if (!file.createNewFile())
+                    EnchantmentTokens.LOGGER.log(Level.SEVERE, "[ERROR] Could not create file " + file.getPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Object getValueOrDefault(String value, ConfigurationSection section, Object defaultValue) {
+        if (section.isSet(value))
+            return section.get(value);
+        else {
+            section.set(value, defaultValue);
+            return defaultValue;
+        }
+    }
+
+    public static ConfigurationSection getSectionOrCreate(ConfigurationSection section, String subsection) {
+        ConfigurationSection found = section.getConfigurationSection(subsection);
+        if (found == null)
+            return section.createSection(subsection);
+        return found;
+    }
 }

@@ -17,19 +17,19 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import bigbade.enchantmenttokens.localization.TranslatedMessage;
+import bigbade.enchantmenttokens.utils.EnchantmentPlayerHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class BalanceCmd implements CommandExecutor {
-    private EnchantmentTokens main;
+    private EnchantmentPlayerHandler handler;
 
-    public BalanceCmd(EnchantmentTokens main) {
-        this.main = main;
+    public BalanceCmd(EnchantmentPlayerHandler handler) {
+        this.handler = handler;
     }
 
 
@@ -37,7 +37,7 @@ public class BalanceCmd implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if(commandSender instanceof Player) {
             String priceString;
-            EnchantmentPlayer player = main.getPlayerHandler().loadPlayer((Player) commandSender);
+            EnchantmentPlayer player = handler.loadPlayer((Player) commandSender);
             if(player.usingGems())
                 priceString = player.getGems() + "G";
             else

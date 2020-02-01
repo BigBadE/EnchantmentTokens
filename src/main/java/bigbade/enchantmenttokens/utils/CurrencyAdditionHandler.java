@@ -6,11 +6,11 @@ import bigbade.enchantmenttokens.localization.TranslatedMessage;
 import org.bukkit.entity.Player;
 
 public class CurrencyAdditionHandler {
-    public static void addGems(Player player, long amount, EnchantmentTokens main) {
-        addGems(main.getPlayerHandler().getPlayer(player), amount, main);
+    public static void addGems(Player player, long amount) {
+        addGems(main.getPlayerHandler().getPlayer(player), amount);
     }
 
-    public static void addGems(EnchantmentPlayer player, long amount, EnchantmentTokens main) {
+    public static void addGems(EnchantmentPlayer player, long amount) {
         player.addGems(amount);
 
         String priceStr;

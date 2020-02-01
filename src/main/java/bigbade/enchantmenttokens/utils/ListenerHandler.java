@@ -117,16 +117,13 @@ public class ListenerHandler {
                     configs.put(entry.getKey(), configuration);
                 }
 
-                ConfigurationSection section = configuration.getConfigurationSection("enchants");
-                if (section == null)
-                    section = configuration.createSection("enchants");
+                ConfigurationSection section = ConfigurationManager.getSectionOrCreate(configuration, "enchants");
+
                 String name = clazz.getSimpleName();
-                ConfigurationSection enchantSection = section.getConfigurationSection(name.toLowerCase());
+
                 final EnchantmentBase enchant = (EnchantmentBase) ReflectionManager.instantiate(clazz);
-                if (enchantSection == null) {
-                    enchantSection = section.createSection(name.toLowerCase());
-                    enchantSection.set("enabled", true);
-                }
+
+                ConfigurationSection enchantSection = ConfigurationManager.getSectionOrCreate(section, name.toLowerCase());
 
                 for (Field field : clazz.getDeclaredFields()) {
                     ConfigurationManager.loadConfigForField(field, enchantSection, enchant);
@@ -135,13 +132,7 @@ public class ListenerHandler {
                     ConfigurationManager.loadConfigForField(field, enchantSection, enchant);
                 }
 
-                boolean enabled;
-                if (enchantSection.isSet("enabled"))
-                    enabled = enchantSection.getBoolean("enabled");
-                else {
-                    enabled = true;
-                    enchantSection.set("enabled", true);
-                }
+                boolean enabled = (boolean) ConfigurationManager.getValueOrDefault("enabled", enchantSection, true);
 
                 if (!enabled) continue;
                 assert enchant != null;

@@ -17,27 +17,25 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import bigbade.enchantmenttokens.EnchantmentTokens;
-import bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import bigbade.enchantmenttokens.utils.ByteUtils;
-import bigbade.enchantmenttokens.utils.EnchantmentPlayerHandler;
-import org.bukkit.Bukkit;
+import bigbade.enchantmenttokens.utils.ConfigurationManager;
 import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FileLoader {
-    private EnchantmentTokens main;
+    private String path;
     private ByteUtils utils = new ByteUtils();
     private Map<UUID, Long> cache = new ConcurrentHashMap<>();
 
-    public FileLoader(EnchantmentTokens main) {
-        this.main = main;
+    public FileLoader(String path) {
+        this.path = path;
     }
 
     public long getGems(Player player) {
@@ -48,18 +46,14 @@ public class FileLoader {
     }
 
     private long loadGems(Player player) {
-        File playerFile = new File(main.getDataFolder().getAbsolutePath() + "\\data\\" + player.getUniqueId().toString().substring(0, 2) + "\\data.dat");
+        File playerFile = new File(path + "\\data\\" + player.getUniqueId().toString().substring(0, 2) + "\\data.dat");
         if (!playerFile.exists()) {
-            try {
-                playerFile.getParentFile().mkdir();
-                playerFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            ConfigurationManager.createFolder(playerFile.getParentFile());
+            ConfigurationManager.createFile(playerFile);
         } else {
             try {
                 FileInputStream stream = new FileInputStream(playerFile);
-                for (int i = 0; i < stream.available() / 24; i += 1) {
+                for (int i = 0; i < stream.available(); i += 24) {
                     byte[] temp = new byte[8];
                     stream.read(temp);
                     long mostSigBits = utils.bytesToLong(temp);
@@ -90,7 +84,7 @@ public class FileLoader {
     }
 
     private void savePlayer(Player player, long gems) {
-        File playerFile = new File(main.getDataFolder().getAbsolutePath() + "\\data\\" + player.getUniqueId().toString().substring(0, 2) + "\\data.dat");
+        File playerFile = new File(path + "\\data\\" + player.getUniqueId().toString().substring(0, 2) + "\\data.dat");
         try {
             FileInputStream stream = new FileInputStream(playerFile);
             int passed = 0;

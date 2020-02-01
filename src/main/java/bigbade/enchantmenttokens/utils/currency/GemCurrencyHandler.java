@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /*
 EnchantmentTokens
@@ -30,7 +31,7 @@ public class GemCurrencyHandler implements CurrencyHandler {
     private EnchantmentTokens main;
 
     public GemCurrencyHandler(EnchantmentTokens main) {
-        fileLoader = new FileLoader(main);
+        fileLoader = new FileLoader(main.getDataFolder().getAbsolutePath());
         this.main = main;
     }
 
@@ -39,13 +40,15 @@ public class GemCurrencyHandler implements CurrencyHandler {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Callable<Long> callable = () -> fileLoader.getGems(player);
         Future<Long> future = executor.submit(callable);
-        Bukkit.getScheduler().runTaskAsynchronously(main, () -> {
+        final AtomicInteger id = new AtomicInteger();
+        id.set(Bukkit.getScheduler().runTaskTimerAsynchronously(main, () -> {
             try {
-                gems = future.get();
-            } catch (InterruptedException | ExecutionException e) {
+                gems = future.get(1, TimeUnit.MILLISECONDS);
+                Bukkit.getScheduler().cancelTask(id.get());
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
                 e.printStackTrace();
             }
-        });
+        }, 1L, 1L).getTaskId());
         executor.shutdown();
     }
 

@@ -60,13 +60,8 @@ public class EnchantmentHandler {
                 iconName = "BEDROCK";
             Material icon = Material.getMaterial(iconName);
 
-            if (enchantSection.isSet("enabled"))
-                if (enchantSection.getBoolean("enabled"))
-                    vanillaEnchants.add(new VanillaEnchant(icon, enchantment));
-                else {
-                    enchantSection.set("enabled", true);
-                    vanillaEnchants.add(new VanillaEnchant(icon, enchantment));
-                }
+            if ((boolean) ConfigurationManager.getValueOrDefault("enabled", enchantSection, true))
+                vanillaEnchants.add(new VanillaEnchant(icon, enchantment));
         }
 
         main.saveConfig();

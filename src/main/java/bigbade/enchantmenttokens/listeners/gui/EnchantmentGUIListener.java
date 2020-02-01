@@ -60,67 +60,54 @@ public class EnchantmentGUIListener implements Listener {
     private void handleClick(ItemStack item, Player player, int id) {
         SubInventory inventory = null;
         EnchantmentPlayer enchantPlayer = handler.getPlayer(player);
-
         switch (id) {
             case 1:
                 if (version < 14 || !EnchantmentTarget.CROSSBOW.includes(item.getType())) return;
-                inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.CROSSBOW, item, "Crossbow"), 1);
+                inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.CROSSBOW, item, "Crossbow"), id);
                 break;
             case 2:
                 if (version < 13 && !EnchantmentTarget.TRIDENT.includes(item.getType()))
-                    inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.TRIDENT, item, "Trident"), 2);
+                    inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.TRIDENT, item, "Trident"), id);
                 else if (version >= 9 && !EnchantmentTarget.FISHING_ROD.includes(item.getType()))
-                    inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.FISHING_ROD, item, "Fishing Rod"), 2);
+                    inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.FISHING_ROD, item, "Fishing Rod"), id);
                 break;
             case 3:
                 if (!EnchantmentTarget.TOOL.includes(item.getType())) return;
-                inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.TOOL, item, "Tools"), 3);
+                inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.TOOL, item, "Tools"), id);
                 break;
             case 4:
                 if (!EnchantmentTarget.WEAPON.includes(item.getType())) return;
-                inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.WEAPON, item, "Swords"), 4);
+                inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.WEAPON, item, "Swords"), id);
                 break;
             case 5:
                 if (version != 13 && version > 8) return;
                 if (!EnchantmentTarget.FISHING_ROD.includes(item.getType())) return;
-                inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.FISHING_ROD, item, "Fishing Rod"), 4);
+                inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.FISHING_ROD, item, "Fishing Rod"), id);
                 break;
             case 6:
                 if (!EnchantmentTarget.ARMOR.includes(item.getType())) return;
-                inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.ARMOR, item, "Armor"), 6);
+                inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.ARMOR, item, "Armor"), id);
                 break;
             case 7:
                 if (!EnchantmentTarget.BOW.includes(item.getType())) return;
-                inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.BOW, item, "Bow"), 7);
+                inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.BOW, item, "Bow"), id);
                 break;
             case 8:
                 if (version >= 14) {
                     if (!EnchantmentTarget.TRIDENT.includes(item.getType())) return;
-                    inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.TRIDENT, item, "crossbow"), 8);
+                    inventory = new SubInventory(enchantmentPickerManager.generateGUI(EnchantmentTarget.TRIDENT, item, "crossbow"), id);
                 } else if (version >= 9) {
                     if (item.getType() != Material.SHIELD) return;
-                    inventory = new SubInventory(enchantmentPickerManager.generateGUI(null, item, "Shield"), 8);
+                    inventory = new SubInventory(enchantmentPickerManager.generateGUI(null, item, "Shield"), id);
                 }
                 break;
             case 9:
                 if (version < 14 || item.getType() != Material.SHIELD)
                     return;
-                inventory = new SubInventory(enchantmentPickerManager.generateGUI(null, item, "Shield"), 9);
+                inventory = new SubInventory(enchantmentPickerManager.generateGUI(null, item, "Shield"), id);
                 break;
             case 13:
-                ItemMeta meta = item.getItemMeta();
-                assert meta != null;
-                if (meta.getLore() != null) {
-                    String line = meta.getLore().get(meta.getLore().size() - 1);
-                    long price = Long.parseLong(line.substring(9).replace("G", ""));
-                    List<String> lore = meta.getLore();
-                    lore.remove(meta.getLore().size() - 1);
-                    meta.setLore(lore);
-
-                    item.setItemMeta(meta);
-                    enchantPlayer.addGems(-price);
-                    player.getInventory().setItemInMainHand(item);
-                }
+                removePriceLine(item, enchantPlayer);
                 enchantPlayer.setCurrentGUI(null);
                 player.closeInventory();
                 break;
@@ -128,10 +115,30 @@ public class EnchantmentGUIListener implements Listener {
                 enchantPlayer.setCurrentGUI(null);
                 player.closeInventory();
         }
+        openInv(inventory, enchantPlayer);
+    }
+
+    private void removePriceLine(ItemStack item, EnchantmentPlayer player) {
+        ItemMeta meta = item.getItemMeta();
+        assert meta != null;
+        if (meta.getLore() != null) {
+            String line = meta.getLore().get(meta.getLore().size() - 1);
+            long price = Long.parseLong(line.substring(9).replace("G", ""));
+            List<String> lore = meta.getLore();
+            lore.remove(meta.getLore().size() - 1);
+            meta.setLore(lore);
+
+            item.setItemMeta(meta);
+            player.addGems(-price);
+            player.getPlayer().getInventory().setItemInMainHand(item);
+        }
+    }
+
+    private void openInv(SubInventory inventory, EnchantmentPlayer player) {
         if (inventory == null) return;
-        enchantPlayer.setCurrentGUI(null);
-        player.openInventory(inventory.getInventory());
-        enchantPlayer.setCurrentGUI(inventory);
+        player.setCurrentGUI(null);
+        player.getPlayer().openInventory(inventory.getInventory());
+        player.setCurrentGUI(inventory);
     }
 
     @EventHandler

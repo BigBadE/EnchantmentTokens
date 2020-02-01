@@ -91,6 +91,12 @@
                     <include>configurationguide.txt</include>
                 </includes>
             </resource>
+            <resource>
+                <directory>${basedir}</directory>
+                <includes>
+                    <include>EnchantmentTokensLocalization/*</include>
+                </includes>
+            </resource>
         </resources>
 
         <plugins>

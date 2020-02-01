@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantmentBase;
 import bigbade.enchantmenttokens.localization.TranslatedMessage;
 import bigbade.enchantmenttokens.utils.EnchantmentHandler;
@@ -42,14 +41,14 @@ public class SignPlaceListener implements Listener {
             for (Enchantment base : handler.getVanillaEnchants()) {
                 if(updateSign(base, event)) return;
             }
-            event.getPlayer().sendMessage(TranslatedMessage.translate(EnchantmentTokens.NAME, "enchantment.add.fail"));
+            event.getPlayer().sendMessage(TranslatedMessage.translate( "enchantment.add.fail"));
         }
     }
 
     private boolean updateSign(Enchantment base, SignChangeEvent event) {
         if (base.getName().equalsIgnoreCase(event.getLine(1))) {
-            event.getPlayer().sendMessage(TranslatedMessage.translate(EnchantmentTokens.NAME, "enchantment.add", base.getName()));
-            event.setLine(0, "[" + TranslatedMessage.translate(EnchantmentTokens.NAME, "enchantment") + "]");
+            event.getPlayer().sendMessage(TranslatedMessage.translate("enchantment.add", base.getName()));
+            event.setLine(0, "[" + TranslatedMessage.translate( "enchantment") + "]");
             event.setLine(1, base.getName());
             return true;
         }

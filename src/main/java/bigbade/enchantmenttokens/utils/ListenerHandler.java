@@ -161,11 +161,10 @@ public class ListenerHandler {
         }
 
         Bukkit.getScheduler().runTask(main, () -> {
+            registerListeners();
             main.getLogger().log(Level.INFO, "Finishing loading enchantments");
             main.getEnchantmentHandler().registerEnchants(enchantments);
         });
-
-        registerListeners();
 
         for (Map.Entry<String, FileConfiguration> configuration : configs.entrySet()) {
             ConfigurationManager.saveConfiguration(main.getDataFolder().getAbsolutePath() + "\\enchantments\\" + configuration.getKey() + ".yml", configuration.getValue());

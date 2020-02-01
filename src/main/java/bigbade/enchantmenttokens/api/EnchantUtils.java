@@ -51,12 +51,14 @@ public class EnchantUtils {
             if (base.getName().equals(name))
                 if (base.canEnchantItem(itemStack)) {
                     addEnchantmentBase(itemStack, base, player, simulate);
+                    return;
                 }
         }
         for (VanillaEnchant base : handler.getVanillaEnchants()) {
             if (base.getName().equals(name))
                 if (base.canEnchantItem(itemStack)) {
                     addEnchantmentBase(itemStack, base, player, simulate);
+                    return;
                 }
         }
         player.sendMessage(TranslatedMessage.translate("enchantment.add.fail"));
@@ -68,6 +70,7 @@ public class EnchantUtils {
             player.sendMessage(TranslatedMessage.translate("enchantment.max.message"));
             return;
         }
+        System.out.println(level);
         long price = base.getDefaultPrice(level);
         EnchantmentPlayer enchantmentPlayer = playerHandler.getPlayer(player);
         if (enchantmentPlayer.getGems() < price) {
@@ -108,6 +111,7 @@ public class EnchantUtils {
                 temp = priceMessage + TranslatedMessage.translate("dollar.symbol", "" + (currentPrice + base.getDefaultPrice(level)));
             lore.add(temp);
         }
+        meta.setLore(lore);
     }
 
     private int getLevel(ItemStack item, EnchantmentBase enchantment) {

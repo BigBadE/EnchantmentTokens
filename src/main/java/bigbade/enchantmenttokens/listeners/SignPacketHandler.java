@@ -62,7 +62,8 @@ public class SignPacketHandler {
         for (int i = 1; i < 5; i++) {
             try {
                 text.add(compound.getString("Text" + i).split("text\":\"")[1].split("\"}")[0]);
-            } catch (IndexOutOfBoundsException ignored) {
+            } catch (ArrayIndexOutOfBoundsException | IllegalArgumentException ignored) {
+
             }
         }
         if (text.size() != 2)

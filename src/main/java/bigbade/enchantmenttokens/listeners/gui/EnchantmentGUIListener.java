@@ -158,7 +158,7 @@ public class EnchantmentGUIListener implements Listener {
             enchantPlayer.setCurrentGUI(gui);
         } else {
             SubInventory inventory = (SubInventory) enchantPlayer.getCurrentGUI();
-            utils.addEnchantment(event.getInventory().getItem(4), clicked.getItemMeta().getDisplayName(), (Player) event.getWhoClicked(), false);
+            utils.addEnchantment(event.getInventory().getItem(4), clicked.getItemMeta().getDisplayName(), (Player) event.getWhoClicked(), true);
             handleClick(event.getInventory().getItem(4), (Player) event.getWhoClicked(), inventory.getMaterial());
         }
     }

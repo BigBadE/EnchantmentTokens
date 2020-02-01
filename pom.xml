@@ -94,7 +94,7 @@
             <resource>
                 <directory>${basedir}</directory>
                 <includes>
-                    <include>EnchantmentTokensLocalization/*</include>
+                    <include>EnchantmentTokensLocalization/*.properties</include>
                 </includes>
             </resource>
         </resources>

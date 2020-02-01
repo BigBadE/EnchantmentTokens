@@ -128,8 +128,8 @@ public class EnchantmentTokens extends JavaPlugin {
 
         int autosaveTime;
         try {
-            autosaveTime = Integer.parseInt((String) ConfigurationManager.getValueOrDefault("autosaveTime", getConfig(), 15));
-        } catch (NumberFormatException e) {
+            autosaveTime = (Integer) ConfigurationManager.getValueOrDefault("autosaveTime", getConfig(), 15);
+        } catch (ClassCastException e) {
             getConfig().set("autosaveTime", 15);
             autosaveTime = 15;
         }

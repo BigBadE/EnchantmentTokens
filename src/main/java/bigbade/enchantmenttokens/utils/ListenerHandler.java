@@ -110,32 +110,12 @@ public class ListenerHandler {
         Map<String, FileConfiguration> configs = new HashMap<>();
         for (Map.Entry<String, Set<Class<EnchantmentBase>>> entry : enchants.entrySet()) {
             for (Class<EnchantmentBase> clazz : entry.getValue()) {
-                String name = clazz.getSimpleName();
-
                 EnchantmentBase enchant = loadConfiguration(clazz, configs, entry.getKey());
 
                 if (enchant == null) continue;
                 enchant.loadConfig();
                 enchantments.add(enchant);
-                methodCheck:
-                for (Method method : clazz.getDeclaredMethods()) {
-                    if (!method.isAnnotationPresent(EnchantListener.class) || method.getReturnType() != EnchantmentListener.class)
-                        continue;
-                    ListenerType type = method.getAnnotation(EnchantListener.class).type();
-                    if (enchant.getItemTarget() != null) {
-                        if (!type.canTarget(enchant.getItemTarget())) {
-                            main.getLogger().warning("Cannot add listener " + type + " to target " + enchant.getItemTarget());
-                            continue;
-                        }
-                    } else
-                        for (Material material : enchant.getTargets()) {
-                            if (!type.canTarget(material)) {
-                                main.getLogger().warning("Cannot add listener " + type + " to target " + material);
-                            }
-                            continue methodCheck;
-                        }
-                    enchantListeners.get(type).add((EnchantmentListener<EnchantmentEvent<? extends Event>>) ReflectionManager.invoke(method, enchant), enchant);
-                }
+                checkMethods(enchant, clazz);
             }
         }
 
@@ -147,6 +127,28 @@ public class ListenerHandler {
 
         for (Map.Entry<String, FileConfiguration> configuration : configs.entrySet()) {
             ConfigurationManager.saveConfiguration(main.getDataFolder().getAbsolutePath() + "\\enchantments\\" + configuration.getKey() + ".yml", configuration.getValue());
+        }
+    }
+
+    private void checkMethods(EnchantmentBase enchant, Class<EnchantmentBase> clazz) {
+        methodCheck:
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (!method.isAnnotationPresent(EnchantListener.class) || method.getReturnType() != EnchantmentListener.class)
+                continue;
+            ListenerType type = method.getAnnotation(EnchantListener.class).type();
+            if (enchant.getItemTarget() != null) {
+                if (!type.canTarget(enchant.getItemTarget())) {
+                    main.getLogger().warning("Cannot add listener " + type + " to target " + enchant.getItemTarget());
+                    continue;
+                }
+            } else
+                for (Material material : enchant.getTargets()) {
+                    if (!type.canTarget(material)) {
+                        main.getLogger().warning("Cannot add listener " + type + " to target " + material);
+                    }
+                    continue methodCheck;
+                }
+            enchantListeners.get(type).add((EnchantmentListener<EnchantmentEvent<? extends Event>>) ReflectionManager.invoke(method, enchant), enchant);
         }
     }
 

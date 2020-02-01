@@ -60,8 +60,6 @@ public class EnchantmentLoader {
             JarFile jarFile = new JarFile(file.getAbsolutePath());
             Enumeration<JarEntry> enumerator = jarFile.entries();
 
-            URL[] urls = {new URL("jar:file:" + file.getAbsolutePath() + "!/")};
-            URLClassLoader cl = new URLClassLoader(urls, getClass().getClassLoader());
             EnchantmentAddon addon = null;
             Set<Class<EnchantmentBase>> enchantClasses = new HashSet<>();
             while (enumerator.hasMoreElements()) {
@@ -70,13 +68,12 @@ public class EnchantmentLoader {
                     continue;
                 }
 
-                String className = jar.getName().substring(0, jar.getName().length() - 6);
-                className = className.replace('/', '.');
-                Class<?> clazz = cl.loadClass(className);
-                if (EnchantmentBase.class.equals(clazz.getSuperclass())) {
-                    enchantClasses.add((Class<EnchantmentBase>) clazz);
-                } else if (EnchantmentAddon.class.equals(clazz.getSuperclass())) {
-                    addon = (EnchantmentAddon) clazz.newInstance();
+                Object loaded = loadClass(jar, file);
+                if(loaded == null) continue;
+                if(loaded instanceof Class)
+                    enchantClasses.add((Class<EnchantmentBase>) loaded);
+                else {
+                    addon = (EnchantmentAddon) loaded;
                     addons.add(addon);
                 }
             }
@@ -84,9 +81,27 @@ public class EnchantmentLoader {
                 EnchantmentTokens.LOGGER.log(Level.SEVERE, "Jar " + file.getName() + " has no EnchantmentAddon class, skipping loading enchants");
             } else
                 enchantments.put(addon.getName(), enchantClasses);
-        } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+        } catch (IOException e) {
             EnchantmentTokens.LOGGER.log(Level.SEVERE, "Could not load jar at path: " + file.getPath(), e);
         }
+    }
+
+    private Object loadClass(JarEntry jar, File file) {
+        try {
+            URL[] urls = {new URL("jar:file:" + file.getAbsolutePath() + "!/")};
+            URLClassLoader cl = new URLClassLoader(urls, getClass().getClassLoader());
+            String className = jar.getName().substring(0, jar.getName().length() - 6);
+            className = className.replace('/', '.');
+            Class<?> clazz = cl.loadClass(className);
+            if (EnchantmentBase.class.equals(clazz.getSuperclass())) {
+                return clazz;
+            } else if (EnchantmentAddon.class.equals(clazz.getSuperclass())) {
+                return clazz.newInstance();
+            }
+        } catch (IOException | IllegalAccessException | InstantiationException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public Collection<EnchantmentAddon> getAddons() {

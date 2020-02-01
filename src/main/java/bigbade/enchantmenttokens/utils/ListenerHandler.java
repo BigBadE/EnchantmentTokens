@@ -88,7 +88,7 @@ public class ListenerHandler {
                 ConfigurationManager.loadConfigForField(field, configuration, addon);
             }
 
-            addon.loadConfig(configuration);
+            addon.loadConfig();
             for (Method method : addon.getClass().getDeclaredMethods()) {
                 if (!method.isAnnotationPresent(EnchantListener.class) || method.getReturnType() != EnchantmentListener.class)
                     continue;

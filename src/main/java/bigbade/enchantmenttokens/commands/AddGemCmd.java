@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import bigbade.enchantmenttokens.localization.TranslatedMessage;
 import bigbade.enchantmenttokens.utils.CurrencyAdditionHandler;
+import bigbade.enchantmenttokens.utils.EnchantmentPlayerHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -26,6 +27,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class AddGemCmd implements CommandExecutor {
+    private EnchantmentPlayerHandler handler;
+
+    public AddGemCmd(EnchantmentPlayerHandler handler) {
+        this.handler = handler;
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!sender.hasPermission("enchanttoken.admin") && !sender.isOp()) {
@@ -35,7 +42,7 @@ public class AddGemCmd implements CommandExecutor {
         if (args.length == 1) {
             if (sender instanceof Player)
                 try {
-                    CurrencyAdditionHandler.addGems((Player) sender, Integer.parseInt(args[0]));
+                    CurrencyAdditionHandler.addGems(handler.getPlayer((Player) sender), Integer.parseInt(args[0]));
                 } catch (NumberFormatException e) {
                     sender.sendMessage(TranslatedMessage.translate("command.add.notint", args[0]));
                 }
@@ -43,7 +50,7 @@ public class AddGemCmd implements CommandExecutor {
             Player target = Bukkit.getPlayer(args[0]);
             if (target != null) {
                 try {
-                    CurrencyAdditionHandler.addGems(target, Integer.parseInt(args[1]));
+                    CurrencyAdditionHandler.addGems(handler.getPlayer((Player) sender), Integer.parseInt(args[1]));
                 } catch (NumberFormatException e) {
                     sender.sendMessage(TranslatedMessage.translate("command.add.notint", args[1]));
                 }

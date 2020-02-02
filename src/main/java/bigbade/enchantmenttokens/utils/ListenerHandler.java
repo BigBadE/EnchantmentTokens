@@ -61,7 +61,7 @@ public class ListenerHandler {
         Bukkit.getPluginManager().registerEvents(new SignPlaceListener(main.getEnchantmentHandler()), main);
         Bukkit.getPluginManager().registerEvents(new SignClickListener(main.getUtils()), main);
 
-        Bukkit.getPluginManager().registerEvents(new EnchantmentGUIListener(main.getPlayerHandler()), main);
+        Bukkit.getPluginManager().registerEvents(new EnchantmentGUIListener(main.getPlayerHandler(), main.getScheduler()), main);
 
         Bukkit.getPluginManager().registerEvents(new ChunkUnloadListener(main.getSignHandler().getSigns()), main);
         Bukkit.getPluginManager().registerEvents(new PlayerLeaveListener(main.getPlayerHandler()), main);
@@ -70,7 +70,7 @@ public class ListenerHandler {
         Bukkit.getPluginManager().registerEvents(new BlockBreakListener(enchantListeners.get(ListenerType.BLOCKBREAK), main.getSignHandler()), main);
         Bukkit.getPluginManager().registerEvents(new ArmorEquipListener(enchantListeners.get(ListenerType.EQUIP), enchantListeners.get(ListenerType.UNEQUIP)), main);
         Bukkit.getPluginManager().registerEvents(new BlockDamageListener(enchantListeners.get(ListenerType.BLOCKDAMAGED)), main);
-        Bukkit.getPluginManager().registerEvents(new InventoryMoveListener(enchantListeners.get(ListenerType.HELD), enchantListeners.get(ListenerType.SWAPPED), main), main);
+        Bukkit.getPluginManager().registerEvents(new InventoryMoveListener(enchantListeners.get(ListenerType.HELD), enchantListeners.get(ListenerType.SWAPPED), main.getSignHandler().getSigns(), main.getScheduler()), main);
     }
 
     public void onEnchant(ItemStack item, EnchantmentBase base, Player player) {

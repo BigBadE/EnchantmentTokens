@@ -39,10 +39,10 @@ public class ConfigurationManager {
         try {
             if (!config.exists())
                 if (!config.createNewFile())
-                    EnchantmentTokens.LOGGER.log(Level.SEVERE, "Problem creating config file at " + config.getPath());
+                    EnchantmentTokens.logger.log(Level.SEVERE, "Problem creating config file at " + config.getPath());
             configuration.load(config);
         } catch (IOException | InvalidConfigurationException e) {
-            EnchantmentTokens.LOGGER.log(Level.SEVERE, "could not load enchantment configuration", e);
+            EnchantmentTokens.logger.log(Level.SEVERE, "could not load enchantment configuration", e);
         }
         return configuration;
     }
@@ -82,10 +82,10 @@ public class ConfigurationManager {
         File config = new File(path);
         try {
             if (config.exists() && !config.delete())
-                EnchantmentTokens.LOGGER.log(Level.SEVERE, "Could not save configuration");
+                EnchantmentTokens.logger.log(Level.SEVERE, "Could not save configuration");
             Files.write(config.toPath(), configuration.saveToString().getBytes());
         } catch (IOException e) {
-            EnchantmentTokens.LOGGER.log(Level.SEVERE, "Could not save configuration", e);
+            EnchantmentTokens.logger.log(Level.SEVERE, "Could not save configuration", e);
         }
     }
 
@@ -102,7 +102,7 @@ public class ConfigurationManager {
                         out.write(buffer, 0, readBytes);
                     }
                 } catch (IOException e) {
-                    EnchantmentTokens.LOGGER.log(Level.SEVERE, "Could not create new configurationguide file!");
+                    EnchantmentTokens.logger.log(Level.SEVERE, "Could not create new configurationguide file!");
                 }
             });
         }
@@ -112,20 +112,20 @@ public class ConfigurationManager {
         File data = new File(path);
         if (!data.exists())
             if (!data.mkdir())
-                EnchantmentTokens.LOGGER.log(Level.SEVERE, "[ERROR] Could not create folder " + path);
+                EnchantmentTokens.logger.log(Level.SEVERE, "[ERROR] Could not create folder " + path);
     }
 
     public static void createFolder(File file) {
         if (!file.exists())
             if (!file.mkdir())
-                EnchantmentTokens.LOGGER.log(Level.SEVERE, "[ERROR] Could not create folder " + file.getPath());
+                EnchantmentTokens.logger.log(Level.SEVERE, "[ERROR] Could not create folder " + file.getPath());
     }
 
     public static void createFile(File file) {
         try {
             if (!file.exists())
                 if (!file.createNewFile())
-                    EnchantmentTokens.LOGGER.log(Level.SEVERE, "[ERROR] Could not create file " + file.getPath());
+                    EnchantmentTokens.logger.log(Level.SEVERE, "[ERROR] Could not create file " + file.getPath());
         } catch (IOException e) {
             e.printStackTrace();
         }

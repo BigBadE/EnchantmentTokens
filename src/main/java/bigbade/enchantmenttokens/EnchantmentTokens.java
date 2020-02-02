@@ -22,7 +22,6 @@ import bigbade.enchantmenttokens.api.EnchantmentAddon;
 import bigbade.enchantmenttokens.api.EnchantmentBase;
 import bigbade.enchantmenttokens.api.EnchantmentLoader;
 import bigbade.enchantmenttokens.gui.EnchantmentMenuFactory;
-import bigbade.enchantmenttokens.gui.EnchantmentPickerManager;
 import bigbade.enchantmenttokens.listeners.SignPacketHandler;
 import bigbade.enchantmenttokens.utils.*;
 import bigbade.enchantmenttokens.utils.currency.CurrencyHandler;
@@ -42,12 +41,11 @@ import java.util.logging.Logger;
 public class EnchantmentTokens extends JavaPlugin {
     public static final String NAME = "enchantmenttokens";
 
-    private EnchantmentPickerManager enchantmentPickerManager;
-    public static Logger LOGGER;
+    public static Logger logger;
 
-    public EnchantmentLoader loader;
+    private EnchantmentLoader loader;
 
-    public SignPacketHandler signHandler;
+    private SignPacketHandler signHandler;
 
     //Minecraft version
     private int version;
@@ -62,17 +60,18 @@ public class EnchantmentTokens extends JavaPlugin {
 
     private EnchantmentMenuFactory factory;
 
+    private SchedulerHandler scheduler;
     /**
      * Everything is set up here
      */
     @Override
     public void onEnable() {
-        LOGGER = getLogger();
+        logger = getLogger();
         getConfig().options().copyHeader(true).header("#Add all vanilla enchantments used in here!\nCheck configurationguide.txt for names/versions.");
         saveDefaultConfig();
         version = Integer.parseInt(Bukkit.getVersion().split("\\.")[1]);
 
-        playerHandler = new EnchantmentPlayerHandler(this);
+        scheduler = new SchedulerHandler(this);
 
         String currency = (String) ConfigurationManager.getValueOrDefault("currency", getConfig(), "gems");
 
@@ -86,6 +85,8 @@ public class EnchantmentTokens extends JavaPlugin {
             } else
                 currencyHandler = new GemCurrencyHandler(this);
         }
+
+        playerHandler = new EnchantmentPlayerHandler(currencyHandler);
 
         boolean metrics = (boolean) ConfigurationManager.getValueOrDefault("metrics", getConfig(), true);
 
@@ -125,8 +126,7 @@ public class EnchantmentTokens extends JavaPlugin {
         utils = new EnchantUtils(enchantmentHandler, playerHandler, listenerHandler, signHandler.getSigns());
 
         if (Bukkit.getPluginManager().isPluginEnabled(this)) {
-            enchantmentPickerManager = new EnchantmentPickerManager(this, getConfig().getConfigurationSection("enchants"));
-            factory = new EnchantmentMenuFactory(version, playerHandler, enchantmentPickerManager);
+            factory = new EnchantmentMenuFactory(version, playerHandler, utils, enchantmentHandler);
             new CommandManager(this);
         }
 
@@ -162,10 +162,6 @@ public class EnchantmentTokens extends JavaPlugin {
         return enchantmentHandler;
     }
 
-    public EnchantmentPickerManager getEnchantmentPickerManager() {
-        return enchantmentPickerManager;
-    }
-
     public ListenerHandler getListenerHandler() {
         return listenerHandler;
     }
@@ -192,5 +188,9 @@ public class EnchantmentTokens extends JavaPlugin {
 
     public EnchantmentMenuFactory getFactory() {
         return factory;
+    }
+
+    public SchedulerHandler getScheduler() {
+        return scheduler;
     }
 }

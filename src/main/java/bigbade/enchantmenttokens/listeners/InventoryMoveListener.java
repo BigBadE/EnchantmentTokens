@@ -17,11 +17,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.events.EnchantmentEvent;
 import bigbade.enchantmenttokens.listeners.enchants.BasicEnchantListener;
 import bigbade.enchantmenttokens.utils.ListenerManager;
-import org.bukkit.Bukkit;
+import bigbade.enchantmenttokens.utils.SchedulerHandler;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -32,15 +31,19 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class InventoryMoveListener extends BasicEnchantListener<Event> implements Listener {
-    private EnchantmentTokens main;
+    private List<Location> signs;
+    private SchedulerHandler scheduler;
 
     private ListenerManager swapOn;
     private ListenerManager swapOff;
 
-    public InventoryMoveListener(ListenerManager swapOn, ListenerManager swapOff, EnchantmentTokens main) {
+    public InventoryMoveListener(ListenerManager swapOn, ListenerManager swapOff, List<Location> signs, SchedulerHandler scheduler) {
         super(null);
-        this.main = main;
+        this.scheduler = scheduler;
+        this.signs = signs;
         this.swapOn = swapOn;
         this.swapOff = swapOff;
     }
@@ -50,10 +53,10 @@ public class InventoryMoveListener extends BasicEnchantListener<Event> implement
         if (event.getInventory().getHolder() == null) return;
         if (event.getInventory().getHolder().equals(event.getWhoClicked()))
             if (event.getSlot() == event.getWhoClicked().getInventory().getHeldItemSlot()) {
-                for (Location location : main.signHandler.getSigns())
+                for (Location location : signs)
                     if (location.getChunk().isLoaded() && location.getWorld() == event.getWhoClicked().getWorld())
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(main, () ->
-                                ((Player) event.getWhoClicked()).sendSignChange(location, new String[]{"[Enchantment]", ((Sign) location.getBlock().getState()).getLine(1), "", ""}));
+                        scheduler.runTaskLater(() ->
+                                ((Player) event.getWhoClicked()).sendSignChange(location, new String[]{"[Enchantment]", ((Sign) location.getBlock().getState()).getLine(1), "", ""}), 1L);
                 if(event.getCurrentItem() != null) {
                     EnchantmentEvent<Event> enchantmentEvent = new EnchantmentEvent<Event>(event, event.getCurrentItem()).setUser(event.getWhoClicked());
                     callListeners(enchantmentEvent, swapOn);
@@ -68,10 +71,10 @@ public class InventoryMoveListener extends BasicEnchantListener<Event> implement
 
     @EventHandler
     public void onHandSwap(PlayerItemHeldEvent event) {
-        for (Location location : main.signHandler.getSigns()) {
+        for (Location location : signs) {
             if (location.getChunk().isLoaded() && location.getWorld() == event.getPlayer().getWorld()) {
-                Bukkit.getScheduler().scheduleSyncDelayedTask(main, () ->
-                        event.getPlayer().sendSignChange(location, new String[]{"[Enchantment]", ((Sign) location.getBlock().getState()).getLine(1), "", ""}));
+                scheduler.runTaskLater(() ->
+                        event.getPlayer().sendSignChange(location, new String[]{"[Enchantment]", ((Sign) location.getBlock().getState()).getLine(1), "", ""}), 1L);
             }
         }
 

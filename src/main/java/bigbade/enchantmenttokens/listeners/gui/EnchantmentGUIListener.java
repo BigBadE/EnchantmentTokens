@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import bigbade.enchantmenttokens.gui.EnchantmentGUI;
 import bigbade.enchantmenttokens.utils.EnchantmentPlayerHandler;
+import bigbade.enchantmenttokens.utils.SchedulerHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -35,9 +36,11 @@ public class EnchantmentGUIListener implements Listener {
             "VI", "VII", "VIII", "IX"};
 
     private EnchantmentPlayerHandler handler;
+    private SchedulerHandler scheduler;
 
-    public EnchantmentGUIListener(EnchantmentPlayerHandler handler) {
+    public EnchantmentGUIListener(EnchantmentPlayerHandler handler, SchedulerHandler scheduler) {
         this.handler = handler;
+        this.scheduler = scheduler;
     }
 
     @EventHandler
@@ -49,9 +52,10 @@ public class EnchantmentGUIListener implements Listener {
         player.getCurrentGUI().getButtons().forEach((button -> {
             if (button.isSame(event.getCurrentItem())) {
                 EnchantmentGUI inventory = button.click(event.getInventory().getItem(4));
-                if (inventory == null)
+                if (inventory == null) {
                     player.setCurrentGUI(null);
-                else {
+                    player.getPlayer().closeInventory();
+                } else {
                     player.setCurrentGUI(null);
                     player.getPlayer().openInventory(inventory.getInventory());
                     player.setCurrentGUI(inventory);
@@ -64,10 +68,12 @@ public class EnchantmentGUIListener implements Listener {
     public void onInventoryClose(InventoryCloseEvent event) {
         EnchantmentPlayer enchantPlayer = handler.getPlayer((Player) event.getPlayer());
         if (enchantPlayer.getCurrentGUI() != null && enchantPlayer.getCurrentGUI().getInventory() != null && enchantPlayer.getCurrentGUI().getInventory().equals(event.getInventory())) {
-            EnchantmentGUI gui = enchantPlayer.getCurrentGUI();
-            enchantPlayer.setCurrentGUI(null);
-            event.getPlayer().openInventory(event.getInventory());
-            enchantPlayer.setCurrentGUI(gui);
+            scheduler.runTaskLater(() -> {
+                EnchantmentGUI gui = enchantPlayer.getCurrentGUI();
+                enchantPlayer.setCurrentGUI(null);
+                event.getPlayer().openInventory(event.getInventory());
+                enchantPlayer.setCurrentGUI(gui);
+            }, 1L);
         }
     }
 

@@ -70,7 +70,6 @@ public class EnchantUtils {
             player.sendMessage(TranslatedMessage.translate("enchantment.max.message"));
             return;
         }
-        System.out.println(level);
         long price = base.getDefaultPrice(level);
         EnchantmentPlayer enchantmentPlayer = playerHandler.getPlayer(player);
         if (enchantmentPlayer.getGems() < price) {

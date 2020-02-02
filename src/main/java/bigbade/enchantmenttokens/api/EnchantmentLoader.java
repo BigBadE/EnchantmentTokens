@@ -77,11 +77,11 @@ public class EnchantmentLoader {
                 }
             }
             if (addon == null) {
-                EnchantmentTokens.LOGGER.log(Level.SEVERE, "Jar " + file.getName() + " has no EnchantmentAddon class, skipping loading enchants");
+                EnchantmentTokens.logger.log(Level.SEVERE, "Jar " + file.getName() + " has no EnchantmentAddon class, skipping loading enchants");
             } else
                 enchantments.put(addon.getName(), enchantClasses);
         } catch (IOException e) {
-            EnchantmentTokens.LOGGER.log(Level.SEVERE, "Could not load jar at path: " + file.getPath(), e);
+            EnchantmentTokens.logger.log(Level.SEVERE, "Could not load jar at path: " + file.getPath(), e);
         }
     }
 

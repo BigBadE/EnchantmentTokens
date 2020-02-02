@@ -23,6 +23,8 @@ public class EnchantButton {
         return null;
     }
 
+    public ItemStack getItem() { return item; }
+
     public boolean isSame(ItemStack item) {
         return this.item.equals(item);
     }

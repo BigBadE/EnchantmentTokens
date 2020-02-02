@@ -1,6 +1,11 @@
 package bigbade.enchantmenttokens.gui;
 
+import bigbade.enchantmenttokens.utils.EnchantButton;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /*
 EnchantmentTokens
@@ -20,7 +25,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 public class EnchantmentGUI {
+    private ItemStack item;
     private Inventory inventory;
+    private List<EnchantButton> buttons = new ArrayList<>();
 
     public EnchantmentGUI(Inventory inventory) {
         this.inventory = inventory;
@@ -28,5 +35,21 @@ public class EnchantmentGUI {
 
     public Inventory getInventory() {
         return inventory;
+    }
+
+    public List<EnchantButton> getButtons() {
+        return buttons;
+    }
+
+    public void addButton(EnchantButton button) {
+        buttons.add(button);
+    }
+
+    public ItemStack getItem() {
+        return item;
+    }
+
+    public void setItem(ItemStack item) {
+        this.item = item;
     }
 }

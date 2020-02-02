@@ -21,6 +21,7 @@ import bigbade.enchantmenttokens.api.EnchantUtils;
 import bigbade.enchantmenttokens.api.EnchantmentAddon;
 import bigbade.enchantmenttokens.api.EnchantmentBase;
 import bigbade.enchantmenttokens.api.EnchantmentLoader;
+import bigbade.enchantmenttokens.gui.EnchantmentMenuFactory;
 import bigbade.enchantmenttokens.gui.EnchantmentPickerManager;
 import bigbade.enchantmenttokens.listeners.SignPacketHandler;
 import bigbade.enchantmenttokens.utils.*;
@@ -58,6 +59,8 @@ public class EnchantmentTokens extends JavaPlugin {
     private EnchantmentPlayerHandler playerHandler;
 
     private EnchantUtils utils;
+
+    private EnchantmentMenuFactory factory;
 
     /**
      * Everything is set up here
@@ -122,7 +125,8 @@ public class EnchantmentTokens extends JavaPlugin {
         utils = new EnchantUtils(enchantmentHandler, playerHandler, listenerHandler, signHandler.getSigns());
 
         if (Bukkit.getPluginManager().isPluginEnabled(this)) {
-            enchantmentPickerManager = new EnchantmentPickerManager(enchantmentHandler, getConfig().getConfigurationSection("enchants"));
+            enchantmentPickerManager = new EnchantmentPickerManager(this, getConfig().getConfigurationSection("enchants"));
+            factory = new EnchantmentMenuFactory(version, playerHandler, enchantmentPickerManager);
             new CommandManager(this);
         }
 
@@ -184,5 +188,9 @@ public class EnchantmentTokens extends JavaPlugin {
 
     public EnchantUtils getUtils() {
         return utils;
+    }
+
+    public EnchantmentMenuFactory getFactory() {
+        return factory;
     }
 }

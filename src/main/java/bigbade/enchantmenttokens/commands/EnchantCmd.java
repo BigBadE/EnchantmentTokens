@@ -54,7 +54,7 @@ public class EnchantCmd implements CommandExecutor {
             }
             String name = nameBuilder.toString();
             ItemStack item = ((Player) sender).getInventory().getItemInMainHand();
-            utils.addEnchantment(item, name, (Player) sender, true);
+            utils.addEnchantment(item, name, (Player) sender, false);
             for (EnchantmentBase enchant : handler.getVanillaEnchants()) {
                 if (enchant.getName().equals(args[0])) {
                     addEnchant((Player) sender, item, enchant, Integer.parseInt(args[args.length - 1]));

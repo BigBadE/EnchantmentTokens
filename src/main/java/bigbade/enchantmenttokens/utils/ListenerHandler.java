@@ -61,7 +61,7 @@ public class ListenerHandler {
         Bukkit.getPluginManager().registerEvents(new SignPlaceListener(main.getEnchantmentHandler()), main);
         Bukkit.getPluginManager().registerEvents(new SignClickListener(main.getUtils()), main);
 
-        Bukkit.getPluginManager().registerEvents(new EnchantmentGUIListener(main.getPlayerHandler(), main.getEnchantmentPickerManager(), main.getUtils(), main.getVersion()), main);
+        Bukkit.getPluginManager().registerEvents(new EnchantmentGUIListener(main.getPlayerHandler()), main);
 
         Bukkit.getPluginManager().registerEvents(new ChunkUnloadListener(main.getSignHandler().getSigns()), main);
         Bukkit.getPluginManager().registerEvents(new PlayerLeaveListener(main.getPlayerHandler()), main);

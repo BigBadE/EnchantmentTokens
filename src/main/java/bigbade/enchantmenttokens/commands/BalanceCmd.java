@@ -37,7 +37,7 @@ public class BalanceCmd implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if(commandSender instanceof Player) {
             String priceString;
-            EnchantmentPlayer player = handler.loadPlayer((Player) commandSender);
+            EnchantmentPlayer player = handler.getPlayer((Player) commandSender);
             if(player.usingGems())
                 priceString = player.getGems() + "G";
             else

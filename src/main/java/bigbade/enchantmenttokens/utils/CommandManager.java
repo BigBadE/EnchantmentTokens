@@ -13,7 +13,7 @@ public class CommandManager {
         Objects.requireNonNull(main.getCommand("addgems")).setExecutor(new AddGemCmd(main.getPlayerHandler()));
         Objects.requireNonNull(main.getCommand("addgems")).setTabCompleter(new AddGemTabCompleter());
 
-        EnchantMenuCmd menuCmd = new EnchantMenuCmd(main.getVersion(), main.getPlayerHandler());
+        EnchantMenuCmd menuCmd = new EnchantMenuCmd(main.getFactory());
         Objects.requireNonNull(main.getCommand("tokenenchant")).setExecutor(menuCmd);
         Objects.requireNonNull(main.getCommand("tokenenchant")).setTabCompleter(new GenericTabCompleter());
 

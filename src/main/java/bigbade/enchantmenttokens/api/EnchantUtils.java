@@ -64,7 +64,7 @@ public class EnchantUtils {
         player.sendMessage(TranslatedMessage.translate("enchantment.add.fail"));
     }
 
-    private void addEnchantmentBase(ItemStack item, EnchantmentBase base, Player player, boolean simulate) {
+    public void addEnchantmentBase(ItemStack item, EnchantmentBase base, Player player, boolean takeMoney) {
         int level = getLevel(item, base);
         if (level > base.getMaxLevel()) {
             player.sendMessage(TranslatedMessage.translate("enchantment.max.message"));
@@ -77,7 +77,7 @@ public class EnchantUtils {
             player.sendMessage(TranslatedMessage.translate("enchantment.bought.fail", getPriceString(enchantmentPlayer, level, base)));
             return;
         }
-        if (!simulate)
+        if (takeMoney)
             enchantmentPlayer.addGems(-price);
         player.sendMessage(TranslatedMessage.translate("enchantment.bought.success", base.getName(), "" + level));
         ItemMeta meta = item.getItemMeta();

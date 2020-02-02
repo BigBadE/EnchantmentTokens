@@ -35,6 +35,7 @@ public abstract class EnchantmentBase extends Enchantment {
     private boolean treasure = false;
     private final List<Enchantment> conflicts = new ArrayList<>();
     private final Material icon;
+    private boolean cursed;
 
     @ConfigurationField
     public String name;
@@ -122,7 +123,7 @@ public abstract class EnchantmentBase extends Enchantment {
 
     @Override
     public boolean isCursed() {
-        return false;
+        return cursed;
     }
 
     @Override
@@ -135,23 +136,25 @@ public abstract class EnchantmentBase extends Enchantment {
             return false;
     }
 
-    protected void setTarget(EnchantmentTarget target) {
+    public void setTarget(EnchantmentTarget target) {
         this.target = target;
     }
 
-    protected void setTreasure(boolean treasure) {
+    public void setTreasure(boolean treasure) {
         this.treasure = treasure;
     }
 
-    protected void addConflict(Enchantment conflict) {
+    public void addConflict(Enchantment conflict) {
         conflicts.add(conflict);
     }
 
-    protected void addTargets(Material... targets) {
+    public void addTargets(Material... targets) {
         this.targets.addAll(Arrays.asList(targets));
     }
 
     public Material getIcon() {
         return icon;
     }
+
+    public void setCursed(boolean cursed) { this.cursed = cursed; }
 }

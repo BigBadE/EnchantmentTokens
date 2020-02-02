@@ -155,7 +155,7 @@ public class ListenerHandler {
 
         final EnchantmentBase enchant = (EnchantmentBase) ReflectionManager.instantiate(clazz);
 
-        ConfigurationSection enchantSection = ConfigurationManager.getSectionOrCreate(section, clazz.getName().toLowerCase());
+        ConfigurationSection enchantSection = ConfigurationManager.getSectionOrCreate(section, clazz.getSimpleName().toLowerCase());
 
         for (Field field : clazz.getDeclaredFields()) {
             ConfigurationManager.loadConfigForField(field, enchantSection, enchant);

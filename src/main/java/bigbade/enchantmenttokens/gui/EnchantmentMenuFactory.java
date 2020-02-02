@@ -5,6 +5,7 @@ import bigbade.enchantmenttokens.localization.TranslatedMessage;
 import bigbade.enchantmenttokens.utils.EnchantButton;
 import bigbade.enchantmenttokens.utils.EnchantmentHandler;
 import bigbade.enchantmenttokens.utils.EnchantmentPlayerHandler;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -15,19 +16,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class EnchantmentMenuFactory {
-    private static ItemStack glassPane = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
+    private ItemStack glassPane;
     private int version;
     private EnchantmentPlayerHandler handler;
     private EnchantmentHandler enchantmentHandler;
     private EnchantUtils utils;
 
-    //Basic grey pane used for populating the GUI.
-    private ItemStack greyPlane = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
     //Barrier used for exiting the GUI
     private ItemStack exit;
 
@@ -37,7 +34,8 @@ public class EnchantmentMenuFactory {
         this.utils = utils;
         this.enchantmentHandler = enchantmentHandler;
 
-        exit = EnchantmentMenuFactory.makeItem(Material.BARRIER, TranslatedMessage.translate("enchant.back"));
+        exit = makeItem(Material.BARRIER, TranslatedMessage.translate("enchant.back"));
+        glassPane = makeItem(Material.BLACK_STAINED_GLASS_PANE, " ");
     }
 
     /**
@@ -57,40 +55,76 @@ public class EnchantmentMenuFactory {
 
         for (int i = 0; i < 54; i++) {
             if (i < 10 || i > 45 || i % 9 == 0 || i % 9 == 8)
-                inventory.setItem(i, greyPlane);
+                inventory.setItem(i, glassPane);
         }
 
         inventory.setItem(4, itemStack);
+
+        inventory.setItem(49, exit);
+
+        int next = inventory.firstEmpty();
 
         for (VanillaEnchant enchantment : enchantmentHandler.getVanillaEnchants()) {
             if (enchantment.getItemTarget() != target && enchantment.getItemTarget() != EnchantmentTarget.ALL)
                 continue;
             EnchantButton button = updateItem(name, enchantment, itemStack, player);
-            subInventory.addButton(button);
-            inventory.addItem(button.getItem());
+            subInventory.addButton(button, next);
+            inventory.setItem(next, button.getItem());
+            next = inventory.firstEmpty();
         }
 
         for (EnchantmentBase enchantment : enchantmentHandler.getEnchantments()) {
             if (enchantment.getItemTarget() != target && enchantment.getItemTarget() != EnchantmentTarget.ALL && !enchantment.getTargets().contains(itemStack.getType()))
                 continue;
             EnchantButton button = updateItem(name, enchantment, itemStack, player);
-            subInventory.addButton(button);
-            inventory.addItem(button.getItem());
+            subInventory.addButton(button, next);
+            inventory.setItem(next, button.getItem());
+            next = inventory.firstEmpty();
         }
-        inventory.setItem(49, exit);
-        subInventory.addButton(new EnchantButton(EnchantmentMenuFactory.makeItem(Material.BARRIER, TranslatedMessage.translate("enchant.back")), item -> genInventory(player.getPlayer())));
+        subInventory.addButton(new EnchantButton(exit, item -> genItemInventory(player.getPlayer(), subInventory.getItem())), 49);
         return subInventory;
     }
 
     private EnchantButton updateItem(String name, EnchantmentBase base, ItemStack stack, EnchantmentPlayer player) {
-        ItemStack item = EnchantmentMenuFactory.makeItem(base.getIcon(), base.getName());
-        int level = getLevel(stack, base);
-        item.setAmount(level);
-        return new EnchantButton(item, itemStack -> {
-            utils.addEnchantmentBase(itemStack, base, player.getPlayer(), false);
-            updatePriceStr(base, level, itemStack);
-            return generateGUI(base.getItemTarget(), itemStack, player, name);
-        });
+        ItemStack item = EnchantmentMenuFactory.makeItem(base.getIcon(), ChatColor.GREEN + base.getName());
+        int level = addLore(stack, base, item, player.usingGems());
+        if (level <= base.getMaxLevel()) {
+            item.setAmount(level);
+            return new EnchantButton(item, itemStack -> {
+                utils.addEnchantmentBase(itemStack, base, player.getPlayer(), false);
+                updatePriceStr(base, level, itemStack);
+                return generateGUI(base.getItemTarget(), itemStack, player, name);
+            });
+        } else {
+            item.setAmount(64);
+            return new EnchantButton(item, itemStack -> generateGUI(base.getItemTarget(), itemStack, player, name));
+        }
+    }
+
+    private int addLore(ItemStack item, EnchantmentBase base, ItemStack target, boolean gems) {
+        int level = getLevel(item, base);
+        long price = base.getDefaultPrice(level);
+        ItemMeta meta = target.getItemMeta();
+        assert meta != null;
+        String priceStr = null;
+        if (level <= base.getMaxLevel()) {
+            priceStr = TranslatedMessage.translate("enchantment.price");
+            if (gems)
+                priceStr += price + "G";
+            else
+                priceStr += TranslatedMessage.translate("dollar.symbol", price + "");
+        }
+        String levelStr = TranslatedMessage.translate("enchantment.level");
+        if (level <= base.getMaxLevel())
+            levelStr += level;
+        else
+            levelStr += TranslatedMessage.translate("enchantment.maxed");
+        if (priceStr != null)
+            meta.setLore(Arrays.asList(levelStr, priceStr));
+        else
+            meta.setLore(Collections.singletonList(levelStr));
+        target.setItemMeta(meta);
+        return level;
     }
 
     private void updatePriceStr(EnchantmentBase base, int level, ItemStack item) {
@@ -109,12 +143,15 @@ public class EnchantmentMenuFactory {
             if (enchantment.getKey().getKey().equals(base.getKey()))
                 return enchantment.getValue();
         }
-        return 0;
+        return 1;
     }
 
     public EnchantmentGUI genInventory(Player player) {
+        return genItemInventory(player, player.getInventory().getItemInMainHand());
+    }
+
+    public EnchantmentGUI genItemInventory(Player player, ItemStack item) {
         Inventory inventory = Bukkit.createInventory(null, 27, "Enchantments");
-        ItemStack item = player.getInventory().getItemInMainHand().clone();
         ItemMeta meta = item.getItemMeta();
         if (meta == null) {
             if (item.getType() == Material.AIR) {
@@ -128,10 +165,12 @@ public class EnchantmentMenuFactory {
         if (lore == null)
             lore = new ArrayList<>();
         EnchantmentPlayer enchantPlayer = handler.getPlayer(player);
-        if (enchantPlayer.usingGems())
-            lore.add(TranslatedMessage.translate("enchantment.price") + "0G");
-        else
-            lore.add(TranslatedMessage.translate("enchantment.price") + " " + TranslatedMessage.translate("dollar.symbol", "0"));
+        if(lore.isEmpty() || !lore.get(lore.size()-1).startsWith(TranslatedMessage.translate("enchantment.price"))) {
+            if (enchantPlayer.usingGems())
+                lore.add(TranslatedMessage.translate("enchantment.price") + "0G");
+            else
+                lore.add(TranslatedMessage.translate("enchantment.price") + " " + TranslatedMessage.translate("dollar.symbol", "0"));
+        }
         meta.setLore(lore);
         item.setItemMeta(meta);
         EnchantmentGUI enchantInv = new EnchantmentGUI(inventory);
@@ -166,25 +205,25 @@ public class EnchantmentMenuFactory {
 
         if (version >= 14)
             generateButton(player, inventory, Material.CROSSBOW, "tool.crossbow", EnchantmentTarget.CROSSBOW, 9);
-        if(version >= 13)
+        if (version >= 13)
             generateButton(player, inventory, Material.TRIDENT, "tool.trident", EnchantmentTarget.TRIDENT, 10);
-        else if(version >= 9)
+        else if (version >= 9)
             generateButton(player, inventory, Material.FISHING_ROD, "tool.fishingrod", EnchantmentTarget.FISHING_ROD, 10);
         generateButton(player, inventory, Material.DIAMOND_PICKAXE, "tool.tool", EnchantmentTarget.TOOL, 11);
         generateButton(player, inventory, Material.DIAMOND_SWORD, "tool.sword", EnchantmentTarget.WEAPON, 12);
-        if(version >= 13 || version < 8)
+        if (version >= 13 || version < 8)
             generateButton(player, inventory, Material.FISHING_ROD, "tool.fishingrod", EnchantmentTarget.FISHING_ROD, 13);
         generateButton(player, inventory, Material.DIAMOND_CHESTPLATE, "tool.armor", EnchantmentTarget.ARMOR, 14);
         generateButton(player, inventory, Material.BOW, "tool.bow", EnchantmentTarget.BOW, 15);
-        if(version >= 14)
+        if (version >= 14)
             generateButton(player, inventory, Material.FISHING_ROD, "tool.fishingrod", EnchantmentTarget.FISHING_ROD, 16);
-        else if(version >= 9)
+        else if (version >= 9)
             generateButton(player, inventory, Material.SHIELD, "tool.shield", null, 16);
-        if(version >= 14)
+        if (version >= 14)
             generateButton(player, inventory, Material.SHIELD, "tool.shield", null, 17);
         ItemStack newItem = makeItem(Material.REDSTONE_BLOCK, TranslatedMessage.translate("enchant.cancel"));
-        inventory.addButton(new EnchantButton(newItem, itemStack -> null));
-        inventory.getInventory().setItem(21, newItem);
+        inventory.addButton(new EnchantButton(newItem, itemStack -> null), 24);
+        inventory.getInventory().setItem(23, newItem);
 
         newItem = makeItem(Material.EMERALD_BLOCK, TranslatedMessage.translate("enchant.confirm"));
         inventory.addButton(new EnchantButton(newItem, itemStack -> {
@@ -192,8 +231,8 @@ public class EnchantmentMenuFactory {
             removePriceLine(itemStack, handler.getPlayer(player));
             playerInventory.setItem(playerInventory.getHeldItemSlot(), itemStack);
             return null;
-        }));
-        inventory.getInventory().setItem(23, newItem);
+        }), 21);
+        inventory.getInventory().setItem(21, newItem);
     }
 
     private void removePriceLine(ItemStack item, EnchantmentPlayer player) {
@@ -201,7 +240,7 @@ public class EnchantmentMenuFactory {
         assert meta != null;
         if (meta.getLore() != null) {
             String line = meta.getLore().get(meta.getLore().size() - 1);
-            long price = Long.parseLong(line.substring(9).replace("G", ""));
+            long price = Long.parseLong(line.substring(9).replace("G", "").replace(TranslatedMessage.translate("dollar.symbol", ""), ""));
             List<String> lore = meta.getLore();
             lore.remove(meta.getLore().size() - 1);
             meta.setLore(lore);
@@ -214,7 +253,7 @@ public class EnchantmentMenuFactory {
 
     private void generateButton(Player player, EnchantmentGUI inventory, Material material, String key, EnchantmentTarget target, int slot) {
         ItemStack item = makeItem(material, TranslatedMessage.translate(key));
-        inventory.addButton(new EnchantButton(item, itemStack -> generateGUI(target, itemStack, handler.getPlayer(player), TranslatedMessage.translate(key))));
+        inventory.addButton(new EnchantButton(item, itemStack -> generateGUI(target, itemStack, handler.getPlayer(player), TranslatedMessage.translate(key))), slot);
         inventory.getInventory().setItem(slot, item);
     }
 

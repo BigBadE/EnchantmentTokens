@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import bigbade.enchantmenttokens.gui.EnchantmentGUI;
+import bigbade.enchantmenttokens.utils.EnchantButton;
 import bigbade.enchantmenttokens.utils.EnchantmentPlayerHandler;
 import bigbade.enchantmenttokens.utils.SchedulerHandler;
 import org.bukkit.entity.Player;
@@ -49,19 +50,16 @@ public class EnchantmentGUIListener implements Listener {
         if (event.getClickedInventory() == null || event.getCurrentItem() == null || player.getCurrentGUI() == null)
             return;
         event.setCancelled(true);
-        player.getCurrentGUI().getButtons().forEach((button -> {
-            if (button.isSame(event.getCurrentItem())) {
-                EnchantmentGUI inventory = button.click(event.getInventory().getItem(4));
-                if (inventory == null) {
-                    player.setCurrentGUI(null);
-                    player.getPlayer().closeInventory();
-                } else {
-                    player.setCurrentGUI(null);
-                    player.getPlayer().openInventory(inventory.getInventory());
-                    player.setCurrentGUI(inventory);
-                }
-            }
-        }));
+        EnchantButton button = player.getCurrentGUI().getButton(event.getSlot());
+        EnchantmentGUI inventory = button.click(event.getInventory().getItem(4));
+        if (inventory == null) {
+            player.setCurrentGUI(null);
+            player.getPlayer().closeInventory();
+        } else {
+            player.setCurrentGUI(null);
+            player.getPlayer().openInventory(inventory.getInventory());
+            player.setCurrentGUI(inventory);
+        }
     }
 
     @EventHandler

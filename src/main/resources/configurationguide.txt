@@ -46,6 +46,7 @@ Shield (1.9): Custom only
 
 Run the server then start it after it boots up, and a simple configuration for each enchantment will be generated.
 Configuring enchantments is simple, here is an overview:
+name: THIS CAN BE USED FOR TRANSLATING NAMES, BUT SHOULD NOT BE USED FOR CUSTOM NAMES BECAUSE THIS WILL NOT AFFECT THE LORE ON THE ITEM
 icon: The item that shows up when choosing the enchantment in the enchantment GUI. Name should be uppercase with underscores instead of spaces.
 (Some items have different names in-game then in the code, check Minecraft gamepedia for the correct name, under Data Values and Namespaced ID.
 price: This section controls the pricing of the enchantment.

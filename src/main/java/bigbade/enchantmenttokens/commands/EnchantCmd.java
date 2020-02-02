@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import bigbade.enchantmenttokens.api.EnchantUtils;
 import bigbade.enchantmenttokens.api.EnchantmentBase;
+import bigbade.enchantmenttokens.api.VanillaEnchant;
 import bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
 import bigbade.enchantmenttokens.localization.TranslatedMessage;
 import bigbade.enchantmenttokens.utils.EnchantmentHandler;
@@ -74,12 +75,16 @@ public class EnchantCmd implements CommandExecutor {
     }
 
     private void addEnchant(Player player, ItemStack item, Enchantment base, int level) {
-        item.addEnchantment(base, level);
-        ItemMeta meta = item.getItemMeta();
-        assert meta != null;
-        if(meta.getLore() == null)
-            meta.setLore(new ArrayList<>());
-        meta.getLore().add(base.getName() + ": " + EnchantmentGUIListener.getRomanNumeral(level));
+        if(base instanceof VanillaEnchant) {
+            item.addEnchantment(((VanillaEnchant) base).getEnchantment(), level);
+        } else {
+            item.addEnchantment(base, level);
+            ItemMeta meta = item.getItemMeta();
+            assert meta != null;
+            if (meta.getLore() == null)
+                meta.setLore(new ArrayList<>());
+            meta.getLore().add(base.getName() + ": " + EnchantmentGUIListener.getRomanNumeral(level));
+        }
         player.sendMessage(TranslatedMessage.translate("command.add", base.getName()));
     }
 }

@@ -32,14 +32,15 @@ import java.util.Objects;
 import java.util.logging.Level;
 
 public class ConfigurationManager {
+    private ConfigurationManager() { }
+
     public static FileConfiguration loadConfigurationFile(String path) {
         File config = new File(path);
 
         FileConfiguration configuration = new YamlConfiguration();
         try {
-            if (!config.exists())
-                if (!config.createNewFile())
-                    EnchantmentTokens.logger.log(Level.SEVERE, "Problem creating config file at " + config.getPath());
+            if (!config.exists() && !config.createNewFile())
+                EnchantmentTokens.logger.log(Level.SEVERE, "Problem creating config file at " + config.getPath());
             configuration.load(config);
         } catch (IOException | InvalidConfigurationException e) {
             EnchantmentTokens.logger.log(Level.SEVERE, "could not load enchantment configuration", e);
@@ -81,8 +82,8 @@ public class ConfigurationManager {
     public static void saveConfiguration(String path, FileConfiguration configuration) {
         File config = new File(path);
         try {
-            if (config.exists() && !config.delete())
-                EnchantmentTokens.logger.log(Level.SEVERE, "Could not save configuration");
+            if (config.exists())
+                Files.delete(config.toPath());
             Files.write(config.toPath(), configuration.saveToString().getBytes());
         } catch (IOException e) {
             EnchantmentTokens.logger.log(Level.SEVERE, "Could not save configuration", e);
@@ -110,24 +111,21 @@ public class ConfigurationManager {
 
     public static void createFolder(String path) {
         File data = new File(path);
-        if (!data.exists())
-            if (!data.mkdir())
-                EnchantmentTokens.logger.log(Level.SEVERE, "[ERROR] Could not create folder " + path);
+        if (!data.exists() && !data.mkdir())
+            EnchantmentTokens.logger.log(Level.SEVERE, "[ERROR] Could not create folder {0}", path);
     }
 
     public static void createFolder(File file) {
-        if (!file.exists())
-            if (!file.mkdir())
-                EnchantmentTokens.logger.log(Level.SEVERE, "[ERROR] Could not create folder " + file.getPath());
+        if (!file.exists() && !file.mkdir())
+            EnchantmentTokens.logger.log(Level.SEVERE, "[ERROR] Could not create folder {0}", file.getPath());
     }
 
     public static void createFile(File file) {
         try {
-            if (!file.exists())
-                if (!file.createNewFile())
-                    EnchantmentTokens.logger.log(Level.SEVERE, "[ERROR] Could not create file " + file.getPath());
+            if (!file.exists() && !file.createNewFile())
+                EnchantmentTokens.logger.log(Level.SEVERE, "[ERROR] Could not create file {0}", file.getPath());
         } catch (IOException e) {
-            e.printStackTrace();
+            EnchantmentTokens.logger.log(Level.SEVERE, "[ERROR] Could not access {0}", file.getPath());
         }
     }
 

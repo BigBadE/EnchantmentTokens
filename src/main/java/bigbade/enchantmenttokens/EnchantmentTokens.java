@@ -67,7 +67,7 @@ public class EnchantmentTokens extends JavaPlugin {
     @Override
     public void onEnable() {
         logger = getLogger();
-        getConfig().options().copyHeader(true).header("#Add all vanilla enchantments used in here!\nCheck configurationguide.txt for names/versions.");
+        getConfig().options().copyHeader(true).header("Add all vanilla enchantments used in here!\nCheck configurationguide.txt for names/versions.");
         saveDefaultConfig();
         version = Integer.parseInt(Bukkit.getVersion().split("\\.")[1]);
 
@@ -102,8 +102,6 @@ public class EnchantmentTokens extends JavaPlugin {
         getLogger().info("Looking for enchantments");
 
         ConfigurationManager.createFolder(getDataFolder().getPath() + "\\enchantments");
-
-        getLogger().info("Registering enchants");
 
         listenerHandler = new ListenerHandler(this);
         enchantmentHandler = new EnchantmentHandler(this);

@@ -79,13 +79,18 @@ public class EnchantUtils {
         if (takeMoney)
             enchantmentPlayer.addGems(-price);
         player.sendMessage(TranslatedMessage.translate("enchantment.bought.success", base.getName(), "" + level));
+        if (base instanceof VanillaEnchant) {
+            item.addEnchantment(((VanillaEnchant) base).getEnchantment(), level);
+            updateSigns(level, base, signs, enchantmentPlayer);
+            return;
+        }
         ItemMeta meta = item.getItemMeta();
         assert meta != null;
         meta.addEnchant(base, level + 1, true);
         updateLore(meta, level, enchantmentPlayer, base);
         item.setItemMeta(meta);
-        updateSigns(level, base, signs, enchantmentPlayer);
         listenerHandler.onEnchant(item, base, player);
+        updateSigns(level, base, signs, enchantmentPlayer);
     }
 
     private void updateLore(ItemMeta meta, int level, EnchantmentPlayer player, EnchantmentBase base) {
@@ -94,18 +99,17 @@ public class EnchantUtils {
             lore = new ArrayList<>();
         String temp = null;
         String priceMessage = TranslatedMessage.translate("enchantment.price");
-        if (lore.size() > 0)
-            if (lore.get(lore.size() - 1).startsWith(priceMessage)) {
-                temp = lore.get(lore.size() - 1);
-                lore.remove(temp);
-            }
+        if (!lore.isEmpty() && lore.get(lore.size() - 1).startsWith(priceMessage)) {
+            temp = lore.get(lore.size() - 1);
+            lore.remove(temp);
+        }
         if (level != 0)
             lore.remove(ChatColor.GRAY + base.getName() + " " + EnchantmentGUIListener.getRomanNumeral(level - 1));
         lore.add(ChatColor.GRAY + base.getName() + " " + EnchantmentGUIListener.getRomanNumeral(level));
         if (temp != null) {
             int currentPrice = Integer.parseInt(temp.substring(9, temp.length() - 1));
             if (player.usingGems())
-                temp = priceMessage + (currentPrice + base.getDefaultPrice(level+1)) + "G";
+                temp = priceMessage + (currentPrice + base.getDefaultPrice(level + 1)) + "G";
             else
                 temp = priceMessage + TranslatedMessage.translate("dollar.symbol", "" + (currentPrice + base.getDefaultPrice(level)));
             lore.add(temp);

@@ -24,11 +24,11 @@ public interface CurrencyHandler {
 
     void setAmount(long amount);
 
-    void removeAmount(long amount);
-
     void addAmount(long amount);
 
     CurrencyHandler newInstance(Player player);
 
     void savePlayer(Player player);
+
+    String name();
 }

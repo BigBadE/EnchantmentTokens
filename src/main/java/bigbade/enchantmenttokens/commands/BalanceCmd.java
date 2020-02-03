@@ -17,25 +17,33 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import bigbade.enchantmenttokens.EnchantmentTokens;
-import org.bukkit.ChatColor;
+import bigbade.enchantmenttokens.api.EnchantmentPlayer;
+import bigbade.enchantmenttokens.localization.TranslatedMessage;
+import bigbade.enchantmenttokens.utils.EnchantmentPlayerHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class BalanceCmd implements CommandExecutor {
-    private EnchantmentTokens main;
+    private EnchantmentPlayerHandler handler;
 
-    public BalanceCmd(EnchantmentTokens main) {
-        this.main = main;
+    public BalanceCmd(EnchantmentPlayerHandler handler) {
+        this.handler = handler;
     }
 
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if(commandSender instanceof Player)
-            commandSender.sendMessage(ChatColor.GREEN + "Your balance: " + main.getPlayerHandler().getPlayer((Player) commandSender).getGems() + "G");
+        if(commandSender instanceof Player) {
+            String priceString;
+            EnchantmentPlayer player = handler.getPlayer((Player) commandSender);
+            if(player.usingGems())
+                priceString = player.getGems() + "G";
+            else
+                priceString = TranslatedMessage.translate("dollar.symbol", "" + player.getGems());
+            commandSender.sendMessage(TranslatedMessage.translate("command.balance", priceString));
+        }
         return true;
     }
 }

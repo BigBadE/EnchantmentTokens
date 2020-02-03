@@ -15,7 +15,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /*
 EnchantmentTokens
@@ -38,57 +37,70 @@ public class EnchantmentLoader {
     private Map<String, Set<Class<EnchantmentBase>>> enchantments = new ConcurrentHashMap<>();
     private Collection<EnchantmentAddon> addons = new ConcurrentLinkedQueue<>();
 
-    public EnchantmentLoader(File folder, Logger logger, EnchantmentTokens main) {
+    public EnchantmentLoader(File folder, EnchantmentTokens main) {
+        ReflectionManager.setValue(ReflectionManager.getField(Enchantment.class, "acceptingNew"), true, Enchantment.class);
         Bukkit.getScheduler().runTaskAsynchronously(main, () -> {
             if (folder.listFiles() == null) {
-                logger.info("No enchantments found");
-            } else
-                for (File enchants : Objects.requireNonNull(folder.listFiles())) {
-                    if (enchants.getName().endsWith(".jar")) {
-                        try {
-                            JarFile jarFile = new JarFile(enchants.getAbsolutePath());
-                            Enumeration<JarEntry> enumerator = jarFile.entries();
+                return;
+            }
+            for (File enchants : Objects.requireNonNull(folder.listFiles())) {
+                if (!enchants.getName().endsWith(".jar"))
+                    continue;
+                loadJar(enchants);
+            }
 
-                            URL[] urls = {new URL("jar:file:" + enchants.getAbsolutePath() + "!/")};
-                            URLClassLoader cl = new URLClassLoader(urls, getClass().getClassLoader());
-                            EnchantmentAddon addon = null;
-                            Set<Class<EnchantmentBase>> enchantClasses = new HashSet<>();
-                            while (enumerator.hasMoreElements()) {
-                                JarEntry file = enumerator.nextElement();
-                                if (file.isDirectory() || !file.getName().endsWith(".class")) {
-                                    continue;
-                                }
-
-                                String className = file.getName().substring(0, file.getName().length() - 6);
-                                className = className.replace('/', '.');
-                                Class<?> clazz = cl.loadClass(className);
-                                if (EnchantmentBase.class.equals(clazz.getSuperclass())) {
-                                    enchantClasses.add((Class<EnchantmentBase>) clazz);
-                                } else if (EnchantmentAddon.class.equals(clazz.getSuperclass())) {
-                                    addon = (EnchantmentAddon) clazz.newInstance();
-                                    addons.add(addon);
-                                }
-                            }
-                            if (addon == null) {
-                                logger.log(Level.SEVERE, "Jar " + enchants.getName() + " has no EnchantmentAddon class, skipping loading enchants");
-                            } else
-                                enchantments.put(addon.getName(), enchantClasses);
-                        } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-                            logger.log(Level.SEVERE, "Could not load jar at path: " + enchants.getPath(), e);
-                            if (e instanceof IOException) {
-                                logger.log(Level.SEVERE, "Jar is invalid/corrupted, inform the creator.");
-                            } else if (e instanceof ClassNotFoundException) {
-                                logger.log(Level.SEVERE, "Problem loading class, please report this.");
-                            } else if (e instanceof IllegalAccessException) {
-                                logger.log(Level.SEVERE, "A class set to private, set all enchantments to public");
-                            }
-                        }
-                    }
-                }
-            ReflectionManager.setValue(ReflectionManager.getField(Enchantment.class, "acceptingNew"), true, Enchantment.class);
-                main.getListenerHandler().loadAddons(addons);
+            main.getListenerHandler().loadAddons(addons);
             main.getListenerHandler().loadEnchantments(enchantments);
         });
+    }
+
+    private void loadJar(File file) {
+        try {
+            JarFile jarFile = new JarFile(file.getAbsolutePath());
+            Enumeration<JarEntry> enumerator = jarFile.entries();
+
+            EnchantmentAddon addon = null;
+            Set<Class<EnchantmentBase>> enchantClasses = new HashSet<>();
+            while (enumerator.hasMoreElements()) {
+                JarEntry jar = enumerator.nextElement();
+                if (jar.isDirectory() || !jar.getName().endsWith(".class")) {
+                    continue;
+                }
+
+                Object loaded = loadClass(jar, file);
+                if(loaded == null) continue;
+                if(loaded instanceof Class)
+                    enchantClasses.add((Class<EnchantmentBase>) loaded);
+                else {
+                    addon = (EnchantmentAddon) loaded;
+                    addons.add(addon);
+                }
+            }
+            if (addon == null) {
+                EnchantmentTokens.logger.log(Level.SEVERE, "Jar " + file.getName() + " has no EnchantmentAddon class, skipping loading enchants");
+            } else
+                enchantments.put(addon.getName(), enchantClasses);
+        } catch (IOException e) {
+            EnchantmentTokens.logger.log(Level.SEVERE, "Could not load jar at path: " + file.getPath(), e);
+        }
+    }
+
+    private Object loadClass(JarEntry jar, File file) {
+        try {
+            URL[] urls = {new URL("jar:file:" + file.getAbsolutePath() + "!/")};
+            URLClassLoader cl = new URLClassLoader(urls, getClass().getClassLoader());
+            String className = jar.getName().substring(0, jar.getName().length() - 6);
+            className = className.replace('/', '.');
+            Class<?> clazz = cl.loadClass(className);
+            if (EnchantmentBase.class.equals(clazz.getSuperclass())) {
+                return clazz;
+            } else if (EnchantmentAddon.class.equals(clazz.getSuperclass())) {
+                return clazz.newInstance();
+            }
+        } catch (IOException | IllegalAccessException | InstantiationException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public Collection<EnchantmentAddon> getAddons() {

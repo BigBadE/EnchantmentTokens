@@ -1,6 +1,5 @@
 package bigbade.enchantmenttokens.utils.currency;
 
-import bigbade.enchantmenttokens.EnchantmentTokens;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -26,13 +25,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 public class LatestCurrencyHandler implements CurrencyHandler {
     private long gems;
 
-    private static NamespacedKey key;
+    private NamespacedKey key;
 
-    public LatestCurrencyHandler(EnchantmentTokens main) {
-        key = new NamespacedKey(main, "gems");
+    public LatestCurrencyHandler(NamespacedKey key) {
+        this.key = key;
     }
 
-    public LatestCurrencyHandler(Player player) {
+    public LatestCurrencyHandler(Player player, NamespacedKey key) {
+        this.key = key;
         PersistentDataContainer dataContainer = player.getPersistentDataContainer();
         gems = dataContainer.getOrDefault(key, PersistentDataType.LONG, 0L);
     }
@@ -48,22 +48,22 @@ public class LatestCurrencyHandler implements CurrencyHandler {
     }
 
     @Override
-    public void removeAmount(long amount) {
-        gems -= amount;
-    }
-
-    @Override
     public void addAmount(long amount) {
         gems += amount;
     }
 
     @Override
     public CurrencyHandler newInstance(Player player) {
-        return new LatestCurrencyHandler(player);
+        return new LatestCurrencyHandler(player, key);
     }
 
     @Override
     public void savePlayer(Player player) {
         player.getPersistentDataContainer().set(key, PersistentDataType.LONG, gems);
+    }
+
+    @Override
+    public String name() {
+        return "gemsNew";
     }
 }

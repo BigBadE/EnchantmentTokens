@@ -41,14 +41,12 @@ public class EnchantmentHandler {
 
     public void registerEnchants(Collection<EnchantmentBase> enchantments) {
         List<Enchantment> enchantsToRegister = new ArrayList<>();
-        ConfigurationSection section = main.getConfig().getConfigurationSection("enchants");
-        if (section == null)
-            section = main.getConfig().createSection("enchants");
+        ConfigurationSection section = ConfigurationManager.getSectionOrCreate(main.getConfig(), "enchants");
 
-        for (String name : section.getStringList("vanillaEnchants")) {
+        for (String name : (List<String>) ConfigurationManager.getValueOrDefault("vanillaEnchants", section, new String[] { "Fortune" })) {
             Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(name.toLowerCase().replace(" ", "_")));
             if (enchantment != null) enchantsToRegister.add(enchantment);
-            else main.getLogger().log(Level.SEVERE, "Could not find an enchantment by the name " + name);
+            else main.getLogger().log(Level.SEVERE, "Could not find an enchantment by the name {0}", name);
         }
 
         for (Enchantment enchantment : enchantsToRegister) {
@@ -60,13 +58,13 @@ public class EnchantmentHandler {
                 iconName = "BEDROCK";
             Material icon = Material.getMaterial(iconName);
 
-            if (enchantSection.isSet("enabled"))
-                if (enchantSection.getBoolean("enabled"))
-                    vanillaEnchants.add(new VanillaEnchant(icon, enchantment));
-                else {
-                    enchantSection.set("enabled", true);
-                    vanillaEnchants.add(new VanillaEnchant(icon, enchantment));
+            if ((boolean) ConfigurationManager.getValueOrDefault("enabled", enchantSection, true)) {
+                VanillaEnchant vanillaEnchant = new VanillaEnchant(icon, enchantment);
+                vanillaEnchants.add(vanillaEnchant);
+                for(Field field : EnchantmentBase.class.getDeclaredFields()) {
+                    ConfigurationManager.loadConfigForField(field, enchantSection, vanillaEnchant);
                 }
+            }
         }
 
         main.saveConfig();

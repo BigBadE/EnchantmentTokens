@@ -17,30 +17,31 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import bigbade.enchantmenttokens.EnchantmentTokens;
+import bigbade.enchantmenttokens.localization.TranslatedMessage;
+import bigbade.enchantmenttokens.utils.EnchantmentHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 public class EnchantmentListCommand implements CommandExecutor {
-    private EnchantmentTokens main;
+    private EnchantmentHandler handler;
 
-    public EnchantmentListCommand(EnchantmentTokens main) {
-        this.main = main;
+    public EnchantmentListCommand(EnchantmentHandler handler) {
+        this.handler = handler;
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if(!sender.hasPermission("enchanttoken.list") && !sender.isOp()) {
+        if (!sender.hasPermission("enchanttoken.list") && !sender.isOp()) {
             sender.sendMessage(ChatColor.RED + "You do not have permission to run this command");
             return true;
         }
-        StringBuilder builder = new StringBuilder("Enchantments: ");
-        if(main.getEnchantments().size() > 0) {
-            main.getEnchantments().forEach((enchant) -> builder.append(enchant.getName()).append(", "));
+        StringBuilder builder = new StringBuilder(TranslatedMessage.translate("command.list"));
+        handler.getEnchantments().forEach((enchant) -> builder.append(enchant.getName()).append(", "));
+        handler.getVanillaEnchants().forEach((enchant) -> builder.append(enchant.getName()).append(", "));
+        if (builder.length() > 0)
             builder.setLength(builder.length() - 2);
-        }
         sender.sendMessage(ChatColor.GREEN + builder.toString());
         return true;
     }

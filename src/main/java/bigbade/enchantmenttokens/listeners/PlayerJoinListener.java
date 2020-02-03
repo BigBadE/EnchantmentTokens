@@ -1,7 +1,6 @@
 package bigbade.enchantmenttokens.listeners;
 
 import bigbade.enchantmenttokens.utils.EnchantmentPlayerHandler;
-import bigbade.enchantmenttokens.utils.currency.CurrencyHandler;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -26,11 +25,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 public class PlayerJoinListener implements Listener {
 
     private EnchantmentPlayerHandler playerHandler;
-    private CurrencyHandler currencyHandler;
 
-    public PlayerJoinListener(EnchantmentPlayerHandler handler, CurrencyHandler currencyHandler) {
+    public PlayerJoinListener(EnchantmentPlayerHandler handler) {
         playerHandler = handler;
-        this.currencyHandler = currencyHandler;
     }
 
     @EventHandler

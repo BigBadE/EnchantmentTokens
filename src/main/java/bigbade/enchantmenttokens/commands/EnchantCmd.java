@@ -17,11 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantUtils;
 import bigbade.enchantmenttokens.api.EnchantmentBase;
+import bigbade.enchantmenttokens.api.VanillaEnchant;
 import bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
-import org.bukkit.ChatColor;
+import bigbade.enchantmenttokens.localization.TranslatedMessage;
+import bigbade.enchantmenttokens.utils.EnchantmentHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -33,16 +34,18 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 
 public class EnchantCmd implements CommandExecutor {
-    private EnchantmentTokens main;
+    private EnchantmentHandler handler;
+    private EnchantUtils utils;
 
-    public EnchantCmd(EnchantmentTokens main) {
-        this.main = main;
+    public EnchantCmd(EnchantmentHandler handler, EnchantUtils utils) {
+        this.handler = handler;
+        this.utils = utils;
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!sender.hasPermission("enchanttoken.admin") && !sender.isOp()) {
-            sender.sendMessage(ChatColor.RED + "You do not have permission to run this command");
+            sender.sendMessage(TranslatedMessage.translate("command.permission"));
             return true;
         }
         if (args.length >= 1 && sender instanceof Player) {
@@ -52,32 +55,36 @@ public class EnchantCmd implements CommandExecutor {
             }
             String name = nameBuilder.toString();
             ItemStack item = ((Player) sender).getInventory().getItemInMainHand();
-            EnchantUtils.addEnchantment(item, name, main, (Player) sender, true);
-            for (EnchantmentBase enchant : main.getVanillaEnchantments()) {
+            utils.addEnchantment(item, name, (Player) sender, false);
+            for (EnchantmentBase enchant : handler.getVanillaEnchants()) {
                 if (enchant.getName().equals(args[0])) {
-                    item.addEnchantment(enchant, Integer.parseInt(args[args.length - 1]));
-                    ItemMeta meta = item.getItemMeta();
-                    if(meta.getLore() == null)
-                        meta.setLore(new ArrayList<>());
-                    meta.getLore().add(enchant.getName() + ": " + EnchantmentGUIListener.getRomanNumeral(Integer.parseInt(args[args.length - 1])));
-                    sender.sendMessage(ChatColor.GREEN + "Added Enchant " + name);
+                    addEnchant((Player) sender, item, enchant, Integer.parseInt(args[args.length - 1]));
                     return true;
                 }
             }
-            for (Enchantment enchantment : main.getVanillaEnchantments()) {
+            for (Enchantment enchantment : handler.getEnchantments()) {
                 if (enchantment.getKey().getKey().equals(name.toLowerCase().replace("_", ""))) {
-                    item.addEnchantment(enchantment, Integer.parseInt(args[args.length - 1]));
-                    ItemMeta meta = item.getItemMeta();
-                    if(meta.getLore() == null)
-                        meta.setLore(new ArrayList<>());
-                    meta.getLore().add(enchantment.getName() + ": " + EnchantmentGUIListener.getRomanNumeral(Integer.parseInt(args[args.length - 1])));
-                    sender.sendMessage(ChatColor.GREEN + "Added Enchant " + name);
+                    addEnchant((Player) sender, item, enchantment, Integer.parseInt(args[args.length - 1]));
                     return true;
                 }
             }
-            sender.sendMessage(ChatColor.RED + "Could not find that enchant!");
+            sender.sendMessage(TranslatedMessage.translate("command.enchant.notfound"));
         } else
-            sender.sendMessage("Usage: /adminenchant (enchant) (level)");
+            sender.sendMessage(TranslatedMessage.translate("command.enchant.usage"));
         return true;
+    }
+
+    private void addEnchant(Player player, ItemStack item, Enchantment base, int level) {
+        if(base instanceof VanillaEnchant) {
+            item.addEnchantment(((VanillaEnchant) base).getEnchantment(), level);
+        } else {
+            item.addEnchantment(base, level);
+            ItemMeta meta = item.getItemMeta();
+            assert meta != null;
+            if (meta.getLore() == null)
+                meta.setLore(new ArrayList<>());
+            meta.getLore().add(base.getName() + ": " + EnchantmentGUIListener.getRomanNumeral(level));
+        }
+        player.sendMessage(TranslatedMessage.translate("command.add", base.getName()));
     }
 }

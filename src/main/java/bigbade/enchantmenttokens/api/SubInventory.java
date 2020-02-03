@@ -22,26 +22,13 @@ import org.bukkit.inventory.Inventory;
 
 public class SubInventory extends EnchantmentGUI {
     private Inventory inventory;
-    private int material;
-    private boolean closing;
 
-    public SubInventory(Inventory inventory, int material) {
+    public SubInventory(Inventory inventory) {
         super(inventory);
         this.inventory = inventory;
-        this.material = material;
     }
-
-    public void close() {
-        closing = true;
-    }
-
-    public boolean isClosing() { return closing; }
 
     public Inventory getInventory() {
         return inventory;
-    }
-
-    public int getMaterial() {
-        return material;
     }
 }

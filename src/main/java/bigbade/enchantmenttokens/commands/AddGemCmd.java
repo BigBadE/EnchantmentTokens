@@ -17,22 +17,20 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import bigbade.enchantmenttokens.EnchantmentTokens;
-import bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import bigbade.enchantmenttokens.localization.TranslatedMessage;
-import com.comphenix.protocol.PacketType;
+import bigbade.enchantmenttokens.utils.CurrencyAdditionHandler;
+import bigbade.enchantmenttokens.utils.EnchantmentPlayerHandler;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class AddGemCmd implements CommandExecutor {
-    private EnchantmentTokens main;
+    private EnchantmentPlayerHandler handler;
 
-    public AddGemCmd(EnchantmentTokens main) {
-        this.main = main;
+    public AddGemCmd(EnchantmentPlayerHandler handler) {
+        this.handler = handler;
     }
 
     @Override
@@ -44,7 +42,7 @@ public class AddGemCmd implements CommandExecutor {
         if (args.length == 1) {
             if (sender instanceof Player)
                 try {
-                    addGems((Player) sender);
+                    CurrencyAdditionHandler.addGems(handler.getPlayer((Player) sender), Integer.parseInt(args[0]));
                 } catch (NumberFormatException e) {
                     sender.sendMessage(TranslatedMessage.translate("command.add.notint", args[0]));
                 }
@@ -52,19 +50,14 @@ public class AddGemCmd implements CommandExecutor {
             Player target = Bukkit.getPlayer(args[0]);
             if (target != null) {
                 try {
-                    main.getPlayerHandler().getPlayer(target).addGems(Integer.parseInt(args[1]));
-                    sender.sendMessage(ChatColor.GREEN + "Added " + args[1] + "G!");
+                    CurrencyAdditionHandler.addGems(handler.getPlayer((Player) sender), Integer.parseInt(args[1]));
                 } catch (NumberFormatException e) {
-                    sender.sendMessage(ChatColor.RED + args[1] + " is not an Integer!");
+                    sender.sendMessage(TranslatedMessage.translate("command.add.notint", args[1]));
                 }
             } else {
-                sender.sendMessage(ChatColor.RED + args[0] + " is not a Player!");
+                sender.sendMessage(TranslatedMessage.translate("command.add.noplayer", args[0]));
             }
         }
         return true;
-    }
-
-    private void addGems(Player player) {
-
     }
 }

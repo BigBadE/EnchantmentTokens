@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.events.EnchantmentEvent;
+import bigbade.enchantmenttokens.listeners.SignPacketHandler;
 import bigbade.enchantmenttokens.utils.ListenerManager;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
@@ -27,11 +27,11 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class BlockBreakListener extends BasicEnchantListener<BlockBreakEvent> implements Listener {
-    private EnchantmentTokens main;
+    private SignPacketHandler handler;
 
-    public BlockBreakListener(ListenerManager enchantListeners, EnchantmentTokens main) {
+    public BlockBreakListener(ListenerManager enchantListeners, SignPacketHandler handler) {
         super(enchantListeners);
-        this.main = main;
+        this.handler = handler;
     }
 
     @EventHandler
@@ -43,7 +43,7 @@ public class BlockBreakListener extends BasicEnchantListener<BlockBreakEvent> im
         if(event.getBlock().getState() instanceof Sign) {
             Sign sign = (Sign) event.getBlock().getState();
             if(sign.getLine(0).equals("[Enchantment]")) {
-                main.signHandler.removeSign(sign.getLocation());
+                handler.removeSign(sign.getLocation());
             }
         }
     }

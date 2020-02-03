@@ -17,42 +17,41 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantmentBase;
 import bigbade.enchantmenttokens.localization.TranslatedMessage;
-import org.bukkit.ChatColor;
+import bigbade.enchantmenttokens.utils.EnchantmentHandler;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 
 public class SignPlaceListener implements Listener {
-    private EnchantmentTokens main;
+    private EnchantmentHandler handler;
 
-    public SignPlaceListener(EnchantmentTokens main) {
-        this.main = main;
+    public SignPlaceListener(EnchantmentHandler handler) {
+        this.handler = handler;
     }
 
     @EventHandler
     public void onSignChange(SignChangeEvent event) {
         if ("[enchantment]".equalsIgnoreCase(event.getLine(0))) {
-            for (EnchantmentBase base : main.getEnchantments()) {
-                if (base.getName().equalsIgnoreCase(event.getLine(1))) {
-                    event.getPlayer().sendMessage(TranslatedMessage.translate(EnchantmentTokens.NAME, "enchantment.add", base.getName()));
-                    event.setLine(0, "[" + TranslatedMessage.translate(EnchantmentTokens.NAME, "enchantment") + "]");
-                    event.setLine(1, base.getName());
-                    return;
-                }
+            for (EnchantmentBase base : handler.getEnchantments()) {
+                if(updateSign(base, event)) return;
             }
-            for (Enchantment base : main.getVanillaEnchantments()) {
-                if (base.getName().equalsIgnoreCase(event.getLine(1))) {
-                    event.getPlayer().sendMessage(TranslatedMessage.translate(EnchantmentTokens.NAME, "enchantment.add", base.getName()));
-                    event.setLine(0, "[" + TranslatedMessage.translate(EnchantmentTokens.NAME, "enchantment") + "]");
-                    event.setLine(1, base.getName());
-                    return;
-                }
+            for (Enchantment base : handler.getVanillaEnchants()) {
+                if(updateSign(base, event)) return;
             }
-            event.getPlayer().sendMessage(TranslatedMessage.translate(EnchantmentTokens.NAME, "enchantment.add.fail"));
+            event.getPlayer().sendMessage(TranslatedMessage.translate( "enchantment.add.fail"));
         }
+    }
+
+    private boolean updateSign(Enchantment base, SignChangeEvent event) {
+        if (base.getName().equalsIgnoreCase(event.getLine(1))) {
+            event.getPlayer().sendMessage(TranslatedMessage.translate("enchantment.add", base.getName()));
+            event.setLine(0, "[" + TranslatedMessage.translate( "enchantment") + "]");
+            event.setLine(1, base.getName());
+            return true;
+        }
+        return false;
     }
 }

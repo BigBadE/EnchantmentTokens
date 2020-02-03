@@ -32,17 +32,18 @@ import java.util.Objects;
 import java.util.logging.Level;
 
 public class ConfigurationManager {
+    private ConfigurationManager() { }
+
     public static FileConfiguration loadConfigurationFile(String path) {
         File config = new File(path);
 
         FileConfiguration configuration = new YamlConfiguration();
         try {
-            if (!config.exists())
-                if (!config.createNewFile())
-                    EnchantmentTokens.LOGGER.log(Level.SEVERE, "Problem creating config file at " + config.getPath());
+            if (!config.exists() && !config.createNewFile())
+                EnchantmentTokens.logger.log(Level.SEVERE, "Problem creating config file at " + config.getPath());
             configuration.load(config);
         } catch (IOException | InvalidConfigurationException e) {
-            EnchantmentTokens.LOGGER.log(Level.SEVERE, "could not load enchantment configuration", e);
+            EnchantmentTokens.logger.log(Level.SEVERE, "could not load enchantment configuration", e);
         }
         return configuration;
     }
@@ -81,11 +82,11 @@ public class ConfigurationManager {
     public static void saveConfiguration(String path, FileConfiguration configuration) {
         File config = new File(path);
         try {
-            if (config.exists() && !config.delete())
-                EnchantmentTokens.LOGGER.log(Level.SEVERE, "Could not save configuration");
+            if (config.exists())
+                Files.delete(config.toPath());
             Files.write(config.toPath(), configuration.saveToString().getBytes());
         } catch (IOException e) {
-            EnchantmentTokens.LOGGER.log(Level.SEVERE, "Could not save configuration", e);
+            EnchantmentTokens.logger.log(Level.SEVERE, "Could not save configuration", e);
         }
     }
 
@@ -102,7 +103,7 @@ public class ConfigurationManager {
                         out.write(buffer, 0, readBytes);
                     }
                 } catch (IOException e) {
-                    EnchantmentTokens.LOGGER.log(Level.SEVERE, "Could not create new configurationguide file!");
+                    EnchantmentTokens.logger.log(Level.SEVERE, "Could not create new configurationguide file!");
                 }
             });
         }
@@ -110,8 +111,37 @@ public class ConfigurationManager {
 
     public static void createFolder(String path) {
         File data = new File(path);
-        if (!data.exists())
-            if (!data.mkdir())
-                EnchantmentTokens.LOGGER.log(Level.SEVERE, "[ERROR] Could not create folder " + path);
+        if (!data.exists() && !data.mkdir())
+            EnchantmentTokens.logger.log(Level.SEVERE, "[ERROR] Could not create folder {0}", path);
+    }
+
+    public static void createFolder(File file) {
+        if (!file.exists() && !file.mkdir())
+            EnchantmentTokens.logger.log(Level.SEVERE, "[ERROR] Could not create folder {0}", file.getPath());
+    }
+
+    public static void createFile(File file) {
+        try {
+            if (!file.exists() && !file.createNewFile())
+                EnchantmentTokens.logger.log(Level.SEVERE, "[ERROR] Could not create file {0}", file.getPath());
+        } catch (IOException e) {
+            EnchantmentTokens.logger.log(Level.SEVERE, "[ERROR] Could not access {0}", file.getPath());
+        }
+    }
+
+    public static Object getValueOrDefault(String value, ConfigurationSection section, Object defaultValue) {
+        if (section.isSet(value))
+            return section.get(value);
+        else {
+            section.set(value, defaultValue);
+            return defaultValue;
+        }
+    }
+
+    public static ConfigurationSection getSectionOrCreate(ConfigurationSection section, String subsection) {
+        ConfigurationSection found = section.getConfigurationSection(subsection);
+        if (found == null)
+            return section.createSection(subsection);
+        return found;
     }
 }

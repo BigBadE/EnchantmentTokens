@@ -24,13 +24,15 @@ import bigbade.enchantmenttokens.api.EnchantmentBase;
 import bigbade.enchantmenttokens.api.ListenerType;
 import bigbade.enchantmenttokens.events.EnchantmentApplyEvent;
 import bigbade.enchantmenttokens.events.EnchantmentEvent;
-import bigbade.enchantmenttokens.listeners.InventoryMoveListener;
+import bigbade.enchantmenttokens.listeners.*;
 import bigbade.enchantmenttokens.listeners.enchants.ArmorEquipListener;
 import bigbade.enchantmenttokens.listeners.enchants.BlockBreakListener;
 import bigbade.enchantmenttokens.listeners.enchants.BlockDamageListener;
 import bigbade.enchantmenttokens.listeners.enchants.EnchantmentListener;
+import bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
+import com.codingforcookies.armorequip.ArmorListener;
+import com.codingforcookies.armorequip.DispenserArmorListener;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -53,10 +55,22 @@ public class ListenerHandler {
     }
 
     public void registerListeners() {
-        Bukkit.getPluginManager().registerEvents(new BlockBreakListener(enchantListeners.get(ListenerType.BLOCKBREAK), main), main);
+        Bukkit.getPluginManager().registerEvents(new ArmorListener(new ArrayList<>()), main);
+        Bukkit.getPluginManager().registerEvents(new DispenserArmorListener(), main);
+
+        Bukkit.getPluginManager().registerEvents(new SignPlaceListener(main.getEnchantmentHandler()), main);
+        Bukkit.getPluginManager().registerEvents(new SignClickListener(main.getUtils()), main);
+
+        Bukkit.getPluginManager().registerEvents(new EnchantmentGUIListener(main.getPlayerHandler(), main.getScheduler()), main);
+
+        Bukkit.getPluginManager().registerEvents(new ChunkUnloadListener(main.getSignHandler().getSigns()), main);
+        Bukkit.getPluginManager().registerEvents(new PlayerLeaveListener(main.getPlayerHandler()), main);
+        Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(main.getPlayerHandler()), main);
+
+        Bukkit.getPluginManager().registerEvents(new BlockBreakListener(enchantListeners.get(ListenerType.BLOCKBREAK), main.getSignHandler()), main);
         Bukkit.getPluginManager().registerEvents(new ArmorEquipListener(enchantListeners.get(ListenerType.EQUIP), enchantListeners.get(ListenerType.UNEQUIP)), main);
         Bukkit.getPluginManager().registerEvents(new BlockDamageListener(enchantListeners.get(ListenerType.BLOCKDAMAGED)), main);
-        Bukkit.getPluginManager().registerEvents(new InventoryMoveListener(enchantListeners.get(ListenerType.HELD), enchantListeners.get(ListenerType.SWAPPED), main), main);
+        Bukkit.getPluginManager().registerEvents(new InventoryMoveListener(enchantListeners.get(ListenerType.HELD), enchantListeners.get(ListenerType.SWAPPED), main.getSignHandler().getSigns(), main.getScheduler()), main);
     }
 
     public void onEnchant(ItemStack item, EnchantmentBase base, Player player) {
@@ -73,13 +87,10 @@ public class ListenerHandler {
                 ConfigurationManager.loadConfigForField(field, configuration, addon);
             }
 
-            addon.loadConfig(configuration);
-            for (Method method : addon.getClass().getDeclaredMethods()) {
-                if (method.isAnnotationPresent(EnchantListener.class) && method.getReturnType() == EnchantmentListener.class) {
-                    ListenerType type = method.getAnnotation(EnchantListener.class).type();
-                    enchantListeners.get(type).add((EnchantmentListener<EnchantmentEvent<? extends Event>>) ReflectionManager.invoke(method, addon), addon);
-                }
-            }
+            addon.loadConfig();
+            checkMethods(null, addon.getClass());
+
+            addon.onEnable();
         }
     }
 
@@ -93,74 +104,68 @@ public class ListenerHandler {
         Map<String, FileConfiguration> configs = new HashMap<>();
         for (Map.Entry<String, Set<Class<EnchantmentBase>>> entry : enchants.entrySet()) {
             for (Class<EnchantmentBase> clazz : entry.getValue()) {
-                FileConfiguration configuration = configs.get(entry.getKey());
+                EnchantmentBase enchant = loadConfiguration(clazz, configs, entry.getKey());
 
-                if (configuration == null) {
-                    configuration = ConfigurationManager.loadConfigurationFile(main.getDataFolder().getAbsolutePath() + "\\enchantments\\" + entry.getKey() + ".yml");
-                    configs.put(entry.getKey(), configuration);
-                }
-
-                ConfigurationSection section = configuration.getConfigurationSection("enchants");
-                if (section == null)
-                    section = configuration.createSection("enchants");
-                String name = clazz.getSimpleName();
-                ConfigurationSection enchantSection = section.getConfigurationSection(name.toLowerCase());
-                final EnchantmentBase enchant = (EnchantmentBase) ReflectionManager.instantiate(clazz);
-                if (enchantSection == null) {
-                    enchantSection = section.createSection(name.toLowerCase());
-                    enchantSection.set("enabled", true);
-                }
-
-                for (Field field : clazz.getDeclaredFields()) {
-                    ConfigurationManager.loadConfigForField(field, enchantSection, enchant);
-                }
-                for (Field field : clazz.getSuperclass().getDeclaredFields()) {
-                    ConfigurationManager.loadConfigForField(field, enchantSection, enchant);
-                }
-
-                boolean enabled;
-                if (enchantSection.isSet("enabled"))
-                    enabled = enchantSection.getBoolean("enabled");
-                else {
-                    enabled = true;
-                    enchantSection.set("enabled", true);
-                }
-
-                if (enabled) {
-                    assert enchant != null;
-                    enchant.loadConfig();
-                    enchantments.add(enchant);
-                    methodCheck:
-                    for (Method method : clazz.getDeclaredMethods()) {
-                        if (method.isAnnotationPresent(EnchantListener.class) && method.getReturnType() == EnchantmentListener.class) {
-                            ListenerType type = method.getAnnotation(EnchantListener.class).type();
-                            if (enchant.getItemTarget() != null) {
-                                if (!type.canTarget(enchant.getItemTarget())) {
-                                    main.getLogger().warning("Cannot add listener " + type + " to target " + enchant.getItemTarget());
-                                    continue;
-                                }
-                            } else
-                                for (Material material : enchant.getTargets()) {
-                                    if (!type.canTarget(material)) {
-                                        main.getLogger().warning("Cannot add listener " + type + " to target " + material);
-                                    }
-                                    continue methodCheck;
-                                }
-                            enchantListeners.get(type).add((EnchantmentListener<EnchantmentEvent<? extends Event>>) ReflectionManager.invoke(method, enchant), enchant);
-                        }
-                    }
-                }
+                if (enchant == null) continue;
+                enchant.loadConfig();
+                enchantments.add(enchant);
+                checkMethods(enchant, clazz);
             }
         }
+
         Bukkit.getScheduler().runTask(main, () -> {
+            registerListeners();
             main.getLogger().log(Level.INFO, "Finishing loading enchantments");
             main.getEnchantmentHandler().registerEnchants(enchantments);
         });
 
-        registerListeners();
-
         for (Map.Entry<String, FileConfiguration> configuration : configs.entrySet()) {
             ConfigurationManager.saveConfiguration(main.getDataFolder().getAbsolutePath() + "\\enchantments\\" + configuration.getKey() + ".yml", configuration.getValue());
         }
+    }
+
+    private void checkMethods(EnchantmentBase enchant, Class<?> clazz) {
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (!method.isAnnotationPresent(EnchantListener.class) || method.getReturnType() != EnchantmentListener.class)
+                continue;
+            ListenerType type = method.getAnnotation(EnchantListener.class).type();
+            if (enchant != null)
+                if (enchant.getItemTarget() != null) {
+                    if (!type.canTarget(enchant.getItemTarget())) {
+                        main.getLogger().warning("Cannot add listener " + type + " to target " + enchant.getItemTarget());
+                        continue;
+                    }
+                } else if (!type.canTarget(enchant.getTargets())) {
+                    main.getLogger().warning("Cannot add listener " + type + " to targets " + enchant.getTargets());
+                    continue;
+                }
+            enchantListeners.get(type).add((EnchantmentListener<EnchantmentEvent<? extends Event>>) ReflectionManager.invoke(method, enchant), enchant);
+        }
+    }
+
+    private EnchantmentBase loadConfiguration(Class<EnchantmentBase> clazz, Map<String, FileConfiguration> configs, String addon) {
+        FileConfiguration configuration = configs.get(addon);
+
+        if (configuration == null) {
+            configuration = ConfigurationManager.loadConfigurationFile(main.getDataFolder().getAbsolutePath() + "\\enchantments\\" + addon + ".yml");
+            configs.put(addon, configuration);
+        }
+
+        ConfigurationSection section = ConfigurationManager.getSectionOrCreate(configuration, "enchants");
+
+        final EnchantmentBase enchant = (EnchantmentBase) ReflectionManager.instantiate(clazz);
+
+        ConfigurationSection enchantSection = ConfigurationManager.getSectionOrCreate(section, clazz.getSimpleName().toLowerCase());
+
+        for (Field field : clazz.getDeclaredFields()) {
+            ConfigurationManager.loadConfigForField(field, enchantSection, enchant);
+        }
+        for (Field field : clazz.getSuperclass().getDeclaredFields()) {
+            ConfigurationManager.loadConfigForField(field, enchantSection, enchant);
+        }
+
+        boolean enabled = (boolean) ConfigurationManager.getValueOrDefault("enabled", enchantSection, true);
+
+        return (enabled) ? enchant : null;
     }
 }

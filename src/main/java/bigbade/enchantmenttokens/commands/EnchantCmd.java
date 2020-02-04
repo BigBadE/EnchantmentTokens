@@ -17,12 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import bigbade.enchantmenttokens.api.EnchantUtils;
+import bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
 import bigbade.enchantmenttokens.api.EnchantmentBase;
 import bigbade.enchantmenttokens.api.VanillaEnchant;
 import bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
 import bigbade.enchantmenttokens.localization.TranslatedMessage;
-import bigbade.enchantmenttokens.utils.EnchantmentHandler;
+import bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

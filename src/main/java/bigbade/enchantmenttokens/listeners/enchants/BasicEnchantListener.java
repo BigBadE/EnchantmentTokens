@@ -1,7 +1,7 @@
 package bigbade.enchantmenttokens.listeners.enchants;
 
 import bigbade.enchantmenttokens.events.EnchantmentEvent;
-import bigbade.enchantmenttokens.utils.ListenerManager;
+import bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 import org.bukkit.event.Event;
 
 /*

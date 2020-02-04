@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import bigbade.enchantmenttokens.api.EnchantmentBase;
-import bigbade.enchantmenttokens.utils.EnchantmentHandler;
+import bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;

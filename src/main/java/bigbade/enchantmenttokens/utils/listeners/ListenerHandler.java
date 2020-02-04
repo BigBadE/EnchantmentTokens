@@ -1,4 +1,4 @@
-package bigbade.enchantmenttokens.utils;
+package bigbade.enchantmenttokens.utils.listeners;
 
 /*
 EnchantmentTokens
@@ -30,6 +30,8 @@ import bigbade.enchantmenttokens.listeners.enchants.BlockBreakListener;
 import bigbade.enchantmenttokens.listeners.enchants.BlockDamageListener;
 import bigbade.enchantmenttokens.listeners.enchants.EnchantmentListener;
 import bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
+import bigbade.enchantmenttokens.utils.ConfigurationManager;
+import bigbade.enchantmenttokens.utils.ReflectionManager;
 import com.codingforcookies.armorequip.ArmorListener;
 import com.codingforcookies.armorequip.DispenserArmorListener;
 import org.bukkit.Bukkit;

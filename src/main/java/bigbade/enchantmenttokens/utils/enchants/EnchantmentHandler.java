@@ -1,4 +1,4 @@
-package bigbade.enchantmenttokens.utils;
+package bigbade.enchantmenttokens.utils.enchants;
 
 /*
 EnchantmentTokens
@@ -20,6 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantmentBase;
 import bigbade.enchantmenttokens.api.VanillaEnchant;
+import bigbade.enchantmenttokens.utils.ConfigurationManager;
+import bigbade.enchantmenttokens.utils.ReflectionManager;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
@@ -43,7 +45,7 @@ public class EnchantmentHandler {
         List<Enchantment> enchantsToRegister = new ArrayList<>();
         ConfigurationSection section = ConfigurationManager.getSectionOrCreate(main.getConfig(), "enchants");
 
-        for (String name : (List<String>) ConfigurationManager.getValueOrDefault("vanillaEnchants", section, new String[] { "Fortune" })) {
+        for (String name : (String[]) ConfigurationManager.getValueOrDefault("vanillaEnchants", section, new String[] { "Fortune" })) {
             Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(name.toLowerCase().replace(" ", "_")));
             if (enchantment != null) enchantsToRegister.add(enchantment);
             else main.getLogger().log(Level.SEVERE, "Could not find an enchantment by the name {0}", name);

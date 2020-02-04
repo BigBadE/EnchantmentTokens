@@ -1,4 +1,4 @@
-package bigbade.enchantmenttokens.api;
+package bigbade.enchantmenttokens.utils.enchants;
 
 /*
 EnchantmentTokens
@@ -17,11 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import bigbade.enchantmenttokens.api.EnchantmentBase;
+import bigbade.enchantmenttokens.api.EnchantmentPlayer;
+import bigbade.enchantmenttokens.api.VanillaEnchant;
 import bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
 import bigbade.enchantmenttokens.localization.TranslatedMessage;
-import bigbade.enchantmenttokens.utils.EnchantmentHandler;
-import bigbade.enchantmenttokens.utils.EnchantmentPlayerHandler;
-import bigbade.enchantmenttokens.utils.ListenerHandler;
+import bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
+import bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
+import bigbade.enchantmenttokens.utils.listeners.ListenerHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.enchantments.Enchantment;

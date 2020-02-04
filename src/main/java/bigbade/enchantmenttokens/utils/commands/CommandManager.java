@@ -1,4 +1,4 @@
-package bigbade.enchantmenttokens.utils;
+package bigbade.enchantmenttokens.utils.commands;
 
 import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.commands.*;

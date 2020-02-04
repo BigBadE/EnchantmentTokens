@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import bigbade.enchantmenttokens.gui.EnchantmentGUI;
 import bigbade.enchantmenttokens.utils.EnchantButton;
-import bigbade.enchantmenttokens.utils.EnchantmentPlayerHandler;
+import bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
 import bigbade.enchantmenttokens.utils.SchedulerHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

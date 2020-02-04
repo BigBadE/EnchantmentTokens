@@ -17,16 +17,22 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import bigbade.enchantmenttokens.api.EnchantUtils;
 import bigbade.enchantmenttokens.api.EnchantmentAddon;
 import bigbade.enchantmenttokens.api.EnchantmentBase;
-import bigbade.enchantmenttokens.api.EnchantmentLoader;
 import bigbade.enchantmenttokens.gui.EnchantmentMenuFactory;
 import bigbade.enchantmenttokens.listeners.SignPacketHandler;
-import bigbade.enchantmenttokens.utils.*;
-import bigbade.enchantmenttokens.utils.currency.CurrencyHandler;
-import bigbade.enchantmenttokens.utils.currency.GemCurrencyHandler;
-import bigbade.enchantmenttokens.utils.currency.LatestCurrencyHandler;
+import bigbade.enchantmenttokens.localization.LocaleManager;
+import bigbade.enchantmenttokens.utils.ConfigurationManager;
+import bigbade.enchantmenttokens.utils.EnchantLogger;
+import bigbade.enchantmenttokens.utils.MetricManager;
+import bigbade.enchantmenttokens.utils.SchedulerHandler;
+import bigbade.enchantmenttokens.utils.commands.CommandManager;
+import bigbade.enchantmenttokens.utils.currency.*;
+import bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
+import bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
+import bigbade.enchantmenttokens.utils.enchants.EnchantmentLoader;
+import bigbade.enchantmenttokens.utils.listeners.ListenerHandler;
+import bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import org.bukkit.Bukkit;
@@ -36,12 +42,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.logging.Logger;
 
 public class EnchantmentTokens extends JavaPlugin {
     public static final String NAME = "enchantmenttokens";
-
-    public static Logger logger;
 
     private EnchantmentLoader loader;
 
@@ -53,7 +56,7 @@ public class EnchantmentTokens extends JavaPlugin {
     private EnchantmentHandler enchantmentHandler;
     private ListenerHandler listenerHandler;
 
-    private CurrencyHandler currencyHandler;
+    private CurrencyFactory currencyFactory;
     private EnchantmentPlayerHandler playerHandler;
 
     private EnchantUtils utils;
@@ -61,12 +64,12 @@ public class EnchantmentTokens extends JavaPlugin {
     private EnchantmentMenuFactory factory;
 
     private SchedulerHandler scheduler;
+
     /**
      * Everything is set up here
      */
     @Override
     public void onEnable() {
-        logger = getLogger();
         getConfig().options().copyHeader(true).header("Add all vanilla enchantments used in here!\nCheck configurationguide.txt for names/versions.");
         saveDefaultConfig();
         version = Integer.parseInt(Bukkit.getVersion().split("\\.")[1]);
@@ -79,14 +82,14 @@ public class EnchantmentTokens extends JavaPlugin {
             if (version >= 14) {
                 boolean persistent = (boolean) ConfigurationManager.getValueOrDefault("usePersistentData", getConfig(), true);
                 if (persistent)
-                    currencyHandler = new LatestCurrencyHandler(new NamespacedKey(this, "gems"));
+                    currencyFactory = new LatestCurrencyFactory(this);
                 else
-                    currencyHandler = new GemCurrencyHandler(this);
+                    currencyFactory = new GemCurrencyFactory(this);
             } else
-                currencyHandler = new GemCurrencyHandler(this);
+                currencyFactory = new GemCurrencyFactory(this);
         }
 
-        playerHandler = new EnchantmentPlayerHandler(currencyHandler);
+        playerHandler = new EnchantmentPlayerHandler(currencyFactory);
 
         boolean metrics = (boolean) ConfigurationManager.getValueOrDefault("metrics", getConfig(), true);
 
@@ -99,7 +102,7 @@ public class EnchantmentTokens extends JavaPlugin {
         ConfigurationManager.createFolder(getDataFolder());
 
         ConfigurationManager.createFolder(getDataFolder().getPath() + "\\data");
-        getLogger().info("Looking for enchantments");
+        EnchantLogger.LOGGER.info("Looking for enchantments");
 
         ConfigurationManager.createFolder(getDataFolder().getPath() + "\\enchantments");
 
@@ -118,7 +121,7 @@ public class EnchantmentTokens extends JavaPlugin {
         LocaleManager.updateLocale(locale, loader.getAddons());
 
         ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
-        getLogger().info("Registering sign listener");
+        EnchantLogger.LOGGER.info("Registering sign listener");
         signHandler = new SignPacketHandler(protocolManager, this, Objects.requireNonNull(getConfig().getString("currency")).equalsIgnoreCase("gems"));
 
         utils = new EnchantUtils(enchantmentHandler, playerHandler, listenerHandler, signHandler.getSigns());
@@ -137,6 +140,8 @@ public class EnchantmentTokens extends JavaPlugin {
         }
 
         autosaveTime *= 20 * 60;
+
+        saveConfig();
 
         Bukkit.getScheduler().runTaskTimer(this, () -> playerHandler.autosave(this), autosaveTime, autosaveTime);
     }

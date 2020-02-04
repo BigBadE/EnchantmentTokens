@@ -1,8 +1,8 @@
-package bigbade.enchantmenttokens.utils;
+package bigbade.enchantmenttokens.utils.players;
 
 import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantmentPlayer;
-import bigbade.enchantmenttokens.utils.currency.CurrencyHandler;
+import bigbade.enchantmenttokens.utils.currency.CurrencyFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -29,15 +29,15 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 public class EnchantmentPlayerHandler {
     private List<EnchantmentPlayer> players = new ArrayList<>();
-    private CurrencyHandler currencyHandler;
+    private CurrencyFactory currencyFactory;
 
-    public EnchantmentPlayerHandler(CurrencyHandler currencyHandler) {
-        this.currencyHandler = currencyHandler;
+    public EnchantmentPlayerHandler(CurrencyFactory currencyFactory) {
+        this.currencyFactory = currencyFactory;
     }
 
     public EnchantmentPlayer loadPlayer(Player player) {
         EnchantmentPlayer enchantmentPlayer = EnchantmentPlayer.loadPlayer(player);
-        enchantmentPlayer.setHandler(currencyHandler);
+        enchantmentPlayer.setHandler(currencyFactory.newInstance(player));
         players.add(enchantmentPlayer);
         return enchantmentPlayer;
     }
@@ -54,7 +54,7 @@ public class EnchantmentPlayerHandler {
     }
 
     public void autosave(EnchantmentTokens main) {
-        if (players.size() > 0) {
+        if (!players.isEmpty()) {
             AtomicInteger saving = new AtomicInteger(0);
             Bukkit.getScheduler().runTaskTimer(main, () -> {
                 if (saving.get() > players.size()) players.get(saving.getAndIncrement()).save();

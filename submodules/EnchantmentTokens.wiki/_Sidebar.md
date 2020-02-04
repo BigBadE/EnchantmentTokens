@@ -1,0 +1,8 @@
+- [Home/Server owners](Home.md)
+- [Development](Developing.md)
+    - [Main enchantment class](development/Main.md)
+    - [Making an enchantment](development/Enchantment.md)
+    - [Registering an event listener](development/EnchantmentListener.md)
+        - [Event list](development/Events.md)
+    - [Configuration](development/Configuration.md)
+    - [Localization](development/Localization.md)

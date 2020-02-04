@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import bigbade.enchantmenttokens.events.EnchantmentEvent;
-import bigbade.enchantmenttokens.utils.ListenerManager;
+import bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

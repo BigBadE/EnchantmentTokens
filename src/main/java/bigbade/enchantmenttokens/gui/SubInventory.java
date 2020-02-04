@@ -1,4 +1,4 @@
-package bigbade.enchantmenttokens.api;
+package bigbade.enchantmenttokens.gui;
 
 /*
 EnchantmentTokens

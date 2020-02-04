@@ -1,12 +1,14 @@
 package bigbade.enchantmenttokens.utils.currency;
 
-import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.loader.FileLoader;
+import bigbade.enchantmenttokens.utils.EnchantLogger;
+import bigbade.enchantmenttokens.utils.SchedulerHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
 
 /*
 EnchantmentTokens
@@ -28,27 +30,26 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 public class GemCurrencyHandler implements CurrencyHandler {
     private long gems = -1;
     private FileLoader fileLoader;
-    private EnchantmentTokens main;
 
-    public GemCurrencyHandler(EnchantmentTokens main) {
-        fileLoader = new FileLoader(main.getDataFolder().getAbsolutePath());
-        this.main = main;
-    }
-
-    public GemCurrencyHandler(Player player, FileLoader fileLoader, EnchantmentTokens main) {
+    public GemCurrencyHandler(Player player, FileLoader fileLoader, SchedulerHandler scheduler) {
         this.fileLoader = fileLoader;
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Callable<Long> callable = () -> fileLoader.getGems(player);
         Future<Long> future = executor.submit(callable);
         final AtomicInteger id = new AtomicInteger();
-        id.set(Bukkit.getScheduler().runTaskTimerAsynchronously(main, () -> {
+        id.set(scheduler.runTaskAsyncRepeating(() -> {
             try {
                 gems = future.get(1, TimeUnit.MILLISECONDS);
                 Bukkit.getScheduler().cancelTask(id.get());
-            } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                e.printStackTrace();
+            } catch (InterruptedException e) {
+                EnchantLogger.LOGGER.log(Level.SEVERE, "gem thread interrupted", e);
+                Thread.currentThread().interrupt();
+            } catch (ExecutionException e) {
+                EnchantLogger.LOGGER.log(Level.SEVERE, "Could not load gems", e);
+            } catch (TimeoutException ignored) {
+                EnchantLogger.LOGGER.log(Level.INFO, "Reading gems took longer than 1 tick");
             }
-        }, 1L, 1L).getTaskId());
+        }, 1L, 1L));
         executor.shutdown();
     }
 
@@ -65,11 +66,6 @@ public class GemCurrencyHandler implements CurrencyHandler {
     @Override
     public void addAmount(long amount) {
         gems += amount;
-    }
-
-    @Override
-    public CurrencyHandler newInstance(Player player) {
-        return new GemCurrencyHandler(player, fileLoader, main);
     }
 
     @Override

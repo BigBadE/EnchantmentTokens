@@ -1,6 +1,9 @@
-package bigbade.enchantmenttokens.api;
+package bigbade.enchantmenttokens.utils.enchants;
 
 import bigbade.enchantmenttokens.EnchantmentTokens;
+import bigbade.enchantmenttokens.api.EnchantmentAddon;
+import bigbade.enchantmenttokens.api.EnchantmentBase;
+import bigbade.enchantmenttokens.utils.EnchantLogger;
 import bigbade.enchantmenttokens.utils.ReflectionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.enchantments.Enchantment;
@@ -77,11 +80,11 @@ public class EnchantmentLoader {
                 }
             }
             if (addon == null) {
-                EnchantmentTokens.logger.log(Level.SEVERE, "Jar " + file.getName() + " has no EnchantmentAddon class, skipping loading enchants");
+                EnchantLogger.LOGGER.log(Level.SEVERE, "Jar " + file.getName() + " has no EnchantmentAddon class, skipping loading enchants");
             } else
                 enchantments.put(addon.getName(), enchantClasses);
         } catch (IOException e) {
-            EnchantmentTokens.logger.log(Level.SEVERE, "Could not load jar at path: " + file.getPath(), e);
+            EnchantLogger.LOGGER.log(Level.SEVERE, "Could not load jar at path: " + file.getPath(), e);
         }
     }
 

@@ -56,7 +56,7 @@ public class ReflectionManager {
             field = clazz.getDeclaredField(name);
             field.setAccessible(true);
         } catch (NoSuchFieldException e) {
-            EnchantmentTokens.logger.log(Level.SEVERE, "Version changes with enchantments, please report this and the MC version");
+            EnchantLogger.LOGGER.log(Level.SEVERE, "Version changes with enchantments, please report this and the MC version");
         }
         return field;
     }
@@ -65,7 +65,7 @@ public class ReflectionManager {
         try {
             return field.get(instance);
         } catch (IllegalAccessException e) {
-            EnchantmentTokens.logger.log(Level.SEVERE, "Could not get field reflexively");
+            EnchantLogger.LOGGER.log(Level.SEVERE, "Could not get field reflexively");
         }
         return null;
     }
@@ -74,7 +74,7 @@ public class ReflectionManager {
         try {
             field.set(instance, value);
         } catch (IllegalAccessException e) {
-            EnchantmentTokens.logger.log(Level.SEVERE, "Could not set field reflexively");
+            EnchantLogger.LOGGER.log(Level.SEVERE, "Could not set field reflexively");
         }
     }
 
@@ -82,7 +82,7 @@ public class ReflectionManager {
         try {
             return clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            EnchantmentTokens.logger.log(Level.SEVERE, "Could not instantiate class " + clazz.getSimpleName());
+            EnchantLogger.LOGGER.log(Level.SEVERE, "Could not instantiate class " + clazz.getSimpleName());
         }
         return null;
     }

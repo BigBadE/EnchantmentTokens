@@ -1,14 +1,17 @@
-package bigbade.enchantmenttokens.utils;
+package bigbade.enchantmenttokens.localization;
 
 import bigbade.enchantmenttokens.EnchantmentTokens;
 import bigbade.enchantmenttokens.api.EnchantmentAddon;
-import bigbade.enchantmenttokens.localization.TranslatedMessage;
+import bigbade.enchantmenttokens.utils.EnchantLogger;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.logging.Level;
 
 public class LocaleManager {
+    private LocaleManager() { }
+
     public static void updateLocale(Locale locale, Collection<EnchantmentAddon> addons) {
         try {
             Map<String, ResourceBundle> resources = new HashMap<>();
@@ -20,7 +23,7 @@ public class LocaleManager {
 
             TranslatedMessage.updateBundles(resources);
         } catch (IOException e) {
-            e.printStackTrace();
+            EnchantLogger.LOGGER.log(Level.SEVERE, "Could not load Localization files.", e);
         }
     }
 

@@ -19,7 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import bigbade.enchantmenttokens.localization.TranslatedMessage;
-import bigbade.enchantmenttokens.utils.EnchantmentPlayerHandler;
+import bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

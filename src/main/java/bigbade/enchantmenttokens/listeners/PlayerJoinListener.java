@@ -1,6 +1,6 @@
 package bigbade.enchantmenttokens.listeners;
 
-import bigbade.enchantmenttokens.utils.EnchantmentPlayerHandler;
+import bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;

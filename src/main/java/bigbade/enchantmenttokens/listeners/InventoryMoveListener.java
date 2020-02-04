@@ -19,7 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import bigbade.enchantmenttokens.events.EnchantmentEvent;
 import bigbade.enchantmenttokens.listeners.enchants.BasicEnchantListener;
-import bigbade.enchantmenttokens.utils.ListenerManager;
+import bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 import bigbade.enchantmenttokens.utils.SchedulerHandler;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;

@@ -26,8 +26,6 @@ public interface CurrencyHandler {
 
     void addAmount(long amount);
 
-    CurrencyHandler newInstance(Player player);
-
     void savePlayer(Player player);
 
     String name();

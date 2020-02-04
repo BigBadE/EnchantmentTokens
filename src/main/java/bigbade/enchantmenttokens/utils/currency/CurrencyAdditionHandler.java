@@ -1,4 +1,4 @@
-package bigbade.enchantmenttokens.utils;
+package bigbade.enchantmenttokens.utils.currency;
 
 import bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import bigbade.enchantmenttokens.localization.TranslatedMessage;

@@ -18,8 +18,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import bigbade.enchantmenttokens.localization.TranslatedMessage;
-import bigbade.enchantmenttokens.utils.CurrencyAdditionHandler;
-import bigbade.enchantmenttokens.utils.EnchantmentPlayerHandler;
+import bigbade.enchantmenttokens.utils.currency.CurrencyAdditionHandler;
+import bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

@@ -2,25 +2,15 @@ language: java
 
 before_install:
   - mvn install:install-file -Dfile=./libs/ArmorEquipEvent-1.7.3.jar -DgroupId=com.codingforcookies -DartifactId=ArmorEquipEvent -Dversion=1.7.3 -Dpackaging=jar
-<<<<<<< HEAD
-env:
-  global:
-    - JAVA_TOOL_OPTIONS=-Dhttps.protocols=TLSv1.2
-=======
+
 env:		
     global:		
         - JAVA_TOOL_OPTIONS=-Dhttps.protocols=TLSv1.2
->>>>>>> e221ea4788546298dce82c23054132af9d277b1d
+
 jdk:
   - openjdk8
 
 script: "mvn cobertura:cobertura"
-<<<<<<< HEAD
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
-=======
-  
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
->>>>>>> e221ea4788546298dce82c23054132af9d277b1d

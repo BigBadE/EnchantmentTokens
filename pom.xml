@@ -4,7 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+<<<<<<< HEAD
     <groupId>software.bigbade.enchantmenttokens</groupId>
+=======
+    <groupId>bigbade.enchantmenttokens</groupId>
+>>>>>>> e221ea4788546298dce82c23054132af9d277b1d
     <artifactId>EnchantmentTokens</artifactId>
     <packaging>jar</packaging>
     <version>1.1</version>
@@ -104,9 +108,15 @@
                 </includes>
             </resource>
             <resource>
+<<<<<<< HEAD
                 <directory>${basedir}/submodules</directory>
                 <includes>
                     <include>localization/*.properties</include>
+=======
+                <directory>${basedir}</directory>
+                <includes>
+                    <include>EnchantmentTokensLocalization/*.properties</include>
+>>>>>>> e221ea4788546298dce82c23054132af9d277b1d
                 </includes>
             </resource>
         </resources>

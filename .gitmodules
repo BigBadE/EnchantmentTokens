@@ -4,6 +4,7 @@
 [submodule "EnchantmentTokens.wiki"]
 	path = EnchantmentTokens.wiki
 	url = https://github.com/BigBadE/EnchantmentTokens.wiki.git
+<<<<<<< HEAD
 [submodule "submodules/mongo"]
 	path = submodules/mongo
 	url = https://github.com/BigBadE/EnchantmentTokensMongo
@@ -13,3 +14,5 @@
 [submodule "submodules/localization"]
 	path = submodules/localization
 	url = https://github.com/BigBadE/EnchantmentTokensLocalization
+=======
+>>>>>>> e221ea4788546298dce82c23054132af9d277b1d

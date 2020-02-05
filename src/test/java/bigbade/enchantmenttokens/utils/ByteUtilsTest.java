@@ -2,6 +2,7 @@ package bigbade.enchantmenttokens.utils;
 
 import org.junit.Assert;
 import org.junit.Test;
+import software.bigbade.enchantmenttokens.utils.ByteUtils;
 
 public class ByteUtilsTest {
     @Test

@@ -34,6 +34,7 @@ import java.util.logging.Level;
 public class EnchantmentHandler {
     private List<EnchantmentBase> enchantments = new ArrayList<>();
     private List<VanillaEnchant> vanillaEnchants = new ArrayList<>();
+    private List<EnchantmentBase> allEnchants = new ArrayList<>();
 
     private EnchantmentTokens main;
 
@@ -75,6 +76,10 @@ public class EnchantmentHandler {
             this.enchantments.add(enchantment);
             Enchantment.registerEnchantment(enchantment);
         }
+
+        allEnchants.addAll(enchantments);
+        allEnchants.addAll(vanillaEnchants);
+
         main.getLogger().log(Level.INFO, "Registered enchantments");
     }
 
@@ -105,5 +110,9 @@ public class EnchantmentHandler {
 
     public List<VanillaEnchant> getVanillaEnchants() {
         return vanillaEnchants;
+    }
+
+    public List<EnchantmentBase> getAllEnchants() {
+        return allEnchants;
     }
 }

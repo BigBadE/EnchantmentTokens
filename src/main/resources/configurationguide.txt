@@ -1,0 +1,65 @@
+BUG REPORTING:
+
+Bugs do exist, this is a large plugin, they happen sometimes.
+If you find a bug, please report it to https://www.Github.com/BigBadE/EnchantmentTokens
+Open an issue in the "Issues" tab.
+
+CONFIGURATION GUIDE:
+
+COUNTRY-LANGUAGE:
+
+This is the country used for Internalization. If no supported language files are found, this defaults to US.
+
+Supported: US
+
+If your language of choice is not supported, you can create a translation at https://github.com/BigBadE/EnchantmentTokensLocalization.
+
+CURRENCY METHOD:
+
+There are a multitude of ways EnchantmentTokens handles currency.
+Currently you can only use "gems". It is planned to add Vault support.
+There are currently 2 methods of saving, persistent data and flat file.
+Persistent data is only available for 1.14+.
+Flat file saves all data to a separate file in the data folder.
+MySQL and MongoDB support is planned.
+
+AUTOSAVE TIME:
+
+If you are using gems, player gem count will be automatically saved after this amount of minutes.
+
+VANILLA ENCHANTMENTS:
+
+There will be no vanilla enchantments added by default. To add a vanilla enchantment, add it to the default configuration.
+Here are the current enchantments (as of 1.14.4/1.15.1)
+(Versions are included in enchantments added after 1.7, do not use enchantments before they were added):
+All: Binding Curse (1.11), Vanishing Curse (1.11), Unbreaking, Mending (1.9)
+Armor: Protection, Fire Protection, Feather Falling, Blast Protection, Projectile Projection, Thorns
+Helmet: Respiration, Aqua Affinity,
+Boots: Depth Strider (1.8), Frost Walker (1.9)
+Swords: Sharpness, Smite, Bane Of Arthropods, Knockback, Fire Aspect, Looting, Sweeping (1.9)
+Tools: Efficiency, Silk Touch, Fortune
+Bows/Crossbows: Power, Punch, Flame, Infinity
+Crossbows Only (1.14): Multishot, Quick Charge, Piercing
+Fishing Rods: Luck of The Sea, Lure
+Trident (1.13): Loyalty, Impaling, Channeling, Riptide
+Shield (1.9): Custom only
+
+Run the server then start it after it boots up, and a simple configuration for each enchantment will be generated.
+Configuring enchantments is simple, here is an overview:
+name: THIS CAN BE USED FOR TRANSLATING NAMES, BUT SHOULD NOT BE USED FOR CUSTOM NAMES BECAUSE THIS WILL NOT AFFECT THE LORE ON THE ITEM
+icon: The item that shows up when choosing the enchantment in the enchantment GUI. Name should be uppercase with underscores instead of spaces.
+(Some items have different names in-game then in the code, check Minecraft gamepedia for the correct name, under Data Values and Namespaced ID.
+price: This section controls the pricing of the enchantment.
+type: Currently there is just "custom", which allows you to set the price for every level. Soon quadratic and polynomia function support will be added.
+CUSTOM ENCHANTMENTS:
+
+Custom enchantments have all the values as Vanilla Enchantments. They also have an enabled setting, so if for instance you get a pack of
+enchantments you can remove ones that you don't want by setting enabled to "false".
+You can also set "name", the in-game name of the enchantment. The default value is set by the developer.
+Custom enchantments might have custom values generated, you can find the use of them on however you downloaded the jar.
+
+If you are having problems configuring the plugin, getting errors in the console, or have a feature you want added, check out the GitHub:
+https://github.com/BigBadE/EnchantmentTokens
+
+Current planned features:
+- Multi-lingual support

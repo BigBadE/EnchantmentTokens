@@ -1,0 +1,15 @@
+[submodule "EnchantmentTokensLocalization"]
+	path = EnchantmentTokensLocalization
+	url = https://github.com/BigBadE/EnchantmentTokensLocalization
+[submodule "EnchantmentTokens.wiki"]
+	path = EnchantmentTokens.wiki
+	url = https://github.com/BigBadE/EnchantmentTokens.wiki.git
+[submodule "submodules/mongo"]
+	path = submodules/mongo
+	url = https://github.com/BigBadE/EnchantmentTokensMongo
+[submodule "submodules/wiki"]
+	path = submodules/wiki
+	url = https://github.com/BigBadE/EnchantmentTokens.wiki.git
+[submodule "submodules/localization"]
+	path = submodules/localization
+	url = https://github.com/BigBadE/EnchantmentTokensLocalization

@@ -1,0 +1,17 @@
+# Add all vanilla enchantments used in here!
+# Check configurationguide.txt for names/versions.
+metrics: true
+enchants:
+  vanillaEnchants:
+    - Fortune
+  fortune:
+    enabled: true
+    name: Fortune
+    maxLevel: 3
+    minLevel: 1
+    price: {}
+    type: custom
+currency: gems
+usePersistentData: true
+country-language: US
+autosaveTime: 15

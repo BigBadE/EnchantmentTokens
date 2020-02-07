@@ -18,4 +18,9 @@ public class LatestCurrencyFactory implements CurrencyFactory {
     public String name() {
         return "gemsNew";
     }
+
+    @Override
+    public void shutdown() {
+        //Not used since Spigot handles this for us
+    }
 }

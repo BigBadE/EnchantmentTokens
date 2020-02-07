@@ -20,11 +20,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import software.bigbade.enchantmenttokens.utils.ByteUtils;
 import software.bigbade.enchantmenttokens.utils.ConfigurationManager;
 import org.bukkit.entity.Player;
+import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 
 import java.io.*;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 public class FileLoader {
     private String path;
@@ -55,7 +57,7 @@ public class FileLoader {
                 stream.read(gems, offset, 8);
                 return utils.bytesToLong(gems);
             } catch (IOException e) {
-                e.printStackTrace();
+                EnchantLogger.LOGGER.log(Level.SEVERE, "Could not read player data", e);
             }
         }
         return 0;
@@ -79,8 +81,9 @@ public class FileLoader {
 
             FileOutputStream output = new FileOutputStream(playerFile);
             output.write(utils.longToBytes(gems), passed, 8);
+            output.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            EnchantLogger.LOGGER.log(Level.SEVERE, "Error saving data", e);
         }
     }
 
@@ -89,24 +92,24 @@ public class FileLoader {
             int passed = 0;
             for (; passed < stream.available(); passed += 24) {
                 byte[] temp = new byte[8];
-                stream.read(temp);
+                passed += stream.read(temp);
                 long mostSigBits = utils.bytesToLong(temp);
                 if (mostSigBits == id.getMostSignificantBits()) {
-                    stream.read(temp);
+                    passed += stream.read(temp);
                     long leastSigBits = utils.bytesToLong(temp);
                     if (leastSigBits == id.getLeastSignificantBits()) {
                         passed += 16;
                         break;
                     } else {
-                        stream.skip(8);
+                        passed += stream.skip(8);
                     }
                 } else {
-                    stream.skip(16);
+                    passed += stream.skip(16);
                 }
             }
             return passed;
         } catch (IOException e) {
-
+            EnchantLogger.LOGGER.log(Level.SEVERE, "Error reading player save data", e);
         }
         return -1;
     }

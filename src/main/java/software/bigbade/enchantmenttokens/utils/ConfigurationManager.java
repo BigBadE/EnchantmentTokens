@@ -115,6 +115,12 @@ public class ConfigurationManager {
             EnchantLogger.LOGGER.log(Level.SEVERE, "[ERROR] Could not create folder {0}", path);
     }
 
+    public static File getFolder(String path) {
+        File folder = new File(path);
+        if(!folder.exists()) createFolder(folder);
+        return folder;
+    }
+
     public static void createFolder(File file) {
         if (!file.exists() && !file.mkdir())
             EnchantLogger.LOGGER.log(Level.SEVERE, "[ERROR] Could not create folder {0}", file.getPath());

@@ -79,6 +79,7 @@ public class EnchantmentLoader {
                     addons.add(addon);
                 }
             }
+            jarFile.close();
             if (addon == null) {
                 EnchantLogger.LOGGER.log(Level.SEVERE, "Jar " + file.getName() + " has no EnchantmentAddon class, skipping loading enchants");
             } else

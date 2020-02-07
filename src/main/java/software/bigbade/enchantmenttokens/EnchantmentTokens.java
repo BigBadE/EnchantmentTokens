@@ -20,9 +20,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
+import software.bigbade.enchantmenttokens.api.ExternalCurrencyData;
 import software.bigbade.enchantmenttokens.gui.EnchantmentMenuFactory;
 import software.bigbade.enchantmenttokens.listeners.SignPacketHandler;
 import software.bigbade.enchantmenttokens.localization.LocaleManager;
@@ -32,6 +37,7 @@ import software.bigbade.enchantmenttokens.utils.MetricManager;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 import software.bigbade.enchantmenttokens.utils.commands.CommandManager;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyFactory;
+import software.bigbade.enchantmenttokens.utils.currency.CurrencyFactoryHandler;
 import software.bigbade.enchantmenttokens.utils.currency.GemCurrencyFactory;
 import software.bigbade.enchantmenttokens.utils.currency.LatestCurrencyFactory;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
@@ -41,8 +47,13 @@ import software.bigbade.enchantmenttokens.utils.listeners.ListenerHandler;
 import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.jar.JarFile;
+import java.util.logging.Level;
 
 public class EnchantmentTokens extends JavaPlugin {
     public static final String NAME = "enchantmenttokens";
@@ -58,6 +69,8 @@ public class EnchantmentTokens extends JavaPlugin {
     private ListenerHandler listenerHandler;
 
     private CurrencyFactory currencyFactory;
+    private ExternalCurrencyData data;
+
     private EnchantmentPlayerHandler playerHandler;
 
     private EnchantUtils utils;
@@ -77,17 +90,22 @@ public class EnchantmentTokens extends JavaPlugin {
 
         scheduler = new SchedulerHandler(this);
 
-        String currency = (String) ConfigurationManager.getValueOrDefault("currency", getConfig(), "gems");
+        ConfigurationSection curreny = ConfigurationManager.getSectionOrCreate(getConfig(), "currency");
+
+        String currency = (String) ConfigurationManager.getValueOrDefault("type", curreny, "gems");
 
         if ("gems".equalsIgnoreCase(currency)) {
             if (version >= 14) {
-                boolean persistent = (boolean) ConfigurationManager.getValueOrDefault("usePersistentData", getConfig(), true);
+                boolean persistent = (boolean) ConfigurationManager.getValueOrDefault("usePersistentData", curreny, true);
                 if (persistent)
                     currencyFactory = new LatestCurrencyFactory(this);
                 else
                     currencyFactory = new GemCurrencyFactory(this);
             } else
                 currencyFactory = new GemCurrencyFactory(this);
+        } else {
+            CurrencyFactoryHandler handler = new CurrencyFactoryHandler();
+            currencyFactory = handler.load(this, currency);
         }
 
         playerHandler = new EnchantmentPlayerHandler(currencyFactory);
@@ -152,6 +170,7 @@ public class EnchantmentTokens extends JavaPlugin {
         saveConfig();
         loader.getAddons().forEach(EnchantmentAddon::onDisable);
         enchantmentHandler.getEnchantments().forEach(EnchantmentBase::onDisable);
+        currencyFactory.shutdown();
     }
 
     public void unregisterEnchants() {

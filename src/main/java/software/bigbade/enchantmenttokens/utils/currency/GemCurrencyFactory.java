@@ -21,4 +21,9 @@ public class GemCurrencyFactory implements CurrencyFactory {
     public String name() {
         return "gemsOld";
     }
+
+    @Override
+    public void shutdown() {
+        //Not used
+    }
 }

@@ -21,6 +21,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 public class ReflectionManager {
@@ -76,10 +78,14 @@ public class ReflectionManager {
         }
     }
 
-    public static Object instantiate(Class<?> clazz) {
+    public static Object instantiate(Class<?> clazz, Object... args) {
         try {
-            return clazz.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            List<Class<?>> classes = new ArrayList<>();
+            for(Object arg : args)
+                classes.add(arg.getClass());
+            System.out.println("Constructor: " + clazz.getConstructor(classes.toArray(new Class[0])));
+            return clazz.getConstructor(classes.toArray(new Class[0])).newInstance(args);
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             EnchantLogger.LOGGER.log(Level.SEVERE, "Could not instantiate class " + clazz.getSimpleName());
         }
         return null;

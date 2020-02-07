@@ -69,7 +69,6 @@ public class EnchantmentTokens extends JavaPlugin {
     private ListenerHandler listenerHandler;
 
     private CurrencyFactory currencyFactory;
-    private ExternalCurrencyData data;
 
     private EnchantmentPlayerHandler playerHandler;
 
@@ -90,24 +89,6 @@ public class EnchantmentTokens extends JavaPlugin {
 
         scheduler = new SchedulerHandler(this);
 
-        ConfigurationSection curreny = ConfigurationManager.getSectionOrCreate(getConfig(), "currency");
-
-        String currency = (String) ConfigurationManager.getValueOrDefault("type", curreny, "gems");
-
-        if ("gems".equalsIgnoreCase(currency)) {
-            if (version >= 14) {
-                boolean persistent = (boolean) ConfigurationManager.getValueOrDefault("usePersistentData", curreny, true);
-                if (persistent)
-                    currencyFactory = new LatestCurrencyFactory(this);
-                else
-                    currencyFactory = new GemCurrencyFactory(this);
-            } else
-                currencyFactory = new GemCurrencyFactory(this);
-        } else {
-            CurrencyFactoryHandler handler = new CurrencyFactoryHandler();
-            currencyFactory = handler.load(this, currency);
-        }
-
         playerHandler = new EnchantmentPlayerHandler(currencyFactory);
 
         boolean metrics = (boolean) ConfigurationManager.getValueOrDefault("metrics", getConfig(), true);
@@ -125,10 +106,19 @@ public class EnchantmentTokens extends JavaPlugin {
 
         ConfigurationManager.createFolder(getDataFolder().getPath() + "\\enchantments");
 
+        ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
+        EnchantLogger.LOGGER.info("Registering sign listener");
+        signHandler = new SignPacketHandler(protocolManager, this, Objects.requireNonNull(getConfig().getString("currency")).equalsIgnoreCase("gems"));
+
         listenerHandler = new ListenerHandler(this);
         enchantmentHandler = new EnchantmentHandler(this);
 
         registerEnchants();
+
+        ConfigurationSection currency = ConfigurationManager.getSectionOrCreate(getConfig(), "currency");
+
+        CurrencyFactoryHandler handler = new CurrencyFactoryHandler();
+        currencyFactory = handler.load(this, currency, version);
 
         Locale locale = Locale.US;
         String language = (String) ConfigurationManager.getValueOrDefault("country-language", getConfig(), "US");
@@ -138,10 +128,6 @@ public class EnchantmentTokens extends JavaPlugin {
                 locale = foundLocale;
 
         LocaleManager.updateLocale(locale, loader.getAddons());
-
-        ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
-        EnchantLogger.LOGGER.info("Registering sign listener");
-        signHandler = new SignPacketHandler(protocolManager, this, Objects.requireNonNull(getConfig().getString("currency")).equalsIgnoreCase("gems"));
 
         utils = new EnchantUtils(enchantmentHandler, playerHandler, listenerHandler, signHandler.getSigns());
 
@@ -216,4 +202,6 @@ public class EnchantmentTokens extends JavaPlugin {
     public SchedulerHandler getScheduler() {
         return scheduler;
     }
+
+    public EnchantmentLoader getLoader() { return loader; }
 }

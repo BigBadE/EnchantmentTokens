@@ -28,9 +28,9 @@ public class LocaleManager {
     }
 
     private static InputStream getStream(String name, Locale locale) {
-        InputStream languageStream = EnchantmentTokens.class.getResourceAsStream("/Localization/" + name + "-" + locale.getLanguage() + "_" + locale.getCountry() + ".properties");
+        InputStream languageStream = EnchantmentTokens.class.getResourceAsStream("/localization/" + name + "-" + locale.getLanguage() + "_" + locale.getCountry() + ".properties");
         if(languageStream == null)
-            languageStream = EnchantmentTokens.class.getResourceAsStream("Localization/messages-en_US.properties");
+            languageStream = EnchantmentTokens.class.getResourceAsStream("localization/messages-en_US.properties");
         return languageStream;
     }
 }

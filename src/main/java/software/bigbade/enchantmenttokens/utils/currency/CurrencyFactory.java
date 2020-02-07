@@ -6,4 +6,6 @@ public interface CurrencyFactory {
     CurrencyHandler newInstance(Player player);
 
     String name();
+
+    void close();
 }

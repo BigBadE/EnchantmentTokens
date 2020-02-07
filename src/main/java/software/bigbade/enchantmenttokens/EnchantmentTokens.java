@@ -152,6 +152,7 @@ public class EnchantmentTokens extends JavaPlugin {
         saveConfig();
         loader.getAddons().forEach(EnchantmentAddon::onDisable);
         enchantmentHandler.getEnchantments().forEach(EnchantmentBase::onDisable);
+        currencyFactory.close();
     }
 
     public void unregisterEnchants() {

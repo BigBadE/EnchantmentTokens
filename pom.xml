@@ -137,7 +137,7 @@
                             <relocations>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
-                                    <shadedPattern>bigbade.enchantmenttokens</shadedPattern>
+                                    <shadedPattern>software.bigbade.enchantmenttokens</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>EnchantmentTokensLocalization</pattern>

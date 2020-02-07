@@ -46,7 +46,7 @@ public class EnchantmentHandler {
         List<Enchantment> enchantsToRegister = new ArrayList<>();
         ConfigurationSection section = ConfigurationManager.getSectionOrCreate(main.getConfig(), "enchants");
 
-        for (String name : (Iterable<String>) ConfigurationManager.getValueOrDefault("vanillaEnchants", section, new String[] { "Fortune" })) {
+        for (String name : (List<String>) ConfigurationManager.getValueOrDefault("vanillaEnchants", section, new String[] { "Fortune" })) {
             Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(name.toLowerCase().replace(" ", "_")));
             if (enchantment != null) enchantsToRegister.add(enchantment);
             else main.getLogger().log(Level.SEVERE, "Could not find an enchantment by the name {0}", name);
@@ -83,6 +83,7 @@ public class EnchantmentHandler {
         main.getLogger().log(Level.INFO, "Registered enchantments");
     }
 
+    @SuppressWarnings("unchecked")
     public void unregisterEnchants() {
         Field byKey = ReflectionManager.getField(Enchantment.class, "byKey");
         Field byName = ReflectionManager.getField(Enchantment.class, "byName");

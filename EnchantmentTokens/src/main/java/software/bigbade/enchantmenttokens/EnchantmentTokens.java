@@ -197,16 +197,16 @@ public class EnchantmentTokens extends JavaPlugin {
                                 return false;
                             }
                         }));
-                addon.loadClasses("software.bigbade", "enchantmenttokens");
+                //addon.loadClasses("software.bigbade", "enchantmenttokens");
                 addon.loadClasses("software.bigbade.enchantmenttokens", "api");
-                addon.loadClasses("software.bigbade.enchantmenttokens", "commands");
-                addon.loadClasses("software.bigbade.enchantmenttokens", "events");
-                addon.loadClasses("software.bigbade.enchantmenttokens", "gui");
-                addon.loadClasses("software.bigbade.enchantmenttokens", "listeners");
-                addon.loadClasses("software.bigbade.enchantmenttokens", "loader");
-                addon.loadClasses("software.bigbade.enchantmenttokens", "localization");
+                //addon.loadClasses("software.bigbade.enchantmenttokens", "commands");
+                //addon.loadClasses("software.bigbade.enchantmenttokens", "events");
+                //addon.loadClasses("software.bigbade.enchantmenttokens", "gui");
+                //addon.loadClasses("software.bigbade.enchantmenttokens", "listeners");
+                //addon.loadClasses("software.bigbade.enchantmenttokens", "loader");
+                //addon.loadClasses("software.bigbade.enchantmenttokens", "localization");
                 addon.loadClasses("software.bigbade.enchantmenttokens", "skript");
-                addon.loadClasses("software.bigbade.enchantmenttokens", "utils");
+                //addon.loadClasses("software.bigbade.enchantmenttokens", "utils");
             } catch (IOException e) {
                 e.printStackTrace();
             }

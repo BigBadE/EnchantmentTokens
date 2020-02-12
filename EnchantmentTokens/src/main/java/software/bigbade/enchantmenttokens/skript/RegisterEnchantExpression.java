@@ -43,7 +43,7 @@ public class RegisterEnchantExpression extends SimpleExpression<EnchantmentBase>
     private Expression<ItemType> icon;
 
     static {
-        Skript.registerExpression(RegisterEnchantExpression.class, EnchantmentBase.class, ExpressionType.COMBINED, "[a] [new] custom enchantment named %string% with [an] icon [of] %itemtype%");
+        Skript.registerExpression(RegisterEnchantExpression.class, EnchantmentBase.class, ExpressionType.COMBINED, "[a] [new] custom enchant[ment] named %string% with [an] icon [of] %itemtype%");
     }
 
     @Override

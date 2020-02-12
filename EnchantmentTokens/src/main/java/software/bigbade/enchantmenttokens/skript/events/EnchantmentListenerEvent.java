@@ -23,7 +23,7 @@ public class EnchantmentListenerEvent extends SelfRegisteringSkriptEvent {
     private Trigger trigger;
 
     static {
-        Skript.registerEvent("enchantmentevent", EnchantmentListenerEvent.class, EnchantmentEvent.class, "on %string% for %customenchant%");
+        Skript.registerEvent("enchantmentevent", EnchantmentListenerEvent.class, EnchantmentEvent.class, "on %string% for %string%");
         EventValues.registerEventValue(EnchantmentEvent.class, Player.class, new Getter<Player, EnchantmentEvent>() {
             @Override
             @Nullable
@@ -36,8 +36,9 @@ public class EnchantmentListenerEvent extends SelfRegisteringSkriptEvent {
     @Override
     public boolean init(Literal<?>[] literals, int i, SkriptParser.ParseResult parseResult) {
         ListenerType type = ListenerType.valueOf(((Literal<String>) literals[0]).getSingle().toUpperCase().replace(" ", "_"));
-        SkriptEnchantment enchantment = ((Literal<SkriptEnchantment>) literals[1]).getSingle();
-        ((EnchantmentTokens) Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("EnchantmentTokens"))).getListenerHandler().addListener(type, enchantment, (event) -> trigger.execute(event));
+        String name = ((Literal<String>) literals[1]).getSingle();
+        //SkriptEnchantment enchantment = ((Literal<SkriptEnchantment>) literals[1]).getSingle();
+        //((EnchantmentTokens) Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("EnchantmentTokens"))).getListenerHandler().addListener(type, enchantment, (event) -> trigger.execute(event));
         return true;
     }
 

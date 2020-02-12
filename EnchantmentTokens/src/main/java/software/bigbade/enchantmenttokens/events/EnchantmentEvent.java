@@ -3,34 +3,27 @@ package software.bigbade.enchantmenttokens.events;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-public class EnchantmentEvent<T extends Event> {
-    private T event;
+public class EnchantmentEvent extends Event {
     private Entity user;
     private Entity targetEntity;
     private Block targetBlock;
     private ItemStack item;
 
-    public EnchantmentEvent(T event, ItemStack item) {
-        this.event = event;
+    private HandlerList handlers;
+
+    public EnchantmentEvent(ItemStack item) {
         this.item = item;
-    }
-
-    public T getEvent() {
-        return event;
-    }
-
-    public EnchantmentEvent<T> setEvent(T event) {
-        this.event = event;
-        return this;
     }
 
     public Entity getUser() {
         return user;
     }
 
-    public EnchantmentEvent<T> setUser(Entity user) {
+    public EnchantmentEvent setUser(Entity user) {
         this.user = user;
         return this;
     }
@@ -39,7 +32,7 @@ public class EnchantmentEvent<T extends Event> {
         return targetEntity;
     }
 
-    public EnchantmentEvent<T> setTargetEntity(Entity targetEntity) {
+    public EnchantmentEvent setTargetEntity(Entity targetEntity) {
         this.targetEntity = targetEntity;
         return this;
     }
@@ -48,12 +41,18 @@ public class EnchantmentEvent<T extends Event> {
         return targetBlock;
     }
 
-    public EnchantmentEvent<T> setTargetBlock(Block targetBlock) {
+    public EnchantmentEvent setTargetBlock(Block targetBlock) {
         this.targetBlock = targetBlock;
         return this;
     }
 
     public ItemStack getItem() {
         return item;
+    }
+
+    @NotNull
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
     }
 }

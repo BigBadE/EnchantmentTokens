@@ -75,6 +75,10 @@ public class EnchantmentHandler {
 
         main.saveConfig();
 
+        for(SkriptEnchantment enchantment : skriptEnchantments) {
+            Enchantment.registerEnchantment(enchantment);
+        }
+
         for (EnchantmentBase enchantment : enchantments) {
             this.enchantments.add(enchantment);
             Enchantment.registerEnchantment(enchantment);
@@ -106,11 +110,6 @@ public class EnchantmentHandler {
             byNames.remove(enchantment.getKey());
         }
         ReflectionManager.setValue(byName, byNames, null);
-    }
-
-    public void addEnchantment(EnchantmentBase base) {
-        enchantments.add(base);
-        allEnchants.add(base);
     }
 
     public void addSkriptEnchant(SkriptEnchantment enchantment) {

@@ -26,7 +26,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class BlockBreakListener extends BasicEnchantListener<BlockBreakEvent> implements Listener {
+public class BlockBreakListener extends BasicEnchantListener implements Listener {
     private SignPacketHandler handler;
 
     public BlockBreakListener(ListenerManager enchantListeners, SignPacketHandler handler) {
@@ -37,7 +37,7 @@ public class BlockBreakListener extends BasicEnchantListener<BlockBreakEvent> im
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
-        EnchantmentEvent<BlockBreakEvent> enchantmentEvent = new EnchantmentEvent<>(event, item).setTargetBlock(event.getBlock()).setUser(event.getPlayer());
+        EnchantmentEvent enchantmentEvent = new EnchantmentEvent(item).setTargetBlock(event.getBlock()).setUser(event.getPlayer());
         callListeners(enchantmentEvent);
 
         if(event.getBlock().getState() instanceof Sign) {

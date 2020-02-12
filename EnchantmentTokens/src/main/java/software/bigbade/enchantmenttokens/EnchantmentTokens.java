@@ -19,34 +19,17 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
-import ch.njol.skript.bukkitutil.EnchantmentUtils;
-import ch.njol.skript.classes.ClassInfo;
-import ch.njol.skript.classes.Parser;
-import ch.njol.skript.classes.Serializer;
-import ch.njol.skript.lang.ParseContext;
-import ch.njol.skript.registrations.Classes;
-import ch.njol.skript.util.EnchantmentType;
-import ch.njol.yggdrasil.Fields;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import org.bukkit.Bukkit;
-import org.bukkit.DyeColor;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Colorable;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.eclipse.jdt.annotation.Nullable;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.gui.EnchantmentMenuFactory;
 import software.bigbade.enchantmenttokens.listeners.SignPacketHandler;
 import software.bigbade.enchantmenttokens.localization.LocaleManager;
-import software.bigbade.enchantmenttokens.utils.ConfigurationManager;
-import software.bigbade.enchantmenttokens.utils.EnchantLogger;
-import software.bigbade.enchantmenttokens.utils.MetricManager;
-import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
+import software.bigbade.enchantmenttokens.utils.*;
 import software.bigbade.enchantmenttokens.utils.commands.CommandManager;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyFactory;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyFactoryHandler;
@@ -55,13 +38,10 @@ import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentLoader;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerHandler;
 import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
+import software.bigbade.enchantmenttokens.skript.type.SkriptManager;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.StreamCorruptedException;
-import java.util.Locale;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 public class EnchantmentTokens extends JavaPlugin {
@@ -123,93 +103,9 @@ public class EnchantmentTokens extends JavaPlugin {
 
         registerEnchants();
 
-        if(Bukkit.getPluginManager().isPluginEnabled("Skript")) {
+        if (Bukkit.getPluginManager().isPluginEnabled("Skript")) {
             SkriptAddon addon = Skript.registerAddon(this);
-            try {
-                Classes.registerClass(new ClassInfo<>(EnchantmentBase.class, "customenchant").user("customenchantments?")
-                        .name("CustomEnchantment")
-                        .description("A custom enchantment.")
-                        .parser(new Parser<EnchantmentBase>() {
-                            @Override
-                            @Nullable
-                            public EnchantmentBase parse(final String s, final ParseContext context) {
-                                if(context != ParseContext.SCRIPT) return null;
-                                AtomicReference<EnchantmentBase> found = null;
-                                ((EnchantmentTokens) Bukkit.getPluginManager().getPlugin("Enchantmenttokens")).getEnchantmentHandler().getSkriptEnchantments().forEach((base) -> {
-                                    if(base.getName().equals(s))
-                                        found.set(base);
-                                });
-                                return found.get();
-                            }
-
-                            @Override
-                            public String toString(final EnchantmentBase e, final int flags) {
-                                return EnchantmentType.toString(e, flags);
-                            }
-
-                            @Override
-                            public String toVariableNameString(final EnchantmentBase e) {
-                                return "" + e.getName();
-                            }
-
-                            @Override
-                            public String getVariableNamePattern() {
-                                return ".+";
-                            }
-                        })
-                        .serializer(new Serializer<Enchantment>() {
-                            @Override
-                            public Fields serialize(final Enchantment ench) {
-                                final Fields f = new Fields();
-                                f.putObject("key", EnchantmentUtils.getKey(ench));
-                                return f;
-                            }
-
-                            @Override
-                            public boolean canBeInstantiated() {
-                                return false;
-                            }
-
-                            @Override
-                            public void deserialize(final Enchantment o, final Fields f) {
-                                assert false;
-                            }
-
-                            @Override
-                            protected Enchantment deserialize(final Fields fields) throws StreamCorruptedException {
-                                final String key = fields.getObject("key", String.class);
-                                assert key != null; // If a key happens to be null, something went really wrong...
-                                final Enchantment e = EnchantmentUtils.getByKey(key);
-                                if (e == null)
-                                    throw new StreamCorruptedException("Invalid enchantment " + key);
-                                return e;
-                            }
-
-                            // return "" + e.getId();
-                            @Override
-                            @Nullable
-                            public Enchantment deserialize(String s) {
-                                return Enchantment.getByName(s);
-                            }
-
-                            @Override
-                            public boolean mustSyncDeserialization() {
-                                return false;
-                            }
-                        }));
-                //addon.loadClasses("software.bigbade", "enchantmenttokens");
-                addon.loadClasses("software.bigbade.enchantmenttokens", "api");
-                //addon.loadClasses("software.bigbade.enchantmenttokens", "commands");
-                //addon.loadClasses("software.bigbade.enchantmenttokens", "events");
-                //addon.loadClasses("software.bigbade.enchantmenttokens", "gui");
-                //addon.loadClasses("software.bigbade.enchantmenttokens", "listeners");
-                //addon.loadClasses("software.bigbade.enchantmenttokens", "loader");
-                //addon.loadClasses("software.bigbade.enchantmenttokens", "localization");
-                addon.loadClasses("software.bigbade.enchantmenttokens", "skript");
-                //addon.loadClasses("software.bigbade.enchantmenttokens", "utils");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            new SkriptManager(addon);
         }
 
         ConfigurationSection currency = ConfigurationManager.getSectionOrCreate(getConfig(), "currency");
@@ -219,14 +115,9 @@ public class EnchantmentTokens extends JavaPlugin {
 
         playerHandler = new EnchantmentPlayerHandler(currencyFactory);
 
-        Locale locale = Locale.US;
-        String language = (String) ConfigurationManager.getValueOrDefault("country-language", getConfig(), "US");
 
-        for (Locale foundLocale : Locale.getAvailableLocales())
-            if (foundLocale.getDisplayCountry().equals(language))
-                locale = foundLocale;
 
-        LocaleManager.updateLocale(locale, loader.getAddons());
+        LocaleManager.updateLocale(getConfig(), loader.getAddons());
 
         utils = new EnchantUtils(enchantmentHandler, playerHandler, listenerHandler, signHandler.getSigns());
 
@@ -302,5 +193,7 @@ public class EnchantmentTokens extends JavaPlugin {
         return scheduler;
     }
 
-    public EnchantmentLoader getLoader() { return loader; }
+    public EnchantmentLoader getLoader() {
+        return loader;
+    }
 }

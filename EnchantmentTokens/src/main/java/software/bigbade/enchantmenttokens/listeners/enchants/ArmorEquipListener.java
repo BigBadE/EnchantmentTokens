@@ -24,7 +24,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
-public class ArmorEquipListener extends BasicEnchantListener<ArmorEquipEvent> implements Listener {
+public class ArmorEquipListener extends BasicEnchantListener implements Listener {
     private ListenerManager oldArmorListeners;
     private ListenerManager newArmorListeners;
 
@@ -38,12 +38,12 @@ public class ArmorEquipListener extends BasicEnchantListener<ArmorEquipEvent> im
     public void onArmorEquip(ArmorEquipEvent event) {
         ItemStack item = event.getOldArmorPiece();
         if(item != null) {
-            EnchantmentEvent<ArmorEquipEvent> enchantmentEvent = new EnchantmentEvent<>(event, item).setUser(event.getPlayer());
+            EnchantmentEvent enchantmentEvent = new EnchantmentEvent(item).setUser(event.getPlayer());
             callListeners(enchantmentEvent, oldArmorListeners);
         }
         item = event.getNewArmorPiece();
         if(item != null) {
-            EnchantmentEvent<ArmorEquipEvent> enchantmentEvent = new EnchantmentEvent<>(event, item).setUser(event.getPlayer());
+            EnchantmentEvent enchantmentEvent = new EnchantmentEvent(item).setUser(event.getPlayer());
             callListeners(enchantmentEvent, newArmorListeners);
         }
     }

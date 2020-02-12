@@ -27,22 +27,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ListenerManager {
-    private Map<Object, EnchantmentListener<EnchantmentEvent<? extends Event>>> listeners = new HashMap<>();
+    private Map<Object, EnchantmentListener<EnchantmentEvent>> listeners = new HashMap<>();
 
-    public void add(EnchantmentListener<EnchantmentEvent<? extends Event>> listener, Object base) {
+    public void add(EnchantmentListener<EnchantmentEvent> listener, Object base) {
         listeners.put(base, listener);
     }
 
-    public void callEvent(EnchantmentEvent<? extends Event> event, EnchantmentBase base) {
-        for (Map.Entry<Object, EnchantmentListener<EnchantmentEvent<? extends Event>>> listenerEntry : listeners.entrySet()) {
+    public void callEvent(EnchantmentEvent event, EnchantmentBase base) {
+        for (Map.Entry<Object, EnchantmentListener<EnchantmentEvent>> listenerEntry : listeners.entrySet()) {
             if(listenerEntry.getKey().equals(base)) {
                 listenerEntry.getValue().apply(event);
             }
         }
     }
 
-    public void callEvent(EnchantmentEvent<? extends Event> event) {
-        for (Map.Entry<Object, EnchantmentListener<EnchantmentEvent<? extends Event>>> listenerEntry : listeners.entrySet()) {
+    public void callEvent(EnchantmentEvent event) {
+        for (Map.Entry<Object, EnchantmentListener<EnchantmentEvent>> listenerEntry : listeners.entrySet()) {
             if (listenerEntry.getKey() instanceof EnchantmentBase) {
                 for (Enchantment enchantment : event.getItem().getEnchantments().keySet()) {
                     if (enchantment.getKey().equals(((EnchantmentBase) listenerEntry.getKey()).getKey()))

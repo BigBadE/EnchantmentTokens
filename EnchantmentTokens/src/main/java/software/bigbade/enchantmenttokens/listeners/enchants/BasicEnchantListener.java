@@ -21,18 +21,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-public class BasicEnchantListener<T extends Event> {
+public class BasicEnchantListener {
     private ListenerManager listeners;
 
     public BasicEnchantListener(ListenerManager listeners) {
         this.listeners = listeners;
     }
 
-    public void callListeners(EnchantmentEvent<T> event) {
+    public void callListeners(EnchantmentEvent event) {
         listeners.callEvent(event);
     }
 
-    public void callListeners(EnchantmentEvent<T> event, ListenerManager listeners) {
+    public void callListeners(EnchantmentEvent event, ListenerManager listeners) {
         listeners.callEvent(event);
     }
 }

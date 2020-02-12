@@ -33,7 +33,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class InventoryMoveListener extends BasicEnchantListener<Event> implements Listener {
+public class InventoryMoveListener extends BasicEnchantListener implements Listener {
     private List<Location> signs;
     private SchedulerHandler scheduler;
 
@@ -58,12 +58,12 @@ public class InventoryMoveListener extends BasicEnchantListener<Event> implement
                         scheduler.runTaskLater(() ->
                                 ((Player) event.getWhoClicked()).sendSignChange(location, new String[]{"[Enchantment]", ((Sign) location.getBlock().getState()).getLine(1), "", ""}), 1L);
                 if(event.getCurrentItem() != null) {
-                    EnchantmentEvent<Event> enchantmentEvent = new EnchantmentEvent<Event>(event, event.getCurrentItem()).setUser(event.getWhoClicked());
+                    EnchantmentEvent enchantmentEvent = new EnchantmentEvent(event.getCurrentItem()).setUser(event.getWhoClicked());
                     callListeners(enchantmentEvent, swapOn);
                 }
 
                 if(event.getCursor() != null) {
-                    EnchantmentEvent<Event> enchantmentEvent = new EnchantmentEvent<Event>(event, event.getCursor()).setUser(event.getWhoClicked());
+                    EnchantmentEvent enchantmentEvent = new EnchantmentEvent(event.getCursor()).setUser(event.getWhoClicked());
                     callListeners(enchantmentEvent, swapOff);
                 }
             }
@@ -80,13 +80,13 @@ public class InventoryMoveListener extends BasicEnchantListener<Event> implement
 
         ItemStack item = event.getPlayer().getInventory().getItem(event.getPreviousSlot());
         if(item != null) {
-            EnchantmentEvent<Event> enchantmentEvent = new EnchantmentEvent<Event>(event, item).setUser(event.getPlayer());
+            EnchantmentEvent enchantmentEvent = new EnchantmentEvent(item).setUser(event.getPlayer());
             callListeners(enchantmentEvent, swapOff);
         }
 
         item = event.getPlayer().getInventory().getItem(event.getNewSlot());
         if(item != null) {
-            EnchantmentEvent<Event> enchantmentEvent = new EnchantmentEvent<Event>(event, item).setUser(event.getPlayer());
+            EnchantmentEvent enchantmentEvent = new EnchantmentEvent(item).setUser(event.getPlayer());
             callListeners(enchantmentEvent, swapOn);
         }
     }

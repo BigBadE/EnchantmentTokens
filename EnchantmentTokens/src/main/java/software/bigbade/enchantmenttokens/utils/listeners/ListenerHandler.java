@@ -69,15 +69,19 @@ public class ListenerHandler {
         Bukkit.getPluginManager().registerEvents(new PlayerLeaveListener(main.getPlayerHandler()), main);
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(main.getPlayerHandler()), main);
 
-        Bukkit.getPluginManager().registerEvents(new BlockBreakListener(enchantListeners.get(ListenerType.BLOCKBREAK), main.getSignHandler()), main);
+        Bukkit.getPluginManager().registerEvents(new BlockBreakListener(enchantListeners.get(ListenerType.BLOCK_BREAK), main.getSignHandler()), main);
         Bukkit.getPluginManager().registerEvents(new ArmorEquipListener(enchantListeners.get(ListenerType.EQUIP), enchantListeners.get(ListenerType.UNEQUIP)), main);
-        Bukkit.getPluginManager().registerEvents(new BlockDamageListener(enchantListeners.get(ListenerType.BLOCKDAMAGED)), main);
+        Bukkit.getPluginManager().registerEvents(new BlockDamageListener(enchantListeners.get(ListenerType.BLOCK_DAMAGED)), main);
         Bukkit.getPluginManager().registerEvents(new InventoryMoveListener(enchantListeners.get(ListenerType.HELD), enchantListeners.get(ListenerType.SWAPPED), main.getSignHandler().getSigns(), main.getScheduler()), main);
+    }
+
+    public void addListener(ListenerType type, EnchantmentBase base, EnchantmentListener<EnchantmentEvent> listener) {
+        enchantListeners.get(type).add(listener, base);
     }
 
     public void onEnchant(ItemStack item, EnchantmentBase base, Player player) {
         ListenerManager manager = enchantListeners.get(ListenerType.ENCHANT);
-        EnchantmentEvent<EnchantmentApplyEvent> enchantmentEvent = new EnchantmentEvent<>(new EnchantmentApplyEvent(item, player), item).setUser(player);
+        EnchantmentEvent enchantmentEvent = new EnchantmentEvent(item).setUser(player);
         manager.callEvent(enchantmentEvent, base);
     }
 
@@ -141,7 +145,7 @@ public class ListenerHandler {
                     main.getLogger().warning("Cannot add listener " + type + " to targets " + enchant.getTargets());
                     continue;
                 }
-            enchantListeners.get(type).add((EnchantmentListener<EnchantmentEvent<? extends Event>>) ReflectionManager.invoke(method, enchant), enchant);
+            enchantListeners.get(type).add((EnchantmentListener<EnchantmentEvent>) ReflectionManager.invoke(method, enchant), enchant);
         }
     }
 

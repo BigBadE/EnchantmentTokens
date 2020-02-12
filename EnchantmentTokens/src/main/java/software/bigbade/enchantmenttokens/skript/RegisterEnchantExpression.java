@@ -18,28 +18,32 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
+import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 
 import java.util.Objects;
 
 @Name("Register enchantment")
 @Description("Registers an enchantment with given name.")
-public class RegisterEnchantEffect extends Effect {
+public class RegisterEnchantExpression extends SimpleExpression<EnchantmentBase> {
     private Expression<String> name;
-    private Expression<ItemStack> icon;
+    private Expression<ItemType> icon;
 
     static {
-        Skript.registerEffect(RegisterEnchantEffect.class, "[a] new customenchant named %string% with [an] icon [of] %material%");
+        Skript.registerExpression(RegisterEnchantExpression.class, EnchantmentBase.class, ExpressionType.COMBINED, "[a] [new] custom enchantment named %string% with [an] icon [of] %itemtype%");
     }
 
     @Override
@@ -51,13 +55,24 @@ public class RegisterEnchantEffect extends Effect {
     @SuppressWarnings("unchecked")
     public boolean init(Expression<?>[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
         name = (Expression<String>) expressions[0];
-        icon = (Expression<ItemStack>) expressions[1];
+        icon = (Expression<ItemType>) expressions[1];
         return true;
     }
 
     @Override
-    protected void execute(Event event) {
-        SkriptEnchantment base = new SkriptEnchantment(name.getSingle(event), icon.getSingle(event).getType());
-        ((EnchantmentTokens) Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("Enchantmenttokens"))).getEnchantmentHandler().addSkriptEnchant(base);
+    protected EnchantmentBase[] get(Event event) {
+        SkriptEnchantment base = new SkriptEnchantment(name.getSingle(event), icon.getSingle(event).getMaterial());
+        ((EnchantmentTokens) Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("EnchantmentTokens"))).getEnchantmentHandler().addSkriptEnchant(base);
+        return new EnchantmentBase[] { base };
+    }
+
+    @Override
+    public boolean isSingle() {
+        return true;
+    }
+
+    @Override
+    public Class<? extends EnchantmentBase> getReturnType() {
+        return EnchantmentBase.class;
     }
 }

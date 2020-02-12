@@ -25,9 +25,9 @@ import java.util.List;
 
 public enum ListenerType {
     //On block starting hit
-    BLOCKDAMAGED(EnchantmentTarget.TOOL),
+    BLOCK_DAMAGED(EnchantmentTarget.TOOL),
     //On block destroyed
-    BLOCKBREAK(EnchantmentTarget.TOOL),
+    BLOCK_BREAK(EnchantmentTarget.TOOL),
     //Armor equipped
     EQUIP(EnchantmentTarget.ARMOR),
     //Armor unequipped

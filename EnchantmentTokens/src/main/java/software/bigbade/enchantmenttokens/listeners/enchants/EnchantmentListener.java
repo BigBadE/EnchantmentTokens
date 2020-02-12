@@ -21,6 +21,6 @@ import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import org.bukkit.event.Event;
 
 @FunctionalInterface
-public interface EnchantmentListener<T extends EnchantmentEvent<? extends Event>> {
+public interface EnchantmentListener<T extends EnchantmentEvent> {
     void apply(T event);
 }

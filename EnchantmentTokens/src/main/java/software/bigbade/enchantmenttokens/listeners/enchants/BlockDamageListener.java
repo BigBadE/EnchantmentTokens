@@ -25,7 +25,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class BlockDamageListener extends BasicEnchantListener<BlockDamageEvent> implements Listener {
+public class BlockDamageListener extends BasicEnchantListener implements Listener {
 
     public BlockDamageListener(ListenerManager eventListeners) {
         super(eventListeners);
@@ -35,7 +35,7 @@ public class BlockDamageListener extends BasicEnchantListener<BlockDamageEvent> 
     public void blockBreakStart(BlockDamageEvent event) {
         ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
         if(item.getType() != Material.AIR) {
-            EnchantmentEvent<BlockDamageEvent> enchantmentEvent = new EnchantmentEvent<>(event, item).setTargetBlock(event.getBlock()).setUser(event.getPlayer());
+            EnchantmentEvent enchantmentEvent = new EnchantmentEvent(item).setTargetBlock(event.getBlock()).setUser(event.getPlayer());
             callListeners(enchantmentEvent);
         }
     }

@@ -1,23 +1,17 @@
 package software.bigbade.enchantmenttokens.skript.events;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.events.bukkit.ScheduledEvent;
-import ch.njol.skript.events.bukkit.ScheduledNoWorldEvent;
-import ch.njol.skript.lang.*;
+import ch.njol.skript.lang.Literal;
+import ch.njol.skript.lang.SkriptEvent;
+import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.registrations.EventValues;
 import ch.njol.skript.util.Getter;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
-import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
-
-import java.util.Objects;
 
 public class EnchantmentListenerEvent extends SkriptEvent {
 

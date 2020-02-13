@@ -81,7 +81,7 @@ public class ListenerHandler {
 
     public void onEnchant(ItemStack item, EnchantmentBase base, Player player) {
         ListenerManager manager = enchantListeners.get(ListenerType.ENCHANT);
-        EnchantmentEvent enchantmentEvent = new EnchantmentEvent(item).setUser(player);
+        EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.ENCHANT, item).setUser(player);
         manager.callEvent(enchantmentEvent, base);
     }
 

@@ -32,19 +32,21 @@ public class EnchantmentListenerEvent extends SkriptEvent {
         }, 0);
     }
 
-
+    private Literal<String> type;
+    private Literal<SkriptEnchantment> enchantment;
 
     @Override
     public boolean init(Literal<?>[] literals, int i, SkriptParser.ParseResult parseResult) {
-        ListenerType type = ListenerType.valueOf(((Literal<String>) literals[0]).getSingle().toUpperCase().replace(" ", "_"));
-        SkriptEnchantment enchantment = ((Literal<SkriptEnchantment>) literals[1]).getSingle();
-        ((EnchantmentTokens) Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("EnchantmentTokens"))).getListenerHandler().addListener(type, enchantment, (event) -> trigger.execute(event));
+        type = (Literal<String>) literals[0];
+        enchantment = (Literal<SkriptEnchantment>) literals[1];
         return true;
     }
 
     @Override
     public boolean check(Event event) {
-        return false;
+        ListenerType type = ListenerType.valueOf(this.type.getSingle(event).toUpperCase().replace(" ", "_"));
+        EnchantmentEvent enchantEvent = (EnchantmentEvent) event;
+        return enchantEvent.getType() == type;
     }
 
     @Override

@@ -17,19 +17,20 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
-import software.bigbade.enchantmenttokens.listeners.enchants.BasicEnchantListener;
-import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
-import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
+import software.bigbade.enchantmenttokens.api.ListenerType;
+import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
+import software.bigbade.enchantmenttokens.listeners.enchants.BasicEnchantListener;
+import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
+import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
 import java.util.List;
 
@@ -58,12 +59,12 @@ public class InventoryMoveListener extends BasicEnchantListener implements Liste
                         scheduler.runTaskLater(() ->
                                 ((Player) event.getWhoClicked()).sendSignChange(location, new String[]{"[Enchantment]", ((Sign) location.getBlock().getState()).getLine(1), "", ""}), 1L);
                 if(event.getCurrentItem() != null) {
-                    EnchantmentEvent enchantmentEvent = new EnchantmentEvent(event.getCurrentItem()).setUser(event.getWhoClicked());
+                    EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.HELD, event.getCurrentItem()).setUser(event.getWhoClicked());
                     callListeners(enchantmentEvent, swapOn);
                 }
 
                 if(event.getCursor() != null) {
-                    EnchantmentEvent enchantmentEvent = new EnchantmentEvent(event.getCursor()).setUser(event.getWhoClicked());
+                    EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.SWAPPED, event.getCursor()).setUser(event.getWhoClicked());
                     callListeners(enchantmentEvent, swapOff);
                 }
             }
@@ -80,13 +81,13 @@ public class InventoryMoveListener extends BasicEnchantListener implements Liste
 
         ItemStack item = event.getPlayer().getInventory().getItem(event.getPreviousSlot());
         if(item != null) {
-            EnchantmentEvent enchantmentEvent = new EnchantmentEvent(item).setUser(event.getPlayer());
+            EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.SWAPPED, item).setUser(event.getPlayer());
             callListeners(enchantmentEvent, swapOff);
         }
 
         item = event.getPlayer().getInventory().getItem(event.getNewSlot());
         if(item != null) {
-            EnchantmentEvent enchantmentEvent = new EnchantmentEvent(item).setUser(event.getPlayer());
+            EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.HELD, item).setUser(event.getPlayer());
             callListeners(enchantmentEvent, swapOn);
         }
     }

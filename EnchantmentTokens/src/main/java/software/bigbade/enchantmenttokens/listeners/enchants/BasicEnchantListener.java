@@ -1,5 +1,6 @@
 package software.bigbade.enchantmenttokens.listeners.enchants;
 
+import org.bukkit.Bukkit;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 import org.bukkit.event.Event;
@@ -30,9 +31,11 @@ public class BasicEnchantListener {
 
     public void callListeners(EnchantmentEvent event) {
         listeners.callEvent(event);
+        Bukkit.getPluginManager().callEvent(event);
     }
 
     public void callListeners(EnchantmentEvent event, ListenerManager listeners) {
         listeners.callEvent(event);
+        Bukkit.getPluginManager().callEvent(event);
     }
 }

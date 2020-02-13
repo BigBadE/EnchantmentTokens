@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import software.bigbade.enchantmenttokens.listeners.SignPacketHandler;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
@@ -37,7 +38,7 @@ public class BlockBreakListener extends BasicEnchantListener implements Listener
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
-        EnchantmentEvent enchantmentEvent = new EnchantmentEvent(item).setTargetBlock(event.getBlock()).setUser(event.getPlayer());
+        EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.BLOCK_BREAK, item).setTargetBlock(event.getBlock()).setUser(event.getPlayer());
         callListeners(enchantmentEvent);
 
         if(event.getBlock().getState() instanceof Sign) {

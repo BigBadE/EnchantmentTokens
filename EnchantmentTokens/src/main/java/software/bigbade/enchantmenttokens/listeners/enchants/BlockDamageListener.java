@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 import org.bukkit.Material;
@@ -35,7 +36,7 @@ public class BlockDamageListener extends BasicEnchantListener implements Listene
     public void blockBreakStart(BlockDamageEvent event) {
         ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
         if(item.getType() != Material.AIR) {
-            EnchantmentEvent enchantmentEvent = new EnchantmentEvent(item).setTargetBlock(event.getBlock()).setUser(event.getPlayer());
+            EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.BLOCK_DAMAGED, item).setTargetBlock(event.getBlock()).setUser(event.getPlayer());
             callListeners(enchantmentEvent);
         }
     }

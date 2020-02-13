@@ -2,14 +2,19 @@ package software.bigbade.enchantmenttokens.skript.type;
 
 import ch.njol.skript.classes.Serializer;
 import ch.njol.yggdrasil.Fields;
-import org.bukkit.Material;
+import org.bukkit.Bukkit;
 import org.eclipse.jdt.annotation.Nullable;
+import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
+
+import java.io.StreamCorruptedException;
 
 public class BaseSerializer extends Serializer<SkriptEnchantment> {
     @Override
     public Fields serialize(final SkriptEnchantment ench) {
-        return new Fields();
+        Fields fields = new Fields();
+        fields.putObject("enchant", ench);
+        return fields;
     }
 
     @Override
@@ -23,14 +28,18 @@ public class BaseSerializer extends Serializer<SkriptEnchantment> {
     }
 
     @Override
-    protected SkriptEnchantment deserialize(final Fields fields) {
-        return new SkriptEnchantment("do-not-save-enchantments", Material.BEDROCK);
+    protected SkriptEnchantment deserialize(final Fields fields) throws StreamCorruptedException {
+        return (SkriptEnchantment) fields.getObject("enchant");
     }
 
     @Override
     @Nullable
     public SkriptEnchantment deserialize(String s) {
-        return new SkriptEnchantment("do-not-save-enchantments", Material.BEDROCK);
+        for (SkriptEnchantment enchantment : ((EnchantmentTokens) Bukkit.getPluginManager().getPlugin("EnchantmentTokens")).getEnchantmentHandler().getSkriptEnchantments()) {
+            if (enchantment.getName().equals(s))
+                return enchantment;
+        }
+        return null;
     }
 
     @Override

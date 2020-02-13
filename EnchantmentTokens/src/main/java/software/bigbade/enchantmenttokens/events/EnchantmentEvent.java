@@ -6,16 +6,19 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import software.bigbade.enchantmenttokens.api.ListenerType;
 
 public class EnchantmentEvent extends Event {
     private Entity user;
     private Entity targetEntity;
     private Block targetBlock;
     private ItemStack item;
+    private ListenerType type;
 
     private HandlerList handlers;
 
-    public EnchantmentEvent(ItemStack item) {
+    public EnchantmentEvent(ListenerType type, ItemStack item) {
+        this.type = type;
         this.item = item;
     }
 
@@ -54,5 +57,9 @@ public class EnchantmentEvent extends Event {
     @Override
     public HandlerList getHandlers() {
         return handlers;
+    }
+
+    public ListenerType getType() {
+        return type;
     }
 }

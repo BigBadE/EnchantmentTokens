@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 import com.codingforcookies.armorequip.ArmorEquipEvent;
@@ -38,12 +39,12 @@ public class ArmorEquipListener extends BasicEnchantListener implements Listener
     public void onArmorEquip(ArmorEquipEvent event) {
         ItemStack item = event.getOldArmorPiece();
         if(item != null) {
-            EnchantmentEvent enchantmentEvent = new EnchantmentEvent(item).setUser(event.getPlayer());
+            EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.UNEQUIP, item).setUser(event.getPlayer());
             callListeners(enchantmentEvent, oldArmorListeners);
         }
         item = event.getNewArmorPiece();
         if(item != null) {
-            EnchantmentEvent enchantmentEvent = new EnchantmentEvent(item).setUser(event.getPlayer());
+            EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.EQUIP, item).setUser(event.getPlayer());
             callListeners(enchantmentEvent, newArmorListeners);
         }
     }

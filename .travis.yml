@@ -7,6 +7,9 @@ env:
 jdk:
   - openjdk8
 
+before_install:
+  - mvn -U clean
+
 script: "mvn cobertura:cobertura"
 
 after_success:

@@ -37,4 +37,9 @@ public class BaseParser extends Parser<SkriptEnchantment> {
     public String getVariableNamePattern() {
         return ".+";
     }
+
+    @Override
+    public boolean canParse(ParseContext context) {
+        return context != ParseContext.CONFIG;
+    }
 }

@@ -19,11 +19,10 @@ import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
 
 import java.util.Objects;
 
-public class EnchantmentListenerEvent extends SelfRegisteringSkriptEvent {
-    private Trigger trigger;
+public class EnchantmentListenerEvent extends SkriptEvent {
 
     static {
-        Skript.registerEvent("enchantmentevent", EnchantmentListenerEvent.class, EnchantmentEvent.class, "on %string% for %customenchant%");
+        Skript.registerEvent("enchantmentevent", EnchantmentListenerEvent.class, EnchantmentEvent.class, "%string% for %customenchant%");
         EventValues.registerEventValue(EnchantmentEvent.class, Player.class, new Getter<Player, EnchantmentEvent>() {
             @Override
             @Nullable
@@ -32,6 +31,8 @@ public class EnchantmentListenerEvent extends SelfRegisteringSkriptEvent {
             }
         }, 0);
     }
+
+
 
     @Override
     public boolean init(Literal<?>[] literals, int i, SkriptParser.ParseResult parseResult) {
@@ -42,17 +43,9 @@ public class EnchantmentListenerEvent extends SelfRegisteringSkriptEvent {
     }
 
     @Override
-    public void register(Trigger trigger) {
-        this.trigger = trigger;
+    public boolean check(Event event) {
+        return false;
     }
-
-    @Override
-    public void unregister(Trigger trigger) {
-        this.trigger = null;
-    }
-
-    @Override
-    public void unregisterAll() { }
 
     @Override
     public String toString(Event event, boolean b) {

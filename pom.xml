@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>software.bigbade.enchantmenttokens</groupId>
+    <artifactId>EnchantmentTokensMain</artifactId>
+    <packaging>pom</packaging>
+    <version>1.1</version>
+
+    <repositories>
+        <!--Spigot-->
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <!--Paper-->
+        <repository>
+            <id>papermc</id>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
+        </repository>
+        <!--BStats-->
+        <repository>
+            <id>CodeMC</id>
+            <url>https://repo.codemc.org/repository/maven-public</url>
+        </repository>
+        <!--ProtocolLib-->
+        <repository>
+            <id>dmulloy2-repo</id>
+            <url>https://repo.dmulloy2.net/nexus/repository/public/</url>
+        </repository>
+        <!--Vault API-->
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <!--Worldguard-->
+        <repository>
+            <id>sk89d</id>
+            <url>https://maven.sk89q.com/repo</url>
+        </repository>
+    </repositories>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
+        </license>
+    </licenses>
+
+    <modules>
+        <module>EnchantmentTokensLibraries</module>
+        <module>EnchantmentTokens</module>
+        <module>EnchantmentTokensCurrency</module>
+    </modules>
+
+    <contributors>
+        <contributor>
+            <name>BigBadE</name>
+        </contributor>
+    </contributors>
+
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <formats>
+                        <format>html</format>
+                        <format>xml</format>
+                    </formats>
+                    <check/>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub OWNER Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/BigBadE/EnchantmentTokens</url>
+        </repository>
+    </distributionManagement>
+</project>

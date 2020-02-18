@@ -32,21 +32,21 @@ public class ReflectionManager {
         try {
             modifiersField = Field.class.getDeclaredField("modifiers");
         } catch (NoSuchFieldException e) {
-            e.printStackTrace();
+            EnchantLogger.log("Problem removing final", e);
         }
         assert modifiersField != null;
         modifiersField.setAccessible(true);
         try {
             modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            EnchantLogger.log("Problem removing final", e);
         }
 
         modifiersField.setAccessible(true);
         try {
             modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            EnchantLogger.log("Problem removing final", e);
         }
     }
 
@@ -91,7 +91,7 @@ public class ReflectionManager {
         try {
             return method.invoke(instance, args);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            EnchantLogger.log("Problem invoking method", e);
         }
         return null;
     }

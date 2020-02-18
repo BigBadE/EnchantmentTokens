@@ -33,10 +33,7 @@ import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.events.EnchantmentApplyEvent;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import software.bigbade.enchantmenttokens.listeners.*;
-import software.bigbade.enchantmenttokens.listeners.enchants.ArmorEquipListener;
-import software.bigbade.enchantmenttokens.listeners.enchants.BlockBreakListener;
-import software.bigbade.enchantmenttokens.listeners.enchants.BlockDamageListener;
-import software.bigbade.enchantmenttokens.listeners.enchants.EnchantmentListener;
+import software.bigbade.enchantmenttokens.listeners.enchants.*;
 import software.bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
 import software.bigbade.enchantmenttokens.utils.ConfigurationManager;
 import software.bigbade.enchantmenttokens.utils.EnchantLogger;
@@ -71,14 +68,15 @@ public class ListenerHandler {
         Bukkit.getPluginManager().registerEvents(new PlayerLeaveListener(main.getPlayerHandler()), main);
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(main.getPlayerHandler()), main);
 
+        Bukkit.getPluginManager().registerEvents(new RiptideListener(enchantListeners.get(ListenerType.RIPTIDE)), main);
+        Bukkit.getPluginManager().registerEvents(new ProjectileShootListener(main.getVersion(), enchantListeners.get(ListenerType.TRIDENT_THROW), enchantListeners.get(ListenerType.SHOOT)), main);
+        Bukkit.getPluginManager().registerEvents(new DamageListener(enchantListeners.get(ListenerType.DAMAGE), enchantListeners.get(ListenerType.SHIELD_BLOCK)), main);
+        Bukkit.getPluginManager().registerEvents(new PotionListener(enchantListeners.get(ListenerType.POTION_APPLY), enchantListeners.get(ListenerType.POTION_REMOVE)), main);
         Bukkit.getPluginManager().registerEvents(new BlockBreakListener(enchantListeners.get(ListenerType.BLOCK_BREAK), main.getSignHandler()), main);
+        Bukkit.getPluginManager().registerEvents(new PlayerDeathListener(enchantListeners.get(ListenerType.DEATH)), main);
         Bukkit.getPluginManager().registerEvents(new ArmorEquipListener(enchantListeners.get(ListenerType.EQUIP), enchantListeners.get(ListenerType.UNEQUIP)), main);
         Bukkit.getPluginManager().registerEvents(new BlockDamageListener(enchantListeners.get(ListenerType.BLOCK_DAMAGED)), main);
         Bukkit.getPluginManager().registerEvents(new InventoryMoveListener(enchantListeners.get(ListenerType.HELD), enchantListeners.get(ListenerType.SWAPPED), main.getSignHandler().getSigns(), main.getScheduler()), main);
-    }
-
-    public void addListener(ListenerType type, EnchantmentBase base, EnchantmentListener<EnchantmentEvent> listener) {
-        enchantListeners.get(type).add(listener, base);
     }
 
     public void onEnchant(ItemStack item, EnchantmentBase base, Player player) {

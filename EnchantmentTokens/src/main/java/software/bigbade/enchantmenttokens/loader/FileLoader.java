@@ -53,9 +53,17 @@ public class FileLoader {
             try {
                 FileInputStream stream = new FileInputStream(playerFile);
                 int offset = getOffset(stream, player.getUniqueId());
-                byte[] gems = new byte[8];
-                stream.read(gems, offset, 8);
-                return utils.bytesToLong(gems);
+
+                if(offset == -1) {
+                    cache.put(player.getUniqueId(), 0L);
+                    return 0;
+                }
+
+                byte[] gemsBytes = new byte[8];
+                stream.read(gemsBytes, 0, 8);
+                long gems = utils.bytesToLong(gemsBytes);
+                cache.put(player.getUniqueId(), gems);
+                return gems;
             } catch (IOException e) {
                 EnchantLogger.log(Level.SEVERE, "Could not read player data", e);
             }
@@ -63,10 +71,10 @@ public class FileLoader {
         return 0;
     }
 
-    public void removePlayer(Player player) {
+    public void removePlayer(Player player, long gems) {
         for (Map.Entry<UUID, Long> removing : cache.entrySet()) {
             if (player.getUniqueId().equals(removing.getKey())) {
-                savePlayer(player, removing.getValue());
+                savePlayer(player, gems);
                 cache.remove(removing.getKey());
                 return;
             }
@@ -78,9 +86,18 @@ public class FileLoader {
         try {
             FileInputStream stream = new FileInputStream(playerFile);
             int passed = getOffset(stream, player.getUniqueId());
+            stream.close();
 
-            FileOutputStream output = new FileOutputStream(playerFile);
-            output.write(utils.longToBytes(gems), passed, 8);
+            FileOutputStream output;
+            if(passed == -1) {
+                output = new FileOutputStream(playerFile, true);
+                output.write(utils.longToBytes(player.getUniqueId().getMostSignificantBits()));
+                output.write(utils.longToBytes(player.getUniqueId().getLeastSignificantBits()));
+                output.write(utils.longToBytes(gems));
+            } else {
+                output = new FileOutputStream(playerFile);
+                output.write(utils.longToBytes(gems), passed, 8);
+            }
             output.close();
         } catch (IOException e) {
             EnchantLogger.log(Level.SEVERE, "Error saving data", e);
@@ -92,22 +109,18 @@ public class FileLoader {
             int passed = 0;
             for (; passed < stream.available(); passed += 24) {
                 byte[] temp = new byte[8];
-                passed += stream.read(temp);
+                stream.read(temp);
                 long mostSigBits = utils.bytesToLong(temp);
                 if (mostSigBits == id.getMostSignificantBits()) {
-                    passed += stream.read(temp);
+                    stream.read(temp);
                     long leastSigBits = utils.bytesToLong(temp);
                     if (leastSigBits == id.getLeastSignificantBits()) {
                         passed += 16;
-                        break;
-                    } else {
-                        passed += stream.skip(8);
+                        return passed;
                     }
-                } else {
-                    passed += stream.skip(16);
                 }
             }
-            return passed;
+            return -1;
         } catch (IOException e) {
             EnchantLogger.log(Level.SEVERE, "Error reading player save data", e);
         }

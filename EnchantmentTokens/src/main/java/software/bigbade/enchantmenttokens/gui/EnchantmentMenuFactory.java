@@ -21,6 +21,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -59,7 +60,7 @@ public class EnchantmentMenuFactory {
     /**
      * Generate the GUI with every enchantment in it
      *
-     * @param player    Target player
+     * @param player Target player
      * @return Generated enchantment inventory
      */
     public SubInventory generateGUI(EnchantmentPlayer player) {
@@ -89,7 +90,7 @@ public class EnchantmentMenuFactory {
         ItemStack item = player.getPlayer().getInventory().getItemInMainHand();
 
         for (EnchantmentBase enchantment : enchantmentHandler.getAllEnchants()) {
-            if(!enchantment.canEnchantItem(item))
+            if (!enchantment.canEnchantItem(item))
                 continue;
             EnchantButton button = updateItem(enchantment, item, player);
             subInventory.addButton(button, next);
@@ -178,7 +179,7 @@ public class EnchantmentMenuFactory {
         if (lore == null)
             lore = new ArrayList<>();
         EnchantmentPlayer enchantPlayer = handler.getPlayer(player);
-        if(lore.isEmpty() || !lore.get(lore.size()-1).startsWith(TranslatedMessage.translate("enchantment.price"))) {
+        if (lore.isEmpty() || !lore.get(lore.size() - 1).startsWith(TranslatedMessage.translate("enchantment.price"))) {
             if (enchantPlayer.usingGems())
                 lore.add(TranslatedMessage.translate("enchantment.price") + "0G");
             else
@@ -217,23 +218,23 @@ public class EnchantmentMenuFactory {
         inventory.getInventory().setItem(4, item);
 
         if (version >= 14)
-            generateButton(player, inventory, Material.CROSSBOW, "tool.crossbow", 9);
+            generateButton(player, inventory, EnchantmentTarget.CROSSBOW, Material.CROSSBOW, "tool.crossbow", 9);
         if (version >= 13)
-            generateButton(player, inventory, Material.TRIDENT, "tool.trident", 10);
+            generateButton(player, inventory, EnchantmentTarget.TRIDENT, Material.TRIDENT, "tool.trident", 10);
         else if (version >= 9)
-            generateButton(player, inventory, Material.FISHING_ROD, "tool.fishingrod", 10);
-        generateButton(player, inventory, Material.DIAMOND_PICKAXE, "tool.tool", 11);
-        generateButton(player, inventory, Material.DIAMOND_SWORD, "tool.sword", 12);
+            generateButton(player, inventory, EnchantmentTarget.FISHING_ROD, Material.FISHING_ROD, "tool.fishingrod", 10);
+        generateButton(player, inventory, EnchantmentTarget.TOOL, Material.DIAMOND_PICKAXE, "tool.tool", 11);
+        generateButton(player, inventory, EnchantmentTarget.WEAPON, Material.DIAMOND_SWORD, "tool.sword", 12);
         if (version >= 13 || version < 8)
-            generateButton(player, inventory, Material.FISHING_ROD, "tool.fishingrod", 13);
-        generateButton(player, inventory, Material.DIAMOND_CHESTPLATE, "tool.armor", 14);
-        generateButton(player, inventory, Material.BOW, "tool.bow", 15);
+            generateButton(player, inventory, EnchantmentTarget.FISHING_ROD, Material.FISHING_ROD, "tool.fishingrod", 13);
+        generateButton(player, inventory, EnchantmentTarget.ARMOR, Material.DIAMOND_CHESTPLATE, "tool.armor", 14);
+        generateButton(player, inventory, EnchantmentTarget.BOW, Material.BOW, "tool.bow", 15);
         if (version >= 14)
-            generateButton(player, inventory, Material.FISHING_ROD, "tool.fishingrod", 16);
+            generateButton(player, inventory, EnchantmentTarget.FISHING_ROD, Material.FISHING_ROD, "tool.fishingrod", 16);
         else if (version >= 9)
-            generateButton(player, inventory, Material.SHIELD, "tool.shield", 16);
+            generateButton(player, inventory, null, Material.SHIELD, "tool.shield", 16);
         if (version >= 14)
-            generateButton(player, inventory, Material.SHIELD, "tool.shield", 17);
+            generateButton(player, inventory, null, Material.SHIELD, "tool.shield", 17);
         ItemStack newItem = makeItem(Material.REDSTONE_BLOCK, TranslatedMessage.translate("enchant.cancel"));
         inventory.addButton(new EnchantButton(newItem, itemStack -> null), 24);
         inventory.getInventory().setItem(23, newItem);
@@ -264,9 +265,14 @@ public class EnchantmentMenuFactory {
         }
     }
 
-    private void generateButton(Player player, EnchantmentGUI inventory, Material material, String key, int slot) {
+    private void generateButton(Player player, EnchantmentGUI inventory, EnchantmentTarget target, Material material, String key, int slot) {
         ItemStack item = makeItem(material, TranslatedMessage.translate(key));
-        inventory.addButton(new EnchantButton(item, itemStack -> generateGUI(handler.getPlayer(player))), slot);
+        inventory.addButton(new EnchantButton(item, itemStack -> {
+            if ((target != null && target.includes(player.getInventory().getItemInMainHand())) || player.getInventory().getItemInMainHand().getType() == material)
+                return generateGUI(handler.getPlayer(player));
+            else
+                return genItemInventory(player, itemStack);
+        }), slot);
         inventory.getInventory().setItem(slot, item);
     }
 

@@ -64,6 +64,6 @@ public class EnchantmentPlayerHandler {
     }
 
     public void shutdown() {
-        players.forEach(EnchantmentPlayer::save);
+        //players.forEach(player -> player.save(true));
     }
 }

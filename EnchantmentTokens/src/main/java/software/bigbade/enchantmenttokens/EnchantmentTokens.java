@@ -26,8 +26,10 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
+import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.gui.EnchantmentMenuFactory;
 import software.bigbade.enchantmenttokens.listeners.SignPacketHandler;
+import software.bigbade.enchantmenttokens.listeners.enchants.PotionListener;
 import software.bigbade.enchantmenttokens.localization.LocaleManager;
 import software.bigbade.enchantmenttokens.skript.type.SkriptManager;
 import software.bigbade.enchantmenttokens.utils.ConfigurationManager;
@@ -79,8 +81,7 @@ public class EnchantmentTokens extends JavaPlugin {
 
         scheduler = new SchedulerHandler(this);
 
-        ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
-        signHandler = new SignPacketHandler(protocolManager, this, Objects.requireNonNull(getConfig().getString("currency")).equalsIgnoreCase("vault"));
+        setupProtocolManager();
 
         registerEnchants();
 
@@ -100,6 +101,11 @@ public class EnchantmentTokens extends JavaPlugin {
         setupAutosave();
 
         saveConfig();
+    }
+
+    private void setupProtocolManager() {
+        ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
+        signHandler = new SignPacketHandler(protocolManager, this, Objects.requireNonNull(getConfig().getString("currency")).equalsIgnoreCase("vault"));
     }
 
     private void setupSkript() {

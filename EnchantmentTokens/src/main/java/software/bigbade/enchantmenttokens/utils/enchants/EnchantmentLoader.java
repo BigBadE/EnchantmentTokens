@@ -104,7 +104,7 @@ public class EnchantmentLoader {
             className = className.replace('/', '.');
             return cl.loadClass(className);
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+            EnchantLogger.log("Problem loading classes", e);
         }
         return null;
     }

@@ -37,7 +37,23 @@ public enum ListenerType {
     //Item swapped off
     SWAPPED(EnchantmentTarget.ALL),
     //On current enchantment applied to an item
-    ENCHANT(EnchantmentTarget.ALL);
+    ENCHANT(EnchantmentTarget.ALL),
+    //On user death
+    DEATH(EnchantmentTarget.ALL),
+    //Potion apply
+    POTION_APPLY(EnchantmentTarget.ALL),
+    //Potion remove
+    POTION_REMOVE(EnchantmentTarget.ALL),
+    //Shield block
+    SHIELD_BLOCK(EnchantmentTarget.ALL),
+    //Trident throw
+    TRIDENT_THROW(EnchantmentTarget.TRIDENT),
+    //Bow/crossbow shoot
+    SHOOT(EnchantmentTarget.BOW, EnchantmentTarget.CROSSBOW),
+    //Entity damage
+    DAMAGE(EnchantmentTarget.ALL),
+    //Player riptide with trident
+    RIPTIDE(EnchantmentTarget.TRIDENT);
     //TODO
 
     private List<EnchantmentTarget> targets;

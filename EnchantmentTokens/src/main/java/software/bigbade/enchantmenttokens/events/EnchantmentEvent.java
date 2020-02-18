@@ -59,6 +59,10 @@ public class EnchantmentEvent extends Event {
         return item;
     }
 
+    public void setItem(ItemStack item) {
+        this.item = item;
+    }
+
     @NotNull
     @Override
     public HandlerList getHandlers() {

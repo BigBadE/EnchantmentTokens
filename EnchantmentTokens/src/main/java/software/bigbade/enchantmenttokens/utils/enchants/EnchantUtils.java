@@ -49,14 +49,7 @@ public class EnchantUtils {
     }
 
     public void addEnchantment(ItemStack itemStack, String name, Player player, boolean simulate) {
-        for (EnchantmentBase base : handler.getEnchantments()) {
-            if (base.getName().equals(name))
-                if (base.canEnchantItem(itemStack)) {
-                    addEnchantmentBase(itemStack, base, player, simulate);
-                    return;
-                }
-        }
-        for (VanillaEnchant base : handler.getVanillaEnchants()) {
+        for (EnchantmentBase base : handler.getAllEnchants()) {
             if (base.getName().equals(name))
                 if (base.canEnchantItem(itemStack)) {
                     addEnchantmentBase(itemStack, base, player, simulate);

@@ -15,17 +15,10 @@ public class EnchantButton {
     }
 
     public EnchantmentGUI click(ItemStack stack) {
-        try {
-            return callable.apply(stack);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        return callable.apply(stack);
     }
 
-    public ItemStack getItem() { return item; }
-
-    public boolean isSame(ItemStack item) {
-        return this.item.equals(item);
+    public ItemStack getItem() {
+        return item;
     }
 }

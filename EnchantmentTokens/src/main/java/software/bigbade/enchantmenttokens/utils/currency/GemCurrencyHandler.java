@@ -70,7 +70,7 @@ public class GemCurrencyHandler implements CurrencyHandler {
 
     @Override
     public void savePlayer(Player player) {
-        CompletableFuture.runAsync(() -> fileLoader.removePlayer(player));
+        CompletableFuture.runAsync(() -> fileLoader.removePlayer(player, gems));
     }
 
     @Override

@@ -121,6 +121,7 @@ public class EnchantmentHandler {
     public void addSkriptEnchant(SkriptEnchantment enchantment) {
         for (Field field : enchantment.getClass().getSuperclass().getDeclaredFields())
             ConfigurationManager.loadConfigForField(field, ConfigurationManager.getSectionOrCreate(skriptConfiguration, enchantment.getName()), enchantment);
+        enchantment.loadConfig();
         skriptEnchantments.add(enchantment);
         allEnchants.add(enchantment);
     }

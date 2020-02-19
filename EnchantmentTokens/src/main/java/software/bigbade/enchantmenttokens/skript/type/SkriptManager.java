@@ -17,9 +17,7 @@ public class SkriptManager {
                     .description("A custom enchantment.")
                     .parser(new BaseParser())
                     .serializer(new BaseSerializer()));
-            addon.loadClasses("software.bigbade.enchantmenttokens", "api");
             addon.loadClasses("software.bigbade.enchantmenttokens", "skript");
-            addon.loadClasses("software.bigbade.enchantmenttokens.skript", "events");
         } catch (IOException e) {
             EnchantLogger.log(Level.SEVERE, "Could not load Skript compatibility", e);
         }

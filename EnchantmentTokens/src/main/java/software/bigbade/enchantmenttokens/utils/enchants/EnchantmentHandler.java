@@ -101,8 +101,8 @@ public class EnchantmentHandler {
         Field byKey = ReflectionManager.getField(Enchantment.class, "byKey");
         Field byName = ReflectionManager.getField(Enchantment.class, "byName");
 
-        ReflectionManager.removeFinalFromField(byKey);
-        ReflectionManager.removeFinalFromField(byName);
+        ReflectionManager.removeFinalFromField(byKey, null);
+        ReflectionManager.removeFinalFromField(byName, null);
 
         Map<NamespacedKey, Enchantment> byKeys = (HashMap<NamespacedKey, Enchantment>) ReflectionManager.getValue(byKey, null);
         assert byKeys != null;

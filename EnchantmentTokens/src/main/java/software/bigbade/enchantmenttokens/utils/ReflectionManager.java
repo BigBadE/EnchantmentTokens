@@ -17,40 +17,28 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 
 public class ReflectionManager {
-    public static void removeFinalFromField(Field field) {
+    private ReflectionManager() {}
+
+    public static void removeFinalFromField(@NotNull Field field, @Nullable Object instance) {
         field.setAccessible(true);
-        Field modifiersField = null;
-        try {
-            modifiersField = Field.class.getDeclaredField("modifiers");
-        } catch (NoSuchFieldException e) {
-            EnchantLogger.log("Problem removing final", e);
-        }
-        assert modifiersField != null;
-        modifiersField.setAccessible(true);
-        try {
-            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-        } catch (IllegalAccessException e) {
-            EnchantLogger.log("Problem removing final", e);
-        }
+        Field modifiersField = getField(Field.class, "modifiers");
 
         modifiersField.setAccessible(true);
-        try {
-            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-        } catch (IllegalAccessException e) {
-            EnchantLogger.log("Problem removing final", e);
-        }
+        setValue(modifiersField, field.getModifiers() & ~Modifier.FINAL, field);
     }
 
-    public static Field getField(Class<?> clazz, String name) {
+    @NotNull
+    public static Field getField(@NotNull Class<?> clazz, @NotNull String name) {
         Field field = null;
         try {
             field = clazz.getDeclaredField(name);
@@ -58,6 +46,7 @@ public class ReflectionManager {
         } catch (NoSuchFieldException e) {
             EnchantLogger.log(Level.SEVERE, "Version changes with enchantments, please report this and the MC version");
         }
+        assert field != null;
         return field;
     }
 
@@ -80,8 +69,8 @@ public class ReflectionManager {
 
     public static Object instantiate(Class<?> clazz) {
         try {
-            return clazz.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            return clazz.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             EnchantLogger.log(Level.SEVERE, "Could not instantiate class " + clazz.getSimpleName());
         }
         return null;

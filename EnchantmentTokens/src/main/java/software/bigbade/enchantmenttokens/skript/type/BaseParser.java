@@ -28,13 +28,15 @@ public class BaseParser extends Parser<SkriptEnchantment> {
         }
 
         if(!NAME_PATTERN.matcher(name.toLowerCase()).matches()) {
-            EnchantLogger.log(Level.SEVERE, "{0} has invalid characters, must have a-z (lowercase), 0-9, and some symbols(._-]+)", name);
+            EnchantLogger.log(Level.SEVERE, "{0} has invalid characters, must have a-z, 0-9, and some symbols(._-]+)", name);
             return null;
         }
 
+        for(SkriptEnchantment enchantment : enchantmentHandler.getSkriptEnchantments())
+            if (enchantment.getName().equals(name.toLowerCase()))
+                return enchantment;
         SkriptEnchantment enchantment = new SkriptEnchantment(name, Material.BEDROCK);
         enchantmentHandler.addSkriptEnchant(enchantment);
-
         return enchantment;
     }
 
@@ -50,7 +52,7 @@ public class BaseParser extends Parser<SkriptEnchantment> {
 
     @Override
     public String getVariableNamePattern() {
-        return ".+";
+        return "._-]+";
     }
 
     @Override

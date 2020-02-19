@@ -51,9 +51,9 @@ public class EnchantmentListenerEvent extends SkriptEvent {
 
     @Override
     public boolean check(Event event) {
-        ListenerType type = ListenerType.valueOf(this.type.getSingle(event).toUpperCase().replace(" ", "_"));
+        ListenerType listenerType = ListenerType.valueOf(this.type.getSingle(event).toUpperCase().replace(" ", "_"));
         EnchantmentEvent enchantEvent = (EnchantmentEvent) event;
-        return enchantEvent.getType() == type && enchantEvent.getEnchantment().equals(enchantment.getSingle(event));
+        return enchantEvent.getType() == listenerType && enchantEvent.getEnchantment().equals(enchantment.getSingle(event));
     }
 
     @Override

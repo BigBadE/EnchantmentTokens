@@ -68,7 +68,7 @@ public class EnchantUtils {
         long price = base.getDefaultPrice(level);
         EnchantmentPlayer enchantmentPlayer = playerHandler.getPlayer(player);
         if (enchantmentPlayer.getGems() < price) {
-            player.sendMessage(TranslatedMessage.translate("enchantment.bought.fail", getPriceString(enchantmentPlayer, level, base)));
+            player.sendMessage(TranslatedMessage.translate("enchantment.bought.fail", getPriceString(enchantmentPlayer.usingGems(), level, base)));
             return;
         }
         if (takeMoney)
@@ -113,9 +113,9 @@ public class EnchantUtils {
     }
 
     public static int getLevel(ItemStack item, EnchantmentBase enchantment) {
-        if(enchantment instanceof VanillaEnchant) {
-            if(item.containsEnchantment(((VanillaEnchant) enchantment).getEnchantment()))
-                return item.getEnchantmentLevel(((VanillaEnchant) enchantment).getEnchantment())+1;
+        if (enchantment instanceof VanillaEnchant) {
+            if (item.containsEnchantment(((VanillaEnchant) enchantment).getEnchantment()))
+                return item.getEnchantmentLevel(((VanillaEnchant) enchantment).getEnchantment()) + 1;
             return enchantment.getStartLevel();
         }
         for (Map.Entry<Enchantment, Integer> entry : item.getEnchantments().entrySet()) {
@@ -126,11 +126,15 @@ public class EnchantUtils {
         return enchantment.getStartLevel();
     }
 
-    private String getPriceString(EnchantmentPlayer player, int level, EnchantmentBase base) {
-        if (player.usingGems())
-            return base.getDefaultPrice(level) + "G";
-        else
-            return TranslatedMessage.translate("dollar.symbol", "" + base.getDefaultPrice(level));
+    public static String getPriceString(boolean gems, int level, EnchantmentBase base) {
+        if (level > base.maxLevel) {
+            return TranslatedMessage.translate("enchantment.max");
+        } else {
+            if (gems)
+                return base.getDefaultPrice(level) + "G";
+            else
+                return TranslatedMessage.translate("dollar.symbol", "" + base.getDefaultPrice(level));
+        }
     }
 
     private void updateSigns(int level, EnchantmentBase base, List<Location> signs, EnchantmentPlayer player) {
@@ -138,7 +142,7 @@ public class EnchantUtils {
             if (level >= base.getMaxLevel())
                 player.getPlayer().sendSignChange(location, new String[]{"[" + TranslatedMessage.translate("enchantment") + "]", base.getName(), TranslatedMessage.translate("enchantment.price.maxed"), ""});
             else {
-                player.getPlayer().sendSignChange(location, new String[]{"[" + TranslatedMessage.translate("enchantment") + "]", base.getName(), getPriceString(player, level, base), ""});
+                player.getPlayer().sendSignChange(location, new String[]{"[" + TranslatedMessage.translate("enchantment") + "]", base.getName(), getPriceString(player.usingGems(), level, base), ""});
             }
     }
 }

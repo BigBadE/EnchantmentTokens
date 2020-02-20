@@ -32,15 +32,15 @@ import java.util.Objects;
 import java.util.logging.Level;
 
 public class ConfigurationManager {
-    private ConfigurationManager() { }
+    private ConfigurationManager() {
+    }
 
     public static FileConfiguration loadConfigurationFile(String path) {
         File config = new File(path);
 
         FileConfiguration configuration = new YamlConfiguration();
         try {
-            if (!config.exists() && !config.createNewFile())
-                EnchantLogger.log(Level.SEVERE, "Problem creating config file at " + config.getPath());
+            createFile(config);
             configuration.load(config);
         } catch (IOException | InvalidConfigurationException e) {
             EnchantLogger.log(Level.SEVERE, "could not load enchantment configuration", e);
@@ -48,42 +48,38 @@ public class ConfigurationManager {
         return configuration;
     }
 
+    public static void deleteFile(File file) {
+        if (file.exists()) {
+            try {
+                Files.delete(file.toPath());
+            } catch (IOException e) {
+                EnchantLogger.log("Could not delete file", e);
+            }
+        }
+    }
+
     public static void loadConfigForField(Field field, ConfigurationSection section, Object target) {
-        if (field.isAnnotationPresent(ConfigurationField.class)) {
-            String location = field.getAnnotation(ConfigurationField.class).value();
-            ConfigurationSection current = section;
-            if (location.contains(".")) {
-                String[] next = location.split("\\.");
-                for (String nextLoc : next) {
-                    assert current != null;
-                    ConfigurationSection newSection = current.getConfigurationSection(nextLoc);
-                    if (newSection == null)
-                        current = current.createSection(nextLoc);
-                    else
-                        current = newSection;
-                }
-            }
-            location = field.getName();
-            if (field.getType().equals(ConfigurationSection.class)) {
-                ConfigurationSection newSection = current.getConfigurationSection(location);
-                if (newSection == null)
-                    newSection = current.createSection(location);
-                ReflectionManager.setValue(field, newSection, target);
-            } else {
-                Object value = Objects.requireNonNull(current).get(location);
-                if (value != null)
-                    ReflectionManager.setValue(field, value, target);
-                else
-                    current.set(location, ReflectionManager.getValue(field, target));
-            }
+        if (!field.isAnnotationPresent(ConfigurationField.class))
+            return;
+        String location = field.getAnnotation(ConfigurationField.class).value() + "." + field.getName();
+        if (field.getType().equals(ConfigurationSection.class)) {
+            ConfigurationSection newSection = section.getConfigurationSection(location);
+            if (newSection == null)
+                newSection = section.createSection(location);
+            ReflectionManager.setValue(field, newSection, target);
+        } else {
+            Object value = Objects.requireNonNull(section).get(location);
+            if (value != null)
+                ReflectionManager.setValue(field, value, target);
+            else
+                section.set(location, ReflectionManager.getValue(field, target));
         }
     }
 
     public static void saveConfiguration(String path, FileConfiguration configuration) {
         File config = new File(path);
         try {
-            if (config.exists())
-                Files.delete(config.toPath());
+            deleteFile(config);
             Files.write(config.toPath(), configuration.saveToString().getBytes());
         } catch (IOException e) {
             EnchantLogger.log(Level.SEVERE, "Could not save configuration", e);
@@ -93,19 +89,21 @@ public class ConfigurationManager {
     public static void saveConfigurationGuide(EnchantmentTokens main, String path) {
         File configGuide = new File(path);
         if (!configGuide.exists()) {
-            Bukkit.getScheduler().runTaskAsynchronously(main, () -> {
-                try {
-                    InputStream stream = Objects.requireNonNull(ConfigurationManager.class.getClassLoader().getResourceAsStream("configurationguide.txt"));
-                    int readBytes;
-                    byte[] buffer = new byte[4096];
-                    OutputStream out = new FileOutputStream(path);
-                    while ((readBytes = stream.read(buffer)) > 0) {
-                        out.write(buffer, 0, readBytes);
-                    }
-                } catch (IOException e) {
-                    EnchantLogger.log(Level.SEVERE, "Could not create new configurationguide file!");
-                }
-            });
+            Bukkit.getScheduler().runTaskAsynchronously(main, () -> writeInternalFile(path, "configurationguide.txt"));
+        }
+    }
+
+    public static void writeInternalFile(String path, String name) {
+        try(OutputStream out = new FileOutputStream(path)) {
+            InputStream stream = Objects.requireNonNull(ConfigurationManager.class.getClassLoader().getResourceAsStream(name));
+            int readBytes;
+            byte[] buffer = new byte[4096];
+            while ((readBytes = stream.read(buffer)) > 0) {
+                out.write(buffer, 0, readBytes);
+            }
+            stream.close();
+        } catch (IOException e) {
+            EnchantLogger.log(Level.SEVERE, "Could not create new configurationguide file!");
         }
     }
 
@@ -117,7 +115,7 @@ public class ConfigurationManager {
 
     public static File getFolder(String path) {
         File folder = new File(path);
-        if(!folder.exists()) createFolder(folder);
+        createFolder(folder);
         return folder;
     }
 

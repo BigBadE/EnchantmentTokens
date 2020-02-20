@@ -1,5 +1,6 @@
 package software.bigbade.enchantmenttokens.gui;
 
+import org.bukkit.entity.Player;
 import software.bigbade.enchantmenttokens.utils.EnchantButton;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -25,6 +26,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 public class EnchantmentGUI {
+    private Player opener;
     private ItemStack item;
     private Inventory inventory;
     private Map<Integer, EnchantButton> buttons = new HashMap<>();
@@ -51,5 +53,13 @@ public class EnchantmentGUI {
 
     public void setItem(ItemStack item) {
         this.item = item;
+    }
+
+    public Player getOpener() {
+        return opener;
+    }
+
+    public void setOpener(Player opener) {
+        this.opener = opener;
     }
 }

@@ -94,7 +94,7 @@ public class EnchantmentTokens extends JavaPlugin {
         utils = new EnchantUtils(enchantmentHandler, playerHandler, listenerHandler, signHandler.getSigns());
 
         if (Bukkit.getPluginManager().isPluginEnabled(this)) {
-            factory = new EnchantmentMenuFactory(version, playerHandler, utils, enchantmentHandler);
+            factory = new EnchantmentMenuFactory(this);
             new CommandManager(this);
         }
 

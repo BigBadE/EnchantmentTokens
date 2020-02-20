@@ -36,9 +36,7 @@ import java.util.logging.Level;
 public class ConfigurationManager {
     private ConfigurationManager() { }
 
-    public static FileConfiguration loadConfigurationFile(String path) {
-        File config = new File(path);
-
+    public static FileConfiguration loadConfigurationFile(File config) {
         FileConfiguration configuration = new YamlConfiguration();
         try {
             createFile(config);
@@ -77,8 +75,7 @@ public class ConfigurationManager {
         }
     }
 
-    public static void saveConfiguration(String path, FileConfiguration configuration) {
-        File config = new File(path);
+    public static void saveConfiguration(File config, FileConfiguration configuration) {
         try {
             deleteFile(config);
             Files.write(config.toPath(), configuration.saveToString().getBytes());

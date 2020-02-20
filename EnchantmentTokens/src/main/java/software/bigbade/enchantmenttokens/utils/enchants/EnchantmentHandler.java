@@ -30,6 +30,7 @@ import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationType;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.logging.Level;
@@ -47,7 +48,7 @@ public class EnchantmentHandler {
     public EnchantmentHandler(FileConfiguration config, String skriptPath) {
         this.config = config;
         this.skriptPath = skriptPath;
-        skriptConfiguration = ConfigurationManager.loadConfigurationFile(skriptPath);
+        skriptConfiguration = ConfigurationManager.loadConfigurationFile(new File(skriptPath));
     }
 
     public void registerEnchants(Collection<EnchantmentBase> enchantments) {
@@ -70,7 +71,7 @@ public class EnchantmentHandler {
         allEnchants.addAll(enchantments);
         allEnchants.addAll(vanillaEnchants);
 
-        ConfigurationManager.saveConfiguration(skriptPath, skriptConfiguration);
+        ConfigurationManager.saveConfiguration(new File(skriptPath), skriptConfiguration);
 
         EnchantLogger.log(Level.INFO, "Registered enchantments");
     }

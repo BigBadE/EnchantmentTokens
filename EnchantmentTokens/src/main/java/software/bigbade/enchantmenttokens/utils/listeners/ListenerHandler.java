@@ -33,11 +33,12 @@ import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import software.bigbade.enchantmenttokens.listeners.*;
 import software.bigbade.enchantmenttokens.listeners.enchants.*;
 import software.bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
-import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.ReflectionManager;
+import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationType;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -86,7 +87,7 @@ public class ListenerHandler {
 
     public void loadAddons(Collection<EnchantmentAddon> addons) {
         for (EnchantmentAddon addon : addons) {
-            FileConfiguration configuration = ConfigurationManager.loadConfigurationFile(main.getDataFolder().getAbsolutePath() + "\\enchantments\\" + addon.getName() + ".yml");
+            FileConfiguration configuration = ConfigurationManager.loadConfigurationFile(new File(main.getDataFolder().getAbsolutePath() + "\\enchantments\\" + addon.getName() + ".yml"));
 
             for (Field field : addon.getClass().getDeclaredFields()) {
                 ConfigurationManager.loadConfigForField(field, configuration, addon);
@@ -107,16 +108,19 @@ public class ListenerHandler {
         }
 
         Map<String, FileConfiguration> configs = new HashMap<>();
-        for (Map.Entry<String, Set<Class<EnchantmentBase>>> entry : enchants.entrySet()) {
-            for (Class<EnchantmentBase> clazz : entry.getValue()) {
-                EnchantmentBase enchant = loadConfiguration(clazz, configs, entry.getKey());
+
+        enchants.keySet().forEach(key -> ConfigurationManager.loadConfigurationFile(new File(main.getDataFolder().getAbsolutePath() + "\\enchantments\\" + key + ".yml")));
+
+        enchants.forEach((addon, classes) -> {
+            for (Class<EnchantmentBase> clazz : classes) {
+                EnchantmentBase enchant = loadConfiguration(clazz, configs, addon);
 
                 if (enchant == null) continue;
                 enchant.loadConfig();
                 enchantments.add(enchant);
                 checkMethods(enchant, clazz);
             }
-        }
+        });
 
         Bukkit.getScheduler().runTask(main, () -> {
             registerListeners();
@@ -126,39 +130,40 @@ public class ListenerHandler {
         });
 
         for (Map.Entry<String, FileConfiguration> configuration : configs.entrySet()) {
-            ConfigurationManager.saveConfiguration(main.getDataFolder().getAbsolutePath() + "\\enchantments\\" + configuration.getKey() + ".yml", configuration.getValue());
+            ConfigurationManager.saveConfiguration(new File(main.getDataFolder().getAbsolutePath() + "\\enchantments\\" + configuration.getKey() + ".yml"), configuration.getValue());
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void checkMethods(EnchantmentBase enchant, Class<?> clazz) {
         for (Method method : clazz.getDeclaredMethods()) {
             if (!method.isAnnotationPresent(EnchantListener.class) || method.getReturnType() != EnchantmentListener.class)
                 continue;
             ListenerType type = method.getAnnotation(EnchantListener.class).type();
-            if (enchant != null) {
-                if (enchant.getItemTarget() != null) {
-                    if (!type.canTarget(enchant.getItemTarget())) {
-                        EnchantLogger.log(Level.SEVERE, "Cannot add listener {0} to target {1}", type, enchant.getItemTarget());
-                        continue;
-                    }
-                } else if (!type.canTarget(enchant.getTargets())) {
-                    EnchantLogger.log(Level.SEVERE, "Cannot add listener {0} to targets {1}", type, enchant.getTargets());
-                    continue;
-                }
+            if (enchant != null && !canEnchant(enchant, type)) {
+                continue;
             }
             enchantListeners.get(type).add((EnchantmentListener<EnchantmentEvent>) ReflectionManager.invoke(method, enchant), enchant);
         }
     }
 
-    private EnchantmentBase loadConfiguration(Class<EnchantmentBase> clazz, Map<String, FileConfiguration> configs, String addon) {
-        assert configs.containsKey(addon);
-        FileConfiguration configuration = configs.get(addon);
-
-        if (configuration == null) {
-            configuration = ConfigurationManager.loadConfigurationFile(main.getDataFolder().getAbsolutePath() + "\\enchantments\\" + addon + ".yml");
-            configs.put(addon, configuration);
+    private boolean canEnchant(EnchantmentBase enchant, ListenerType type) {
+        if (enchant.getItemTarget() != null) {
+            if (!type.canTarget(enchant.getItemTarget())) {
+                EnchantLogger.log(Level.SEVERE, "Cannot add listener {0} to target {1}", type, enchant.getItemTarget());
+                return false;
+            }
+        } else if (!type.canTarget(enchant.getTargets())) {
+            EnchantLogger.log(Level.SEVERE, "Cannot add listener {0} to targets {1}", type, enchant.getTargets());
+            return false;
         }
+        return true;
+    }
 
+    private EnchantmentBase loadConfiguration(Class<EnchantmentBase> clazz, Map<String, FileConfiguration> configs, String addon) {
+        FileConfiguration configuration = configs.computeIfAbsent(addon, key -> null);
+
+        assert configuration != null;
         ConfigurationSection section = ConfigurationManager.getSectionOrCreate(configuration, "enchants");
 
         final EnchantmentBase enchant = (EnchantmentBase) ReflectionManager.instantiate(clazz);

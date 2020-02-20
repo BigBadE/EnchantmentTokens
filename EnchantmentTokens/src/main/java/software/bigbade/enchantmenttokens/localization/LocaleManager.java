@@ -20,8 +20,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import org.bukkit.configuration.ConfigurationSection;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
-import software.bigbade.enchantmenttokens.utils.ConfigurationManager;
+import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.utils.EnchantLogger;
+import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationType;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,7 +52,7 @@ public class LocaleManager {
 
     private static Locale getLocale(ConfigurationSection section) {
         Locale locale = Locale.US;
-        String language = (String) ConfigurationManager.getValueOrDefault("country-language", section, "US");
+        String language = new ConfigurationType<String>("US").getValue("country-language", section);
 
         for (Locale foundLocale : Locale.getAvailableLocales()) {
             if (foundLocale.getCountry() != null)

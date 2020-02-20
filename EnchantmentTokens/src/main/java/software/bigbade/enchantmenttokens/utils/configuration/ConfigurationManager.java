@@ -1,4 +1,4 @@
-package software.bigbade.enchantmenttokens.utils;
+package software.bigbade.enchantmenttokens.utils.configuration;
 
 /*
 EnchantmentTokens
@@ -17,13 +17,15 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import software.bigbade.enchantmenttokens.EnchantmentTokens;
-import software.bigbade.enchantmenttokens.api.ConfigurationField;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import software.bigbade.enchantmenttokens.EnchantmentTokens;
+import software.bigbade.enchantmenttokens.api.ConfigurationField;
+import software.bigbade.enchantmenttokens.utils.EnchantLogger;
+import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -32,8 +34,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 
 public class ConfigurationManager {
-    private ConfigurationManager() {
-    }
+    private ConfigurationManager() { }
 
     public static FileConfiguration loadConfigurationFile(String path) {
         File config = new File(path);
@@ -130,15 +131,6 @@ public class ConfigurationManager {
                 EnchantLogger.log(Level.SEVERE, "[ERROR] Could not create file {0}", file.getPath());
         } catch (IOException e) {
             EnchantLogger.log(Level.SEVERE, "[ERROR] Could not access {0}", file.getPath());
-        }
-    }
-
-    public static Object getValueOrDefault(String value, ConfigurationSection section, Object defaultValue) {
-        if (section.isSet(value))
-            return section.get(value);
-        else {
-            section.set(value, defaultValue);
-            return defaultValue;
         }
     }
 

@@ -23,8 +23,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.ExternalCurrencyData;
-import software.bigbade.enchantmenttokens.utils.ConfigurationManager;
+import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.utils.EnchantLogger;
+import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationType;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,11 +40,11 @@ import java.util.logging.Level;
 public class CurrencyFactoryHandler {
 
     public CurrencyFactory load(EnchantmentTokens main, ConfigurationSection section, int version) {
-        String type = (String) ConfigurationManager.getValueOrDefault("type", section, "gems");
+        String type = new ConfigurationType<String>("gems").getValue("type", section);
 
         if ("gems".equalsIgnoreCase(type)) {
             if (version >= 14) {
-                boolean persistent = (boolean) ConfigurationManager.getValueOrDefault("usePersistentData", section, true);
+                boolean persistent = new ConfigurationType<Boolean>(true).getValue("usePersistentData", section);
                 if (persistent)
                     return new LatestCurrencyFactory(main);
                 else

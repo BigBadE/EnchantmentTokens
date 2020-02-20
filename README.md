@@ -5,7 +5,7 @@ Latest Build:
 
 [![BCH compliance](https://bettercodehub.com/edge/badge/BigBadE/EnchantmentTokens?branch=master)](https://bettercodehub.com/)
 [![CodeScene Code Health](https://codescene.io/projects/6865/status-badges/code-health)](https://codescene.io/projects/6865)
-[![CodeScene System Mastery](https://codescene.io/projects/6865/status-badges/system-mastery)](https://codescene.io/projects/6865)
+[![codecov](https://codecov.io/gh/BigBadE/EnchantmentTokens/branch/master/graph/badge.svg?token=1hsnZMVMJQ)](https://codecov.io/gh/BigBadE/EnchantmentTokens)
 
 Current features:
 - Add enchantments to items. Currently supports:

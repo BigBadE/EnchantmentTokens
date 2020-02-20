@@ -26,16 +26,15 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
-import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.gui.EnchantmentMenuFactory;
 import software.bigbade.enchantmenttokens.listeners.SignPacketHandler;
-import software.bigbade.enchantmenttokens.listeners.enchants.PotionListener;
 import software.bigbade.enchantmenttokens.localization.LocaleManager;
 import software.bigbade.enchantmenttokens.skript.type.SkriptManager;
-import software.bigbade.enchantmenttokens.utils.ConfigurationManager;
+import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.utils.MetricManager;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 import software.bigbade.enchantmenttokens.utils.commands.CommandManager;
+import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationType;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyFactory;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyFactoryHandler;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
@@ -127,7 +126,7 @@ public class EnchantmentTokens extends JavaPlugin {
     private void setupAutosave() {
         int autosaveTime;
         try {
-            autosaveTime = (Integer) ConfigurationManager.getValueOrDefault("autosaveTime", getConfig(), 15);
+            autosaveTime = new ConfigurationType<Integer>(15).getValue("autosaveTime", getConfig());
         } catch (ClassCastException e) {
             getConfig().set("autosaveTime", 15);
             autosaveTime = 15;
@@ -141,7 +140,7 @@ public class EnchantmentTokens extends JavaPlugin {
     private void setupConfiguration() {
         getConfig().options().copyHeader(true).header("Add all vanilla enchantments used in here!\nCheck configurationguide.txt for names/versions.");
         saveDefaultConfig();
-        boolean metrics = (boolean) ConfigurationManager.getValueOrDefault("metrics", getConfig(), true);
+        boolean metrics = new ConfigurationType<Boolean>(true).getValue("metrics", getConfig());
 
         if (metrics) {
             new MetricManager(this);

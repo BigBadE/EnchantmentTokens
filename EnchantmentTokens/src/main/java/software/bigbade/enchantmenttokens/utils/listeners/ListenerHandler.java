@@ -23,21 +23,20 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantListener;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.ListenerType;
-import software.bigbade.enchantmenttokens.events.EnchantmentApplyEvent;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import software.bigbade.enchantmenttokens.listeners.*;
 import software.bigbade.enchantmenttokens.listeners.enchants.*;
 import software.bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
-import software.bigbade.enchantmenttokens.utils.ConfigurationManager;
+import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.ReflectionManager;
+import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationType;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -136,21 +135,23 @@ public class ListenerHandler {
             if (!method.isAnnotationPresent(EnchantListener.class) || method.getReturnType() != EnchantmentListener.class)
                 continue;
             ListenerType type = method.getAnnotation(EnchantListener.class).type();
-            if (enchant != null)
+            if (enchant != null) {
                 if (enchant.getItemTarget() != null) {
                     if (!type.canTarget(enchant.getItemTarget())) {
-                        main.getLogger().warning("Cannot add listener " + type + " to target " + enchant.getItemTarget());
+                        EnchantLogger.log(Level.SEVERE, "Cannot add listener {0} to target {1}", type, enchant.getItemTarget());
                         continue;
                     }
                 } else if (!type.canTarget(enchant.getTargets())) {
-                    main.getLogger().warning("Cannot add listener " + type + " to targets " + enchant.getTargets());
+                    EnchantLogger.log(Level.SEVERE, "Cannot add listener {0} to targets {1}", type, enchant.getTargets());
                     continue;
                 }
+            }
             enchantListeners.get(type).add((EnchantmentListener<EnchantmentEvent>) ReflectionManager.invoke(method, enchant), enchant);
         }
     }
 
     private EnchantmentBase loadConfiguration(Class<EnchantmentBase> clazz, Map<String, FileConfiguration> configs, String addon) {
+        assert configs.containsKey(addon);
         FileConfiguration configuration = configs.get(addon);
 
         if (configuration == null) {
@@ -171,7 +172,7 @@ public class ListenerHandler {
             ConfigurationManager.loadConfigForField(field, enchantSection, enchant);
         }
 
-        boolean enabled = (boolean) ConfigurationManager.getValueOrDefault("enabled", enchantSection, true);
+        boolean enabled = new ConfigurationType<Boolean>(true).getValue("enabled", enchantSection);
 
         return (enabled) ? enchant : null;
     }

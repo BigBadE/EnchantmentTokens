@@ -1,18 +1,18 @@
 package software.bigbade.enchantmenttokens.utils.enchants;
 
-import software.bigbade.enchantmenttokens.api.EnchantmentBase;
-import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
-import software.bigbade.enchantmenttokens.api.VanillaEnchant;
-import software.bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
-import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
-import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
-import software.bigbade.enchantmenttokens.utils.listeners.ListenerHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import software.bigbade.enchantmenttokens.api.EnchantmentBase;
+import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
+import software.bigbade.enchantmenttokens.api.VanillaEnchant;
+import software.bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
+import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
+import software.bigbade.enchantmenttokens.utils.listeners.ListenerHandler;
+import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,11 +33,10 @@ public class EnchantUtils {
 
     public void addEnchantment(ItemStack itemStack, String name, Player player, boolean simulate) {
         for (EnchantmentBase base : handler.getAllEnchants()) {
-            if (base.getName().equals(name))
-                if (base.canEnchantItem(itemStack)) {
-                    addEnchantmentBase(itemStack, base, player, simulate);
-                    return;
-                }
+            if (base.getName().equals(name) && base.canEnchantItem(itemStack)) {
+                addEnchantmentBase(itemStack, base, player, simulate);
+                return;
+            }
         }
         player.sendMessage(TranslatedMessage.translate("enchantment.add.fail"));
     }
@@ -83,17 +82,12 @@ public class EnchantUtils {
         }
         if (level != 0)
             lore.remove(ChatColor.GRAY + base.getName() + " " + EnchantmentGUIListener.getRomanNumeral(level - 1));
-        System.out.println("Adding level to lore");
         lore.add(ChatColor.GRAY + base.getName() + " " + EnchantmentGUIListener.getRomanNumeral(level));
         if (temp != null) {
             int currentPrice = Integer.parseInt(temp.substring(9, temp.length() - 1));
-            if (player.usingGems())
-                temp = priceMessage + (currentPrice + base.getDefaultPrice(level)) + "G";
-            else
-                temp = priceMessage + TranslatedMessage.translate("dollar.symbol", "" + (currentPrice + base.getDefaultPrice(level)));
+            temp = priceMessage + getPriceStringPrice(player.usingGems(), currentPrice + base.getDefaultPrice(level));
             lore.add(temp);
         }
-        lore.forEach(System.out::println);
         meta.setLore(lore);
     }
 
@@ -112,22 +106,24 @@ public class EnchantUtils {
     }
 
     public static String getPriceString(boolean gems, int level, EnchantmentBase base) {
-        if (level > base.maxLevel) {
+        if (level > base.maxLevel)
             return TranslatedMessage.translate("enchantment.max");
-        } else {
-            if (gems)
-                return base.getDefaultPrice(level) + "G";
-            else
-                return TranslatedMessage.translate("dollar.symbol", "" + base.getDefaultPrice(level));
-        }
+        else
+            return getPriceStringPrice(gems, base.getDefaultPrice(level));
+    }
+
+    public static String getPriceStringPrice(boolean gems, long price) {
+        if (gems)
+            return price + "G";
+        else
+            return TranslatedMessage.translate("dollar.symbol", "" + price);
     }
 
     private void updateSigns(int level, EnchantmentBase base, List<Location> signs, EnchantmentPlayer player) {
         for (Location location : signs)
             if (level >= base.getMaxLevel())
                 player.getPlayer().sendSignChange(location, new String[]{"[" + TranslatedMessage.translate("enchantment") + "]", base.getName(), TranslatedMessage.translate("enchantment.price.maxed"), ""});
-            else {
+            else
                 player.getPlayer().sendSignChange(location, new String[]{"[" + TranslatedMessage.translate("enchantment") + "]", base.getName(), getPriceString(player.usingGems(), level, base), ""});
-            }
     }
 }

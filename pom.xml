@@ -60,10 +60,6 @@
         </contributor>
     </contributors>
 
-    <properties>
-        <maven.deploy.skip>true</maven.deploy.skip>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
@@ -78,33 +74,6 @@
                     <check/>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jarsigner-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <id>sign</id>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <keystore>${java.home}/jre/lib/security/cacerts</keystore>
-                    <alias>enchantmenttokens</alias>
-                    <storepass>Ethan2004!</storepass>
-                    <keypass>Ethan2004!</keypass>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
-
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>GitHub OWNER Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/BigBadE/EnchantmentTokens</url>
-        </repository>
-    </distributionManagement>
 </project>

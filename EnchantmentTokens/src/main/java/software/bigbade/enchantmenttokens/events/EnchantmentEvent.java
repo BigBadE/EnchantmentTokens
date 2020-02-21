@@ -72,12 +72,4 @@ public class EnchantmentEvent extends Event {
     public ListenerType getType() {
         return type;
     }
-
-    public Enchantment getEnchantment() {
-        return enchantment;
-    }
-
-    public void setEnchantment(Enchantment enchantment) {
-        this.enchantment = enchantment;
-    }
 }

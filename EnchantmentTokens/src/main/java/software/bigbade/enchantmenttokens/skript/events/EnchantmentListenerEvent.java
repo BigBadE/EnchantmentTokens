@@ -9,9 +9,11 @@ import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.registrations.EventValues;
 import ch.njol.skript.util.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
+import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
@@ -30,13 +32,6 @@ public class EnchantmentListenerEvent extends SkriptEvent {
                 return (Player) e.getUser();
             }
         }, 0);
-        EventValues.registerEventValue(EnchantmentEvent.class, SkriptEnchantment.class, new Getter<SkriptEnchantment, EnchantmentEvent>() {
-            @Override
-            @Nullable
-            public SkriptEnchantment get(final EnchantmentEvent e) {
-                return (SkriptEnchantment) e.getEnchantment();
-            }
-        }, 0);
     }
 
     private Literal<String> type;
@@ -46,6 +41,7 @@ public class EnchantmentListenerEvent extends SkriptEvent {
     public boolean init(Literal<?>[] literals, int i, SkriptParser.ParseResult parseResult) {
         type = (Literal<String>) literals[0];
         enchantment = (Literal<SkriptEnchantment>) literals[1];
+        ((EnchantmentTokens) Bukkit.getPluginManager().getPlugin("EnchantmentTokens")).getListenerHandler();
         return true;
     }
 
@@ -53,7 +49,7 @@ public class EnchantmentListenerEvent extends SkriptEvent {
     public boolean check(Event event) {
         ListenerType type = ListenerType.valueOf(this.type.getSingle(event).toUpperCase().replace(" ", "_"));
         EnchantmentEvent enchantEvent = (EnchantmentEvent) event;
-        return enchantEvent.getType() == type && enchantEvent.getEnchantment().equals(enchantment.getSingle(event));
+        return enchantEvent.getType() == type/* && ((EnchantmentTokens) Bukkit.getPluginManager().getPlugin("EnchantmentTokens"))*/;
     }
 
     @Override

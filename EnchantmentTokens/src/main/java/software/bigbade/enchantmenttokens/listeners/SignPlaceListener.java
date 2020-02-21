@@ -35,17 +35,15 @@ public class SignPlaceListener implements Listener {
     @EventHandler
     public void onSignChange(SignChangeEvent event) {
         if ("[enchantment]".equalsIgnoreCase(event.getLine(0))) {
-            for (EnchantmentBase base : handler.getEnchantments()) {
-                if(updateSign(base, event)) return;
-            }
-            for (Enchantment base : handler.getVanillaEnchants()) {
+            for (EnchantmentBase base : handler.getAllEnchants()) {
                 if(updateSign(base, event)) return;
             }
             event.getPlayer().sendMessage(TranslatedMessage.translate( "enchantment.add.fail"));
         }
     }
 
-    private boolean updateSign(Enchantment base, SignChangeEvent event) {
+    private boolean updateSign(EnchantmentBase base, SignChangeEvent event) {
+        System.out.println(base.getName() + " tested against " + event.getLine(1));
         if (base.getName().equalsIgnoreCase(event.getLine(1))) {
             event.getPlayer().sendMessage(TranslatedMessage.translate("enchantment.add", base.getName()));
             event.setLine(0, "[" + TranslatedMessage.translate( "enchantment") + "]");

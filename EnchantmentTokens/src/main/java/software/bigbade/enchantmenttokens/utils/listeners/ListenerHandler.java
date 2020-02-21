@@ -131,6 +131,10 @@ public class ListenerHandler {
         }
     }
 
+    public ListenerManager getListenerManager(ListenerType type) {
+        return enchantListeners.get(type);
+    }
+
     private void checkMethods(EnchantmentBase enchant, Class<?> clazz) {
         for (Method method : clazz.getDeclaredMethods()) {
             if (!method.isAnnotationPresent(EnchantListener.class) || method.getReturnType() != EnchantmentListener.class)

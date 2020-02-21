@@ -236,7 +236,7 @@ public class EnchantmentMenuFactory {
         if (version >= 14)
             generateButton(player, inventory, null, Material.SHIELD, "tool.shield", 17);
         ItemStack newItem = makeItem(Material.REDSTONE_BLOCK, TranslatedMessage.translate("enchant.cancel"));
-        inventory.addButton(new EnchantButton(newItem, itemStack -> null), 24);
+        inventory.addButton(new EnchantButton(newItem, itemStack -> null), 23);
         inventory.getInventory().setItem(23, newItem);
 
         newItem = makeItem(Material.EMERALD_BLOCK, TranslatedMessage.translate("enchant.confirm"));

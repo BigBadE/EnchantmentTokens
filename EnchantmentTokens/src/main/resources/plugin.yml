@@ -2,7 +2,7 @@ name: EnchantmentTokens
 description: Add some custom enchantments to your world!
 author: Big_Bad_E
 version: 1.1
-api-version: 1.14
+api-version: 1.15
 main: software.bigbade.enchantmenttokens.EnchantmentTokens
 depend: [ProtocolLib]
 softdepend:

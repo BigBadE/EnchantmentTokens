@@ -81,7 +81,7 @@ public class EnchantUtils {
         }
         ItemMeta meta = item.getItemMeta();
         assert meta != null;
-        meta.addEnchant(base, level + 1, true);
+        meta.addEnchant(base, level, true);
         updateLore(meta, level, enchantmentPlayer, base);
         item.setItemMeta(meta);
         listenerHandler.onEnchant(item, base, player);
@@ -100,15 +100,17 @@ public class EnchantUtils {
         }
         if (level != 0)
             lore.remove(ChatColor.GRAY + base.getName() + " " + EnchantmentGUIListener.getRomanNumeral(level - 1));
+        System.out.println("Adding level to lore");
         lore.add(ChatColor.GRAY + base.getName() + " " + EnchantmentGUIListener.getRomanNumeral(level));
         if (temp != null) {
             int currentPrice = Integer.parseInt(temp.substring(9, temp.length() - 1));
             if (player.usingGems())
-                temp = priceMessage + (currentPrice + base.getDefaultPrice(level + 1)) + "G";
+                temp = priceMessage + (currentPrice + base.getDefaultPrice(level)) + "G";
             else
                 temp = priceMessage + TranslatedMessage.translate("dollar.symbol", "" + (currentPrice + base.getDefaultPrice(level)));
             lore.add(temp);
         }
+        lore.forEach(System.out::println);
         meta.setLore(lore);
     }
 

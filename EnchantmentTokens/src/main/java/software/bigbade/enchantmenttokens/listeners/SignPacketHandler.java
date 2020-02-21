@@ -17,10 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import software.bigbade.enchantmenttokens.EnchantmentTokens;
-import software.bigbade.enchantmenttokens.api.EnchantmentBase;
-import software.bigbade.enchantmenttokens.api.VanillaEnchant;
-import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.ListenerPriority;
@@ -31,6 +27,9 @@ import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
+import software.bigbade.enchantmenttokens.EnchantmentTokens;
+import software.bigbade.enchantmenttokens.api.EnchantmentBase;
+import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
 import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
 
@@ -65,41 +64,27 @@ public class SignPacketHandler {
             try {
                 text.add(compound.getString("Text" + i).split("text\":\"")[1].split("\"}")[0]);
             } catch (ArrayIndexOutOfBoundsException | IllegalArgumentException ignored) {
-
+                if (i != 3)
+                    return;
             }
         }
-        if (text.size() != 2)
-            return;
-        if (text.get(0).equals("[Enchantment]")) {
-            for (EnchantmentBase base : main.getEnchantmentHandler().getEnchantments()) {
-                updateSign(base, text, compound, event);
-                return;
+        if (!text.get(0).equals("[Enchantment]")) return;
+        main.getEnchantmentHandler().getAllEnchants().forEach(base -> {
+            if (base.getName().equals(text.get(1))) {
+                updateSign(base, compound, event);
             }
-            for(VanillaEnchant base : main.getEnchantmentHandler().getVanillaEnchants()) {
-                updateSign(base, text, compound, event);
-                return;
-            }
-        }
+        });
     }
 
-    private void updateSign(EnchantmentBase base, List<String> text, NbtCompound compound, PacketEvent event) {
-        if (base.getName().equals(text.get(1))) {
-            signs.add(new Location(event.getPlayer().getWorld(), compound.getInteger("x"), compound.getInteger("y"), compound.getInteger("z")));
-            String price = TranslatedMessage.translate("enchantment.notapplicable");
-            ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
-            if (base.canEnchantItem(itemStack)) {
-                int level = EnchantUtils.getLevel(itemStack, base);
-                if (level <= base.getMaxLevel()) {
-                    if (gems)
-                        price = base.getDefaultPrice(level) + "G";
-                    else
-                        price = TranslatedMessage.translate("dollar.symbol", "" + base.getDefaultPrice(level));
-                }
-                else
-                    price = TranslatedMessage.translate("enchantment.max");
-            }
-            compound.put("Text3", "{\"extra\":[{\"text\":\"Price: " + price + "\"}],\"text\":\"\"}");
+    private void updateSign(EnchantmentBase base, NbtCompound compound, PacketEvent event) {
+        signs.add(new Location(event.getPlayer().getWorld(), compound.getInteger("x"), compound.getInteger("y"), compound.getInteger("z")));
+        String price = TranslatedMessage.translate("enchantment.notapplicable");
+        ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
+        if (base.canEnchantItem(itemStack)) {
+            int level = EnchantUtils.getLevel(itemStack, base);
+            price = EnchantUtils.getPriceString(gems, level, base);
         }
+        compound.put("Text3", "{\"extra\":[{\"text\":\"Price: " + price + "\"}],\"text\":\"\"}");
     }
 }
 

@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import software.bigbade.enchantmenttokens.utils.ByteUtils;
-import software.bigbade.enchantmenttokens.utils.ConfigurationManager;
+import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationManager;
 import org.bukkit.entity.Player;
 import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 

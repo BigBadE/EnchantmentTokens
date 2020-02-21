@@ -1,4 +1,4 @@
-package software.bigbade.enchantmenttokens.skript;
+package software.bigbade.enchantmenttokens.skript.expressions;
 
 /*
 EnchantmentTokens
@@ -22,32 +22,30 @@ import ch.njol.skript.aliases.ItemType;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
-import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.event.Event;
-import org.bukkit.inventory.ItemStack;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
-import software.bigbade.enchantmenttokens.api.EnchantmentBase;
+import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
+import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 
-import java.util.Objects;
+import java.util.logging.Level;
 
 @Name("Register enchantment")
 @Description("Registers an enchantment with given name.")
 @Examples({"on Skript start:",
         "	create a new custom enchant named \"Test\" with an icon of command block "})
-public class RegisterEnchantExpression extends SimpleExpression<EnchantmentBase> {
+public class RegisterEnchantExpression extends SimpleExpression<SkriptEnchantment> {
     private Expression<String> name;
     private Expression<ItemType> icon;
 
     static {
-        Skript.registerExpression(RegisterEnchantExpression.class, EnchantmentBase.class, ExpressionType.COMBINED, "[create] [a] [new] custom enchant[ment] named %string% with [an] icon [of] %itemtype%");
+        Skript.registerExpression(RegisterEnchantExpression.class, SkriptEnchantment.class, ExpressionType.COMBINED, "[create] [a] [new] custom enchant[ment] named %string% with [an] icon [of] %itemtype%");
     }
 
     @Override
@@ -64,19 +62,18 @@ public class RegisterEnchantExpression extends SimpleExpression<EnchantmentBase>
     }
 
     @Override
-    protected EnchantmentBase[] get(Event event) {
+    protected SkriptEnchantment[] get(Event event) {
         String nameStr = name.getSingle(event);
         EnchantmentHandler enchantmentHandler = ((EnchantmentTokens) Bukkit.getPluginManager().getPlugin("EnchantmentTokens")).getEnchantmentHandler();
         for(SkriptEnchantment enchantment : enchantmentHandler.getSkriptEnchantments()) {
             if(enchantment.getName().equals(nameStr)) {
                 enchantment.setIcon(icon.getSingle(event).getMaterial());
-                return new EnchantmentBase[] { enchantment };
+                return new SkriptEnchantment[] { enchantment };
             }
         }
 
-        SkriptEnchantment base = new SkriptEnchantment(nameStr, icon.getSingle(event).getMaterial());
-        enchantmentHandler.addSkriptEnchant(base);
-        return new EnchantmentBase[] { base };
+        EnchantLogger.log(Level.SEVERE, "Could not correctly create {0}, please report this along with any errors.", nameStr);
+        return new SkriptEnchantment[] { null };
     }
 
     @Override
@@ -85,7 +82,7 @@ public class RegisterEnchantExpression extends SimpleExpression<EnchantmentBase>
     }
 
     @Override
-    public Class<? extends EnchantmentBase> getReturnType() {
-        return EnchantmentBase.class;
+    public Class<? extends SkriptEnchantment> getReturnType() {
+        return SkriptEnchantment.class;
     }
 }

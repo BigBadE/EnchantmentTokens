@@ -25,10 +25,12 @@ import org.bukkit.enchantments.Enchantment;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.VanillaEnchant;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
-import software.bigbade.enchantmenttokens.utils.ConfigurationManager;
+import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.ReflectionManager;
+import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationType;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.logging.Level;
@@ -46,14 +48,14 @@ public class EnchantmentHandler {
     public EnchantmentHandler(FileConfiguration config, String skriptPath) {
         this.config = config;
         this.skriptPath = skriptPath;
-        skriptConfiguration = ConfigurationManager.loadConfigurationFile(skriptPath);
+        skriptConfiguration = ConfigurationManager.loadConfigurationFile(new File(skriptPath));
     }
 
     public void registerEnchants(Collection<EnchantmentBase> enchantments) {
         List<Enchantment> vanillaRegistering = new ArrayList<>();
         ConfigurationSection section = ConfigurationManager.getSectionOrCreate(config, "enchants");
 
-        for (String name : (List<String>) ConfigurationManager.getValueOrDefault("vanillaEnchants", section, new String[]{"Fortune"})) {
+        for (String name : new ConfigurationType<List<String>>(new String[]{"Fortune"}).getValue("vanillaEnchants", section)) {
             Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(name.toLowerCase().replace(" ", "_")));
             if (enchantment != null) vanillaRegistering.add(enchantment);
             else EnchantLogger.log(Level.SEVERE, "Could not find an enchantment by the name {0}", name);
@@ -69,7 +71,7 @@ public class EnchantmentHandler {
         allEnchants.addAll(enchantments);
         allEnchants.addAll(vanillaEnchants);
 
-        ConfigurationManager.saveConfiguration(skriptPath, skriptConfiguration);
+        ConfigurationManager.saveConfiguration(new File(skriptPath), skriptConfiguration);
 
         EnchantLogger.log(Level.INFO, "Registered enchantments");
     }
@@ -78,7 +80,7 @@ public class EnchantmentHandler {
         ConfigurationSection enchantSection = section.getConfigurationSection(enchantment.getKey().getKey());
         if (enchantSection == null)
             enchantSection = section.createSection(enchantment.getKey().getKey());
-        String iconName = (String) ConfigurationManager.getValueOrDefault("icon", enchantSection, "Bedrock");
+        String iconName = new ConfigurationType<String>("Bedrock").getValue("icon", enchantSection);
         Material icon = Material.getMaterial(iconName.toUpperCase().replace(" ", "_"));
 
         if (icon == null) {
@@ -86,7 +88,7 @@ public class EnchantmentHandler {
             icon = Material.BEDROCK;
         }
 
-        if ((boolean) ConfigurationManager.getValueOrDefault("enabled", enchantSection, true)) {
+        if (new ConfigurationType<Boolean>(true).getValue("enabled", enchantSection)) {
             VanillaEnchant vanillaEnchant = new VanillaEnchant(icon, enchantment);
             vanillaEnchants.add(vanillaEnchant);
             for (Field field : EnchantmentBase.class.getDeclaredFields()) {
@@ -101,8 +103,8 @@ public class EnchantmentHandler {
         Field byKey = ReflectionManager.getField(Enchantment.class, "byKey");
         Field byName = ReflectionManager.getField(Enchantment.class, "byName");
 
-        ReflectionManager.removeFinalFromField(byKey);
-        ReflectionManager.removeFinalFromField(byName);
+        ReflectionManager.removeFinalFromField(byKey, null);
+        ReflectionManager.removeFinalFromField(byName, null);
 
         Map<NamespacedKey, Enchantment> byKeys = (HashMap<NamespacedKey, Enchantment>) ReflectionManager.getValue(byKey, null);
         assert byKeys != null;

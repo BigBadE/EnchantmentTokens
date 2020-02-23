@@ -40,13 +40,13 @@ public class InventoryMoveListener extends BasicEnchantListener implements Liste
                 for (Location location : signs)
                     if (location.getChunk().isLoaded() && location.getWorld() == event.getWhoClicked().getWorld())
                         scheduler.runTaskLater(() ->
-                                ((Player) event.getWhoClicked()).sendSignChange(location, new String[]{"[Enchantment]", ((Sign) location.getBlock().getState()).getLine(1), "", ""}), 1L);
-                if(event.getCurrentItem() != null) {
+                                ((Player) event.getWhoClicked()).sendSignChange(location, new String[]{"[Enchantment]", ((Sign) location.getBlock().getState()).getLine(1), "", ""}), 0L);
+                if (event.getCurrentItem() != null) {
                     EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.HELD, event.getCurrentItem()).setUser(event.getWhoClicked());
                     callListeners(enchantmentEvent, swapOn);
                 }
 
-                if(event.getCursor() != null) {
+                if (event.getCursor() != null) {
                     EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.SWAPPED, event.getCursor()).setUser(event.getWhoClicked());
                     callListeners(enchantmentEvent, swapOff);
                 }
@@ -58,18 +58,18 @@ public class InventoryMoveListener extends BasicEnchantListener implements Liste
         for (Location location : signs) {
             if (location.getChunk().isLoaded() && location.getWorld() == event.getPlayer().getWorld()) {
                 scheduler.runTaskLater(() ->
-                        event.getPlayer().sendSignChange(location, new String[]{"[Enchantment]", ((Sign) location.getBlock().getState()).getLine(1), "", ""}), 1L);
+                        event.getPlayer().sendSignChange(location, new String[]{"[Enchantment]", ((Sign) location.getBlock().getState()).getLine(1), "", ""}), 0L);
             }
         }
 
         ItemStack item = event.getPlayer().getInventory().getItem(event.getPreviousSlot());
-        if(item != null) {
+        if (item != null) {
             EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.SWAPPED, item).setUser(event.getPlayer());
             callListeners(enchantmentEvent, swapOff);
         }
 
         item = event.getPlayer().getInventory().getItem(event.getNewSlot());
-        if(item != null) {
+        if (item != null) {
             EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.HELD, item).setUser(event.getPlayer());
             callListeners(enchantmentEvent, swapOn);
         }

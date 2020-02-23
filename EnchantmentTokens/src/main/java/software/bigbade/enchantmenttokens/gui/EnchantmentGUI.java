@@ -1,15 +1,15 @@
 package software.bigbade.enchantmenttokens.gui;
 
-import org.bukkit.entity.Player;
-import software.bigbade.enchantmenttokens.utils.EnchantButton;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
+import software.bigbade.enchantmenttokens.utils.EnchantButton;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class EnchantmentGUI {
-    private Player opener;
+    private EnchantmentPlayer opener;
     private ItemStack item;
     private Inventory inventory;
     private Map<Integer, EnchantButton> buttons = new HashMap<>();
@@ -38,11 +38,11 @@ public class EnchantmentGUI {
         this.item = item;
     }
 
-    public Player getOpener() {
+    public EnchantmentPlayer getOpener() {
         return opener;
     }
 
-    public void setOpener(Player opener) {
+    public void setOpener(EnchantmentPlayer opener) {
         this.opener = opener;
     }
 }

@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
+import java.util.Iterator;
 import java.util.List;
 
 public class ChunkUnloadListener implements Listener {
@@ -16,7 +17,9 @@ public class ChunkUnloadListener implements Listener {
 
     @EventHandler
     public void onChunkUnload(ChunkUnloadEvent event) {
-        for(Location location : signs) {
+        Iterator<Location> iterator = signs.iterator();
+        while(iterator.hasNext()) {
+            Location location = iterator.next();
             if(Math.floor(location.getX()/16f) == event.getChunk().getX()) {
                 if(Math.floor(location.getZ()/16) == event.getChunk().getZ()) {
                     signs.remove(location);

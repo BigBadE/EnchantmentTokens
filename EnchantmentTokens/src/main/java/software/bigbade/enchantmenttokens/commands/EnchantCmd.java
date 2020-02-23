@@ -1,5 +1,6 @@
 package software.bigbade.enchantmenttokens.commands;
 
+import org.jetbrains.annotations.NotNull;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.VanillaEnchant;
@@ -26,7 +27,7 @@ public class EnchantCmd implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if(!sender.hasPermission("enchanttoken.admin") && !sender.isOp()) {
             sender.sendMessage(TranslatedMessage.translate("command.permission"));
             return true;
@@ -39,13 +40,9 @@ public class EnchantCmd implements CommandExecutor {
             String name = nameBuilder.toString();
             ItemStack item = ((Player) sender).getInventory().getItemInMainHand();
             utils.addEnchantment(item, name, (Player) sender, false);
-            for (EnchantmentBase enchant : handler.getVanillaEnchants()) {
-                if (enchant.getName().equals(args[0])) {
-                    addEnchant((Player) sender, item, enchant, Integer.parseInt(args[args.length - 1]));
-                    return true;
-                }
-            }
-            for (Enchantment enchantment : handler.getEnchantments()) {
+            for (EnchantmentBase enchantment : handler.getAllEnchants()) {
+                if(enchantment instanceof VanillaEnchant)
+                    continue;
                 if (enchantment.getKey().getKey().equals(name.toLowerCase().replace("_", ""))) {
                     addEnchant((Player) sender, item, enchantment, Integer.parseInt(args[args.length - 1]));
                     return true;
@@ -57,7 +54,7 @@ public class EnchantCmd implements CommandExecutor {
         return true;
     }
 
-    private void addEnchant(Player player, ItemStack item, Enchantment base, int level) {
+    private void addEnchant(Player player, ItemStack item, EnchantmentBase base, int level) {
         if(base instanceof VanillaEnchant) {
             item.addEnchantment(((VanillaEnchant) base).getEnchantment(), level);
         } else {

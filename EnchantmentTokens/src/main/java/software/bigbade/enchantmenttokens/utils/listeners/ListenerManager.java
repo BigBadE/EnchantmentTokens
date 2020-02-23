@@ -1,5 +1,6 @@
 package software.bigbade.enchantmenttokens.utils.listeners;
 
+import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import software.bigbade.enchantmenttokens.listeners.enchants.EnchantmentListener;
@@ -13,15 +14,18 @@ import java.util.List;
 import java.util.Map;
 
 public class ListenerManager {
-    private Map<Object, EnchantmentListener<EnchantmentEvent>> listeners = new HashMap<>();
-    private List<SkriptEnchantment> skriptListeners = new ArrayList<>();
+    private Map<EnchantmentBase, EnchantmentListener<EnchantmentEvent>> listeners = new HashMap<>();
 
-    public void add(EnchantmentListener<EnchantmentEvent> listener, Object base) {
+    public void add(EnchantmentListener<EnchantmentEvent> listener, EnchantmentBase base) {
         listeners.put(base, listener);
     }
 
+    public Map<EnchantmentBase, EnchantmentListener<EnchantmentEvent>> getListeners() {
+        return listeners;
+    }
+
     public void callEvent(EnchantmentEvent event, EnchantmentBase base) {
-        for (Map.Entry<Object, EnchantmentListener<EnchantmentEvent>> listenerEntry : listeners.entrySet()) {
+        for (Map.Entry<EnchantmentBase, EnchantmentListener<EnchantmentEvent>> listenerEntry : listeners.entrySet()) {
             if(listenerEntry.getKey().equals(base)) {
                 listenerEntry.getValue().apply(event);
             }
@@ -29,7 +33,7 @@ public class ListenerManager {
     }
 
     public void callEvent(EnchantmentEvent event) {
-        for (Map.Entry<Object, EnchantmentListener<EnchantmentEvent>> listenerEntry : listeners.entrySet()) {
+        for (Map.Entry<EnchantmentBase, EnchantmentListener<EnchantmentEvent>> listenerEntry : listeners.entrySet()) {
             if (listenerEntry.getKey() instanceof EnchantmentBase) {
                 for (Enchantment enchantment : event.getItem().getEnchantments().keySet()) {
                     if (enchantment.getKey().equals(((EnchantmentBase) listenerEntry.getKey()).getKey()))
@@ -39,13 +43,5 @@ public class ListenerManager {
                 listenerEntry.getValue().apply(event);
             }
         }
-    }
-
-    public boolean hasListener(SkriptEnchantment enchantment) {
-        return skriptListeners.contains(enchantment);
-    }
-
-    public void addSkriptListener(SkriptEnchantment enchantment) {
-        skriptListeners.add(enchantment);
     }
 }

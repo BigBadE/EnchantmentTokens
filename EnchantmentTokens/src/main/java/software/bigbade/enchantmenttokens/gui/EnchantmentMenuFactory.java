@@ -44,14 +44,15 @@ public class EnchantmentMenuFactory {
     /**
      * Generate the GUI with every enchantment in it
      *
+     * @param itemStack Item target
      * @param player Target player
      * @return Generated enchantment inventory
      */
-    public SubInventory generateGUI(EnchantmentPlayer player) {
-        ItemStack itemStack = player.getPlayer().getInventory().getItemInMainHand();
+    public SubInventory generateGUI(ItemStack itemStack, EnchantmentPlayer player) {
         Inventory inventory = Bukkit.createInventory(null, 54, itemStack.getType().name().replace("_", " ").toLowerCase() + " " + TranslatedMessage.translate("tool.enchants"));
         SubInventory subInventory = new SubInventory(inventory);
 
+        subInventory.setOpener(player);
         subInventory.setItem(itemStack);
 
         for (int i = 0; i < 54; i++) {
@@ -65,20 +66,20 @@ public class EnchantmentMenuFactory {
 
         addItems(subInventory, player);
 
-        subInventory.addButton(new EnchantButton(exit, item -> genItemInventory(player.getPlayer(), subInventory.getItem())), 49);
+        subInventory.addButton(new EnchantButton(item -> genItemInventory(player, subInventory.getItem())), 49);
         return subInventory;
     }
 
     private void addItems(SubInventory subInventory, EnchantmentPlayer player) {
         int next = subInventory.getInventory().firstEmpty();
-        ItemStack item = player.getPlayer().getInventory().getItemInMainHand();
+        ItemStack item = subInventory.getItem();
 
         for (EnchantmentBase enchantment : enchantmentHandler.getAllEnchants()) {
             if (!enchantment.canEnchantItem(item))
                 continue;
             EnchantButton button = updateItem(enchantment, item, player);
             subInventory.addButton(button, next);
-            subInventory.getInventory().setItem(next, button.getItem());
+            subInventory.getInventory().setItem(next, new ItemStack(enchantment.getIcon(), 1));
             next = subInventory.getInventory().firstEmpty();
         }
     }
@@ -88,14 +89,14 @@ public class EnchantmentMenuFactory {
         int level = addLore(stack, base, item, player.usingGems());
         if (level <= base.getMaxLevel()) {
             item.setAmount(level);
-            return new EnchantButton(item, itemStack -> {
+            return new EnchantButton(itemStack -> {
                 utils.addEnchantmentBase(itemStack, base, player.getPlayer(), false);
                 updatePriceStr(base, level, itemStack);
-                return generateGUI(player);
+                return generateGUI(itemStack, player);
             });
         } else {
             item.setAmount(64);
-            return new EnchantButton(item, itemStack -> generateGUI(player));
+            return new EnchantButton(itemStack -> generateGUI(itemStack, player));
         }
     }
 
@@ -139,10 +140,10 @@ public class EnchantmentMenuFactory {
     }
 
     public EnchantmentGUI genInventory(Player player) {
-        return genItemInventory(player, player.getInventory().getItemInMainHand());
+        return genItemInventory(handler.getPlayer(player), player.getInventory().getItemInMainHand());
     }
 
-    public EnchantmentGUI genItemInventory(Player player, ItemStack item) {
+    public EnchantmentGUI genItemInventory(EnchantmentPlayer enchantPlayer, ItemStack item) {
         Inventory inventory = Bukkit.createInventory(null, 27, "Enchantments");
         ItemMeta meta = item.getItemMeta();
         if (meta == null) {
@@ -156,7 +157,6 @@ public class EnchantmentMenuFactory {
         List<String> lore = meta.getLore();
         if (lore == null)
             lore = new ArrayList<>();
-        EnchantmentPlayer enchantPlayer = handler.getPlayer(player);
         if (lore.isEmpty() || !lore.get(lore.size() - 1).startsWith(TranslatedMessage.translate("enchantment.price"))) {
             if (enchantPlayer.usingGems())
                 lore.add(TranslatedMessage.translate("enchantment.price") + "0G");
@@ -166,14 +166,16 @@ public class EnchantmentMenuFactory {
         meta.setLore(lore);
         item.setItemMeta(meta);
         EnchantmentGUI enchantInv = new EnchantmentGUI(inventory);
-        populate(enchantInv, item, player);
+        enchantInv.setOpener(enchantPlayer);
+        enchantInv.setItem(item);
+        populate(enchantInv, item, enchantPlayer.getPlayer());
         int i = inventory.firstEmpty();
         while (i > -1 && i < 28) {
             inventory.setItem(i, glassPane);
             i = inventory.firstEmpty();
         }
         enchantPlayer.setCurrentGUI(null);
-        player.openInventory(inventory);
+        enchantPlayer.getPlayer().openInventory(inventory);
         enchantPlayer.setCurrentGUI(enchantInv);
         return enchantInv;
     }
@@ -214,11 +216,11 @@ public class EnchantmentMenuFactory {
         if (version >= 14)
             generateButton(inventory, null, Material.SHIELD, "tool.shield", 17);
         ItemStack newItem = makeItem(Material.REDSTONE_BLOCK, TranslatedMessage.translate("enchant.cancel"));
-        inventory.addButton(new EnchantButton(newItem, itemStack -> null), 23);
+        inventory.addButton(new EnchantButton(itemStack -> null), 23);
         inventory.getInventory().setItem(23, newItem);
 
         newItem = makeItem(Material.EMERALD_BLOCK, TranslatedMessage.translate("enchant.confirm"));
-        inventory.addButton(new EnchantButton(newItem, itemStack -> {
+        inventory.addButton(new EnchantButton(itemStack -> {
             PlayerInventory playerInventory = player.getInventory();
             removePriceLine(itemStack, handler.getPlayer(player));
             playerInventory.setItem(playerInventory.getHeldItemSlot(), itemStack);
@@ -245,9 +247,9 @@ public class EnchantmentMenuFactory {
 
     private void generateButton(EnchantmentGUI inventory, EnchantmentTarget target, Material material, String key, int slot) {
         ItemStack item = makeItem(material, TranslatedMessage.translate(key));
-        inventory.addButton(new EnchantButton(item, itemStack -> {
-            if ((target != null && target.includes(inventory.getOpener().getInventory().getItemInMainHand())) || inventory.getOpener().getInventory().getItemInMainHand().getType() == material)
-                return generateGUI(handler.getPlayer(inventory.getOpener()));
+        inventory.addButton(new EnchantButton(itemStack -> {
+            if ((target != null && target.includes(inventory.getItem())) || inventory.getItem().getType() == material)
+                return generateGUI(itemStack, inventory.getOpener());
             else
                 return genItemInventory(inventory.getOpener(), itemStack);
         }), slot);

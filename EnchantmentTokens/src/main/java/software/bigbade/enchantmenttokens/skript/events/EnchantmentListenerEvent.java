@@ -4,25 +4,28 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
-import ch.njol.skript.lang.Literal;
-import ch.njol.skript.lang.SkriptEvent;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.*;
 import ch.njol.skript.registrations.EventValues;
 import ch.njol.skript.util.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.eclipse.jdt.annotation.Nullable;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
+import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
+import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
+
+import java.util.Iterator;
 
 @Name("Register an enchantment listener")
 @Description("Listens for the given event on the given enchantment. See https://raw.githubusercontent.com/wiki/BigBadE/EnchantmentTokens/development/Events.md for events.")
 @Examples({"on \"block break\" for Test:",
         "	send \"Test\" to event-player"})
-public class EnchantmentListenerEvent extends SkriptEvent {
+public class EnchantmentListenerEvent extends SelfRegisteringSkriptEvent {
     static {
         Skript.registerEvent("enchantmentevent", EnchantmentListenerEvent.class, EnchantmentEvent.class, "%string% for %customenchant%");
         EventValues.registerEventValue(EnchantmentEvent.class, Player.class, new Getter<Player, EnchantmentEvent>() {
@@ -37,19 +40,41 @@ public class EnchantmentListenerEvent extends SkriptEvent {
     private Literal<String> type;
     private Literal<SkriptEnchantment> enchantment;
 
+    private Trigger trigger;
+
     @Override
     public boolean init(Literal<?>[] literals, int i, SkriptParser.ParseResult parseResult) {
         type = (Literal<String>) literals[0];
         enchantment = (Literal<SkriptEnchantment>) literals[1];
-        ((EnchantmentTokens) Bukkit.getPluginManager().getPlugin("EnchantmentTokens")).getListenerHandler();
+        ListenerType listenerType = ListenerType.valueOf(type.getSingle().replace(" ", "_").toUpperCase());
+        ((EnchantmentTokens) Bukkit.getPluginManager().getPlugin("EnchantmentTokens")).getListenerHandler().getListenerManager(listenerType).add(event ->
+                trigger.execute(event), enchantment.getSingle());
         return true;
     }
 
     @Override
-    public boolean check(Event event) {
-        ListenerType type = ListenerType.valueOf(this.type.getSingle(event).toUpperCase().replace(" ", "_"));
-        EnchantmentEvent enchantEvent = (EnchantmentEvent) event;
-        return enchantEvent.getType() == type/* && ((EnchantmentTokens) Bukkit.getPluginManager().getPlugin("EnchantmentTokens"))*/;
+    public void register(Trigger trigger) {
+        this.trigger = trigger;
+    }
+
+    @Override
+    public void unregister(Trigger trigger) {
+        this.trigger = null;
+        for(ListenerType type : ListenerType.values()) {
+            ListenerManager manager = ((EnchantmentTokens) Bukkit.getPluginManager().getPlugin("EnchantmentTokens")).getListenerHandler().getListenerManager(type);
+            Iterator<EnchantmentBase> iterator = manager.getListeners().keySet().iterator();
+            while(iterator.hasNext()) {
+                EnchantmentBase base = iterator.next();
+                if(base instanceof SkriptEnchantment) {
+                    manager.getListeners().remove(base);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void unregisterAll() {
+
     }
 
     @Override

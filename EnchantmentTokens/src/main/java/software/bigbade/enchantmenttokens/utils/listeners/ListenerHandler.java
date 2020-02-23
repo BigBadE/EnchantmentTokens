@@ -35,6 +35,9 @@ public class ListenerHandler {
 
     public ListenerHandler(EnchantmentTokens main) {
         EnchantLogger.log(Level.INFO, "Looking for enchantments");
+        for (ListenerType type : ListenerType.values()) {
+            enchantListeners.put(type, new ListenerManager());
+        }
         this.main = main;
     }
 
@@ -85,10 +88,6 @@ public class ListenerHandler {
 
     public void loadEnchantments(Map<String, Set<Class<EnchantmentBase>>> enchants) {
         ConcurrentLinkedQueue<EnchantmentBase> enchantments = new ConcurrentLinkedQueue<>();
-
-        for (ListenerType type : ListenerType.values()) {
-            enchantListeners.put(type, new ListenerManager());
-        }
 
         Map<String, FileConfiguration> configs = new HashMap<>();
 

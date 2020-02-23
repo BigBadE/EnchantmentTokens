@@ -41,7 +41,7 @@ public class SignPacketHandler {
         return signs;
     }
 
-    void handlePacket(NbtCompound compound, PacketEvent event) {
+    void handlePacket(NbtCompound compound, PacketEvent event, boolean map) {
         List<String> text = new ArrayList<>();
         for (int i = 1; i < 5; i++) {
             try {
@@ -49,18 +49,21 @@ public class SignPacketHandler {
             } catch (ArrayIndexOutOfBoundsException | IllegalArgumentException ignored) {
                 if (i != 3)
                     return;
+                else
+                    break;
             }
         }
         if (!text.get(0).equals("[Enchantment]")) return;
         main.getEnchantmentHandler().getAllEnchants().forEach(base -> {
             if (base.getName().equalsIgnoreCase(text.get(1))) {
+                if(map)
+                    signs.add(new Location(event.getPlayer().getWorld(), compound.getInteger("x"), compound.getInteger("y"), compound.getInteger("z")));
                 updateSign(base, compound, event);
             }
         });
     }
 
     private void updateSign(EnchantmentBase base, NbtCompound compound, PacketEvent event) {
-        signs.add(new Location(event.getPlayer().getWorld(), compound.getInteger("x"), compound.getInteger("y"), compound.getInteger("z")));
         String price = TranslatedMessage.translate("enchantment.notapplicable");
         ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
         if (base.canEnchantItem(itemStack)) {
@@ -85,7 +88,7 @@ class SignPacketLoadAdapter extends PacketAdapter {
         List<NbtBase<?>> compounds = container.getListNbtModifier().read(0);
         for (int i = 0; i < compounds.size(); i++) {
             NbtCompound compound = (NbtCompound) compounds.get(i);
-            handler.handlePacket(compound, event);
+            handler.handlePacket(compound, event, true);
             compounds.set(i, compound);
         }
         container.getListNbtModifier().write(0, compounds);
@@ -105,7 +108,7 @@ class SignPacketUpdateAdapter extends PacketAdapter {
         PacketContainer container = event.getPacket();
         if (container.getIntegers().getValues().get(0) == 9) {
             NbtCompound compound = (NbtCompound) container.getNbtModifier().read(0);
-            handler.handlePacket(compound, event);
+            handler.handlePacket(compound, event, false);
             container.getNbtModifier().write(0, compound);
         }
     }

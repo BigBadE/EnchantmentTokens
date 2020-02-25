@@ -21,24 +21,44 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 
 public class CurrencyFactoryHandler {
+    private EnchantmentTokens main;
+    private ConfigurationSection section;
+    private int version;
 
-    public CurrencyFactory load(EnchantmentTokens main, ConfigurationSection section, int version) {
+    public CurrencyFactoryHandler(EnchantmentTokens main, ConfigurationSection section, int version) {
+        this.main = main;
+        this.section = section;
+        this.version = version;
+    }
+
+    public CurrencyFactory load() {
         String type = new ConfigurationType<String>("gems").getValue("type", section);
 
         if ("gems".equalsIgnoreCase(type)) {
-            if (version >= 14) {
-                boolean persistent = new ConfigurationType<Boolean>(true).getValue("usePersistentData", section);
-                if (persistent)
-                    return new LatestCurrencyFactory(main);
-                else
-                    return new GemCurrencyFactory(main);
-            } else
-                return new GemCurrencyFactory(main);
-        } else if("vault".equalsIgnoreCase(type)) {
+            return loadGemFactory();
+        } else if ("vault".equalsIgnoreCase(type)) {
             return new VaultCurrencyFactory(main.getServer());
         } else {
-            return loadExternalJar(main, section);
+            CurrencyFactory factory = loadExternalJar(main, section);
+            if (factory != null && factory.loaded())
+                return factory;
+            else {
+                if (factory != null)
+                    section.set("type", "gems");
+                return loadGemFactory();
+            }
         }
+    }
+
+    private CurrencyFactory loadGemFactory() {
+        if (version >= 14) {
+            boolean persistent = new ConfigurationType<Boolean>(true).getValue("usePersistentData", section);
+            if (persistent)
+                return new LatestCurrencyFactory(main);
+            else
+                return new GemCurrencyFactory(main);
+        } else
+            return new GemCurrencyFactory(main);
     }
 
     private CurrencyFactory loadExternalJar(EnchantmentTokens main, ConfigurationSection section) {
@@ -56,15 +76,13 @@ public class CurrencyFactoryHandler {
     }
 
     private CurrencyFactory loadFactory(EnchantmentTokens main, ConfigurationSection section, File file) {
-        try {
-            JarFile jarFile = new JarFile(file.getAbsolutePath());
+        try (JarFile jarFile = new JarFile(file.getAbsolutePath())) {
             InputStream stream = jarFile.getInputStream(jarFile.getEntry("config.yml"));
             FileConfiguration configuration = new YamlConfiguration();
             configuration.load(new InputStreamReader(stream));
             stream.close();
             ExternalCurrencyData data = new ExternalCurrencyData(configuration);
             if (!data.matches(section.getString("type"))) {
-                jarFile.close();
                 return null;
             }
             List<Class<?>> classes = main.getLoader().loadClasses(file);

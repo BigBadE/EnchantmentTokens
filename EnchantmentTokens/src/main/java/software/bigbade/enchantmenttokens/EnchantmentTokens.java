@@ -10,6 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.gui.EnchantmentMenuFactory;
+import software.bigbade.enchantmenttokens.gui.MenuFactory;
 import software.bigbade.enchantmenttokens.listeners.SignPacketHandler;
 import software.bigbade.enchantmenttokens.localization.LocaleManager;
 import software.bigbade.enchantmenttokens.skript.type.SkriptManager;
@@ -30,6 +31,7 @@ import java.io.File;
 import java.util.Objects;
 
 public class EnchantmentTokens extends JavaPlugin {
+    //Name used for NamespacedKey namespaces
     public static final String NAME = "enchantmenttokens";
 
     private EnchantmentLoader loader;
@@ -48,7 +50,7 @@ public class EnchantmentTokens extends JavaPlugin {
 
     private EnchantUtils utils;
 
-    private EnchantmentMenuFactory factory;
+    private MenuFactory factory;
 
     private SchedulerHandler scheduler;
 
@@ -85,6 +87,14 @@ public class EnchantmentTokens extends JavaPlugin {
         saveConfig();
     }
 
+    /**
+     * Allows the setting of a custom menu factory.
+     * @param factory A class implementing MenuFactory, called to make the /customenchantment menu
+     */
+    public void setMenuFactory(MenuFactory factory) {
+        this.factory = factory;
+    }
+
     private void setupProtocolManager() {
         ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
         signHandler = new SignPacketHandler(protocolManager, this, Objects.requireNonNull(getConfig().getString("currency")).equalsIgnoreCase("vault"));
@@ -100,8 +110,8 @@ public class EnchantmentTokens extends JavaPlugin {
     private void setupCurrency() {
         ConfigurationSection currency = ConfigurationManager.getSectionOrCreate(getConfig(), "currency");
 
-        CurrencyFactoryHandler handler = new CurrencyFactoryHandler();
-        currencyFactory = handler.load(this, currency, version);
+        CurrencyFactoryHandler handler = new CurrencyFactoryHandler(this, currency, version);
+        currencyFactory = handler.load();
 
         playerHandler = new EnchantmentPlayerHandler(currencyFactory);
     }
@@ -182,7 +192,7 @@ public class EnchantmentTokens extends JavaPlugin {
         return utils;
     }
 
-    public EnchantmentMenuFactory getFactory() {
+    public MenuFactory getMenuFactory() {
         return factory;
     }
 

@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class EnchantmentMenuFactory {
+public class EnchantmentMenuFactory implements MenuFactory {
     private ItemStack glassPane;
     private int version;
     private EnchantmentPlayerHandler handler;

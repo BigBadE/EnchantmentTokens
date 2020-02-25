@@ -55,7 +55,7 @@ public class RegisterEnchantExpression extends SimpleExpression<SkriptEnchantmen
             }
         }
 
-        EnchantLogger.log(Level.SEVERE, "Could not correctly create {0}, please report this along with any errors.", nameStr);
+        EnchantLogger.log(Level.SEVERE, "{0} does not have a tool set.", nameStr);
         return new SkriptEnchantment[] { null };
     }
 

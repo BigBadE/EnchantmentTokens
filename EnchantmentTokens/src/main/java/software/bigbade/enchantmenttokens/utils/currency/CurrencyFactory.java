@@ -8,4 +8,6 @@ public interface CurrencyFactory {
     String name();
 
     void shutdown();
+
+    boolean loaded();
 }

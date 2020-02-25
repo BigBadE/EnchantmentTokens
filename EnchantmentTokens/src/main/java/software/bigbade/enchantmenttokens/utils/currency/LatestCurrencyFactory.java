@@ -26,4 +26,9 @@ public class LatestCurrencyFactory implements CurrencyFactory {
     public void shutdown() {
         //Not used since Spigot handles this for us
     }
+
+    @Override
+    public boolean loaded() {
+        return true;
+    }
 }

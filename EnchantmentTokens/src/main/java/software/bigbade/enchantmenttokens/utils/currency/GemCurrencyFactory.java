@@ -28,4 +28,9 @@ public class GemCurrencyFactory implements CurrencyFactory {
     public void shutdown() {
         //Not used
     }
+
+    @Override
+    public boolean loaded() {
+        return true;
+    }
 }

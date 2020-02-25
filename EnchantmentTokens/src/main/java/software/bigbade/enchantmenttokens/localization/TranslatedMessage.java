@@ -23,8 +23,8 @@ public class TranslatedMessage {
         return "KEY NOT FOUND";
     }
 
-    public static String translate(String key, String... arguemnts) {
-        return translateNamespace(key, EnchantmentTokens.NAME, arguemnts);
+    public static String translate(String key, String... arguments) {
+        return translateNamespace(key, EnchantmentTokens.NAME, arguments);
     }
 
     public static void updateBundles(Map<String, ResourceBundle> bundles) {

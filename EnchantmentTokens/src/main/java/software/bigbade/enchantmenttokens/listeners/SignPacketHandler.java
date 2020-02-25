@@ -17,18 +17,19 @@ import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 
 public class SignPacketHandler {
-    private List<Location> signs = new ArrayList<>();
+    private Set<Location> signs = new HashSet<>();
     private EnchantmentTokens main;
     private boolean gems;
 
     public SignPacketHandler(ProtocolManager manager, EnchantmentTokens main, boolean gems) {
         EnchantLogger.log(Level.INFO, "Registering sign listener");
         manager.addPacketListener(new SignPacketLoadAdapter(main, this));
-        manager.addPacketListener(new SignPacketUpdateAdapter(main, this));
         this.main = main;
         this.gems = gems;
     }
@@ -37,11 +38,11 @@ public class SignPacketHandler {
         signs.remove(location);
     }
 
-    public List<Location> getSigns() {
+    public Set<Location> getSigns() {
         return signs;
     }
 
-    void handlePacket(NbtCompound compound, PacketEvent event, boolean map) {
+    void handlePacket(NbtCompound compound, PacketEvent event) {
         List<String> text = new ArrayList<>();
         for (int i = 1; i < 5; i++) {
             try {
@@ -56,8 +57,9 @@ public class SignPacketHandler {
         if (!text.get(0).equals("[Enchantment]")) return;
         main.getEnchantmentHandler().getAllEnchants().forEach(base -> {
             if (base.getName().equalsIgnoreCase(text.get(1))) {
-                if(map)
-                    signs.add(new Location(event.getPlayer().getWorld(), compound.getInteger("x"), compound.getInteger("y"), compound.getInteger("z")));
+                //TODO chunk loaded check maybe?
+                //if(event.getPlayer().getWorld().isChunkLoaded(compound.getInteger("")))
+                signs.add(new Location(event.getPlayer().getWorld(), compound.getInteger("x"), compound.getInteger("y"), compound.getInteger("z")));
                 updateSign(base, compound, event);
             }
         });
@@ -67,7 +69,7 @@ public class SignPacketHandler {
         String price = TranslatedMessage.translate("enchantment.notapplicable");
         ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
         if (base.canEnchantItem(itemStack)) {
-            int level = EnchantUtils.getLevel(itemStack, base);
+            int level = EnchantUtils.getNextLevel(itemStack, base);
             price = EnchantUtils.getPriceString(gems, level, base);
         }
         compound.put("Text3", "{\"extra\":[{\"text\":\"Price: " + price + "\"}],\"text\":\"\"}");
@@ -88,28 +90,9 @@ class SignPacketLoadAdapter extends PacketAdapter {
         List<NbtBase<?>> compounds = container.getListNbtModifier().read(0);
         for (int i = 0; i < compounds.size(); i++) {
             NbtCompound compound = (NbtCompound) compounds.get(i);
-            handler.handlePacket(compound, event, true);
+            handler.handlePacket(compound, event);
             compounds.set(i, compound);
         }
         container.getListNbtModifier().write(0, compounds);
-    }
-}
-
-class SignPacketUpdateAdapter extends PacketAdapter {
-    private SignPacketHandler handler;
-
-    public SignPacketUpdateAdapter(EnchantmentTokens main, SignPacketHandler handler) {
-        super(main, ListenerPriority.NORMAL, PacketType.Play.Server.TILE_ENTITY_DATA);
-        this.handler = handler;
-    }
-
-    @Override
-    public void onPacketSending(PacketEvent event) {
-        PacketContainer container = event.getPacket();
-        if (container.getIntegers().getValues().get(0) == 9) {
-            NbtCompound compound = (NbtCompound) container.getNbtModifier().read(0);
-            handler.handlePacket(compound, event, false);
-            container.getNbtModifier().write(0, compound);
-        }
     }
 }

@@ -24,7 +24,7 @@ public class SignClickListener implements Listener {
                 Sign sign = (Sign) event.getClickedBlock().getState();
                 if (sign.getLine(0).equals("[Enchantment]")) {
                     ItemStack itemStack = event.getItem();
-                    utils.addEnchantment(itemStack, sign.getLine(1), event.getPlayer(), true);
+                    utils.addEnchantment(itemStack, sign.getLine(1), event.getPlayer());
                     event.getPlayer().sendSignChange(event.getClickedBlock().getLocation(), new String[]{"[Enchantment]", sign.getLine(1), "", ""});
                 }
             }

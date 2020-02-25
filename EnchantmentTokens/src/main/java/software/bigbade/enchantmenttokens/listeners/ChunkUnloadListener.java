@@ -7,11 +7,12 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class ChunkUnloadListener implements Listener {
-    private List<Location> signs;
+    private Set<Location> signs;
 
-    public ChunkUnloadListener(List<Location> signs) {
+    public ChunkUnloadListener(Set<Location> signs) {
         this.signs = signs;
     }
 

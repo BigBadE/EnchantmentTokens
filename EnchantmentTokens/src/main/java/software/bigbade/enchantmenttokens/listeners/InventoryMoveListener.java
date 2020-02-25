@@ -1,6 +1,5 @@
 package software.bigbade.enchantmenttokens.listeners;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -15,16 +14,16 @@ import software.bigbade.enchantmenttokens.listeners.enchants.BasicEnchantListene
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
-import java.util.List;
+import java.util.Set;
 
 public class InventoryMoveListener extends BasicEnchantListener implements Listener {
-    private List<Location> signs;
+    private Set<Location> signs;
     private SchedulerHandler scheduler;
 
     private ListenerManager swapOn;
     private ListenerManager swapOff;
 
-    public InventoryMoveListener(ListenerManager swapOn, ListenerManager swapOff, List<Location> signs, SchedulerHandler scheduler) {
+    public InventoryMoveListener(ListenerManager swapOn, ListenerManager swapOff, Set<Location> signs, SchedulerHandler scheduler) {
         super(null);
         this.scheduler = scheduler;
         this.signs = signs;

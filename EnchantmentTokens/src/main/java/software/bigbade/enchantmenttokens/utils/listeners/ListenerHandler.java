@@ -134,13 +134,11 @@ public class ListenerHandler {
     }
 
     private boolean canEnchant(EnchantmentBase enchant, ListenerType type) {
-        if (enchant.getItemTarget() != null) {
-            if (!type.canTarget(enchant.getItemTarget())) {
-                EnchantLogger.log(Level.SEVERE, "Cannot add listener {0} to target {1}", type, enchant.getItemTarget());
-                return false;
-            }
-        } else if (!type.canTarget(enchant.getTargets())) {
+        if (!type.canTarget(enchant.getTargets())) {
             EnchantLogger.log(Level.SEVERE, "Cannot add listener {0} to targets {1}", type, enchant.getTargets());
+            return false;
+        } else if (!type.canTarget(enchant.getItemTarget())) {
+            EnchantLogger.log(Level.SEVERE, "Cannot add listener {0} to target {1}", type, enchant.getItemTarget());
             return false;
         }
         return true;

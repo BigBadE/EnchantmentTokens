@@ -1,13 +1,11 @@
 package software.bigbade.enchantmenttokens.api;
 
+import org.bukkit.entity.Player;
 import software.bigbade.enchantmenttokens.gui.EnchantmentGUI;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyHandler;
-import org.bukkit.entity.Player;
 import software.bigbade.enchantmenttokens.utils.currency.VaultCurrencyHandler;
 
-import java.io.Serializable;
-
-public class EnchantmentPlayer implements Serializable {
+public class EnchantmentPlayer {
     private Player player;
 
     private EnchantmentGUI currentGUI;

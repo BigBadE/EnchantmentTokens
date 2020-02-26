@@ -12,6 +12,8 @@ import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -61,7 +63,7 @@ public class ConfigurationManager {
     public static void saveConfiguration(File config, FileConfiguration configuration) {
         try {
             deleteFile(config);
-            Files.write(config.toPath(), configuration.saveToString().getBytes());
+            Files.write(config.toPath(), Charset.defaultCharset().encode(configuration.saveToString()).array());
         } catch (IOException e) {
             EnchantLogger.log(Level.SEVERE, "Could not save configuration", e);
         }

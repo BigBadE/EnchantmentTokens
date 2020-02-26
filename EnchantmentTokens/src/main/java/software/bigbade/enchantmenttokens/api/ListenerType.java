@@ -37,7 +37,7 @@ public enum ListenerType {
     DAMAGE(EnchantmentTarget.ALL),
     //Player riptide with trident
     RIPTIDE(EnchantmentTarget.TRIDENT);
-    //TODO
+    //TODO add more listener types
 
     private List<EnchantmentTarget> targets;
 
@@ -46,6 +46,7 @@ public enum ListenerType {
     }
 
     public boolean canTarget(EnchantmentTarget target) {
+        if(target == null) return false;
         if (target == EnchantmentTarget.ALL) return true;
         for (EnchantmentTarget found : targets)
             if (found == target)
@@ -54,7 +55,7 @@ public enum ListenerType {
     }
 
     public boolean canTarget(List<Material> materials) {
-        return targets.stream().anyMatch((type) -> {
+        return targets.stream().anyMatch(type -> {
             for (Material material : materials) if (type.includes(material)) return true;
             return false;
         });

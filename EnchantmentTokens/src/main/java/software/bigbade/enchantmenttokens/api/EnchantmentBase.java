@@ -6,6 +6,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -110,8 +111,8 @@ public abstract class EnchantmentBase extends Enchantment {
     }
 
     @Override
-    public boolean canEnchantItem(ItemStack itemStack) {
-        if (targets.size() > 0)
+    public boolean canEnchantItem(@NotNull ItemStack itemStack) {
+        if (targets.isEmpty())
             return targets.contains(itemStack.getType());
         else if (target != null)
             return target.includes(itemStack.getType());

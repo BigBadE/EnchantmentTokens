@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Objects;
 import java.util.jar.JarFile;
@@ -79,7 +80,7 @@ public class CurrencyFactoryHandler {
         try (JarFile jarFile = new JarFile(file.getAbsolutePath())) {
             InputStream stream = jarFile.getInputStream(jarFile.getEntry("config.yml"));
             FileConfiguration configuration = new YamlConfiguration();
-            configuration.load(new InputStreamReader(stream));
+            configuration.load(new InputStreamReader(stream, Charset.defaultCharset()));
             stream.close();
             ExternalCurrencyData data = new ExternalCurrencyData(configuration);
             if (!data.matches(section.getString("type"))) {

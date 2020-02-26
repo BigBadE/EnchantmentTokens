@@ -1,14 +1,12 @@
 package software.bigbade.enchantmenttokens.utils.currency;
 
-import software.bigbade.enchantmenttokens.EnchantmentTokens;
-import software.bigbade.enchantmenttokens.api.ExternalCurrencyData;
-import software.bigbade.enchantmenttokens.loader.FileLoader;
 import org.bukkit.entity.Player;
+import software.bigbade.enchantmenttokens.EnchantmentTokens;
+import software.bigbade.enchantmenttokens.loader.FileLoader;
 
 public class GemCurrencyFactory implements CurrencyFactory {
     private EnchantmentTokens main;
     private FileLoader loader;
-    private ExternalCurrencyData data;
 
     public GemCurrencyFactory(EnchantmentTokens main) {
         this.main = main;

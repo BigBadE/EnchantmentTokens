@@ -18,12 +18,11 @@ public class ChunkUnloadListener implements Listener {
 
     @EventHandler
     public void onChunkUnload(ChunkUnloadEvent event) {
-        Iterator<Location> iterator = signs.iterator();
-        while(iterator.hasNext()) {
+        for (Iterator<Location> iterator = signs.iterator(); iterator.hasNext(); ) {
             Location location = iterator.next();
-            if(Math.floor(location.getX()/16f) == event.getChunk().getX()) {
-                if(Math.floor(location.getZ()/16) == event.getChunk().getZ()) {
-                    signs.remove(location);
+            if (Math.floor(location.getX() / 16f) == event.getChunk().getX()) {
+                if (Math.floor(location.getZ() / 16) == event.getChunk().getZ()) {
+                    iterator.remove();
                 }
             }
         }

@@ -7,8 +7,8 @@ import software.bigbade.enchantmenttokens.EnchantmentTokens;
 public class LatestCurrencyFactory implements CurrencyFactory {
     private NamespacedKey key;
 
-    public LatestCurrencyFactory(EnchantmentTokens main) {
-        key = new NamespacedKey(main, "gems");
+    public LatestCurrencyFactory(NamespacedKey key) {
+        this.key = key;
     }
 
     @Override

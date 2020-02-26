@@ -33,8 +33,7 @@ public class FileLoader {
             ConfigurationManager.createFolder(playerFile.getParentFile());
             ConfigurationManager.createFile(playerFile);
         } else {
-            try {
-                FileInputStream stream = new FileInputStream(playerFile);
+            try (FileInputStream stream = new FileInputStream(playerFile)) {
                 int offset = getOffset(stream, player.getUniqueId());
 
                 if (offset == -1) {

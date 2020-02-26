@@ -1,5 +1,6 @@
 package software.bigbade.enchantmenttokens.utils.currency;
 
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -44,8 +45,11 @@ public class CurrencyFactoryHandler {
             if (factory != null && factory.loaded())
                 return factory;
             else {
-                if (factory != null)
+                if (factory == null) {
+                    EnchantLogger.log(Level.SEVERE, "Could not find type {0}, defaulted to gems", type);
                     section.set("type", "gems");
+                }
+                EnchantLogger.log(Level.SEVERE, "Could not load currency factory");
                 return loadGemFactory();
             }
         }
@@ -55,7 +59,7 @@ public class CurrencyFactoryHandler {
         if (version >= 14) {
             boolean persistent = new ConfigurationType<Boolean>(true).getValue("usePersistentData", section);
             if (persistent)
-                return new LatestCurrencyFactory(main);
+                return new LatestCurrencyFactory(new NamespacedKey(main, "gems"));
             else
                 return new GemCurrencyFactory(main);
         } else
@@ -89,11 +93,11 @@ public class CurrencyFactoryHandler {
             List<Class<?>> classes = main.getLoader().loadClasses(file);
             for (Class<?> clazz : classes) {
                 if (clazz.getInterfaces()[0].equals(CurrencyFactory.class)) {
-                    return (CurrencyFactory) clazz.getConstructors()[0].newInstance(main, section);
+                    return (CurrencyFactory) clazz.getConstructors()[0].newInstance(section);
                 }
             }
         } catch (IOException | InvalidConfigurationException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            EnchantLogger.log(Level.SEVERE, "Could not load currency handler (is it valid?)", e);
+            EnchantLogger.log("Could not load currency handler (is it valid?)", e);
         }
         return null;
     }

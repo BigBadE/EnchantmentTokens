@@ -34,6 +34,20 @@
                             <packaging>jar</packaging>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>cobertura</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${basedir}/cobertura-2.1.2-SNAPSHOT.jar</file>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>cobertura-maven-plugin</artifactId>
+                            <version>2.1.2-SNAPSHOT</version>
+                            <packaging>jar</packaging>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>

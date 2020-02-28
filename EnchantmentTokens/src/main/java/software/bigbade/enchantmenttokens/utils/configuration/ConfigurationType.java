@@ -1,22 +1,27 @@
 package software.bigbade.enchantmenttokens.utils.configuration;
 
 import org.bukkit.configuration.ConfigurationSection;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Used for safe casting of unknown configuration types
  */
 public class ConfigurationType<T> {
-    private Object defaultValue;
+    private T defaultValue;
 
-    public ConfigurationType(Object defaultValue) {
+    public ConfigurationType(@NotNull T defaultValue) {
         this.defaultValue = defaultValue;
     }
 
-    public T getValue(String value, ConfigurationSection section) {
+    @NotNull
+    public T getValue(@NotNull String value, @NotNull ConfigurationSection section) {
         try {
-            return (T) section.get(value);
+            T foundValue = (T) section.get(value);
+            if(foundValue == null)
+                return defaultValue;
+            return foundValue;
         } catch (ClassCastException e) {
-            return (T) defaultValue;
+            return defaultValue;
         }
     }
 }

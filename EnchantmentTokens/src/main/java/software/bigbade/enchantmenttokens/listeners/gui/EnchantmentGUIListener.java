@@ -35,7 +35,7 @@ public class EnchantmentGUIListener implements Listener {
         event.setCancelled(true);
         EnchantButton button = player.getCurrentGUI().getButton(event.getSlot());
         if(button == null) return;
-        EnchantmentGUI inventory = button.click(event.getInventory().getItem(4));
+        EnchantmentGUI inventory = button.click(player);
         player.setCurrentGUI(null);
         if (inventory == null) {
             player.getPlayer().closeInventory();

@@ -161,7 +161,7 @@ public class ListenerHandler {
             ConfigurationManager.loadConfigForField(field, enchantSection, enchant);
         }
 
-        boolean enabled = new ConfigurationType<Boolean>(true).getValue("enabled", enchantSection);
+        boolean enabled = new ConfigurationType<>(true).getValue("enabled", enchantSection);
 
         return (enabled) ? enchant : null;
     }

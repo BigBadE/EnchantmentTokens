@@ -13,7 +13,6 @@ import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -26,6 +25,16 @@ public class ConfigurationManager {
         try {
             createFile(config);
             configuration.load(config);
+        } catch (IOException | InvalidConfigurationException e) {
+            EnchantLogger.log(Level.SEVERE, "could not load enchantment configuration", e);
+        }
+        return configuration;
+    }
+
+    public static FileConfiguration loadConfigurationStream(InputStream stream) {
+        FileConfiguration configuration = new YamlConfiguration();
+        try {
+            configuration.load(new InputStreamReader(stream, Charset.defaultCharset()));
         } catch (IOException | InvalidConfigurationException e) {
             EnchantLogger.log(Level.SEVERE, "could not load enchantment configuration", e);
         }

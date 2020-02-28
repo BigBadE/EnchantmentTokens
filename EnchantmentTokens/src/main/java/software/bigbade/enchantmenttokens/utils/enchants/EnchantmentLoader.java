@@ -10,6 +10,8 @@ import org.bukkit.enchantments.Enchantment;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
@@ -39,21 +41,23 @@ public class EnchantmentLoader {
         });
     }
 
-    public List<Class<?>> loadClasses(File file) throws IOException {
+    public List<Class<?>> loadClasses(File file) {
         List<Class<?>> classes = new ArrayList<>();
-        JarFile jarFile = new JarFile(file.getAbsolutePath());
-        Enumeration<JarEntry> enumerator = jarFile.entries();
-        while (enumerator.hasMoreElements()) {
-            JarEntry jar = enumerator.nextElement();
-            if (jar.isDirectory() || !jar.getName().endsWith(".class")) {
-                continue;
-            }
+        try (JarFile jarFile = new JarFile(file.getAbsolutePath())) {
+            Enumeration<JarEntry> enumerator = jarFile.entries();
+            while (enumerator.hasMoreElements()) {
+                JarEntry jar = enumerator.nextElement();
+                if (jar.isDirectory() || !jar.getName().endsWith(".class")) {
+                    continue;
+                }
 
-            Class<?> loaded = loadClass(jar, file);
-            if (loaded == null) continue;
-            classes.add(loaded);
+                Class<?> loaded = loadClass(jar, file);
+                if (loaded == null) continue;
+                classes.add(loaded);
+            }
+        } catch (IOException e) {
+            EnchantLogger.log("Could not load external jar file", e);
         }
-        jarFile.close();
         return classes;
     }
 
@@ -67,22 +71,22 @@ public class EnchantmentLoader {
                 if (clazz.isAssignableFrom(EnchantmentBase.class))
                     enchantClasses.add((Class<EnchantmentBase>) clazz);
                 else if (clazz.isAssignableFrom(EnchantmentAddon.class)) {
-                    addon = (EnchantmentAddon) clazz.newInstance();
+                    addon = (EnchantmentAddon) clazz.getDeclaredConstructor().newInstance();
                     addons.add(addon);
                 }
             if (addon == null) {
                 EnchantLogger.log(Level.SEVERE, "Jar " + file.getName() + " has no EnchantmentAddon class, skipping loading enchants");
-            } else
+            } else {
                 enchantments.put(addon.getName(), enchantClasses);
-        } catch (IOException | InstantiationException | IllegalAccessException e) {
+            }
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             EnchantLogger.log(Level.SEVERE, "Could not read jar file", e);
         }
     }
 
-    private Class<?> loadClass(JarEntry jar, File file) {
-        try {
-            URL[] urls = {new URL("jar:file:" + file.getAbsolutePath() + "!/")};
-            URLClassLoader cl = new URLClassLoader(urls, getClass().getClassLoader());
+    private Class<?> loadClass(JarEntry jar, File file) throws MalformedURLException {
+        URL[] urls = {new URL("jar:file:" + file.getAbsolutePath() + "!/")};
+        try (URLClassLoader cl = new URLClassLoader(urls, getClass().getClassLoader())) {
             String className = jar.getName().substring(0, jar.getName().length() - 6);
             className = className.replace('/', '.');
             return cl.loadClass(className);

@@ -3,7 +3,6 @@ package software.bigbade.enchantmenttokens.localization;
 import org.bukkit.configuration.ConfigurationSection;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
-import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationType;
 
@@ -35,7 +34,7 @@ public class LocaleManager {
 
     private static Locale getLocale(ConfigurationSection section) {
         Locale locale = Locale.US;
-        String language = new ConfigurationType<String>("US").getValue("country-language", section);
+        String language = new ConfigurationType<>("US").getValue("country-language", section);
 
         for (Locale foundLocale : Locale.getAvailableLocales()) {
             if (foundLocale.getCountry() != null)

@@ -38,7 +38,7 @@ public class EnchantmentHandler {
         List<Enchantment> vanillaRegistering = new ArrayList<>();
         ConfigurationSection section = ConfigurationManager.getSectionOrCreate(config, "enchants");
 
-        for (String name : new ConfigurationType<List<String>>(new String[]{"Fortune"}).getValue("vanillaEnchants", section)) {
+        for (String name : new ConfigurationType<>(Collections.singletonList("Fortune")).getValue("vanillaEnchants", section)) {
             Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(name.toLowerCase().replace(" ", "_")));
             if (enchantment != null) vanillaRegistering.add(enchantment);
             else EnchantLogger.log(Level.SEVERE, "Could not find an enchantment by the name {0}", name);
@@ -63,7 +63,7 @@ public class EnchantmentHandler {
         ConfigurationSection enchantSection = section.getConfigurationSection(enchantment.getKey().getKey());
         if (enchantSection == null)
             enchantSection = section.createSection(enchantment.getKey().getKey());
-        String iconName = new ConfigurationType<String>("Bedrock").getValue("icon", enchantSection);
+        String iconName = new ConfigurationType<>("Bedrock").getValue("icon", enchantSection);
         Material icon = Material.getMaterial(iconName.toUpperCase().replace(" ", "_"));
 
         if (icon == null) {
@@ -71,7 +71,7 @@ public class EnchantmentHandler {
             icon = Material.BEDROCK;
         }
 
-        if (new ConfigurationType<Boolean>(true).getValue("enabled", enchantSection)) {
+        if (new ConfigurationType<>(true).getValue("enabled", enchantSection)) {
             VanillaEnchant vanillaEnchant = new VanillaEnchant(icon, enchantment);
             vanillaEnchants.add(vanillaEnchant);
             for (Field field : EnchantmentBase.class.getDeclaredFields()) {

@@ -59,32 +59,34 @@ public class EnchantmentTokens extends JavaPlugin {
      */
     @Override
     public void onEnable() {
-        setupConfiguration();
+        try {
+            setupConfiguration();
 
-        version = Integer.parseInt(Bukkit.getVersion().split("\\.")[1]);
+            version = Integer.parseInt(Bukkit.getVersion().split("\\.")[1]);
 
-        scheduler = new SchedulerHandler(this);
+            scheduler = new SchedulerHandler(this);
 
-        setupProtocolManager();
+            setupProtocolManager();
 
-        registerEnchants();
+            registerEnchants();
 
-        setupSkript();
+            setupSkript();
 
-        setupCurrency();
+            setupCurrency();
 
-        LocaleManager.updateLocale(getConfig(), loader.getAddons());
+            LocaleManager.updateLocale(getConfig(), loader.getAddons());
 
-        utils = new EnchantUtils(enchantmentHandler, playerHandler, listenerHandler, signHandler.getSigns());
+            utils = new EnchantUtils(enchantmentHandler, playerHandler, listenerHandler, signHandler.getSigns());
 
-        if (Bukkit.getPluginManager().isPluginEnabled(this)) {
-            factory = new EnchantmentMenuFactory(this);
-            new CommandManager(this);
+            if (Bukkit.getPluginManager().isPluginEnabled(this)) {
+                factory = new EnchantmentMenuFactory(this);
+                new CommandManager(this);
+            }
+
+            setupAutosave();
+        } finally {
+            saveConfig();
         }
-
-        setupAutosave();
-
-        saveConfig();
     }
 
     /**
@@ -119,7 +121,7 @@ public class EnchantmentTokens extends JavaPlugin {
     private void setupAutosave() {
         int autosaveTime;
         try {
-            autosaveTime = new ConfigurationType<Integer>(15).getValue("autosaveTime", getConfig());
+            autosaveTime = new ConfigurationType<>(15).getValue("autosaveTime", getConfig());
         } catch (ClassCastException e) {
             getConfig().set("autosaveTime", 15);
             autosaveTime = 15;
@@ -133,7 +135,7 @@ public class EnchantmentTokens extends JavaPlugin {
     private void setupConfiguration() {
         getConfig().options().copyHeader(true).header("Add all vanilla enchantments used in here!\nCheck configurationguide.txt for names/versions.");
         saveDefaultConfig();
-        boolean metrics = new ConfigurationType<Boolean>(true).getValue("metrics", getConfig());
+        boolean metrics = new ConfigurationType<>(true).getValue("metrics", getConfig());
 
         if (metrics) {
             new MetricManager(this);

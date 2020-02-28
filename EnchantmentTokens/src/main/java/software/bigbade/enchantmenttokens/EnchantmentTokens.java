@@ -59,38 +59,37 @@ public class EnchantmentTokens extends JavaPlugin {
      */
     @Override
     public void onEnable() {
-        try {
-            setupConfiguration();
+        setupConfiguration();
 
-            version = Integer.parseInt(Bukkit.getVersion().split("\\.")[1]);
+        version = Integer.parseInt(Bukkit.getVersion().split("\\.")[1]);
 
-            scheduler = new SchedulerHandler(this);
+        scheduler = new SchedulerHandler(this);
 
-            setupProtocolManager();
+        setupProtocolManager();
 
-            registerEnchants();
+        registerEnchants();
 
-            setupSkript();
+        setupSkript();
 
-            setupCurrency();
+        setupCurrency();
 
-            LocaleManager.updateLocale(getConfig(), loader.getAddons());
+        LocaleManager.updateLocale(getConfig(), loader.getAddons());
 
-            utils = new EnchantUtils(enchantmentHandler, playerHandler, listenerHandler, signHandler.getSigns());
+        utils = new EnchantUtils(enchantmentHandler, playerHandler, listenerHandler, signHandler.getSigns());
 
-            if (Bukkit.getPluginManager().isPluginEnabled(this)) {
-                factory = new EnchantmentMenuFactory(this);
-                new CommandManager(this);
-            }
-
-            setupAutosave();
-        } finally {
-            saveConfig();
+        if (Bukkit.getPluginManager().isPluginEnabled(this)) {
+            factory = new EnchantmentMenuFactory(this);
+            new CommandManager(this);
         }
+
+        setupAutosave();
+
+        saveConfig();
     }
 
     /**
      * Allows the setting of a custom menu factory.
+     *
      * @param factory A class implementing MenuFactory, called to make the /customenchantment menu
      */
     public void setMenuFactory(MenuFactory factory) {

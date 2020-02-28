@@ -51,7 +51,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
     10: (13+) Trident (12-9) Fishing Rod
     11: tools
     12: sword
-    13: (13+) Fishing rod (-8) Fishing Rod
+    13: (13) Fishing rod (-8) Fishing Rod
     14: Armor
     15: Bow
     16: (14+) Fishing Rod (9+) Shield
@@ -74,8 +74,13 @@ public class EnchantmentMenuFactory implements MenuFactory {
             generateButton(EnchantmentTarget.FISHING_ROD, Material.FISHING_ROD, "tool.fishingrod");
         else if (version >= 9)
             generateButton(null, Material.SHIELD, "tool.shield");
-        if (version >= 14)
+        if (version >= 14) {
+            for(int i = 0; i < 3; i++)
+                buttons.put(glassPane, new EnchantButton(player -> genItemInventory(player, player.getCurrentGUI().getItem())));
             generateButton(null, Material.SHIELD, "tool.shield");
+            for(int i = 0; i < 3; i++)
+                buttons.put(glassPane, new EnchantButton(player -> genItemInventory(player, player.getCurrentGUI().getItem())));
+        }
     }
 
     /**
@@ -232,10 +237,10 @@ public class EnchantmentMenuFactory implements MenuFactory {
         int rows = 2 + (int) Math.ceil(buttons.size() / 7f);
         ItemStack[] items = buttons.keySet().toArray(new ItemStack[]{});
         for(int i = 1; i < rows-1; i++) {
-            for(int i2 = 1; i2 < Math.min(8, items.length-(i-1)*9); i2++) {
-                ItemStack buttonItem = items[i2+(i-1)*9];
-                inventory.getInventory().setItem(i*9+i2, buttonItem);
-                inventory.addButton(buttons.get(buttonItem), i*9+i2);
+            for(int i2 = 0; i2 < Math.min(7, items.length-(i-1)*7); i2++) {
+                ItemStack buttonItem = items[i2+(i-1)*7];
+                inventory.getInventory().setItem(i*9+i2+1, buttonItem);
+                inventory.addButton(buttons.get(buttonItem), i*9+i2+1);
             }
         }
         ItemStack newItem = makeItem(Material.REDSTONE_BLOCK, TranslatedMessage.translate("enchant.cancel"));
@@ -252,7 +257,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
 
         int i = inventory.getInventory().firstEmpty();
         while( i != -1) {
-            inventory.getInventory().addItem(glassPane);
+            inventory.getInventory().setItem(i, glassPane);
             i = inventory.getInventory().firstEmpty();
         }
         inventory.getInventory().setItem(rows * 9 - 6, newItem);

@@ -12,6 +12,8 @@ public class EnchantmentPlayer {
 
     private CurrencyHandler handler;
 
+    private long doubler = 1;
+
     private EnchantmentPlayer(Player player) {
         this.player = player;
     }
@@ -42,6 +44,26 @@ public class EnchantmentPlayer {
 
     public EnchantmentGUI getCurrentGUI() {
         return currentGUI;
+    }
+
+    public long getDoubler() {
+        return doubler;
+    }
+
+    public void removeDoubler(long removing) {
+        doubler -= removing;
+    }
+
+    public void resetDoubler() {
+        doubler = 1;
+    }
+
+    /**
+     * Adds a doubler to the user
+     * @param adding the amount to add, adding 1 gives a 2x bonus, 3 goes to a 4x bonus, .5 goes to a 1.5x bonus, etc...
+     */
+    public void addDoubler(long adding) {
+        doubler += adding;
     }
 
     public void setCurrentGUI(EnchantmentGUI currentGUI) {

@@ -1,4 +1,4 @@
-package software.bigbade.enchantmenttokens.utils.commands;
+package software.bigbade.enchantmenttokens.commands;
 
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.commands.*;
@@ -15,15 +15,15 @@ public class CommandManager {
 
         EnchantMenuCmd menuCmd = new EnchantMenuCmd(main.getMenuFactory());
         Objects.requireNonNull(main.getCommand("tokenenchant")).setExecutor(menuCmd);
-        Objects.requireNonNull(main.getCommand("tokenenchant")).setTabCompleter(new GenericTabCompleter());
+        Objects.requireNonNull(main.getCommand("tokenenchant")).setTabCompleter(new GenericTabCompleter(0));
 
         Objects.requireNonNull(main.getCommand("gembal")).setExecutor(new BalanceCmd(main.getPlayerHandler()));
-        Objects.requireNonNull(main.getCommand("gembal")).setTabCompleter(new GenericTabCompleter());
+        Objects.requireNonNull(main.getCommand("gembal")).setTabCompleter(new GenericTabCompleter(0));
 
         Objects.requireNonNull(main.getCommand("enchantlist")).setExecutor(new EnchantmentListCommand(main.getEnchantmentHandler()));
-        Objects.requireNonNull(main.getCommand("enchantlist")).setTabCompleter(new GenericTabCompleter());
+        Objects.requireNonNull(main.getCommand("enchantlist")).setTabCompleter(new GenericTabCompleter(0));
 
         Objects.requireNonNull(main.getCommand("reloadenchants")).setExecutor(new RecompileEnchantsCmd(main));
-        Objects.requireNonNull(main.getCommand("reloadenchants")).setTabCompleter(new GenericTabCompleter());
+        Objects.requireNonNull(main.getCommand("reloadenchants")).setTabCompleter(new GenericTabCompleter(0));
     }
 }

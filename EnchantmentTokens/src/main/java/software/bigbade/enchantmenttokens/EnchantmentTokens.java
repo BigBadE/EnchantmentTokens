@@ -17,7 +17,7 @@ import software.bigbade.enchantmenttokens.skript.type.SkriptManager;
 import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.utils.MetricManager;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
-import software.bigbade.enchantmenttokens.utils.commands.CommandManager;
+import software.bigbade.enchantmenttokens.commands.CommandManager;
 import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationType;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyFactory;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyFactoryHandler;

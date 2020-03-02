@@ -14,21 +14,25 @@ commands:
     usage: /adminenchant (enchant) (level)
   tokenenchant:
     description: Enchant an item using gems.
-    usage: /tokenenchant
-    aliases: [customenchants, customenchant, tokenenchants, ce, te, et, enchanttoken, enchanttokens]
+    usage: /customenchant
+    aliases: [customenchants, tokenenchant, tokenenchants, ce, te, et, enchanttoken, enchanttokens]
   gembalance:
     description: Get your current gem balance.
     usage: /gembalance
     aliases: [gembal, gbal, gems]
   addgems:
     description: Add gems to a player's balance
-    usage: /addgems (player) (amount) or /adddgems (amount)
+    usage: /addgems [player] (amount)
   reloadenchants:
     description: Reload all enchants in the jar
     usage: /reloadenchants
   enchantlist:
     description: Lists all current enchants
     usage: /enchantlist
+  paygems:
+    description: Pay gems to another player
+    usage: /paygems (player) (amount)
+    aliases: [paytokens, paygem, paytoken]
 permissions:
   enchanttoken.admin:
     description: Allows for admins to enchant an item.

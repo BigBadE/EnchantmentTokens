@@ -21,6 +21,7 @@ public class ConfigurationType<T> {
                 return defaultValue;
             return foundValue;
         } catch (ClassCastException e) {
+            section.set(value, defaultValue);
             return defaultValue;
         }
     }

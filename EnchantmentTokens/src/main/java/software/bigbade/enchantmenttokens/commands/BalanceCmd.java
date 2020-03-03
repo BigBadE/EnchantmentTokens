@@ -8,8 +8,12 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Formatter;
+
 public class BalanceCmd implements CommandExecutor {
     private EnchantmentPlayerHandler handler;
+
+    private static final Formatter formatter = new Formatter();
 
     public BalanceCmd(EnchantmentPlayerHandler handler) {
         this.handler = handler;
@@ -22,10 +26,10 @@ public class BalanceCmd implements CommandExecutor {
             String priceString;
             EnchantmentPlayer player = handler.getPlayer((Player) commandSender);
             if(player.usingGems())
-                priceString = player.getGems() + "G";
+                priceString = "%,dG";
             else
-                priceString = TranslatedMessage.translate("dollar.symbol", "" + player.getGems());
-            commandSender.sendMessage(TranslatedMessage.translate("command.balance", priceString));
+                priceString = TranslatedMessage.translate("dollar.symbol", "%,d");
+            commandSender.sendMessage(TranslatedMessage.translate("command.balance", formatter.format(priceString, player.getGems()).toString()));
         }
         return true;
     }

@@ -27,6 +27,7 @@ public class EnchantmentGUI {
     }
 
     public void addButton(EnchantButton button, int slot) {
+        inventory.setItem(slot, button.getItem());
         buttons.put(slot, button);
     }
 

@@ -132,7 +132,7 @@ public class EnchantmentTokens extends JavaPlugin {
     }
 
     private void setupConfiguration() {
-        getConfig().options().copyHeader(true).header("Add all vanilla enchantments used in here!\nCheck configurationguide.txt for names/versions.");
+        getConfig().options().copyHeader(true).header("Add all vanilla enchantments used in here!\nCheck ConfigurationGuide.txt for names/versions.");
         saveDefaultConfig();
         boolean metrics = new ConfigurationType<>(true).getValue("metrics", getConfig());
 
@@ -140,7 +140,7 @@ public class EnchantmentTokens extends JavaPlugin {
             new MetricManager(this);
         }
 
-        ConfigurationManager.saveConfigurationGuide(this, getDataFolder().getPath() + "/configurationguide.txt");
+        ConfigurationManager.saveConfigurationGuide(scheduler, getDataFolder().getPath());
         ConfigurationManager.createFolder(getDataFolder());
         ConfigurationManager.createFolder(getDataFolder().getPath() + "\\data");
         ConfigurationManager.createFolder(getDataFolder().getPath() + "\\enchantments");

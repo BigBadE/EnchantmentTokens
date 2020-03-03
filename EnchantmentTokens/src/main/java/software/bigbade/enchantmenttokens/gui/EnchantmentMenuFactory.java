@@ -22,25 +22,23 @@ import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler
 import java.util.*;
 
 public class EnchantmentMenuFactory implements MenuFactory {
-    private ItemStack glassPane;
+    private ItemStack glassPane = makeItem(Material.BLACK_STAINED_GLASS_PANE, " ");
     private int version;
     private EnchantmentPlayerHandler handler;
     private EnchantmentHandler enchantmentHandler;
     private EnchantUtils utils;
 
     //Barrier used for exiting the GUI
-    private ItemStack exit;
+    private ItemStack exit = makeItem(Material.BARRIER, TranslatedMessage.translate("enchant.back"));
+    private EnchantButton glassButton = new EnchantButton(glassPane, player -> genItemInventory(player, player.getCurrentGUI().getItem()));
 
-    private Map<ItemStack, EnchantButton> buttons = new LinkedHashMap<>();
+    private List<EnchantButton> buttons = new ArrayList<>();
 
     public EnchantmentMenuFactory(EnchantmentTokens main) {
         this.version = main.getVersion();
         this.handler = main.getPlayerHandler();
         this.utils = main.getUtils();
         this.enchantmentHandler = main.getEnchantmentHandler();
-
-        exit = makeItem(Material.BARRIER, TranslatedMessage.translate("enchant.back"));
-        glassPane = makeItem(Material.BLACK_STAINED_GLASS_PANE, " ");
 
         generateButtons();
     }
@@ -75,12 +73,15 @@ public class EnchantmentMenuFactory implements MenuFactory {
         else if (version >= 9)
             generateButton(null, Material.SHIELD, "tool.shield");
         if (version >= 14) {
-            for(int i = 0; i < 3; i++)
-                buttons.put(glassPane, new EnchantButton(player -> genItemInventory(player, player.getCurrentGUI().getItem())));
+            addEmptyItems(3);
             generateButton(null, Material.SHIELD, "tool.shield");
-            for(int i = 0; i < 3; i++)
-                buttons.put(glassPane, new EnchantButton(player -> genItemInventory(player, player.getCurrentGUI().getItem())));
+            addEmptyItems(3);
         }
+    }
+
+    private void addEmptyItems(int amount) {
+        for(int i = 0; i < amount; i++)
+            buttons.add(glassButton);
     }
 
     /**
@@ -104,11 +105,9 @@ public class EnchantmentMenuFactory implements MenuFactory {
 
         inventory.setItem(4, itemStack);
 
-        inventory.setItem(49, exit);
-
         addItems(subInventory, player);
 
-        subInventory.addButton(new EnchantButton(item -> genItemInventory(player, subInventory.getItem())), 49);
+        subInventory.addButton(new EnchantButton(exit, item -> genItemInventory(player, subInventory.getItem())), 49);
         return subInventory;
     }
 
@@ -121,7 +120,6 @@ public class EnchantmentMenuFactory implements MenuFactory {
                 continue;
             EnchantButton button = updateItem(enchantment, item, player);
             subInventory.addButton(button, next);
-            subInventory.getInventory().setItem(next, makeItem(enchantment.getIcon(), ChatColor.GREEN + enchantment.getName(), TranslatedMessage.translate("enchantment.price") + EnchantUtils.getPriceString(player.usingGems(), EnchantUtils.getNextLevel(subInventory.getItem(), enchantment), enchantment)));
             next = subInventory.getInventory().firstEmpty();
         }
     }
@@ -130,7 +128,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
         ItemStack item = EnchantmentMenuFactory.makeItem(base.getIcon(), ChatColor.GREEN + base.getName());
         int level = addLore(stack, base, item, player.usingGems());
         if (level <= base.getMaxLevel()) {
-            return new EnchantButton(enchantmentPlayer -> {
+            return new EnchantButton(item, enchantmentPlayer -> {
                 ItemStack itemStack = enchantmentPlayer.getCurrentGUI().getItem();
                 utils.addEnchantmentBase(itemStack, base, player.getPlayer());
                 if (!(base instanceof VanillaEnchant))
@@ -140,7 +138,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
             });
         } else {
             item.setAmount(64);
-            return new EnchantButton(enchantmentPlayer -> generateGUI(enchantmentPlayer.getCurrentGUI().getItem(), enchantmentPlayer));
+            return new EnchantButton(item, enchantmentPlayer -> generateGUI(enchantmentPlayer.getCurrentGUI().getItem(), enchantmentPlayer));
         }
     }
 
@@ -235,20 +233,16 @@ public class EnchantmentMenuFactory implements MenuFactory {
         inventory.getInventory().setItem(4, item);
         //TODO refine this logic.
         int rows = 2 + (int) Math.ceil(buttons.size() / 7f);
-        ItemStack[] items = buttons.keySet().toArray(new ItemStack[]{});
         for(int i = 1; i < rows-1; i++) {
-            for(int i2 = 0; i2 < Math.min(7, items.length-(i-1)*7); i2++) {
-                ItemStack buttonItem = items[i2+(i-1)*7];
-                inventory.getInventory().setItem(i*9+i2+1, buttonItem);
-                inventory.addButton(buttons.get(buttonItem), i*9+i2+1);
+            for(int i2 = 0; i2 < Math.min(7, buttons.size()-(i-1)*7); i2++) {
+                inventory.addButton(buttons.get(i), i*9+i2+1);
             }
         }
         ItemStack newItem = makeItem(Material.REDSTONE_BLOCK, TranslatedMessage.translate("enchant.cancel"));
-        inventory.addButton(new EnchantButton(itemStack -> null), rows * 9 - 4);
-        inventory.getInventory().setItem(rows * 9 - 4, newItem);
+        inventory.addButton(new EnchantButton(newItem, itemStack -> null), rows * 9 - 4);
 
         newItem = makeItem(Material.EMERALD_BLOCK, TranslatedMessage.translate("enchant.confirm"));
-        inventory.addButton(new EnchantButton(enchantmentPlayer -> {
+        inventory.addButton(new EnchantButton(newItem, enchantmentPlayer -> {
             PlayerInventory playerInventory = player.getInventory();
             removePriceLine(enchantmentPlayer.getCurrentGUI().getItem(), handler.getPlayer(player));
             playerInventory.setItem(playerInventory.getHeldItemSlot(), enchantmentPlayer.getCurrentGUI().getItem());
@@ -260,7 +254,6 @@ public class EnchantmentMenuFactory implements MenuFactory {
             inventory.getInventory().setItem(i, glassPane);
             i = inventory.getInventory().firstEmpty();
         }
-        inventory.getInventory().setItem(rows * 9 - 6, newItem);
     }
 
     private void removePriceLine(ItemStack item, EnchantmentPlayer player) {
@@ -281,8 +274,8 @@ public class EnchantmentMenuFactory implements MenuFactory {
 
     private void generateButton(EnchantmentTarget target, Material material, String key) {
         ItemStack item = makeItem(material, TranslatedMessage.translate(key));
-        buttons.put(item,
-                new EnchantButton(player -> {
+        buttons.add(
+                new EnchantButton(item, player -> {
                     if ((target != null && target.includes(player.getCurrentGUI().getItem())) || player.getCurrentGUI().getItem().getType() == material)
                         return generateGUI(player.getCurrentGUI().getItem(), player);
                     else

@@ -1,5 +1,6 @@
 package software.bigbade.enchantmenttokens.utils;
 
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
@@ -9,9 +10,11 @@ import java.util.function.Function;
 
 public class EnchantButton {
     private Function<EnchantmentPlayer, EnchantmentGUI> callable;
+    private ItemStack item;
 
-    public EnchantButton(@NotNull Function<EnchantmentPlayer, EnchantmentGUI> callable) {
+    public EnchantButton(@NotNull ItemStack item, @NotNull Function<EnchantmentPlayer, EnchantmentGUI> callable) {
         this.callable = callable;
+        this.item = item;
     }
 
     /**
@@ -22,5 +25,10 @@ public class EnchantButton {
     @Nullable
     public EnchantmentGUI click(@NotNull EnchantmentPlayer player) {
         return callable.apply(player);
+    }
+
+    @NotNull
+    public ItemStack getItem() {
+        return item;
     }
 }

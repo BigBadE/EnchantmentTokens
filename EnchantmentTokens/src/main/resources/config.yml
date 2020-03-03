@@ -1,5 +1,5 @@
 # Add all vanilla enchantments used in here!
-# Check configurationguide.txt for names/versions.
+# Check ConfigurationGuide.txt for names/versions.
 metrics: true
 enchants:
   vanillaEnchants:

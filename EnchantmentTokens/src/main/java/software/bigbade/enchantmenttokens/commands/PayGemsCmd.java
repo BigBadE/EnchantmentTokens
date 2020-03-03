@@ -11,6 +11,8 @@ import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyAdditionHandler;
 import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
 
+import java.util.Formatter;
+
 public class PayGemsCmd implements CommandExecutor {
     private EnchantmentPlayerHandler handler;
 
@@ -36,6 +38,7 @@ public class PayGemsCmd implements CommandExecutor {
         try {
             long gemsLong = Long.parseLong(gems);
             CurrencyAdditionHandler.addGems(handler.getPlayer(target), gemsLong);
+
             EnchantmentPlayer player = handler.getPlayer((Player) sender);
             player.addGems(-gemsLong);
         } catch (NumberFormatException e) {

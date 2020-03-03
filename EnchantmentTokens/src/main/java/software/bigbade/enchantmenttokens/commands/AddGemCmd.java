@@ -9,8 +9,12 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Formatter;
+
 public class AddGemCmd implements CommandExecutor {
     private EnchantmentPlayerHandler handler;
+
+    private static final Formatter formatter = new Formatter();
 
     public AddGemCmd(EnchantmentPlayerHandler handler) {
         this.handler = handler;
@@ -40,7 +44,7 @@ public class AddGemCmd implements CommandExecutor {
         try {
             CurrencyAdditionHandler.addGems(handler.getPlayer(target), Long.parseLong(gems));
         } catch (NumberFormatException e) {
-            sender.sendMessage(TranslatedMessage.translate("command.add.notnumber", gems));
+            sender.sendMessage(TranslatedMessage.translate("command.add.notnumber", formatter.format("%,d", gems).toString()));
         }
     }
 }

@@ -24,23 +24,23 @@ public class AddGemCmd implements CommandExecutor {
         }
         if (args.length == 1) {
             if (sender instanceof Player)
-                try {
-                    CurrencyAdditionHandler.addGems(handler.getPlayer((Player) sender), Integer.parseInt(args[0]));
-                } catch (NumberFormatException e) {
-                    sender.sendMessage(TranslatedMessage.translate("command.add.notint", args[0]));
-                }
+                addGems(args[0], (Player) sender, sender);
         } else if (args.length == 2) {
             Player target = Bukkit.getPlayer(args[0]);
             if (target != null) {
-                try {
-                    CurrencyAdditionHandler.addGems(handler.getPlayer((Player) sender), Integer.parseInt(args[1]));
-                } catch (NumberFormatException e) {
-                    sender.sendMessage(TranslatedMessage.translate("command.add.notint", args[1]));
-                }
+                addGems(args[1], target, sender);
             } else {
                 sender.sendMessage(TranslatedMessage.translate("command.add.noplayer", args[0]));
             }
         }
         return true;
+    }
+
+    private void addGems(String gems, Player target, CommandSender sender) {
+        try {
+            CurrencyAdditionHandler.addGems(handler.getPlayer(target), Long.parseLong(gems));
+        } catch (NumberFormatException e) {
+            sender.sendMessage(TranslatedMessage.translate("command.add.notnumber", gems));
+        }
     }
 }

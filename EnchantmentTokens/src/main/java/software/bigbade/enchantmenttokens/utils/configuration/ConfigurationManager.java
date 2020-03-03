@@ -187,6 +187,12 @@ public class ConfigurationManager {
         }
     }
 
+    /**
+     * Gets section, or creates it if it is not found
+     * @param section Section to look in
+     * @param subsection Name of subsection
+     * @return ConfigurationSection instance of subsection
+     */
     public static ConfigurationSection getSectionOrCreate(ConfigurationSection section, String subsection) {
         ConfigurationSection found = section.getConfigurationSection(subsection);
         if (found == null)

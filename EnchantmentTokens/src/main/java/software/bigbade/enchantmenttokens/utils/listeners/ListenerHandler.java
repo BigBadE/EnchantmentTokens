@@ -20,6 +20,7 @@ import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationType;
+import software.bigbade.enchantmenttokens.utils.currency.VaultCurrencyFactory;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -58,11 +59,20 @@ public class ListenerHandler {
         Bukkit.getPluginManager().registerEvents(new ProjectileShootListener(main.getVersion(), enchantListeners.get(ListenerType.TRIDENT_THROW), enchantListeners.get(ListenerType.SHOOT)), main);
         Bukkit.getPluginManager().registerEvents(new DamageListener(enchantListeners.get(ListenerType.DAMAGE), enchantListeners.get(ListenerType.SHIELD_BLOCK)), main);
         Bukkit.getPluginManager().registerEvents(new PotionListener(enchantListeners.get(ListenerType.POTION_APPLY), enchantListeners.get(ListenerType.POTION_REMOVE)), main);
-        Bukkit.getPluginManager().registerEvents(new BlockBreakListener(enchantListeners.get(ListenerType.BLOCK_BREAK), main.getSignHandler()), main);
+
+        registerBlockBreak();
         Bukkit.getPluginManager().registerEvents(new PlayerDeathListener(enchantListeners.get(ListenerType.DEATH)), main);
         Bukkit.getPluginManager().registerEvents(new ArmorEquipListener(enchantListeners.get(ListenerType.EQUIP), enchantListeners.get(ListenerType.UNEQUIP)), main);
         Bukkit.getPluginManager().registerEvents(new BlockDamageListener(enchantListeners.get(ListenerType.BLOCK_DAMAGED)), main);
         Bukkit.getPluginManager().registerEvents(new InventoryMoveListener(enchantListeners.get(ListenerType.HELD), enchantListeners.get(ListenerType.SWAPPED), main.getSignHandler().getSigns(), main.getScheduler()), main);
+    }
+
+    private void registerBlockBreak() {
+        if(main.getCurrencyHandler() instanceof VaultCurrencyFactory) {
+            Bukkit.getPluginManager().registerEvents(new BlockBreakListener(enchantListeners.get(ListenerType.BLOCK_BREAK), main.getSignHandler(), null, null), main);
+        } else {
+            Bukkit.getPluginManager().registerEvents(new BlockBreakListener(enchantListeners.get(ListenerType.BLOCK_BREAK), main.getSignHandler(), main.getConfig().getConfigurationSection("currency"), main.getPlayerHandler()), main);
+        }
     }
 
     public void onEnchant(ItemStack item, EnchantmentBase base, Player player) {

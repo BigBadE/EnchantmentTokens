@@ -14,6 +14,7 @@ import software.bigbade.enchantmenttokens.gui.MenuFactory;
 import software.bigbade.enchantmenttokens.listeners.SignPacketHandler;
 import software.bigbade.enchantmenttokens.localization.LocaleManager;
 import software.bigbade.enchantmenttokens.skript.type.SkriptManager;
+import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.utils.MetricManager;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
@@ -29,6 +30,7 @@ import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler
 
 import java.io.File;
 import java.util.Objects;
+import java.util.logging.Level;
 
 public class EnchantmentTokens extends JavaPlugin {
     //Name used for NamespacedKey namespaces
@@ -77,23 +79,15 @@ public class EnchantmentTokens extends JavaPlugin {
 
         utils = new EnchantUtils(enchantmentHandler, playerHandler, listenerHandler, signHandler.getSigns());
 
-        if (Bukkit.getPluginManager().isPluginEnabled(this)) {
-            factory = new EnchantmentMenuFactory(this);
-            new CommandManager(this);
-        }
+        factory = new EnchantmentMenuFactory(version, playerHandler, utils, enchantmentHandler);
+
+        CommandManager.registerCommands(this);
 
         setupAutosave();
 
-        saveConfig();
-    }
+        EnchantLogger.log(Level.INFO, "Successfully enabled EnchantmentTokens");
 
-    /**
-     * Allows the setting of a custom menu factory.
-     *
-     * @param factory A class implementing MenuFactory, called to make the /customenchantment menu
-     */
-    public void setMenuFactory(MenuFactory factory) {
-        this.factory = factory;
+        saveConfig();
     }
 
     private void setupProtocolManager() {
@@ -118,13 +112,7 @@ public class EnchantmentTokens extends JavaPlugin {
     }
 
     private void setupAutosave() {
-        int autosaveTime;
-        try {
-            autosaveTime = new ConfigurationType<>(15).getValue("autosaveTime", getConfig());
-        } catch (ClassCastException e) {
-            getConfig().set("autosaveTime", 15);
-            autosaveTime = 15;
-        }
+        int autosaveTime = new ConfigurationType<>(15).getValue("autosaveTime", getConfig());
 
         autosaveTime *= 20 * 60;
 
@@ -132,7 +120,7 @@ public class EnchantmentTokens extends JavaPlugin {
     }
 
     private void setupConfiguration() {
-        getConfig().options().copyHeader(true).header("Add all vanilla enchantments used in here!\nCheck ConfigurationGuide.txt for names/versions.");
+        getConfig().options().copyHeader(true);
         saveDefaultConfig();
         boolean metrics = new ConfigurationType<>(true).getValue("metrics", getConfig());
 
@@ -144,15 +132,16 @@ public class EnchantmentTokens extends JavaPlugin {
         ConfigurationManager.createFolder(getDataFolder());
         ConfigurationManager.createFolder(getDataFolder().getPath() + "\\data");
         ConfigurationManager.createFolder(getDataFolder().getPath() + "\\enchantments");
+        ConfigurationManager.createFolder(getDataFolder().getPath() + "\\storage");
     }
 
     @Override
     public void onDisable() {
-        saveConfig();
         loader.getAddons().forEach(EnchantmentAddon::onDisable);
         enchantmentHandler.getEnchantments().forEach(EnchantmentBase::onDisable);
         playerHandler.shutdown();
         currencyFactory.shutdown();
+        saveConfig();
     }
 
     public void unregisterEnchants() {

@@ -3,11 +3,7 @@ package software.bigbade.enchantmenttokens.utils.currency;
 import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
 
-import java.util.Formatter;
-
 public class CurrencyAdditionHandler {
-
-    private static final Formatter formatter = new Formatter();
 
     //Private constructor to hide implicit public one.
     private CurrencyAdditionHandler() {}
@@ -20,6 +16,6 @@ public class CurrencyAdditionHandler {
             priceStr = amount + "%,dG";
         else
             priceStr = TranslatedMessage.translate("dollar.symbol", "%,d");
-        player.getPlayer().sendMessage(TranslatedMessage.translate("command.add", formatter.format(priceStr, amount).toString()));
+        player.getPlayer().sendMessage(TranslatedMessage.translate("command.add", String.format(priceStr, amount)));
     }
 }

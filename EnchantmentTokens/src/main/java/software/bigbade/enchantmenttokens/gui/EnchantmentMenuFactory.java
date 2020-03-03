@@ -9,7 +9,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
-import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import software.bigbade.enchantmenttokens.api.VanillaEnchant;
@@ -19,7 +18,10 @@ import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class EnchantmentMenuFactory implements MenuFactory {
     private ItemStack glassPane = makeItem(Material.BLACK_STAINED_GLASS_PANE, " ");
@@ -34,13 +36,17 @@ public class EnchantmentMenuFactory implements MenuFactory {
 
     private List<EnchantButton> buttons = new ArrayList<>();
 
-    public EnchantmentMenuFactory(EnchantmentTokens main) {
-        this.version = main.getVersion();
-        this.handler = main.getPlayerHandler();
-        this.utils = main.getUtils();
-        this.enchantmentHandler = main.getEnchantmentHandler();
+    public EnchantmentMenuFactory(int version, EnchantmentPlayerHandler handler, EnchantUtils utils, EnchantmentHandler enchantmentHandler) {
+        this.version = version;
+        this.handler = handler;
+        this.utils = utils;
+        this.enchantmentHandler = enchantmentHandler;
 
         generateButtons();
+    }
+
+    public void addButton(EnchantButton button) {
+        buttons.add(button);
     }
 
     /*

@@ -8,15 +8,15 @@ public class EnchantmentAddon {
     }
 
     public void onEnable() {
-
+        //Overridden by addons
     }
 
     public void onDisable() {
-
+        //Overridden by addons
     }
 
     public void loadConfig() {
-
+        //Overridden by addons
     }
 
     public String getName() {

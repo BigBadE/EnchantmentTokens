@@ -16,7 +16,17 @@ public class GemsTabCompleter implements TabCompleter {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         List<String> suggestions = new ArrayList<>();
-        if (args.length > 3) return Collections.singletonList(TranslatedMessage.translate("command.arguments.toomany"));
+        if (args.length > 2) return Collections.singletonList(TranslatedMessage.translate("command.arguments.toomany"));
+        if(args.length == 1) {
+            //Return player names
+            commandSender.getServer().getOnlinePlayers().forEach(player -> { if(player.getName().startsWith(args[0])) suggestions.add(player.getName());});
+        } else {
+            try {
+                Long.parseLong(args[1]);
+            } catch (NumberFormatException e) {
+                return Collections.singletonList(TranslatedMessage.translate("command.add.notnumber"));
+            }
+        }
         return suggestions;
     }
 }

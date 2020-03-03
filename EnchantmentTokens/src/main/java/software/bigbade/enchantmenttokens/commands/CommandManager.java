@@ -1,29 +1,28 @@
 package software.bigbade.enchantmenttokens.commands;
 
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.TabCompleter;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
-import software.bigbade.enchantmenttokens.commands.*;
 
 import java.util.Objects;
 
 public class CommandManager {
-    public CommandManager(EnchantmentTokens main) {
-        Objects.requireNonNull(main.getCommand("adminenchant")).setExecutor(new EnchantCmd(main.getEnchantmentHandler(), main.getUtils()));
-        Objects.requireNonNull(main.getCommand("adminenchant")).setTabCompleter(new EnchantTabCompleter(main.getEnchantmentHandler()));
+    private EnchantmentTokens main;
 
-        Objects.requireNonNull(main.getCommand("addgems")).setExecutor(new AddGemCmd(main.getPlayerHandler()));
-        Objects.requireNonNull(main.getCommand("addgems")).setTabCompleter(new AddGemTabCompleter());
+    public CommandManager(EnchantmentTokens main) {
+        this.main = main;
 
         EnchantMenuCmd menuCmd = new EnchantMenuCmd(main.getMenuFactory());
-        Objects.requireNonNull(main.getCommand("tokenenchant")).setExecutor(menuCmd);
-        Objects.requireNonNull(main.getCommand("tokenenchant")).setTabCompleter(new GenericTabCompleter(0));
+        registerCommand("adminenchant", new EnchantTabCompleter(main.getEnchantmentHandler()), new EnchantCmd(main.getEnchantmentHandler(), main.getUtils()));
+        registerCommand("addgems", new AddGemTabCompleter(), new AddGemCmd(main.getPlayerHandler()));
+        registerCommand("tokenenchant", new GenericTabCompleter(0), menuCmd);
+        registerCommand("enchantlist", new GenericTabCompleter(0), new BalanceCmd(main.getPlayerHandler()));
+        registerCommand("reloadenchants", new GenericTabCompleter(0), new EnchantmentListCommand(main.getEnchantmentHandler()));
+        registerCommand("paygems", new GenericTabCompleter(0), new RecompileEnchantsCmd(main));
+    }
 
-        Objects.requireNonNull(main.getCommand("gembal")).setExecutor(new BalanceCmd(main.getPlayerHandler()));
-        Objects.requireNonNull(main.getCommand("gembal")).setTabCompleter(new GenericTabCompleter(0));
-
-        Objects.requireNonNull(main.getCommand("enchantlist")).setExecutor(new EnchantmentListCommand(main.getEnchantmentHandler()));
-        Objects.requireNonNull(main.getCommand("enchantlist")).setTabCompleter(new GenericTabCompleter(0));
-
-        Objects.requireNonNull(main.getCommand("reloadenchants")).setExecutor(new RecompileEnchantsCmd(main));
-        Objects.requireNonNull(main.getCommand("reloadenchants")).setTabCompleter(new GenericTabCompleter(0));
+    private void registerCommand(String name, TabCompleter tabCompleter, CommandExecutor executor) {
+        Objects.requireNonNull(main.getCommand(name)).setExecutor(executor);
+        Objects.requireNonNull(main.getCommand(name)).setTabCompleter(tabCompleter);
     }
 }

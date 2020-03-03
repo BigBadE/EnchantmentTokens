@@ -53,6 +53,6 @@ public class BlockBreakListener extends BasicEnchantListener implements Listener
     }
 
     private double getGems(EnchantmentPlayer player) {
-        return Math.abs(random.nextGaussian())*new ConfigurationType<>(1).getValue("doubler", section)*player.getDoubler();
+        return (Math.abs(random.nextGaussian())*new ConfigurationType<>(1).getValue("doubler", section)+new ConfigurationType<>(1).getValue("minimum", section))*player.getDoubler();
     }
 }

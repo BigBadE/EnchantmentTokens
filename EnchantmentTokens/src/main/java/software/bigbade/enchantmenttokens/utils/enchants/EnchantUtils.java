@@ -16,7 +16,6 @@ import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class EnchantUtils {
@@ -82,16 +81,11 @@ public class EnchantUtils {
 
     public static int getNextLevel(ItemStack item, EnchantmentBase enchantment) {
         if (enchantment instanceof VanillaEnchant) {
-            if (item.containsEnchantment(((VanillaEnchant) enchantment).getEnchantment()))
-                return item.getEnchantmentLevel(((VanillaEnchant) enchantment).getEnchantment()) + 1;
-            return enchantment.getStartLevel();
+            Enchantment vanillaEnchantment = ((VanillaEnchant) enchantment).getEnchantment();
+            return (item.containsEnchantment(vanillaEnchantment)) ? item.getEnchantmentLevel(vanillaEnchantment) + 1 : enchantment.getStartLevel();
         }
-        for (Map.Entry<Enchantment, Integer> entry : item.getEnchantments().entrySet()) {
-            if (entry.getKey().getKey().equals(enchantment.getKey())) {
-                return entry.getValue()+1;
-            }
-        }
-        return enchantment.getStartLevel();
+        //TODO test this implementation. Overriding hashcode should have fixed the issue but TEST PLEASE!
+        return item.containsEnchantment(enchantment) ? item.getEnchantments().get(enchantment) : enchantment.getStartLevel();
     }
 
     public static String getPriceString(boolean gems, int level, EnchantmentBase base) {

@@ -140,13 +140,23 @@ public abstract class EnchantmentBase extends Enchantment {
         return icon;
     }
 
-    public void setCursed(boolean cursed) { this.cursed = cursed; }
+    public void setCursed(boolean cursed) {
+        this.cursed = cursed;
+    }
 
-    public void setIcon(Material icon) { this.icon = icon; }
+    public void setIcon(Material icon) {
+        this.icon = icon;
+    }
 
     @Override
     public boolean equals(Object obj) {
-        if(!(obj instanceof EnchantmentBase)) return false;
-        return getKey().equals(((EnchantmentBase) obj).getKey());
+        if (obj instanceof EnchantmentBase)
+            return hashCode() == obj.hashCode();
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return getKey().hashCode();
     }
 }

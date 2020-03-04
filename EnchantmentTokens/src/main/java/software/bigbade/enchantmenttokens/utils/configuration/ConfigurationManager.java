@@ -117,7 +117,7 @@ public class ConfigurationManager {
      * @param path Path to the file
      */
     public static void saveConfigurationGuide(SchedulerHandler scheduler, String path) {
-        File configGuide = new File(path);
+        File configGuide = new File(path + "\\ConfigurationGuide.txt");
         if (!configGuide.exists()) {
             scheduler.runTaskAsync(() -> writeInternalFile(path, "ConfigurationGuide.txt"));
         }
@@ -131,16 +131,14 @@ public class ConfigurationManager {
      * @see ConfigurationManager#saveConfigurationGuide(SchedulerHandler, String)
      */
     public static void writeInternalFile(String path, String name) {
-        try(OutputStream out = new FileOutputStream(path)) {
-            InputStream stream = Objects.requireNonNull(ConfigurationManager.class.getClassLoader().getResourceAsStream(name));
+        try(OutputStream out = new FileOutputStream(path + "/" + name); InputStream stream = Objects.requireNonNull(ConfigurationManager.class.getClassLoader().getResourceAsStream(name))) {
             int readBytes;
             byte[] buffer = new byte[4096];
             while ((readBytes = stream.read(buffer)) > 0) {
                 out.write(buffer, 0, readBytes);
             }
-            stream.close();
         } catch (IOException e) {
-            EnchantLogger.log(Level.SEVERE, "Could not create new configurationguide file!");
+            EnchantLogger.log(Level.SEVERE, "Could not create new ConfigurationGuide file!");
         }
     }
 

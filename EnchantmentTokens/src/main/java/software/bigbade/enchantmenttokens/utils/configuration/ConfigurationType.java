@@ -1,6 +1,7 @@
 package software.bigbade.enchantmenttokens.utils.configuration;
 
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,8 +18,10 @@ public class ConfigurationType<T> {
     public T getValue(@NotNull String value, @NotNull ConfigurationSection section) {
         try {
             T foundValue = (T) section.get(value);
-            if(foundValue == null)
+            if(foundValue == null) {
+                section.set(value, defaultValue);
                 return defaultValue;
+            }
             return foundValue;
         } catch (ClassCastException e) {
             section.set(value, defaultValue);

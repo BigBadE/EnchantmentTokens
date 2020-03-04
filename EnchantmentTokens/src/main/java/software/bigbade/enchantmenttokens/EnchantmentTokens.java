@@ -61,19 +61,18 @@ public class EnchantmentTokens extends JavaPlugin {
      */
     @Override
     public void onEnable() {
+        version = Integer.parseInt(Bukkit.getVersion().split("\\.")[1]);
+        scheduler = new SchedulerHandler(this);
+
         setupConfiguration();
 
-        version = Integer.parseInt(Bukkit.getVersion().split("\\.")[1]);
-
-        scheduler = new SchedulerHandler(this);
+        setupCurrency();
 
         setupProtocolManager();
 
         registerEnchants();
 
         setupSkript();
-
-        setupCurrency();
 
         LocaleManager.updateLocale(getConfig(), loader.getAddons());
 
@@ -92,7 +91,7 @@ public class EnchantmentTokens extends JavaPlugin {
 
     private void setupProtocolManager() {
         ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
-        signHandler = new SignPacketHandler(protocolManager, this, Objects.requireNonNull(getConfig().getString("currency")).equalsIgnoreCase("vault"));
+        signHandler = new SignPacketHandler(protocolManager, this, new ConfigurationType<>("gems").getValue("type", getConfig().getConfigurationSection("currency")).equalsIgnoreCase("vault"));
     }
 
     private void setupSkript() {
@@ -113,6 +112,9 @@ public class EnchantmentTokens extends JavaPlugin {
 
     private void setupAutosave() {
         int autosaveTime = new ConfigurationType<>(15).getValue("autosaveTime", getConfig());
+
+        //getConfig().set("autosaveTime", 15);
+        saveConfig();
 
         autosaveTime *= 20 * 60;
 

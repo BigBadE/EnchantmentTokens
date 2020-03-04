@@ -1,17 +1,22 @@
 # Add all vanilla enchantments used in here!
 # Check ConfigurationGuide.txt for names/versions.
 metrics: true
+currency:
+  type: gems
+  usePersistentData: true
+country-language: US
+autosaveTime: 15
 enchants:
   vanillaEnchants:
     - Fortune
   fortune:
+    icon: Bedrock
     enabled: true
     name: Fortune
     maxLevel: 3
     minLevel: 1
-    price: {}
-    type: custom
-currency: gems
-usePersistentData: true
-country-language: US
-autosaveTime: 15
+    price:
+      type: custom
+      '1': 10
+      '2': 20
+      '3': 30

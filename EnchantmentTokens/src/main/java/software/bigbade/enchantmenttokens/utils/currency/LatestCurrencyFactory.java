@@ -2,7 +2,6 @@ package software.bigbade.enchantmenttokens.utils.currency;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
-import software.bigbade.enchantmenttokens.EnchantmentTokens;
 
 public class LatestCurrencyFactory implements CurrencyFactory {
     private NamespacedKey key;

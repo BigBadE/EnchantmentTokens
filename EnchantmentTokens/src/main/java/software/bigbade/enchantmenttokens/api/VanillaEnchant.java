@@ -33,10 +33,20 @@ public class VanillaEnchant extends EnchantmentBase {
             if (!found && Character.isLetter(chars[i])) {
                 chars[i] = Character.toUpperCase(chars[i]);
                 found = true;
-            } else if (Character.isWhitespace(chars[i]) || chars[i]=='.' || chars[i]=='\'') { // You can add other chars here
+            } else if (Character.isWhitespace(chars[i])) {
                 found = false;
             }
         }
         return String.valueOf(chars);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return enchantment.hashCode() == obj.hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+        return enchantment.getKey().hashCode();
     }
 }

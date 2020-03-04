@@ -2,7 +2,6 @@ package software.bigbade.enchantmenttokens.utils.enchants;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -31,6 +30,12 @@ public class EnchantUtils {
         this.signs = signs;
     }
 
+    /**
+     * Adds enchantment with given name to item, removes gems, and sends messages.
+     * @param itemStack
+     * @param name
+     * @param player
+     */
     public void addEnchantment(ItemStack itemStack, String name, Player player) {
         for (EnchantmentBase base : handler.getAllEnchants()) {
             if (base.getName().equals(name) && base.canEnchantItem(itemStack)) {
@@ -80,10 +85,6 @@ public class EnchantUtils {
     }
 
     public static int getNextLevel(ItemStack item, EnchantmentBase enchantment) {
-        if (enchantment instanceof VanillaEnchant) {
-            Enchantment vanillaEnchantment = ((VanillaEnchant) enchantment).getEnchantment();
-            return (item.containsEnchantment(vanillaEnchantment)) ? item.getEnchantmentLevel(vanillaEnchantment) + 1 : enchantment.getStartLevel();
-        }
         //TODO test this implementation. Overriding hashcode should have fixed the issue but TEST PLEASE!
         return item.containsEnchantment(enchantment) ? item.getEnchantments().get(enchantment) : enchantment.getStartLevel();
     }

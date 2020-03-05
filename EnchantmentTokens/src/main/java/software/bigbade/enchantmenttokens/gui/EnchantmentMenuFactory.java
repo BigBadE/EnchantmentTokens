@@ -30,6 +30,8 @@ public class EnchantmentMenuFactory implements MenuFactory {
     private EnchantmentHandler enchantmentHandler;
     private EnchantUtils utils;
 
+    private static final String PRICE = "enchantment.price";
+
     //Barrier used for exiting the GUI
     private ItemStack exit = makeItem(Material.BARRIER, TranslatedMessage.translate("enchant.back"));
     private EnchantButton glassButton = new EnchantButton(glassPane, player -> genItemInventory(player, player.getCurrentGUI().getItem()));
@@ -212,11 +214,11 @@ public class EnchantmentMenuFactory implements MenuFactory {
         List<String> lore = meta.getLore();
         if (lore == null)
             lore = new ArrayList<>();
-        if (lore.isEmpty() || !lore.get(lore.size() - 1).startsWith(TranslatedMessage.translate("enchantment.price"))) {
+        if (lore.isEmpty() || !lore.get(lore.size() - 1).startsWith(TranslatedMessage.translate(PRICE))) {
             if (enchantPlayer.usingGems())
-                lore.add(TranslatedMessage.translate("enchantment.price") + "0G");
+                lore.add(TranslatedMessage.translate(PRICE) + "0G");
             else
-                lore.add(TranslatedMessage.translate("enchantment.price") + " " + TranslatedMessage.translate("dollar.symbol", "0"));
+                lore.add(TranslatedMessage.translate(PRICE) + " " + TranslatedMessage.translate("dollar.symbol", "0"));
         }
         meta.setLore(lore);
         item.setItemMeta(meta);
@@ -237,7 +239,6 @@ public class EnchantmentMenuFactory implements MenuFactory {
      */
     private void populate(EnchantmentGUI inventory, ItemStack item, Player player) {
         inventory.getInventory().setItem(4, item);
-        //TODO refine this logic.
         int rows = 2 + (int) Math.ceil(buttons.size() / 7f);
         for(int i = 1; i < rows-1; i++) {
             for(int i2 = 0; i2 < Math.min(7, buttons.size()-(i-1)*7); i2++) {

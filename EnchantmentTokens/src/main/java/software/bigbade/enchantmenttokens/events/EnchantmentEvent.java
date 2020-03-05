@@ -1,7 +1,6 @@
 package software.bigbade.enchantmenttokens.events;
 
 import org.bukkit.block.Block;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

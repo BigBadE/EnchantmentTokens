@@ -8,11 +8,12 @@ import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 
 import java.util.logging.Level;
 
-public class VaultCurrencyFactory implements CurrencyFactory {
+public class VaultCurrencyFactory extends CurrencyFactory {
     private Economy economy;
     private boolean loaded = true;
 
     public VaultCurrencyFactory(Server server) {
+        super("vault");
         RegisteredServiceProvider<Economy> rsp = server.getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
             EnchantLogger.log(Level.SEVERE, "Could not find Vault, though Vault is specified as the currency handler.");
@@ -24,16 +25,6 @@ public class VaultCurrencyFactory implements CurrencyFactory {
     @Override
     public CurrencyHandler newInstance(Player player) {
         return new VaultCurrencyHandler(player, economy);
-    }
-
-    @Override
-    public String name() {
-        return "vault";
-    }
-
-    @Override
-    public void shutdown() {
-        //Not used, handled by Vault.
     }
 
     @Override

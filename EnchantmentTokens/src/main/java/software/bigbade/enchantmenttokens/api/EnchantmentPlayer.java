@@ -22,8 +22,8 @@ public class EnchantmentPlayer {
         return new EnchantmentPlayer(player);
     }
 
-    public void save() {
-        handler.savePlayer(player);
+    public void save(boolean async) {
+        handler.savePlayer(player, async);
     }
 
     public Player getPlayer() {

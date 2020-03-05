@@ -52,8 +52,8 @@ public class EnchantmentLoader {
                 }
 
                 Class<?> loaded = loadClass(jar, file);
-                if (loaded == null) continue;
-                classes.add(loaded);
+                if (loaded != null)
+                    classes.add(loaded);
             }
         } catch (IOException e) {
             EnchantLogger.log("Could not load external jar file", e);
@@ -61,6 +61,7 @@ public class EnchantmentLoader {
         return classes;
     }
 
+    @SuppressWarnings("unchecked")
     private void loadJar(File file) {
         try {
             EnchantmentAddon addon = null;

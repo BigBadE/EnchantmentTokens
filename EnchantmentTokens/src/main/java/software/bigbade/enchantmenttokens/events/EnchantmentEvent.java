@@ -15,7 +15,6 @@ public class EnchantmentEvent extends Event {
     private Block targetBlock;
     private ItemStack item;
     private ListenerType type;
-    private Enchantment enchantment;
 
     private static HandlerList handlers = new HandlerList();
 
@@ -24,6 +23,7 @@ public class EnchantmentEvent extends Event {
         this.item = item;
     }
 
+    //Needed for Skript
     public static HandlerList getHandlerList() {
         return handlers;
     }

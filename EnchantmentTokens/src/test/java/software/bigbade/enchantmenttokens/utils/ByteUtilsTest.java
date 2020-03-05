@@ -7,6 +7,6 @@ public class ByteUtilsTest {
     @Test
     public void testByteUtils() {
         ByteUtils utils = new ByteUtils();
-        Assert.assertEquals(utils.bytesToLong(utils.longToBytes(5)), 5);
+        Assert.assertEquals(5, utils.bytesToLong(utils.longToBytes(5)));
     }
 }

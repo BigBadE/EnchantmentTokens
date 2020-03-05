@@ -42,7 +42,7 @@ public class VanillaEnchant extends EnchantmentBase {
 
     @Override
     public boolean equals(Object obj) {
-        return enchantment.hashCode() == obj.hashCode();
+        return (obj != null) && enchantment.hashCode() == obj.hashCode();
     }
 
     @Override

@@ -1,7 +1,6 @@
 package software.bigbade.enchantmenttokens.utils.configuration;
 
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -14,6 +13,7 @@ public class ConfigurationType<T> {
         this.defaultValue = defaultValue;
     }
 
+    @SuppressWarnings("unchecked")
     @NotNull
     public T getValue(@NotNull String value, @NotNull ConfigurationSection section) {
         try {

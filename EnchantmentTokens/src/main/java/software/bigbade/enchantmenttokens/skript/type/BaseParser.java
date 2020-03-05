@@ -11,6 +11,7 @@ import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
 import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
@@ -20,7 +21,7 @@ public class BaseParser extends Parser<SkriptEnchantment> {
     @Override
     @Nullable
     public SkriptEnchantment parse(final String name, final ParseContext context) {
-        EnchantmentHandler enchantmentHandler = ((EnchantmentTokens) Bukkit.getPluginManager().getPlugin("EnchantmentTokens")).getEnchantmentHandler();
+        EnchantmentHandler enchantmentHandler = ((EnchantmentTokens) Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("EnchantmentTokens"))).getEnchantmentHandler();
         for(SkriptEnchantment enchantment : enchantmentHandler.getSkriptEnchantments()) {
             if(enchantment.getName().equals(name)) {
                 return enchantment;
@@ -33,7 +34,7 @@ public class BaseParser extends Parser<SkriptEnchantment> {
         }
 
         for(SkriptEnchantment enchantment : enchantmentHandler.getSkriptEnchantments())
-            if (enchantment.getName().equals(name.toLowerCase()))
+            if (enchantment.getName().equalsIgnoreCase(name))
                 return enchantment;
         SkriptEnchantment enchantment = new SkriptEnchantment(name, Material.BEDROCK);
         enchantmentHandler.addSkriptEnchant(enchantment);

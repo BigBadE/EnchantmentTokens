@@ -5,7 +5,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
-import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 
 public class SignPlaceListener implements Listener {

@@ -37,9 +37,7 @@ public class LocaleManager {
         String language = new ConfigurationType<>("US").getValue("country-language", section);
 
         for (Locale foundLocale : Locale.getAvailableLocales()) {
-            if (foundLocale.getCountry() != null)
-                continue;
-            if (foundLocale.getDisplayCountry().equals(language)) {
+            if (foundLocale.getCountry() != null && foundLocale.getDisplayCountry().equals(language)) {
                 locale = foundLocale;
                 break;
             }

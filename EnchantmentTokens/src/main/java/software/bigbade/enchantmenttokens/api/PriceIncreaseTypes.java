@@ -6,20 +6,18 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 public enum PriceIncreaseTypes {
-    CUSTOM((level, section) -> {
-        return section.getInt(level + "");
-    }, (enchant) -> {
+    CUSTOM((level, section) ->
+            section.getInt(level + ""), enchant -> {
         for (int i = enchant.minLevel; i < enchant.maxLevel + 1; i++) {
             if (enchant.price.get(i + "") == null) {
-                enchant.price.set(i + "", i*10);
+                enchant.price.set(i + "", i * 10);
             }
         }
         for (String key : enchant.price.getKeys(true)) {
             try {
-                if (!key.equals("type"))
-                    if (Integer.parseInt(key) < enchant.minLevel || Integer.parseInt(key) > enchant.maxLevel + 1) {
-                        enchant.price.set(key, null);
-                    }
+                if (!key.equals("type") && (Integer.parseInt(key) < enchant.minLevel || Integer.parseInt(key) > enchant.maxLevel + 1)) {
+                    enchant.price.set(key, null);
+                }
             } catch (NumberFormatException e) {
                 enchant.price.set(key, null);
             }

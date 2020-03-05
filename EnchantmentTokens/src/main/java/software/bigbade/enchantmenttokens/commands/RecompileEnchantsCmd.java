@@ -1,5 +1,6 @@
 package software.bigbade.enchantmenttokens.commands;
 
+import org.jetbrains.annotations.NotNull;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -14,13 +15,13 @@ public class RecompileEnchantsCmd implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if(!sender.hasPermission("enchanttoken.admin") && !sender.isOp()) {
             sender.sendMessage(ChatColor.RED + "You do not have permission to run this command");
-            return true;
+        } else {
+            main.unregisterEnchants();
+            main.registerEnchants();
         }
-        main.unregisterEnchants();
-        main.registerEnchants();
         return true;
     }
 }

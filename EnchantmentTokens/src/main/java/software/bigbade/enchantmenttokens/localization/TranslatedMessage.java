@@ -10,6 +10,9 @@ import java.util.ResourceBundle;
 public class TranslatedMessage {
     private static Map<String, ResourceBundle> bundles = new HashMap<>();
 
+    //Private constructor to hide implicit public one.
+    private TranslatedMessage() {}
+
     public static String translateNamespace(String key, String namespace, String... arguments) {
         for (Map.Entry<String, ResourceBundle> entry : bundles.entrySet()) {
             if (entry.getKey().equals(namespace)) {

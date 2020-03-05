@@ -2,12 +2,22 @@ package software.bigbade.enchantmenttokens.utils.currency;
 
 import org.bukkit.entity.Player;
 
-public interface CurrencyFactory {
-    CurrencyHandler newInstance(Player player);
+public abstract class CurrencyFactory {
+    private String name;
 
-    String name();
+    public CurrencyFactory(String name) {
+        this.name = name;
+    }
 
-    void shutdown();
+    public abstract CurrencyHandler newInstance(Player player);
 
-    boolean loaded();
+    public String name() {
+        return name;
+    }
+
+    public void shutdown() {
+
+    }
+
+    public abstract boolean loaded();
 }

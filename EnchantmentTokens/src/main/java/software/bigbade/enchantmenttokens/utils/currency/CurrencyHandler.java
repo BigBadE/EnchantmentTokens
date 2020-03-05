@@ -2,14 +2,25 @@ package software.bigbade.enchantmenttokens.utils.currency;
 
 import org.bukkit.entity.Player;
 
-public interface CurrencyHandler {
-    long getAmount();
+public abstract class CurrencyHandler {
+    private long gems = -1;
+    private String name;
 
-    void setAmount(long amount);
+    public CurrencyHandler(String name) {
+        this.name = name;
+    }
 
-    void addAmount(long amount);
+    public long getAmount() { return gems; }
 
-    void savePlayer(Player player);
+    public void setAmount(long amount) { gems = amount; }
 
-    String name();
+    public void addAmount(long amount) { gems += amount; }
+
+    public void savePlayer(Player player, boolean async) {
+
+    }
+
+    public String name() {
+        return name;
+    }
 }

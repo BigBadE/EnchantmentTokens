@@ -1,11 +1,9 @@
 package software.bigbade.enchantmenttokens.utils.players;
 
-import software.bigbade.enchantmenttokens.EnchantmentTokens;
+import org.bukkit.entity.Player;
 import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyFactory;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,12 +39,12 @@ public class EnchantmentPlayerHandler {
         if (!players.isEmpty()) {
             AtomicInteger saving = new AtomicInteger(0);
             handler.runTaskRepeating(() -> {
-                if (saving.get() > players.size()) players.get(saving.getAndIncrement()).save();
+                if (saving.get() > players.size()) players.get(saving.getAndIncrement()).save(false);
             }, 0, 5);
         }
     }
 
     public void shutdown() {
-        //players.forEach(player -> player.save(true));
+        players.forEach(player -> player.save(true));
     }
 }

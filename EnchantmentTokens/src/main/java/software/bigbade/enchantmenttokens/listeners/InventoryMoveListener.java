@@ -1,6 +1,7 @@
 package software.bigbade.enchantmenttokens.listeners;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -33,23 +34,25 @@ public class InventoryMoveListener extends BasicEnchantListener implements Liste
 
     @EventHandler
     public void onInventorySwap(InventoryClickEvent event) {
-        if (event.getInventory().getHolder() == null) return;
-        if (event.getInventory().getHolder().equals(event.getWhoClicked()))
-            if (event.getSlot() == event.getWhoClicked().getInventory().getHeldItemSlot()) {
-                for (Location location : signs)
-                    if (location.getChunk().isLoaded() && location.getWorld() == event.getWhoClicked().getWorld())
-                        scheduler.runTaskLater(() ->
-                                ((Player) event.getWhoClicked()).sendSignChange(location, new String[]{"[Enchantment]", ((Sign) location.getBlock().getState()).getLine(1), "", ""}), 0L);
-                if (event.getCurrentItem() != null) {
-                    EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.HELD, event.getCurrentItem()).setUser(event.getWhoClicked());
-                    callListeners(enchantmentEvent, swapOn);
-                }
-
-                if (event.getCursor() != null) {
-                    EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.SWAPPED, event.getCursor()).setUser(event.getWhoClicked());
-                    callListeners(enchantmentEvent, swapOff);
-                }
+        if (event.getInventory().getHolder() != null && event.getInventory().getHolder().equals(event.getWhoClicked()) && event.getSlot() == event.getWhoClicked().getInventory().getHeldItemSlot()) {
+            updateSigns((Player) event.getWhoClicked());
+            if (event.getCurrentItem() != null) {
+                EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.HELD, event.getCurrentItem()).setUser(event.getWhoClicked());
+                callListeners(enchantmentEvent, swapOn);
             }
+
+            if (event.getCursor() != null) {
+                EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.SWAPPED, event.getCursor()).setUser(event.getWhoClicked());
+                callListeners(enchantmentEvent, swapOff);
+            }
+        }
+    }
+
+    private void updateSigns(Player player) {
+        for (Location location : signs)
+            if (location.getWorld() == player.getWorld())
+                scheduler.runTaskLater(() ->
+                        player.sendSignChange(location, new String[]{"[Enchantment]", ((Sign) location.getBlock().getState()).getLine(1), "", ""}), 0L);
     }
 
     @EventHandler

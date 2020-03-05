@@ -57,8 +57,6 @@ public class SignPacketHandler {
         if (!text.get(0).equals("[Enchantment]")) return;
         main.getEnchantmentHandler().getAllEnchants().forEach(base -> {
             if (base.getName().equalsIgnoreCase(text.get(1))) {
-                //TODO chunk loaded check maybe?
-                //if(event.getPlayer().getWorld().isChunkLoaded(compound.getInteger("")))
                 signs.add(new Location(event.getPlayer().getWorld(), compound.getInteger("x"), compound.getInteger("y"), compound.getInteger("z")));
                 updateSign(base, compound, event);
             }

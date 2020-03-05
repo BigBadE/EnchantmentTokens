@@ -9,16 +9,16 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
+import software.bigbade.enchantmenttokens.commands.CommandManager;
 import software.bigbade.enchantmenttokens.gui.EnchantmentMenuFactory;
 import software.bigbade.enchantmenttokens.gui.MenuFactory;
 import software.bigbade.enchantmenttokens.listeners.SignPacketHandler;
 import software.bigbade.enchantmenttokens.localization.LocaleManager;
 import software.bigbade.enchantmenttokens.skript.type.SkriptManager;
 import software.bigbade.enchantmenttokens.utils.EnchantLogger;
-import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.utils.MetricManager;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
-import software.bigbade.enchantmenttokens.commands.CommandManager;
+import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationType;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyFactory;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyFactoryHandler;
@@ -29,7 +29,6 @@ import software.bigbade.enchantmenttokens.utils.listeners.ListenerHandler;
 import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
 
 import java.io.File;
-import java.util.Objects;
 import java.util.logging.Level;
 
 public class EnchantmentTokens extends JavaPlugin {
@@ -113,7 +112,6 @@ public class EnchantmentTokens extends JavaPlugin {
     private void setupAutosave() {
         int autosaveTime = new ConfigurationType<>(15).getValue("autosaveTime", getConfig());
 
-        //getConfig().set("autosaveTime", 15);
         saveConfig();
 
         autosaveTime *= 20 * 60;

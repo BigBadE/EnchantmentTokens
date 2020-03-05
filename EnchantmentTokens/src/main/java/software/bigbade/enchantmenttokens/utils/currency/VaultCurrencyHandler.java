@@ -3,11 +3,12 @@ package software.bigbade.enchantmenttokens.utils.currency;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.entity.Player;
 
-public class VaultCurrencyHandler implements CurrencyHandler {
+public class VaultCurrencyHandler extends CurrencyHandler {
     private Player player;
     private Economy economy;
 
     public VaultCurrencyHandler(Player player, Economy economy) {
+        super("vault");
         this.player = player;
         this.economy = economy;
     }
@@ -26,13 +27,5 @@ public class VaultCurrencyHandler implements CurrencyHandler {
     @Override
     public void addAmount(long amount) {
         economy.depositPlayer(player, amount);
-    }
-
-    @Override
-    public void savePlayer(Player player) { }
-
-    @Override
-    public String name() {
-        return "vault";
     }
 }

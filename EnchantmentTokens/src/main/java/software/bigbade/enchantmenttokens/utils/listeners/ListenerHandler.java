@@ -136,10 +136,9 @@ public class ListenerHandler {
             if (!method.isAnnotationPresent(EnchantListener.class) || method.getReturnType() != EnchantmentListener.class)
                 continue;
             ListenerType type = method.getAnnotation(EnchantListener.class).type();
-            if (enchant != null && !canEnchant(enchant, type)) {
-                continue;
+            if (enchant != null && canEnchant(enchant, type)) {
+                enchantListeners.get(type).add((EnchantmentListener<EnchantmentEvent>) ReflectionManager.invoke(method, enchant), enchant);
             }
-            enchantListeners.get(type).add((EnchantmentListener<EnchantmentEvent>) ReflectionManager.invoke(method, enchant), enchant);
         }
     }
 

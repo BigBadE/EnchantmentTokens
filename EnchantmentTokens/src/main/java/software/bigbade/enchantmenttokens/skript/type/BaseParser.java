@@ -18,10 +18,16 @@ import java.util.regex.Pattern;
 public class BaseParser extends Parser<SkriptEnchantment> {
     private static final Pattern NAME_PATTERN = Pattern.compile("[a-z0-9/._-]+");
 
+    private EnchantmentTokens main;
+
+    public BaseParser() {
+        main = (EnchantmentTokens) Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("EnchantmentTokens"));
+    }
+
     @Override
     @Nullable
     public SkriptEnchantment parse(final String name, final ParseContext context) {
-        EnchantmentHandler enchantmentHandler = ((EnchantmentTokens) Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("EnchantmentTokens"))).getEnchantmentHandler();
+        EnchantmentHandler enchantmentHandler = main.getEnchantmentHandler();
         for(SkriptEnchantment enchantment : enchantmentHandler.getSkriptEnchantments()) {
             if(enchantment.getName().equals(name)) {
                 return enchantment;

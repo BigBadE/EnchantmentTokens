@@ -43,13 +43,16 @@ public class EnchantmentListenerEvent extends SelfRegisteringSkriptEvent {
 
     private Trigger trigger;
 
+    private EnchantmentTokens main;
+
     @SuppressWarnings("unchecked")
     @Override
     public boolean init(Literal<?>[] literals, int i, SkriptParser.ParseResult parseResult) {
         type = (Literal<String>) literals[0];
         enchantment = (Literal<SkriptEnchantment>) literals[1];
+        main = (EnchantmentTokens) Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("EnchantmentTokens"));
         ListenerType listenerType = ListenerType.valueOf(type.getSingle().replace(" ", "_").toUpperCase());
-        ((EnchantmentTokens) Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("EnchantmentTokens"))).getListenerHandler().getListenerManager(listenerType).add(event ->
+        main.getListenerHandler().getListenerManager(listenerType).add(event ->
                 trigger.execute(event), enchantment.getSingle());
         return true;
     }
@@ -63,7 +66,7 @@ public class EnchantmentListenerEvent extends SelfRegisteringSkriptEvent {
     public void unregister(Trigger trigger) {
         this.trigger = null;
         for(ListenerType listenerType : ListenerType.values()) {
-            ListenerManager manager = ((EnchantmentTokens) Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("EnchantmentTokens"))).getListenerHandler().getListenerManager(listenerType);
+            ListenerManager manager = main.getListenerHandler().getListenerManager(listenerType);
             manager.getListeners().keySet().removeIf(base -> base instanceof SkriptEnchantment);
         }
     }

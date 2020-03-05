@@ -3,17 +3,20 @@ package software.bigbade.enchantmenttokens.skript.type;
 import ch.njol.skript.classes.Serializer;
 import ch.njol.yggdrasil.Fields;
 import org.bukkit.Bukkit;
-import org.eclipse.jdt.annotation.Nullable;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
 
 import java.io.StreamCorruptedException;
 
 public class BaseSerializer extends Serializer<SkriptEnchantment> {
+    private EnchantmentTokens main = (EnchantmentTokens) Bukkit.getPluginManager().getPlugin("EnchantmentTokens");
+
     @Override
     public Fields serialize(final SkriptEnchantment ench) {
         Fields fields = new Fields();
-        fields.putObject("enchant", ench);
+        fields.putObject("key", ench.getKey());
         return fields;
     }
 
@@ -29,17 +32,15 @@ public class BaseSerializer extends Serializer<SkriptEnchantment> {
 
     @Override
     protected SkriptEnchantment deserialize(final Fields fields) throws StreamCorruptedException {
-        return (SkriptEnchantment) fields.getObject("enchant");
-    }
-
-    @Override
-    @Nullable
-    public SkriptEnchantment deserialize(String s) {
-        for (SkriptEnchantment enchantment : ((EnchantmentTokens) Bukkit.getPluginManager().getPlugin("EnchantmentTokens")).getEnchantmentHandler().getSkriptEnchantments()) {
-            if (enchantment.getName().equals(s))
+        NamespacedKey key = (NamespacedKey) fields.getObject("key");
+        for(SkriptEnchantment enchantment : main.getEnchantmentHandler().getSkriptEnchantments()) {
+            if(enchantment.getKey().equals(key)) {
                 return enchantment;
+            }
         }
-        return null;
+        SkriptEnchantment enchantment = new SkriptEnchantment(key.getKey(), Material.BEDROCK);
+        main.getEnchantmentHandler().addSkriptEnchant(enchantment);
+        return enchantment;
     }
 
     @Override

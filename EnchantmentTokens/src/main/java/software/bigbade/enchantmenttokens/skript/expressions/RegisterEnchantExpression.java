@@ -27,6 +27,8 @@ public class RegisterEnchantExpression extends SimpleExpression<SkriptEnchantmen
     private Expression<String> name;
     private Expression<ItemType> icon;
 
+    private EnchantmentTokens main;
+
     static {
         Skript.registerExpression(RegisterEnchantExpression.class, SkriptEnchantment.class, ExpressionType.COMBINED, "[create] [a] [new] custom enchant[ment] named %string% with [an] icon [of] %itemtype%");
     }
@@ -41,13 +43,14 @@ public class RegisterEnchantExpression extends SimpleExpression<SkriptEnchantmen
     public boolean init(Expression<?>[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
         name = (Expression<String>) expressions[0];
         icon = (Expression<ItemType>) expressions[1];
+        main = (EnchantmentTokens) Bukkit.getPluginManager().getPlugin("EnchantmentTokens");
         return true;
     }
 
     @Override
     protected SkriptEnchantment[] get(Event event) {
         String nameStr = name.getSingle(event);
-        EnchantmentHandler enchantmentHandler = ((EnchantmentTokens) Bukkit.getPluginManager().getPlugin("EnchantmentTokens")).getEnchantmentHandler();
+        EnchantmentHandler enchantmentHandler = main.getEnchantmentHandler();
         for(SkriptEnchantment enchantment : enchantmentHandler.getSkriptEnchantments()) {
             if(enchantment.getName().equals(nameStr)) {
                 enchantment.setIcon(icon.getSingle(event).getMaterial());

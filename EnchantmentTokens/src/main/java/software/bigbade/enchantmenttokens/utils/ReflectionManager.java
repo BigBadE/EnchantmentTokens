@@ -12,14 +12,6 @@ import java.util.logging.Level;
 public class ReflectionManager {
     private ReflectionManager() {}
 
-    public static void removeFinalFromField(@NotNull Field field, @Nullable Object instance) {
-        field.setAccessible(true);
-        Field modifiersField = getField(Field.class, "modifiers");
-
-        modifiersField.setAccessible(true);
-        setValue(modifiersField, field.getModifiers() & ~Modifier.FINAL, field);
-    }
-
     @NotNull
     public static Field getField(@NotNull Class<?> clazz, @NotNull String name) {
         Field field = null;

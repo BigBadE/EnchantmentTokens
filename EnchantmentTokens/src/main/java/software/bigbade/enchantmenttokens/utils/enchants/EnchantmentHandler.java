@@ -86,21 +86,17 @@ public class EnchantmentHandler {
         Field byKey = ReflectionManager.getField(Enchantment.class, "byKey");
         Field byName = ReflectionManager.getField(Enchantment.class, "byName");
 
-        ReflectionManager.removeFinalFromField(byKey, null);
-        ReflectionManager.removeFinalFromField(byName, null);
-
         Map<NamespacedKey, Enchantment> byKeys = (HashMap<NamespacedKey, Enchantment>) ReflectionManager.getValue(byKey, null);
         assert byKeys != null;
         for (Enchantment enchantment : enchantments) {
             byKeys.remove(enchantment.getKey());
         }
-        ReflectionManager.setValue(byKey, byKeys, null);
+
         Map<NamespacedKey, String> byNames = (HashMap<NamespacedKey, String>) ReflectionManager.getValue(byName, null);
         assert byNames != null;
         for (Enchantment enchantment : enchantments) {
             byNames.remove(enchantment.getKey());
         }
-        ReflectionManager.setValue(byName, byNames, null);
     }
 
     public void addSkriptEnchant(SkriptEnchantment enchantment) {

@@ -1,21 +1,20 @@
 package software.bigbade.enchantmenttokens.api;
 
 import org.bukkit.configuration.ConfigurationSection;
+import org.easymock.EasyMock;
+import org.easymock.EasyMockSupport;
+import org.easymock.Mock;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(fullyQualifiedNames = "org.bukkit.configuration.ConfigurationSection")
-public class PriceIncreaseTest {
+public class PriceIncreaseTest extends EasyMockSupport {
+    @Mock
+    private ConfigurationSection section = EasyMock.mock(ConfigurationSection.class);
+
     @Test
     public void testPriceIncreases() {
-        ConfigurationSection mock = Mockito.mock(ConfigurationSection.class);
-        PowerMockito.when(mock.getInt("1")).thenReturn(100);
-        Assert.assertEquals(PriceIncreaseTypes.CUSTOM.getPrice(1, mock), 100);
+        EasyMock.expect(section.getInt("0")).andReturn(100);
+        replayAll();
+        Assert.assertEquals(100, PriceIncreaseTypes.CUSTOM.getPrice(0, section));
     }
 }

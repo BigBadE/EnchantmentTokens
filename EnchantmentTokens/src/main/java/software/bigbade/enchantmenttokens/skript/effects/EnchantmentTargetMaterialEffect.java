@@ -36,6 +36,7 @@ public class EnchantmentTargetMaterialEffect extends Effect {
         return "Set material of " + enchantment.getSingle(event).getName() + " to " + itemType.getSingle(event).toString();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean init(Expression<?>[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
         enchantment = (Expression<SkriptEnchantment>) expressions[0];

@@ -10,15 +10,17 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import org.bukkit.event.Event;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
+import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.MaterialGroupUtils;
+
+import java.util.logging.Level;
 
 @Name("EnchantmentTarget")
 @Description("Allows you to set the item target of an enchantment, required to be functional in game. " +
-        "Types: All, Tool, Armor, Armor feet, Armor legs, Armor torso, Armor head, Weapon, Bow, Fishing rod, Wearable, Trident, Crossbow")
+        "Types: Tools, Armor, Boots, Leggings, Chestplates, Helmets, Weapon, Bow, Fishing rod, Wearable, Trident, Crossbow")
 @Examples({"on Skript start:",
         "	set the target of Test to \"Pickaxe\""})
 public class EnchantmentTargetEffect extends Effect {
-
     static {
         Skript.registerEffect(EnchantmentTargetEffect.class, "Set [the] target of %customenchant% to %string%");
     }
@@ -28,7 +30,12 @@ public class EnchantmentTargetEffect extends Effect {
 
     @Override
     protected void execute(Event event) {
-        enchantment.getSingle(event).addTargets(MaterialGroupUtils.valueOf(target.getSingle(event).toUpperCase().replace(" ", "_")).getMaterials());
+        String type = target.getSingle(event);
+        try {
+            enchantment.getSingle(event).addTargets(MaterialGroupUtils.valueOf(type.toUpperCase().replace(" ", "_")).getMaterials());
+        } catch (IllegalArgumentException e) {
+            EnchantLogger.log(Level.SEVERE, "Type {0} doesn't exist!", type);
+        }
     }
 
     @Override

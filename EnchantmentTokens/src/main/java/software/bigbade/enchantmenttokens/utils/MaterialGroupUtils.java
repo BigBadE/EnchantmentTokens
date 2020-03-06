@@ -14,6 +14,10 @@ public enum MaterialGroupUtils {
     IRON_ARMOR(new Material[] { Material.IRON_HELMET, Material.IRON_CHESTPLATE, Material.IRON_LEGGINGS, Material.IRON_BOOTS }),
     GOLD_ARMOR(new Material[] { Material.GOLDEN_HELMET, Material.GOLDEN_CHESTPLATE, Material.GOLDEN_LEGGINGS, Material.GOLDEN_BOOTS }),
     DIAMOND_ARMOR(new Material[] { Material.DIAMOND_HELMET, Material.DIAMOND_CHESTPLATE, Material.DIAMOND_LEGGINGS, Material.DIAMOND_BOOTS }),
+    HELMETS(new Material[] { Material.LEATHER_HELMET, Material.CHAINMAIL_HELMET, Material.IRON_HELMET, Material.GOLDEN_HELMET, Material.DIAMOND_HELMET }),
+    CHESTPLATE(new Material[] { Material.LEATHER_CHESTPLATE, Material.CHAINMAIL_CHESTPLATE, Material.IRON_CHESTPLATE, Material.GOLDEN_CHESTPLATE, Material.DIAMOND_CHESTPLATE }),
+    LEGGINGS(new Material[] { Material.LEATHER_LEGGINGS, Material.CHAINMAIL_LEGGINGS, Material.IRON_LEGGINGS, Material.GOLDEN_LEGGINGS, Material.DIAMOND_LEGGINGS }),
+    BOOTS(new Material[] { Material.LEATHER_BOOTS, Material.CHAINMAIL_BOOTS, Material.IRON_BOOTS, Material.GOLDEN_BOOTS, Material.DIAMOND_BOOTS }),
     ARMOR(joinAll(LEATHER_ARMOR.getMaterials(), CHAINMAIL_ARMOR.getMaterials(), IRON_ARMOR.getMaterials(), GOLD_ARMOR.getMaterials(), DIAMOND_ARMOR.getMaterials()));
     private Material[] materials;
 
@@ -32,7 +36,8 @@ public enum MaterialGroupUtils {
         Material[] merged = new Material[adding];
         int added = 0;
         for(Material[] materialArray : materials) {
-            System.arraycopy(materialArray, 0, merged, added, materials.length);
+            System.arraycopy(materialArray, 0, merged, added, materialArray.length);
+            added += materialArray.length;
         }
         return merged;
     }

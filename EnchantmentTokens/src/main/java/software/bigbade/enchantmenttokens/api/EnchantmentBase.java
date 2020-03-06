@@ -7,6 +7,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import software.bigbade.enchantmenttokens.utils.enchants.FakePlugin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +15,6 @@ import java.util.List;
 
 public abstract class EnchantmentBase extends Enchantment {
 
-    private EnchantmentTarget target;
     private final List<Material> targets = new ArrayList<>();
     private boolean treasure = false;
     private final List<Enchantment> conflicts = new ArrayList<>();
@@ -35,21 +35,21 @@ public abstract class EnchantmentBase extends Enchantment {
     @ConfigurationField("price")
     public String type = "custom";
 
+    private static FakePlugin fakePlugin = new FakePlugin("enchantmenttokens");
+
     public EnchantmentBase(String name, Material icon) {
-        super(new NamespacedKey("enchantmenttokens", name.toLowerCase()));
+        super(new NamespacedKey(fakePlugin, name.toLowerCase()));
         this.name = name;
         this.icon = icon;
     }
 
     public EnchantmentBase(String name, Material icon, String namespace) {
-        super(new NamespacedKey(namespace, name.toLowerCase()));
+        super(new NamespacedKey(new FakePlugin(namespace), name.toLowerCase()));
         this.name = name;
         this.icon = icon;
     }
 
-    public void onDisable() {
-
-    }
+    public void onDisable() { }
 
     public long getDefaultPrice(int level) {
         for (PriceIncreaseTypes types : PriceIncreaseTypes.values()) {
@@ -71,7 +71,14 @@ public abstract class EnchantmentBase extends Enchantment {
         PriceIncreaseTypes.CUSTOM.loadConfig(this);
     }
 
+    @NotNull
     @Override
+    public EnchantmentTarget getItemTarget() {
+        return EnchantmentTarget.ALL;
+    }
+
+    @Override
+    @NotNull
     public String getName() {
         return name;
     }
@@ -87,21 +94,12 @@ public abstract class EnchantmentBase extends Enchantment {
     }
 
     @Override
-    public EnchantmentTarget getItemTarget() {
-        return target;
-    }
-
-    public List<Material> getTargets() {
-        return targets;
-    }
-
-    @Override
     public boolean isTreasure() {
         return treasure;
     }
 
     @Override
-    public boolean conflictsWith(Enchantment enchantment) {
+    public boolean conflictsWith(@NotNull Enchantment enchantment) {
         return conflicts.contains(enchantment);
     }
 
@@ -112,16 +110,7 @@ public abstract class EnchantmentBase extends Enchantment {
 
     @Override
     public boolean canEnchantItem(@NotNull ItemStack itemStack) {
-        if (targets.isEmpty())
-            return targets.contains(itemStack.getType());
-        else if (target != null)
-            return target.includes(itemStack.getType());
-        else
-            return false;
-    }
-
-    public void setTarget(EnchantmentTarget target) {
-        this.target = target;
+        return !targets.isEmpty() && targets.contains(itemStack.getType());
     }
 
     public void setTreasure(boolean treasure) {
@@ -135,6 +124,8 @@ public abstract class EnchantmentBase extends Enchantment {
     public void addTargets(Material... targets) {
         this.targets.addAll(Arrays.asList(targets));
     }
+
+    public List<Material> getTargets() { return targets; }
 
     public Material getIcon() {
         return icon;

@@ -34,6 +34,8 @@ public class ListenerHandler {
     private Map<ListenerType, ListenerManager> enchantListeners = new ConcurrentHashMap<>();
     private EnchantmentTokens main;
 
+    private static final String FOLDER = "\\enchantments\\";
+
     public ListenerHandler(EnchantmentTokens main) {
         EnchantLogger.log(Level.INFO, "Looking for enchantments");
         for (ListenerType type : ListenerType.values()) {
@@ -68,7 +70,7 @@ public class ListenerHandler {
     }
 
     private void registerBlockBreak() {
-        if(main.getCurrencyHandler() instanceof VaultCurrencyFactory) {
+        if (main.getCurrencyHandler() instanceof VaultCurrencyFactory) {
             Bukkit.getPluginManager().registerEvents(new BlockBreakListener(enchantListeners.get(ListenerType.BLOCK_BREAK), main.getSignHandler(), null, null), main);
         } else {
             Bukkit.getPluginManager().registerEvents(new BlockBreakListener(enchantListeners.get(ListenerType.BLOCK_BREAK), main.getSignHandler(), main.getConfig().getConfigurationSection("currency"), main.getPlayerHandler()), main);
@@ -83,7 +85,7 @@ public class ListenerHandler {
 
     public void loadAddons(Collection<EnchantmentAddon> addons) {
         for (EnchantmentAddon addon : addons) {
-            FileConfiguration configuration = ConfigurationManager.loadConfigurationFile(new File(main.getDataFolder().getAbsolutePath() + "\\enchantments\\" + addon.getName() + ".yml"));
+            FileConfiguration configuration = ConfigurationManager.loadConfigurationFile(new File(main.getDataFolder().getAbsolutePath() + FOLDER + addon.getName() + ".yml"));
 
             for (Field field : addon.getClass().getDeclaredFields()) {
                 ConfigurationManager.loadConfigForField(field, configuration, addon);
@@ -101,7 +103,7 @@ public class ListenerHandler {
 
         Map<String, FileConfiguration> configs = new HashMap<>();
 
-        enchants.keySet().forEach(key -> ConfigurationManager.loadConfigurationFile(new File(main.getDataFolder().getAbsolutePath() + "\\enchantments\\" + key + ".yml")));
+        enchants.keySet().forEach(key -> ConfigurationManager.loadConfigurationFile(new File(main.getDataFolder().getAbsolutePath() + FOLDER + key + ".yml")));
 
         enchants.forEach((addon, classes) -> {
             for (Class<EnchantmentBase> clazz : classes) {
@@ -122,7 +124,7 @@ public class ListenerHandler {
         });
 
         for (Map.Entry<String, FileConfiguration> configuration : configs.entrySet()) {
-            ConfigurationManager.saveConfiguration(new File(main.getDataFolder().getAbsolutePath() + "\\enchantments\\" + configuration.getKey() + ".yml"), configuration.getValue());
+            ConfigurationManager.saveConfiguration(new File(main.getDataFolder().getAbsolutePath() + FOLDER + configuration.getKey() + ".yml"), configuration.getValue());
         }
     }
 
@@ -143,14 +145,7 @@ public class ListenerHandler {
     }
 
     private boolean canEnchant(EnchantmentBase enchant, ListenerType type) {
-        if (!type.canTarget(enchant.getTargets())) {
-            EnchantLogger.log(Level.SEVERE, "Cannot add listener {0} to targets {1}", type, enchant.getTargets());
-            return false;
-        } else if (!type.canTarget(enchant.getItemTarget())) {
-            EnchantLogger.log(Level.SEVERE, "Cannot add listener {0} to target {1}", type, enchant.getItemTarget());
-            return false;
-        }
-        return true;
+        return type.canTarget(enchant.getTargets());
     }
 
     private EnchantmentBase loadConfiguration(Class<EnchantmentBase> clazz, Map<String, FileConfiguration> configs, String addon) {

@@ -2,19 +2,26 @@ package software.bigbade.enchantmenttokens.api;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.enchantments.EnchantmentTarget;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class VanillaEnchant extends EnchantmentBase {
     private Enchantment enchantment;
+    private EnchantmentTarget target;
 
     public VanillaEnchant(Material icon, Enchantment enchantment) {
-        super(enchantment.getName(), icon);
+        super(capitalizeString(enchantment.getKey().getKey()), icon);
         this.enchantment = enchantment;
-        name = capitalizeString(enchantment.getKey().getKey());
         maxLevel = enchantment.getMaxLevel();
         minLevel = enchantment.getStartLevel();
-        setTarget(enchantment.getItemTarget());
+        target = enchantment.getItemTarget();
         setTreasure(enchantment.isTreasure());
-        setCursed(enchantment.isCursed());
+    }
+
+    @Override
+    public boolean canEnchantItem(@NotNull ItemStack itemStack) {
+        return target.includes(itemStack.getType());
     }
 
     public Enchantment getEnchantment() {
@@ -22,11 +29,11 @@ public class VanillaEnchant extends EnchantmentBase {
     }
 
     @Override
-    public boolean conflictsWith(Enchantment other) {
+    public boolean conflictsWith(@NotNull Enchantment other) {
         return enchantment.conflictsWith(enchantment);
     }
 
-    private String capitalizeString(String string) {
+    private static String capitalizeString(String string) {
         char[] chars = string.toLowerCase().toCharArray();
         boolean found = false;
         for (int i = 0; i < chars.length; i++) {
@@ -42,7 +49,7 @@ public class VanillaEnchant extends EnchantmentBase {
 
     @Override
     public boolean equals(Object obj) {
-        return (obj != null) && enchantment.hashCode() == obj.hashCode();
+        return obj instanceof Enchantment && enchantment.hashCode() == obj.hashCode();
     }
 
     @Override

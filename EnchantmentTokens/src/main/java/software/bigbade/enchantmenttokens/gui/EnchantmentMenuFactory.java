@@ -51,6 +51,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
         buttons.add(button);
     }
 
+    private static String FISHINGROD = "tool.fishingrod";
     /*
     Order:
     9: (14+) Crossbow
@@ -69,15 +70,15 @@ public class EnchantmentMenuFactory implements MenuFactory {
         if (version >= 13)
             generateButton(EnchantmentTarget.TRIDENT, Material.TRIDENT, "tool.trident");
         else if (version >= 9)
-            generateButton(EnchantmentTarget.FISHING_ROD, Material.FISHING_ROD, "tool.fishingrod");
+            generateButton(EnchantmentTarget.FISHING_ROD, Material.FISHING_ROD, FISHINGROD);
         generateButton(EnchantmentTarget.TOOL, Material.DIAMOND_PICKAXE, "tool.tool");
         generateButton(EnchantmentTarget.WEAPON, Material.DIAMOND_SWORD, "tool.sword");
         if (version == 13 || version < 8)
-            generateButton(EnchantmentTarget.FISHING_ROD, Material.FISHING_ROD, "tool.fishingrod");
+            generateButton(EnchantmentTarget.FISHING_ROD, Material.FISHING_ROD, FISHINGROD);
         generateButton(EnchantmentTarget.ARMOR, Material.DIAMOND_CHESTPLATE, "tool.armor");
         generateButton(EnchantmentTarget.BOW, Material.BOW, "tool.bow");
         if (version >= 14)
-            generateButton(EnchantmentTarget.FISHING_ROD, Material.FISHING_ROD, "tool.fishingrod");
+            generateButton(EnchantmentTarget.FISHING_ROD, Material.FISHING_ROD, FISHINGROD);
         else if (version >= 9)
             generateButton(null, Material.SHIELD, "tool.shield");
         if (version >= 14) {

@@ -8,9 +8,9 @@ import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
-import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.event.Event;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
+import software.bigbade.enchantmenttokens.utils.MaterialGroupUtils;
 
 @Name("EnchantmentTarget")
 @Description("Allows you to set the item target of an enchantment, required to be functional in game. " +
@@ -28,7 +28,7 @@ public class EnchantmentTargetEffect extends Effect {
 
     @Override
     protected void execute(Event event) {
-        enchantment.getSingle(event).setTarget(EnchantmentTarget.valueOf(target.getSingle(event).toUpperCase().replace(" ", "_")));
+        enchantment.getSingle(event).addTargets(MaterialGroupUtils.valueOf(target.getSingle(event).toUpperCase().replace(" ", "_")).getMaterials());
     }
 
     @Override
@@ -36,6 +36,7 @@ public class EnchantmentTargetEffect extends Effect {
         return "Set material of " + enchantment.getSingle(event).getName() + " to " + target.getSingle(event);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean init(Expression<?>[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
         enchantment = (Expression<SkriptEnchantment>) expressions[0];

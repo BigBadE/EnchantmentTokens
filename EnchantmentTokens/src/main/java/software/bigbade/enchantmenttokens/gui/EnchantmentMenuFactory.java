@@ -51,7 +51,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
         buttons.add(button);
     }
 
-    private static String FISHINGROD = "tool.fishingrod";
+    private static final String FISHINGROD = "tool.fishingrod";
     /*
     Order:
     9: (14+) Crossbow

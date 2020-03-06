@@ -19,6 +19,8 @@ import java.util.logging.Logger;
 public class FakePlugin implements Plugin {
     private String name;
 
+    private static final String ERROR = "This should not be used for real plugins";
+
     public FakePlugin(String namespace) {
         this.name = namespace;
     }
@@ -26,99 +28,99 @@ public class FakePlugin implements Plugin {
     @NotNull
     @Override
     public File getDataFolder() {
-        throw new UnsupportedOperationException("This should not be used for real plugins");
+        throw new UnsupportedOperationException(ERROR);
     }
 
     @NotNull
     @Override
     public PluginDescriptionFile getDescription() {
-        throw new UnsupportedOperationException("This should not be used for real plugins");
+        throw new UnsupportedOperationException(ERROR);
     }
 
     @NotNull
     @Override
     public FileConfiguration getConfig() {
-        throw new UnsupportedOperationException("This should not be used for real plugins");
+        throw new UnsupportedOperationException(ERROR);
     }
 
     @Nullable
     @Override
     public InputStream getResource(@NotNull String s) {
-        throw new UnsupportedOperationException("This should not be used for real plugins");
+        throw new UnsupportedOperationException(ERROR);
     }
 
     @Override
     public void saveConfig() {
-        throw new UnsupportedOperationException("This should not be used for real plugins");
+        throw new UnsupportedOperationException(ERROR);
     }
 
     @Override
     public void saveDefaultConfig() {
-        throw new UnsupportedOperationException("This should not be used for real plugins");
+        throw new UnsupportedOperationException(ERROR);
     }
 
     @Override
     public void saveResource(@NotNull String s, boolean b) {
-        throw new UnsupportedOperationException("This should not be used for real plugins");
+        throw new UnsupportedOperationException(ERROR);
     }
 
     @Override
     public void reloadConfig() {
-        throw new UnsupportedOperationException("This should not be used for real plugins");
+        throw new UnsupportedOperationException(ERROR);
     }
 
     @NotNull
     @Override
     public PluginLoader getPluginLoader() {
-        throw new UnsupportedOperationException("This should not be used for real plugins");
+        throw new UnsupportedOperationException(ERROR);
     }
 
     @NotNull
     @Override
     public Server getServer() {
-        throw new UnsupportedOperationException("This should not be used for real plugins");
+        throw new UnsupportedOperationException(ERROR);
     }
 
     @Override
     public boolean isEnabled() {
-        throw new UnsupportedOperationException("This should not be used for real plugins");
+        throw new UnsupportedOperationException(ERROR);
     }
 
     @Override
     public void onDisable() {
-        throw new UnsupportedOperationException("This should not be used for real plugins");
+        throw new UnsupportedOperationException(ERROR);
     }
 
     @Override
     public void onLoad() {
-        throw new UnsupportedOperationException("This should not be used for real plugins");
+        throw new UnsupportedOperationException(ERROR);
     }
 
     @Override
     public void onEnable() {
-        throw new UnsupportedOperationException("This should not be used for real plugins");
+        throw new UnsupportedOperationException(ERROR);
     }
 
     @Override
     public boolean isNaggable() {
-        throw new UnsupportedOperationException("This should not be used for real plugins");
+        throw new UnsupportedOperationException(ERROR);
     }
 
     @Override
     public void setNaggable(boolean b) {
-        throw new UnsupportedOperationException("This should not be used for real plugins");
+        throw new UnsupportedOperationException(ERROR);
     }
 
     @Nullable
     @Override
     public ChunkGenerator getDefaultWorldGenerator(@NotNull String s, @Nullable String s1) {
-        throw new UnsupportedOperationException("This should not be used for real plugins");
+        throw new UnsupportedOperationException(ERROR);
     }
 
     @NotNull
     @Override
     public Logger getLogger() {
-        throw new UnsupportedOperationException("This should not be used for real plugins");
+        throw new UnsupportedOperationException(ERROR);
     }
 
     @NotNull
@@ -129,12 +131,12 @@ public class FakePlugin implements Plugin {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        throw new UnsupportedOperationException("This should not be used for real plugins");
+        throw new UnsupportedOperationException(ERROR);
     }
 
     @Nullable
     @Override
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        throw new UnsupportedOperationException("This should not be used for real plugins");
+        throw new UnsupportedOperationException(ERROR);
     }
 }

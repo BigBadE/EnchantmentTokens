@@ -1,7 +1,6 @@
 package software.bigbade.enchantmenttokens.utils.currency;
 
 import org.bukkit.entity.Player;
-import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.loader.FileLoader;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 
@@ -9,10 +8,10 @@ public class GemCurrencyFactory extends CurrencyFactory {
     private SchedulerHandler scheduler;
     private FileLoader loader;
 
-    public GemCurrencyFactory(EnchantmentTokens main) {
+    public GemCurrencyFactory(SchedulerHandler scheduler, String dataPath) {
         super("gems");
-        this.scheduler = main.getScheduler();
-        loader = new FileLoader(main.getDataFolder().getAbsolutePath());
+        this.scheduler = scheduler;
+        loader = new FileLoader(dataPath);
     }
 
     public CurrencyHandler newInstance(Player player) {

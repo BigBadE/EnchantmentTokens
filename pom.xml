@@ -39,6 +39,11 @@
             <id>sk89d</id>
             <url>https://maven.sk89q.com/repo</url>
         </repository>
+        <!--Minecraft-->
+        <repository>
+            <id>minecraft</id>
+            <url>https://libraries.minecraft.net</url>
+        </repository>
     </repositories>
 
     <licenses>

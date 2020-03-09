@@ -1,12 +1,12 @@
 package software.bigbade.enchantmenttokens.utils.enchants;
 
+import org.bukkit.Bukkit;
+import org.bukkit.enchantments.Enchantment;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.ReflectionManager;
-import org.bukkit.Bukkit;
-import org.bukkit.enchantments.Enchantment;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +41,7 @@ public class EnchantmentLoader {
         });
     }
 
-    public List<Class<?>> loadClasses(File file) {
+    public static List<Class<?>> loadClasses(File file) {
         List<Class<?>> classes = new ArrayList<>();
         try (JarFile jarFile = new JarFile(file.getAbsolutePath())) {
             Enumeration<JarEntry> enumerator = jarFile.entries();
@@ -85,9 +85,9 @@ public class EnchantmentLoader {
         }
     }
 
-    private Class<?> loadClass(JarEntry jar, File file) throws MalformedURLException {
+    private static Class<?> loadClass(JarEntry jar, File file) throws MalformedURLException {
         URL[] urls = {new URL("jar:file:" + file.getAbsolutePath() + "!/")};
-        try (URLClassLoader cl = new URLClassLoader(urls, getClass().getClassLoader())) {
+        try (URLClassLoader cl = new URLClassLoader(urls, EnchantmentLoader.class.getClassLoader())) {
             String className = jar.getName().substring(0, jar.getName().length() - 6);
             className = className.replace('/', '.');
             return cl.loadClass(className);

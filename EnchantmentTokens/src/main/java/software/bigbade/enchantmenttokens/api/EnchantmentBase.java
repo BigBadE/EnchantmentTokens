@@ -35,10 +35,8 @@ public abstract class EnchantmentBase extends Enchantment {
     @ConfigurationField("price")
     public String type = "custom";
 
-    private static FakePlugin fakePlugin = new FakePlugin("enchantmenttokens");
-
     public EnchantmentBase(String name, Material icon) {
-        super(new NamespacedKey(fakePlugin, name.toLowerCase()));
+        super(new NamespacedKey(FakePlugin.ENCHANTMENTPLUGIN, name.toLowerCase()));
         this.name = name;
         this.icon = icon;
     }
@@ -110,7 +108,12 @@ public abstract class EnchantmentBase extends Enchantment {
 
     @Override
     public boolean canEnchantItem(@NotNull ItemStack itemStack) {
-        return !targets.isEmpty() && targets.contains(itemStack.getType());
+        if(!itemStack.hasItemMeta() || !itemStack.getItemMeta().hasEnchants())
+            return targets.contains(itemStack.getType());
+        for(Enchantment enchantment : itemStack.getEnchantments().keySet())
+            if(conflicts.contains(enchantment))
+                return false;
+        return targets.contains(itemStack.getType());
     }
 
     public void setTreasure(boolean treasure) {

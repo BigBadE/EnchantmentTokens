@@ -30,6 +30,7 @@ public class SignPacketHandler {
     public SignPacketHandler(ProtocolManager manager, EnchantmentTokens main, boolean gems) {
         EnchantLogger.log(Level.INFO, "Registering sign listener");
         manager.addPacketListener(new SignPacketLoadAdapter(main, this));
+        manager.addPacketListener(new SignPacketUpdateAdapter(main, this));
         this.main = main;
         this.gems = gems;
     }
@@ -42,7 +43,7 @@ public class SignPacketHandler {
         return signs;
     }
 
-    void handlePacket(NbtCompound compound, PacketEvent event) {
+    void handlePacket(NbtCompound compound, PacketEvent event, boolean map) {
         List<String> text = new ArrayList<>();
         for (int i = 1; i < 5; i++) {
             try {
@@ -57,7 +58,8 @@ public class SignPacketHandler {
         if (!text.get(0).equals("[Enchantment]")) return;
         main.getEnchantmentHandler().getAllEnchants().forEach(base -> {
             if (base.getName().equalsIgnoreCase(text.get(1))) {
-                signs.add(new Location(event.getPlayer().getWorld(), compound.getInteger("x"), compound.getInteger("y"), compound.getInteger("z")));
+                if (map)
+                    signs.add(new Location(event.getPlayer().getWorld(), compound.getInteger("x"), compound.getInteger("y"), compound.getInteger("z")));
                 updateSign(base, compound, event);
             }
         });
@@ -88,9 +90,28 @@ class SignPacketLoadAdapter extends PacketAdapter {
         List<NbtBase<?>> compounds = container.getListNbtModifier().read(0);
         for (int i = 0; i < compounds.size(); i++) {
             NbtCompound compound = (NbtCompound) compounds.get(i);
-            handler.handlePacket(compound, event);
+            handler.handlePacket(compound, event, true);
             compounds.set(i, compound);
         }
         container.getListNbtModifier().write(0, compounds);
+    }
+}
+
+class SignPacketUpdateAdapter extends PacketAdapter {
+    private SignPacketHandler handler;
+
+    public SignPacketUpdateAdapter(EnchantmentTokens main, SignPacketHandler handler) {
+        super(main, ListenerPriority.NORMAL, PacketType.Play.Server.TILE_ENTITY_DATA);
+        this.handler = handler;
+    }
+
+    @Override
+    public void onPacketSending(PacketEvent event) {
+        PacketContainer container = event.getPacket();
+        if (container.getIntegers().getValues().get(0) == 9) {
+            NbtCompound compound = (NbtCompound) container.getNbtModifier().read(0);
+            handler.handlePacket(compound, event, false);
+            container.getNbtModifier().write(0, compound);
+        }
     }
 }

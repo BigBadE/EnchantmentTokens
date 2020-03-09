@@ -135,14 +135,16 @@ public class EnchantmentMenuFactory implements MenuFactory {
 
     private EnchantButton updateItem(EnchantmentBase base, ItemStack stack, EnchantmentPlayer player) {
         ItemStack item = EnchantmentMenuFactory.makeItem(base.getIcon(), ChatColor.GREEN + base.getName());
-        int level = addLore(stack, base, item, player.usingGems());
+        int level = addLoreAndGetLevel(stack, base, item, player.usingGems());
         if (level <= base.getMaxLevel()) {
             return new EnchantButton(item, enchantmentPlayer -> {
                 ItemStack itemStack = enchantmentPlayer.getCurrentGUI().getItem();
-                utils.addEnchantmentBase(itemStack, base, player.getPlayer());
+                long price = utils.addEnchantmentBase(itemStack, base, player);
+                if(price==0)
+                    return generateGUI(itemStack, player);
                 if (!(base instanceof VanillaEnchant))
                     swapLines(itemStack);
-                updatePriceStr(base, level, itemStack);
+                updatePriceStr(price, itemStack);
                 return generateGUI(itemStack, player);
             });
         } else {
@@ -163,11 +165,11 @@ public class EnchantmentMenuFactory implements MenuFactory {
         itemStack.setItemMeta(meta);
     }
 
-    private int addLore(ItemStack item, EnchantmentBase base, ItemStack target, boolean gems) {
+    private int addLoreAndGetLevel(ItemStack item, EnchantmentBase base, ItemStack target, boolean gems) {
         int level = EnchantUtils.getNextLevel(item, base);
         ItemMeta meta = target.getItemMeta();
         assert meta != null;
-        String priceStr = EnchantUtils.getPriceString(gems, level, base);
+        String priceStr = ChatColor.GRAY + EnchantUtils.getPriceString(gems, level, base);
         String levelStr = TranslatedMessage.translate("enchantment.level");
         if (level <= base.getMaxLevel())
             levelStr += level;
@@ -183,15 +185,15 @@ public class EnchantmentMenuFactory implements MenuFactory {
         return level;
     }
 
-    private void updatePriceStr(EnchantmentBase base, int level, ItemStack item) {
+    private void updatePriceStr(long price, ItemStack item) {
         assert item.getItemMeta() != null;
         List<String> lore = item.getItemMeta().getLore();
         assert lore != null;
-        String priceStr = lore.get(lore.size() - 1);
-        long price = Long.parseLong(priceStr.replaceAll(ChatColor.COLOR_CHAR + ".", "").replaceAll("[^\\d.]", ""));
-        long newPrice = price + base.getDefaultPrice(level);
-        priceStr = priceStr.replace("" + price, "" + newPrice);
-        lore.set(lore.size() - 1, priceStr);
+        String priceStr = lore.get(lore.size() - 1).replaceAll(ChatColor.COLOR_CHAR + ".", "");
+        long oldPrice = Long.parseLong(priceStr.replaceAll("[^\\d.]", ""));
+        long newPrice = price + oldPrice;
+        priceStr = priceStr.replace("" + oldPrice, "" + newPrice);
+        lore.set(lore.size() - 1, ChatColor.GRAY + priceStr);
         ItemMeta meta = item.getItemMeta();
         meta.setLore(lore);
         item.setItemMeta(meta);
@@ -243,7 +245,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
         int rows = 2 + (int) Math.ceil(buttons.size() / 7f);
         for(int i = 1; i < rows-1; i++) {
             for(int i2 = 0; i2 < Math.min(7, buttons.size()-(i-1)*7); i2++) {
-                inventory.addButton(buttons.get(i), i*9+i2+1);
+                inventory.addButton(buttons.get((i-1)*7+i2), i*9+i2+1);
             }
         }
         ItemStack newItem = makeItem(Material.REDSTONE_BLOCK, TranslatedMessage.translate("enchant.cancel"));

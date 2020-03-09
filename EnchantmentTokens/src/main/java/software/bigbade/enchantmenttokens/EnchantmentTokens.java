@@ -15,6 +15,7 @@ import software.bigbade.enchantmenttokens.gui.MenuFactory;
 import software.bigbade.enchantmenttokens.listeners.SignPacketHandler;
 import software.bigbade.enchantmenttokens.localization.LocaleManager;
 import software.bigbade.enchantmenttokens.skript.type.SkriptManager;
+import software.bigbade.enchantmenttokens.utils.BrigadierManager;
 import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.MetricManager;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
@@ -90,7 +91,15 @@ public class EnchantmentTokens extends JavaPlugin {
 
     private void setupProtocolManager() {
         ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
-        signHandler = new SignPacketHandler(protocolManager, this, new ConfigurationType<>("gems").getValue("type", getConfig().getConfigurationSection("currency")).equalsIgnoreCase("vault"));
+        signHandler = new SignPacketHandler(protocolManager, this, new ConfigurationType<>("gems").getValue("type", ConfigurationManager.getSectionOrCreate(getConfig(), "currency")).equalsIgnoreCase("vault"));
+
+        if(version >= 13)
+            injectBrigadier();
+    }
+
+    private void injectBrigadier() {
+        BrigadierManager brigadierManager = new BrigadierManager();
+        brigadierManager.register();
     }
 
     private void setupSkript() {
@@ -103,7 +112,7 @@ public class EnchantmentTokens extends JavaPlugin {
     private void setupCurrency() {
         ConfigurationSection currency = ConfigurationManager.getSectionOrCreate(getConfig(), "currency");
 
-        CurrencyFactoryHandler handler = new CurrencyFactoryHandler(this, currency, version);
+        CurrencyFactoryHandler handler = new CurrencyFactoryHandler(getDataFolder().getAbsolutePath(), scheduler, currency, version);
         currencyFactory = handler.load();
 
         playerHandler = new EnchantmentPlayerHandler(currencyFactory);
@@ -188,9 +197,5 @@ public class EnchantmentTokens extends JavaPlugin {
 
     public SchedulerHandler getScheduler() {
         return scheduler;
-    }
-
-    public EnchantmentLoader getLoader() {
-        return loader;
     }
 }

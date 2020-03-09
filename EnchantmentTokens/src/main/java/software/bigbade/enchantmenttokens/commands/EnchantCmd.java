@@ -1,5 +1,6 @@
 package software.bigbade.enchantmenttokens.commands;
 
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,55 +16,58 @@ import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class EnchantCmd implements CommandExecutor {
     private EnchantmentHandler handler;
-    private EnchantUtils utils;
 
-    public EnchantCmd(EnchantmentHandler handler, EnchantUtils utils) {
+    public EnchantCmd(EnchantmentHandler handler) {
         this.handler = handler;
-        this.utils = utils;
     }
 
     @Override
     public boolean onCommand(CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(!sender.hasPermission("enchanttoken.admin") && !sender.isOp()) {
+        if (!sender.hasPermission("enchanttoken.admin") && !sender.isOp()) {
             sender.sendMessage(TranslatedMessage.translate("command.permission"));
             return true;
         }
-        if (args.length >= 1 && sender instanceof Player) {
-            StringBuilder nameBuilder = new StringBuilder(args[0]);
-            for (int i = 1; i < args.length - 1; i++) {
-                nameBuilder.append(args[i]);
-            }
-            String name = nameBuilder.toString();
-            ItemStack item = ((Player) sender).getInventory().getItemInMainHand();
-            utils.addEnchantment(item, name, (Player) sender);
-            for (EnchantmentBase enchantment : handler.getAllEnchants()) {
-                if(enchantment instanceof VanillaEnchant)
-                    continue;
-                if (enchantment.getKey().getKey().equals(name.toLowerCase().replace("_", ""))) {
-                    addEnchant((Player) sender, item, enchantment, Integer.parseInt(args[args.length - 1]));
-                    return true;
-                }
-            }
-            sender.sendMessage(TranslatedMessage.translate("command.enchant.notfound"));
-        } else
+        if (args.length != 2 || !(sender instanceof Player)) {
             sender.sendMessage(TranslatedMessage.translate("command.enchant.usage"));
+            return true;
+        }
+
+        ItemStack item = ((Player) sender).getInventory().getItemInMainHand();
+        int level;
+
+        try {
+            level = Integer.parseInt(args[1]);
+        } catch (NumberFormatException e) {
+            sender.sendMessage(TranslatedMessage.translate("command.enchant.usage"));
+            return true;
+        }
+
+        for (EnchantmentBase enchantment : handler.getAllEnchants()) {
+            if (enchantment instanceof VanillaEnchant)
+                continue;
+            if (enchantment.getKey().toString().equals(args[0])) {
+                addEnchant((Player) sender, item, enchantment, level);
+                return true;
+            }
+        }
+        sender.sendMessage(TranslatedMessage.translate("command.enchant.notfound"));
         return true;
     }
 
     private void addEnchant(Player player, ItemStack item, EnchantmentBase base, int level) {
-        if(base instanceof VanillaEnchant) {
-            item.addEnchantment(((VanillaEnchant) base).getEnchantment(), level);
-        } else {
-            item.addEnchantment(base, level);
-            ItemMeta meta = item.getItemMeta();
-            assert meta != null;
-            if (meta.getLore() == null)
-                meta.setLore(new ArrayList<>());
-            meta.getLore().add(base.getName() + ": " + EnchantmentGUIListener.getRomanNumeral(level));
-        }
+        item.addEnchantment(base, level);
+        ItemMeta meta = item.getItemMeta();
+        assert meta != null;
+        List<String> lore = meta.getLore();
+        if (lore == null)
+            lore = new ArrayList<>();
+        lore.add(ChatColor.GRAY + base.getName() + ": " + EnchantmentGUIListener.getRomanNumeral(level));
+        meta.setLore(lore);
+        item.setItemMeta(meta);
         player.sendMessage(TranslatedMessage.translate("command.add", base.getName()));
     }
 }

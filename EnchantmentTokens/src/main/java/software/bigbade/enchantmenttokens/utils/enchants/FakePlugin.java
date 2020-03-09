@@ -21,6 +21,8 @@ public class FakePlugin implements Plugin {
 
     private static final String ERROR = "This should not be used for real plugins";
 
+    public static final FakePlugin ENCHANTMENTPLUGIN = new FakePlugin("enchantmenttokens");
+
     public FakePlugin(String namespace) {
         this.name = namespace;
     }

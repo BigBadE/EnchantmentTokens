@@ -1,12 +1,15 @@
 package software.bigbade.enchantmenttokens.utils.currency;
 
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.utils.EnchantLogger;
+import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationType;
+import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentLoader;
+import software.bigbade.enchantmenttokens.utils.enchants.FakePlugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,12 +21,14 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 
 public class CurrencyFactoryHandler {
-    private EnchantmentTokens main;
     private ConfigurationSection section;
     private int version;
+    private String filePath;
+    private SchedulerHandler scheduler;
 
-    public CurrencyFactoryHandler(EnchantmentTokens main, ConfigurationSection section, int version) {
-        this.main = main;
+    public CurrencyFactoryHandler(String filePath, SchedulerHandler scheduler, ConfigurationSection section, int version) {
+        this.filePath = filePath;
+        this.scheduler = scheduler;
         this.section = section;
         this.version = version;
     }
@@ -34,9 +39,9 @@ public class CurrencyFactoryHandler {
         if ("gems".equalsIgnoreCase(type)) {
             return loadGemFactory();
         } else if ("vault".equalsIgnoreCase(type)) {
-            return new VaultCurrencyFactory(main.getServer());
+            return new VaultCurrencyFactory(Bukkit.getServer());
         } else {
-            CurrencyFactory factory = loadExternalJar(main, type);
+            CurrencyFactory factory = loadExternalJar(type);
             if (factory != null && factory.loaded())
                 return factory;
             else {
@@ -54,35 +59,35 @@ public class CurrencyFactoryHandler {
         if (version >= 14) {
             boolean persistent = new ConfigurationType<>(true).getValue("usePersistentData", section);
             if (persistent)
-                return new LatestCurrencyFactory(new NamespacedKey(main, "gems"));
+                return new LatestCurrencyFactory(new NamespacedKey(FakePlugin.ENCHANTMENTPLUGIN, "gems"));
             else
-                return new GemCurrencyFactory(main);
+                return new GemCurrencyFactory(scheduler, filePath);
         } else
-            return new GemCurrencyFactory(main);
+            return new GemCurrencyFactory(scheduler, filePath);
     }
 
-    private CurrencyFactory loadExternalJar(EnchantmentTokens main, String type) {
-        File found = ConfigurationManager.getFolder(main.getDataFolder().getAbsolutePath() + "\\storage");
+    private CurrencyFactory loadExternalJar(String type) {
+        File found = ConfigurationManager.getFolder(filePath + "\\storage");
         if (found.listFiles() == null)
             return null;
         for (File subfile : Objects.requireNonNull(found.listFiles())) {
             if (!subfile.getName().endsWith(".jar"))
                 continue;
-            CurrencyFactory factory = loadFactory(main, type, subfile);
+            CurrencyFactory factory = loadFactory(type, subfile);
             if (factory != null)
                 return factory;
         }
         return null;
     }
 
-    private CurrencyFactory loadFactory(EnchantmentTokens main, String type, File file) {
+    private CurrencyFactory loadFactory(String type, File file) {
         try (JarFile jarFile = new JarFile(file.getAbsolutePath()); InputStream stream = jarFile.getInputStream(jarFile.getEntry("config.yml"))) {
             FileConfiguration configuration = ConfigurationManager.loadConfigurationStream(stream);
 
             if (!new ConfigurationType<>("error").getValue("name", configuration).equals(type))
                 return null;
 
-            List<Class<?>> classes = main.getLoader().loadClasses(file);
+            List<Class<?>> classes = EnchantmentLoader.loadClasses(file);
             return getFactory(classes);
         } catch (IOException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
             EnchantLogger.log("Could not load currency handler (is it valid?)", e);

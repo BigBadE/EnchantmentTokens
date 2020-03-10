@@ -10,7 +10,7 @@ import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
 import java.util.Collections;
 import java.util.List;
 
-public class GenericTabCompleter implements TabCompleter {
+public class GenericTabCompleter implements TabCompleter, IEnchantTabCompleter {
     private int args;
     private String permission;
 
@@ -27,4 +27,6 @@ public class GenericTabCompleter implements TabCompleter {
             return Collections.singletonList(TranslatedMessage.translate("command.arguments.toomany"));
         return Collections.emptyList();
     }
+
+    public String getPermission() { return permission; }
 }

@@ -3,6 +3,7 @@ package software.bigbade.enchantmenttokens.commands;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabCompleter;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
+import software.bigbade.enchantmenttokens.utils.BrigadierManager;
 
 import java.util.Objects;
 
@@ -24,7 +25,9 @@ public class CommandManager {
 
     private static void registerCommand(EnchantmentTokens main, String name, TabCompleter tabCompleter, CommandExecutor executor) {
         Objects.requireNonNull(main.getCommand(name)).setExecutor(executor);
-        if (main.getVersion() >= 13)
+        if (main.getVersion() >= 13) {
             Objects.requireNonNull(main.getCommand(name)).setTabCompleter(tabCompleter);
+            BrigadierManager.register(main, Objects.requireNonNull(main.getCommand(name)), ((IEnchantTabCompleter) tabCompleter).getPermission());
+        }
     }
 }

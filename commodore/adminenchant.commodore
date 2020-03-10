@@ -1,0 +1,5 @@
+adminenchant {
+    name brigadier:string single_word {
+        level brigadier:integer;
+    }
+}

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class GemsTabCompleter implements TabCompleter {
+public class GemsTabCompleter implements TabCompleter, IEnchantTabCompleter {
     boolean admin;
 
     public GemsTabCompleter(boolean admin) {
@@ -39,5 +39,10 @@ public class GemsTabCompleter implements TabCompleter {
                 return Collections.singletonList(TranslatedMessage.translate("command.add.notnumber"));
             }
         }
+    }
+
+    @Override
+    public String getPermission() {
+        return admin ? "enchanttoken.admin" : null;
     }
 }

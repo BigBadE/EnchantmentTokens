@@ -1,6 +1,5 @@
 package software.bigbade.enchantmenttokens.commands;
 
-import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -15,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class EnchantTabCompleter implements TabCompleter {
+public class EnchantTabCompleter implements TabCompleter, IEnchantTabCompleter {
     private EnchantmentHandler handler;
 
     public EnchantTabCompleter(EnchantmentHandler handler) {
@@ -47,5 +46,10 @@ public class EnchantTabCompleter implements TabCompleter {
         } else {
             return Collections.singletonList(TranslatedMessage.translate("command.arguments.toomany"));
         }
+    }
+
+    @Override
+    public String getPermission() {
+        return "enchanttoken.admin";
     }
 }

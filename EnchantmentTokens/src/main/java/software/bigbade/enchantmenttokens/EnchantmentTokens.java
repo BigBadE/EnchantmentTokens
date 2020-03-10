@@ -92,14 +92,6 @@ public class EnchantmentTokens extends JavaPlugin {
     private void setupProtocolManager() {
         ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
         signHandler = new SignPacketHandler(protocolManager, this, new ConfigurationType<>("gems").getValue("type", ConfigurationManager.getSectionOrCreate(getConfig(), "currency")).equalsIgnoreCase("vault"));
-
-        if(version >= 13)
-            injectBrigadier();
-    }
-
-    private void injectBrigadier() {
-        BrigadierManager brigadierManager = new BrigadierManager();
-        brigadierManager.register();
     }
 
     private void setupSkript() {

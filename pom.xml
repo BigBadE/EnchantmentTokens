@@ -92,6 +92,49 @@
                     </dependency>
                 </dependencies>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>EnchantmentTokens-${project.version}</finalName>
+                            <relocations>
+                                <relocation>
+                                    <pattern>org.bstats</pattern>
+                                    <shadedPattern>software.bigbade.enchantmenttokens</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>me.lucko.commodore</pattern>
+                                    <shadedPattern>software.bigbade.enchantmenttokens</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>EnchantmentTokensLocalization</pattern>
+                                    <shadedPattern>Localization</shadedPattern>
+                                </relocation>
+                            </relocations>
+                            <minimizeJar>true</minimizeJar>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/maven/software.bigbade.enchantmenttokens/EnchantmentTokens/*</exclude>
+                                        <exclude>META-INF/maven/com.codingforcookies/ArmorEquipEvent/*</exclude>
+                                        <exclude>META-INF/maven/org.bstats/bstats-bukkit/*</exclude>
+                                        <exclude>META-INF/maven/me.lucko/commodore/*</exclude>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>

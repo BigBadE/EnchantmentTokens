@@ -111,10 +111,6 @@ public class EnchantmentHandler {
         return enchantments;
     }
 
-    public List<VanillaEnchant> getVanillaEnchants() {
-        return vanillaEnchants;
-    }
-
     public List<SkriptEnchantment> getSkriptEnchantments() {
         return skriptEnchantments;
     }

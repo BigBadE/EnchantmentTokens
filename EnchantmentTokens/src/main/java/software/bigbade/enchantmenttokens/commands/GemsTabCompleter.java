@@ -32,12 +32,16 @@ public class GemsTabCompleter implements TabCompleter, IEnchantTabCompleter {
                 players.add(TranslatedMessage.translate("command.arguments.noplayer", args[0]));
             return players;
         } else {
-            try {
-                Long.parseLong(args[1]);
-                return Collections.emptyList();
-            } catch (NumberFormatException e) {
-                return Collections.singletonList(TranslatedMessage.translate("command.add.notnumber"));
-            }
+            return checkLong(args[1]);
+        }
+    }
+
+    private List<String> checkLong(String number) {
+        try {
+            Long.parseLong(number);
+            return Collections.emptyList();
+        } catch (NumberFormatException e) {
+            return Collections.singletonList(TranslatedMessage.translate("command.add.notnumber"));
         }
     }
 

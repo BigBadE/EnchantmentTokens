@@ -26,26 +26,37 @@ public class EnchantTabCompleter implements TabCompleter, IEnchantTabCompleter {
         if (!sender.hasPermission("enchanttoken.admin") && !sender.isOp())
             return Collections.singletonList(TranslatedMessage.translate("command.permission"));
         if (args.length == 1) {
-            List<String> suggestions = new ArrayList<>();
-            for (EnchantmentBase base : handler.getAllEnchants()) {
-                if (base instanceof VanillaEnchant)
-                    continue;
-                NamespacedKey trying = base.getKey();
-                if (trying.toString().startsWith(args[0]))
-                    suggestions.add(trying.toString());
-            }
-            return suggestions;
+            return getKeys(args[0]);
         } else if (args.length == 2) {
-            try {
-                if (!args[1].isEmpty())
-                    Integer.parseInt(args[1]);
-                return Collections.emptyList();
-            } catch (NumberFormatException e) {
-                return Collections.singletonList(TranslatedMessage.translate("command.add.notnumber", args[1]));
-            }
+            return checkInt(args[1]);
         } else {
             return Collections.singletonList(TranslatedMessage.translate("command.arguments.toomany"));
         }
+    }
+
+    private List<String> checkInt(String number) {
+        try {
+            if (!number.isEmpty())
+                Integer.parseInt(number);
+            return Collections.emptyList();
+        } catch (NumberFormatException e) {
+            return Collections.singletonList(TranslatedMessage.translate("command.add.notnumber", number));
+        }
+    }
+
+    public List<String> getKeys(String start) {
+        List<String> suggestions = new ArrayList<>();
+        for (EnchantmentBase base : handler.getAllEnchants()) {
+            if (base instanceof VanillaEnchant)
+                continue;
+            NamespacedKey trying = base.getKey();
+            if (trying.toString().startsWith(start)) {
+                suggestions.add(trying.toString());
+                if(suggestions.size() > 5)
+                    break;
+            }
+        }
+        return suggestions;
     }
 
     @Override

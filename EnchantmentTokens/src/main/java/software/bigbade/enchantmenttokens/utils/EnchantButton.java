@@ -1,5 +1,6 @@
 package software.bigbade.enchantmenttokens.utils;
 
+import com.mojang.brigadier.CommandDispatcher;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

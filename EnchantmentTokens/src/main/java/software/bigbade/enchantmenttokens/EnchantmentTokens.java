@@ -15,7 +15,6 @@ import software.bigbade.enchantmenttokens.gui.MenuFactory;
 import software.bigbade.enchantmenttokens.listeners.SignPacketHandler;
 import software.bigbade.enchantmenttokens.localization.LocaleManager;
 import software.bigbade.enchantmenttokens.skript.type.SkriptManager;
-import software.bigbade.enchantmenttokens.utils.BrigadierManager;
 import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.MetricManager;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;

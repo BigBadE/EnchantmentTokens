@@ -12,7 +12,6 @@ import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.VanillaEnchant;
 import software.bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
 import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
-import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 
 import java.util.ArrayList;

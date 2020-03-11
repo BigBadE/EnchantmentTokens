@@ -43,7 +43,7 @@ public class SignPacketHandler {
         return signs;
     }
 
-    void handlePacket(NbtCompound compound, PacketEvent event, boolean map) {
+    void handlePacket(NbtCompound compound, PacketEvent event) {
         List<String> text = new ArrayList<>();
         for (int i = 1; i < 5; i++) {
             try {
@@ -56,23 +56,23 @@ public class SignPacketHandler {
             }
         }
         if (!text.get(0).equals("[Enchantment]")) return;
-        main.getEnchantmentHandler().getAllEnchants().forEach(base -> {
-            if (base.getName().equalsIgnoreCase(text.get(1))) {
-                if (map)
-                    signs.add(new Location(event.getPlayer().getWorld(), compound.getInteger("x"), compound.getInteger("y"), compound.getInteger("z")));
-                updateSign(base, compound, event);
-            }
-        });
+        main.getEnchantmentHandler().getAllEnchants().stream()
+                .filter(base -> base.getName().equals(text.get(1)))
+                .forEach(base -> {
+                    if (event.getPacketType() == PacketType.Play.Server.MAP_CHUNK)
+                        signs.add(new Location(event.getPlayer().getWorld(), compound.getInteger("x"), compound.getInteger("y"), compound.getInteger("z")));
+                    compound.put("Text3", "{\"extra\":[{\"text\":\"Price: " + getPrice(base, event) + "\"}],\"text\":\"\"}");
+                });
     }
 
-    private void updateSign(EnchantmentBase base, NbtCompound compound, PacketEvent event) {
+    private String getPrice(EnchantmentBase base, PacketEvent event) {
         String price = TranslatedMessage.translate("enchantment.notapplicable");
         ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
         if (base.canEnchantItem(itemStack)) {
             int level = EnchantUtils.getNextLevel(itemStack, base);
             price = EnchantUtils.getPriceString(gems, level, base);
         }
-        compound.put("Text3", "{\"extra\":[{\"text\":\"Price: " + price + "\"}],\"text\":\"\"}");
+        return price;
     }
 }
 
@@ -90,7 +90,7 @@ class SignPacketLoadAdapter extends PacketAdapter {
         List<NbtBase<?>> compounds = container.getListNbtModifier().read(0);
         for (int i = 0; i < compounds.size(); i++) {
             NbtCompound compound = (NbtCompound) compounds.get(i);
-            handler.handlePacket(compound, event, true);
+            handler.handlePacket(compound, event);
             compounds.set(i, compound);
         }
         container.getListNbtModifier().write(0, compounds);
@@ -110,7 +110,7 @@ class SignPacketUpdateAdapter extends PacketAdapter {
         PacketContainer container = event.getPacket();
         if (container.getIntegers().getValues().get(0) == 9) {
             NbtCompound compound = (NbtCompound) container.getNbtModifier().read(0);
-            handler.handlePacket(compound, event, false);
+            handler.handlePacket(compound, event);
             container.getNbtModifier().write(0, compound);
         }
     }

@@ -121,36 +121,44 @@ public class EnchantmentMenuFactory implements MenuFactory {
     }
 
     private void addItems(SubInventory subInventory, EnchantmentPlayer player) {
-        int next = subInventory.getInventory().firstEmpty();
         ItemStack item = subInventory.getItem();
 
         for (EnchantmentBase enchantment : enchantmentHandler.getAllEnchants()) {
             if (!enchantment.canEnchantItem(item))
                 continue;
-            EnchantButton button = updateItem(enchantment, item, player);
-            subInventory.addButton(button, next);
-            next = subInventory.getInventory().firstEmpty();
+            int level = EnchantUtils.getNextLevel(item, enchantment);
+            EnchantButton button = updateItem(enchantment, level);
+
+            assert button.getItem().getItemMeta() != null && button.getItem().getItemMeta().getLore() != null;
+
+            if(level <= enchantment.getMaxLevel())
+                button.getItem().getItemMeta().getLore().add(ChatColor.GRAY + EnchantUtils.getPriceString(player.usingGems(), level, enchantment));
+            subInventory.addButton(button, subInventory.getInventory().firstEmpty());
         }
     }
 
-    private EnchantButton updateItem(EnchantmentBase base, ItemStack stack, EnchantmentPlayer player) {
+    private EnchantButton updateItem(EnchantmentBase base, int level) {
         ItemStack item = EnchantmentMenuFactory.makeItem(base.getIcon(), ChatColor.GREEN + base.getName());
-        int level = addLoreAndGetLevel(stack, base, item, player.usingGems());
+        addLore(level, base, item);
+        assert item.getItemMeta() != null && item.getItemMeta().getLore() != null;
+
         if (level <= base.getMaxLevel()) {
-            return new EnchantButton(item, enchantmentPlayer -> {
-                ItemStack itemStack = enchantmentPlayer.getCurrentGUI().getItem();
-                long price = utils.addEnchantmentBase(itemStack, base, player);
-                if(price==0)
-                    return generateGUI(itemStack, player);
-                if (!(base instanceof VanillaEnchant))
-                    swapLines(itemStack);
-                updatePriceStr(price, itemStack);
-                return generateGUI(itemStack, player);
-            });
+            return new EnchantButton(item, enchantmentPlayer -> generateCallback(enchantmentPlayer, base));
         } else {
             item.setAmount(64);
             return new EnchantButton(item, enchantmentPlayer -> generateGUI(enchantmentPlayer.getCurrentGUI().getItem(), enchantmentPlayer));
         }
+    }
+
+    private EnchantmentGUI generateCallback(EnchantmentPlayer player, EnchantmentBase base) {
+        ItemStack itemStack = player.getCurrentGUI().getItem();
+        long price = utils.addEnchantmentBase(itemStack, base, player);
+        if(price==0)
+            return generateGUI(itemStack, player);
+        if (!(base instanceof VanillaEnchant))
+            swapLines(itemStack);
+        updatePriceStr(price, itemStack);
+        return generateGUI(itemStack, player);
     }
 
     private void swapLines(ItemStack itemStack) {
@@ -165,24 +173,19 @@ public class EnchantmentMenuFactory implements MenuFactory {
         itemStack.setItemMeta(meta);
     }
 
-    private int addLoreAndGetLevel(ItemStack item, EnchantmentBase base, ItemStack target, boolean gems) {
-        int level = EnchantUtils.getNextLevel(item, base);
+    private void addLore(int level, EnchantmentBase base, ItemStack target) {
         ItemMeta meta = target.getItemMeta();
         assert meta != null;
-        String priceStr = ChatColor.GRAY + EnchantUtils.getPriceString(gems, level, base);
-        String levelStr = TranslatedMessage.translate("enchantment.level");
+        String levelString = TranslatedMessage.translate("enchantment.level");
         if (level <= base.getMaxLevel())
-            levelStr += level;
+            levelString += level;
         else
-            levelStr += TranslatedMessage.translate("enchantment.maxed");
+            levelString += TranslatedMessage.translate("enchantment.maxed");
 
-        if (level > base.maxLevel)
-            meta.setLore(Collections.singletonList(levelStr));
-        else
-            meta.setLore(Arrays.asList(levelStr, priceStr));
-
+        List<String> lore = new ArrayList<>();
+        lore.add(levelString);
+        meta.setLore(lore);
         target.setItemMeta(meta);
-        return level;
     }
 
     private void updatePriceStr(long price, ItemStack item) {

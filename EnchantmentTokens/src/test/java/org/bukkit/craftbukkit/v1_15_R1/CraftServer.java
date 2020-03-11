@@ -36,19 +36,19 @@ public class CraftServer implements Server {
     @NotNull
     @Override
     public String getName() {
-        return null;
+        return "Test";
     }
 
     @NotNull
     @Override
     public String getVersion() {
-        return null;
+        return "1.15.2";
     }
 
     @NotNull
     @Override
     public String getBukkitVersion() {
-        return null;
+        return "None";
     }
 
     @NotNull
@@ -275,7 +275,7 @@ public class CraftServer implements Server {
     @NotNull
     @Override
     public Logger getLogger() {
-        return null;
+        return Logger.getLogger("TestLogger");
     }
 
     @Nullable

@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import software.bigbade.enchantmenttokens.api.ListenerType;
+import software.bigbade.enchantmenttokens.events.CustomEnchantEvent;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
@@ -25,9 +26,9 @@ public class PotionListener extends BasicEnchantListener implements Listener {
         Player player = (Player) event.getEntity();
 
         if (event.getAction().equals(EntityPotionEffectEvent.Action.ADDED)) {
-            callForAllItems(player, potionAdd, new EnchantmentEvent(ListenerType.POTION_APPLY, null).setUser(player));
+            callForAllItems(player, potionAdd, new CustomEnchantEvent(ListenerType.POTION_APPLY, null).setUser(player));
         } else if (event.getAction().equals(EntityPotionEffectEvent.Action.REMOVED) || event.getAction().equals(EntityPotionEffectEvent.Action.CLEARED)) {
-            callForAllItems(player, potionRemove, new EnchantmentEvent(ListenerType.POTION_REMOVE, null).setUser(player));
+            callForAllItems(player, potionRemove, new CustomEnchantEvent(ListenerType.POTION_REMOVE, null).setUser(player));
         }
     }
 }

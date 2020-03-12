@@ -6,7 +6,7 @@ import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class VanillaEnchant extends EnchantmentBase {
+public class VanillaEnchant extends CustomEnchantment {
     private Enchantment enchantment;
     private EnchantmentTarget target;
 

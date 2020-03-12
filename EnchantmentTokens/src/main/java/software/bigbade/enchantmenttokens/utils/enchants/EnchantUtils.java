@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import software.bigbade.enchantmenttokens.api.CustomEnchantment;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import software.bigbade.enchantmenttokens.api.VanillaEnchant;
@@ -38,7 +39,7 @@ public class EnchantUtils {
      * @param player who to take the gems from
      */
     public void addEnchantment(ItemStack itemStack, String name, Player player) {
-        for (EnchantmentBase base : handler.getAllEnchants()) {
+        for (CustomEnchantment base : handler.getAllEnchants()) {
             if (base.getName().equals(name) && base.canEnchantItem(itemStack)) {
                 EnchantmentPlayer enchantmentPlayer = playerHandler.getPlayer(player);
                 enchantmentPlayer.addGems(-addEnchantmentBase(itemStack, base, enchantmentPlayer));
@@ -55,7 +56,7 @@ public class EnchantUtils {
      * @param enchantmentPlayer player that holds the item
      * @return price of the enchant
      */
-    public long addEnchantmentBase(ItemStack item, EnchantmentBase base, EnchantmentPlayer enchantmentPlayer) {
+    public long addEnchantmentBase(ItemStack item, CustomEnchantment base, EnchantmentPlayer enchantmentPlayer) {
         int level = getNextLevel(item, base);
         if (level > base.getMaxLevel()) {
             enchantmentPlayer.getPlayer().sendMessage(TranslatedMessage.translate("enchantment.max.message"));
@@ -93,7 +94,7 @@ public class EnchantUtils {
         meta.setLore(lore);
     }
 
-    public static int getNextLevel(ItemStack item, EnchantmentBase enchantment) {
+    public static int getNextLevel(ItemStack item, CustomEnchantment enchantment) {
         if(enchantment instanceof VanillaEnchant)
             return item.getEnchantmentLevel(((VanillaEnchant) enchantment).getEnchantment())+1;
         if(!item.hasItemMeta() || !Objects.requireNonNull(item.getItemMeta()).hasEnchants()) return enchantment.getStartLevel();
@@ -101,7 +102,7 @@ public class EnchantUtils {
         return level==0 ? enchantment.getStartLevel() : level+1;
     }
 
-    public static String getPriceString(boolean gems, int level, EnchantmentBase base) {
+    public static String getPriceString(boolean gems, int level, CustomEnchantment base) {
         if (level > base.maxLevel)
             return TranslatedMessage.translate("enchantment.max");
         else
@@ -115,7 +116,7 @@ public class EnchantUtils {
             return TranslatedMessage.translate("dollar.symbol", "" + price);
     }
 
-    private void updateSigns(int level, EnchantmentBase base, Set<Location> signs, EnchantmentPlayer player) {
+    private void updateSigns(int level, CustomEnchantment base, Set<Location> signs, EnchantmentPlayer player) {
         for (Location location : signs)
             if (level >= base.getMaxLevel())
                 player.getPlayer().sendSignChange(location, new String[]{"[" + TranslatedMessage.translate("enchantment") + "]", base.getName(), TranslatedMessage.translate("enchantment.price.maxed"), ""});

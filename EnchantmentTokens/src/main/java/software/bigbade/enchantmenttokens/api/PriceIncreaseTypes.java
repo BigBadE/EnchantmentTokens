@@ -25,9 +25,9 @@ public enum PriceIncreaseTypes {
     });
 
     private BiFunction<Integer, ConfigurationSection, Integer> function;
-    private Consumer<EnchantmentBase> setup;
+    private Consumer<CustomEnchantment> setup;
 
-    PriceIncreaseTypes(BiFunction<Integer, ConfigurationSection, Integer> function, Consumer<EnchantmentBase> setup) {
+    PriceIncreaseTypes(BiFunction<Integer, ConfigurationSection, Integer> function, Consumer<CustomEnchantment> setup) {
         this.function = function;
         this.setup = setup;
     }
@@ -36,7 +36,7 @@ public enum PriceIncreaseTypes {
         return function.apply(level, section);
     }
 
-    public void loadConfig(EnchantmentBase base) {
+    public void loadConfig(CustomEnchantment base) {
         setup.accept(base);
     }
 }

@@ -8,11 +8,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
-import software.bigbade.enchantmenttokens.api.EnchantListener;
-import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
-import software.bigbade.enchantmenttokens.api.EnchantmentBase;
-import software.bigbade.enchantmenttokens.api.ListenerType;
-import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
+import software.bigbade.enchantmenttokens.api.*;
+import software.bigbade.enchantmenttokens.events.CustomEnchantEvent;
 import software.bigbade.enchantmenttokens.listeners.*;
 import software.bigbade.enchantmenttokens.listeners.enchants.*;
 import software.bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
@@ -79,7 +76,7 @@ public class ListenerHandler {
 
     public void onEnchant(ItemStack item, EnchantmentBase base, Player player) {
         ListenerManager manager = enchantListeners.get(ListenerType.ENCHANT);
-        EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.ENCHANT, item).setUser(player);
+        CustomEnchantEvent enchantmentEvent = new CustomEnchantEvent(ListenerType.ENCHANT, item).setUser(player);
         manager.callEvent(enchantmentEvent, base);
     }
 
@@ -98,16 +95,16 @@ public class ListenerHandler {
         }
     }
 
-    public void loadEnchantments(Map<String, Set<Class<EnchantmentBase>>> enchants) {
-        ConcurrentLinkedQueue<EnchantmentBase> enchantments = new ConcurrentLinkedQueue<>();
+    public void loadEnchantments(Map<String, Set<Class<CustomEnchantment>>> enchants) {
+        ConcurrentLinkedQueue<CustomEnchantment> enchantments = new ConcurrentLinkedQueue<>();
 
         Map<String, FileConfiguration> configs = new HashMap<>();
 
         enchants.keySet().forEach(key -> ConfigurationManager.loadConfigurationFile(new File(main.getDataFolder().getAbsolutePath() + FOLDER + key + ".yml")));
 
         enchants.forEach((addon, classes) -> {
-            for (Class<EnchantmentBase> clazz : classes) {
-                EnchantmentBase enchant = loadConfiguration(clazz, configs, addon);
+            for (Class<CustomEnchantment> clazz : classes) {
+                CustomEnchantment enchant = loadConfiguration(clazz, configs, addon);
 
                 if (enchant == null) continue;
                 enchant.loadConfig();
@@ -133,28 +130,28 @@ public class ListenerHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private void checkMethods(EnchantmentBase enchant, Class<?> clazz) {
+    private void checkMethods(CustomEnchantment enchant, Class<?> clazz) {
         for (Method method : clazz.getDeclaredMethods()) {
             if (!method.isAnnotationPresent(EnchantListener.class) || method.getReturnType() != EnchantmentListener.class)
                 continue;
             ListenerType type = method.getAnnotation(EnchantListener.class).type();
             if (enchant != null && canEnchant(enchant, type)) {
-                enchantListeners.get(type).add((EnchantmentListener<EnchantmentEvent>) ReflectionManager.invoke(method, enchant), enchant);
+                enchantListeners.get(type).add((EnchantmentListener<CustomEnchantEvent>) ReflectionManager.invoke(method, enchant), enchant);
             }
         }
     }
 
-    private boolean canEnchant(EnchantmentBase enchant, ListenerType type) {
+    private boolean canEnchant(CustomEnchantment enchant, ListenerType type) {
         return type.canTarget(enchant.getTargets());
     }
 
-    private EnchantmentBase loadConfiguration(Class<EnchantmentBase> clazz, Map<String, FileConfiguration> configs, String addon) {
+    private CustomEnchantment loadConfiguration(Class<CustomEnchantment> clazz, Map<String, FileConfiguration> configs, String addon) {
         FileConfiguration configuration = configs.computeIfAbsent(addon, key -> null);
 
         assert configuration != null;
         ConfigurationSection section = ConfigurationManager.getSectionOrCreate(configuration, "enchants");
 
-        final EnchantmentBase enchant = (EnchantmentBase) ReflectionManager.instantiate(clazz);
+        final CustomEnchantment enchant = (CustomEnchantment) ReflectionManager.instantiate(clazz);
 
         ConfigurationSection enchantSection = ConfigurationManager.getSectionOrCreate(section, clazz.getSimpleName().toLowerCase());
 

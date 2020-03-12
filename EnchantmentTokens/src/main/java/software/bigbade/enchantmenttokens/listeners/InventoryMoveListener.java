@@ -9,7 +9,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import software.bigbade.enchantmenttokens.api.ListenerType;
-import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
+import software.bigbade.enchantmenttokens.events.CustomEnchantEvent;
 import software.bigbade.enchantmenttokens.listeners.enchants.BasicEnchantListener;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
@@ -36,12 +36,12 @@ public class InventoryMoveListener extends BasicEnchantListener implements Liste
         if (event.getInventory().getHolder() != null && event.getInventory().getHolder().equals(event.getWhoClicked()) && event.getSlot() == event.getWhoClicked().getInventory().getHeldItemSlot()) {
             updateSigns((Player) event.getWhoClicked());
             if (event.getCurrentItem() != null) {
-                EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.HELD, event.getCurrentItem()).setUser(event.getWhoClicked());
+                CustomEnchantEvent enchantmentEvent = new CustomEnchantEvent(ListenerType.HELD, event.getCurrentItem()).setUser(event.getWhoClicked());
                 callListeners(enchantmentEvent, swapOn);
             }
 
             if (event.getCursor() != null) {
-                EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.SWAPPED, event.getCursor()).setUser(event.getWhoClicked());
+                CustomEnchantEvent enchantmentEvent = new CustomEnchantEvent(ListenerType.SWAPPED, event.getCursor()).setUser(event.getWhoClicked());
                 callListeners(enchantmentEvent, swapOff);
             }
         }
@@ -65,13 +65,13 @@ public class InventoryMoveListener extends BasicEnchantListener implements Liste
 
         ItemStack item = event.getPlayer().getInventory().getItem(event.getPreviousSlot());
         if (item != null) {
-            EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.SWAPPED, item).setUser(event.getPlayer());
+            CustomEnchantEvent enchantmentEvent = new CustomEnchantEvent(ListenerType.SWAPPED, item).setUser(event.getPlayer());
             callListeners(enchantmentEvent, swapOff);
         }
 
         item = event.getPlayer().getInventory().getItem(event.getNewSlot());
         if (item != null) {
-            EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.HELD, item).setUser(event.getPlayer());
+            CustomEnchantEvent enchantmentEvent = new CustomEnchantEvent(ListenerType.HELD, item).setUser(event.getPlayer());
             callListeners(enchantmentEvent, swapOn);
         }
     }

@@ -5,6 +5,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
+import software.bigbade.enchantmenttokens.api.CustomEnchantment;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.VanillaEnchant;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
@@ -19,10 +20,10 @@ import java.util.*;
 import java.util.logging.Level;
 
 public class EnchantmentHandler {
-    private List<EnchantmentBase> enchantments = new ArrayList<>();
+    private List<CustomEnchantment> enchantments = new ArrayList<>();
     private List<VanillaEnchant> vanillaEnchants = new ArrayList<>();
     private List<SkriptEnchantment> skriptEnchantments = new ArrayList<>();
-    private List<EnchantmentBase> allEnchants = new ArrayList<>();
+    private List<CustomEnchantment> allEnchants = new ArrayList<>();
 
     private FileConfiguration config;
     private FileConfiguration skriptConfiguration;
@@ -34,7 +35,7 @@ public class EnchantmentHandler {
         skriptConfiguration = ConfigurationManager.loadConfigurationFile(new File(skriptPath));
     }
 
-    public void registerEnchants(Collection<EnchantmentBase> enchantments) {
+    public void registerEnchants(Collection<CustomEnchantment> enchantments) {
         List<Enchantment> vanillaRegistering = new ArrayList<>();
         ConfigurationSection section = ConfigurationManager.getSectionOrCreate(config, "enchants");
 
@@ -107,7 +108,7 @@ public class EnchantmentHandler {
         allEnchants.add(enchantment);
     }
 
-    public List<EnchantmentBase> getEnchantments() {
+    public List<CustomEnchantment> getEnchantments() {
         return enchantments;
     }
 
@@ -115,7 +116,7 @@ public class EnchantmentHandler {
         return skriptEnchantments;
     }
 
-    public List<EnchantmentBase> getAllEnchants() {
+    public List<CustomEnchantment> getAllEnchants() {
         return allEnchants;
     }
 }

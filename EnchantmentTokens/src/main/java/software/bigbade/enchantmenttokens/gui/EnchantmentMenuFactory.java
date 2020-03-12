@@ -9,9 +9,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import software.bigbade.enchantmenttokens.api.CustomEnchantment;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import software.bigbade.enchantmenttokens.api.VanillaEnchant;
+import software.bigbade.enchantmenttokens.events.CustomEnchantEvent;
 import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
 import software.bigbade.enchantmenttokens.utils.EnchantButton;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
@@ -20,7 +22,6 @@ import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class EnchantmentMenuFactory implements MenuFactory {
@@ -123,23 +124,23 @@ public class EnchantmentMenuFactory implements MenuFactory {
     private void addItems(SubInventory subInventory, EnchantmentPlayer player) {
         ItemStack item = subInventory.getItem();
 
-        for (EnchantmentBase enchantment : enchantmentHandler.getAllEnchants()) {
-            if (!enchantment.canEnchantItem(item))
-                continue;
-            int level = EnchantUtils.getNextLevel(item, enchantment);
-            EnchantButton button = updateItem(enchantment, level);
+        enchantmentHandler.getAllEnchants().stream()
+                .filter(base -> base.canEnchantItem(item))
+                .forEach(base -> {
+                    int level = EnchantUtils.getNextLevel(item, base);
+                    EnchantButton button = updateItem(base, level);
 
-            assert button.getItem().getItemMeta() != null && button.getItem().getItemMeta().getLore() != null;
+                    assert button.getItem().getItemMeta() != null && button.getItem().getItemMeta().getLore() != null;
 
-            if(level <= enchantment.getMaxLevel())
-                button.getItem().getItemMeta().getLore().add(ChatColor.GRAY + EnchantUtils.getPriceString(player.usingGems(), level, enchantment));
-            subInventory.addButton(button, subInventory.getInventory().firstEmpty());
-        }
+                    if(level <= base.getMaxLevel())
+                        button.getItem().getItemMeta().getLore().add(ChatColor.GRAY + EnchantUtils.getPriceString(player.usingGems(), level, base));
+                    subInventory.addButton(button, subInventory.getInventory().firstEmpty());
+                });
     }
 
-    private EnchantButton updateItem(EnchantmentBase base, int level) {
+    private EnchantButton updateItem(CustomEnchantment base, int level) {
         ItemStack item = EnchantmentMenuFactory.makeItem(base.getIcon(), ChatColor.GREEN + base.getName());
-        addLore(level, base, item);
+        addLevelLore(level, base.getMaxLevel(), item);
         assert item.getItemMeta() != null && item.getItemMeta().getLore() != null;
 
         if (level <= base.getMaxLevel()) {
@@ -150,7 +151,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
         }
     }
 
-    private EnchantmentGUI generateCallback(EnchantmentPlayer player, EnchantmentBase base) {
+    private EnchantmentGUI generateCallback(EnchantmentPlayer player, CustomEnchantment base) {
         ItemStack itemStack = player.getCurrentGUI().getItem();
         long price = utils.addEnchantmentBase(itemStack, base, player);
         if(price==0)
@@ -173,11 +174,11 @@ public class EnchantmentMenuFactory implements MenuFactory {
         itemStack.setItemMeta(meta);
     }
 
-    private void addLore(int level, EnchantmentBase base, ItemStack target) {
+    private void addLevelLore(int level, int maxLevel, ItemStack target) {
         ItemMeta meta = target.getItemMeta();
         assert meta != null;
         String levelString = TranslatedMessage.translate("enchantment.level");
-        if (level <= base.getMaxLevel())
+        if (level <= maxLevel)
             levelString += level;
         else
             levelString += TranslatedMessage.translate("enchantment.maxed");
@@ -208,26 +209,9 @@ public class EnchantmentMenuFactory implements MenuFactory {
 
     public EnchantmentGUI genItemInventory(EnchantmentPlayer enchantPlayer, ItemStack item) {
         Inventory inventory = Bukkit.createInventory(null, 9 * (2 + ((int) Math.ceil(buttons.size() / 7f))), "Enchantments");
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null) {
-            if (item.getType() == Material.AIR) {
-                return null;
-            } else {
-                meta = Bukkit.getItemFactory().getItemMeta(item.getType());
-            }
-        }
-        assert meta != null;
-        List<String> lore = meta.getLore();
-        if (lore == null)
-            lore = new ArrayList<>();
-        if (lore.isEmpty() || !lore.get(lore.size() - 1).startsWith(TranslatedMessage.translate(PRICE))) {
-            if (enchantPlayer.usingGems())
-                lore.add(TranslatedMessage.translate(PRICE) + "0G");
-            else
-                lore.add(TranslatedMessage.translate(PRICE) + " " + TranslatedMessage.translate("dollar.symbol", "0"));
-        }
-        meta.setLore(lore);
-        item.setItemMeta(meta);
+        if(item.getType() == Material.AIR)
+            return null;
+        setupEncantItem(item, enchantPlayer.usingGems());
         EnchantmentGUI enchantInv = new EnchantmentGUI(inventory);
         enchantInv.setOpener(enchantPlayer);
         enchantInv.setItem(item);
@@ -236,6 +220,26 @@ public class EnchantmentMenuFactory implements MenuFactory {
         enchantPlayer.getPlayer().openInventory(inventory);
         enchantPlayer.setCurrentGUI(enchantInv);
         return enchantInv;
+    }
+
+    private void setupEncantItem(ItemStack item, boolean usingGems) {
+        ItemMeta meta = item.getItemMeta();
+        assert meta != null;
+        addPrice(meta, usingGems);
+        item.setItemMeta(meta);
+    }
+
+    private void addPrice(ItemMeta meta, boolean gems) {
+        List<String> lore = meta.getLore();
+        if (lore == null)
+            lore = new ArrayList<>();
+        if (lore.isEmpty() || !lore.get(lore.size() - 1).startsWith(TranslatedMessage.translate(PRICE))) {
+            if (gems)
+                lore.add(TranslatedMessage.translate(PRICE) + "0G");
+            else
+                lore.add(TranslatedMessage.translate(PRICE) + " " + TranslatedMessage.translate("dollar.symbol", "0"));
+        }
+        meta.setLore(lore);
     }
 
     /*

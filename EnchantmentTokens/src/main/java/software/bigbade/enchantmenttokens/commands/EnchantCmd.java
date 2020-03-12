@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
-import software.bigbade.enchantmenttokens.api.EnchantmentBase;
+import software.bigbade.enchantmenttokens.api.CustomEnchantment;
 import software.bigbade.enchantmenttokens.api.VanillaEnchant;
 import software.bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
 import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
@@ -30,6 +30,7 @@ public class EnchantCmd implements CommandExecutor {
             sender.sendMessage(TranslatedMessage.translate("command.permission"));
             return true;
         }
+
         if (args.length != 2 || !(sender instanceof Player)) {
             sender.sendMessage(TranslatedMessage.translate("command.enchant.usage"));
             return true;
@@ -45,7 +46,7 @@ public class EnchantCmd implements CommandExecutor {
             return true;
         }
 
-        for (EnchantmentBase enchantment : handler.getAllEnchants()) {
+        for (CustomEnchantment enchantment : handler.getAllEnchants()) {
             if (enchantment instanceof VanillaEnchant)
                 continue;
             if (enchantment.getKey().toString().equals(args[0])) {
@@ -57,7 +58,7 @@ public class EnchantCmd implements CommandExecutor {
         return true;
     }
 
-    private void addEnchant(Player player, ItemStack item, EnchantmentBase base, int level) {
+    private void addEnchant(Player player, ItemStack item, CustomEnchantment base, int level) {
         item.addEnchantment(base, level);
         ItemMeta meta = item.getItemMeta();
         assert meta != null;

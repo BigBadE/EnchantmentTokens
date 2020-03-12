@@ -16,7 +16,7 @@ import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.ListenerType;
-import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
+import software.bigbade.enchantmenttokens.events.CustomEnchantEvent;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
@@ -28,11 +28,11 @@ import java.util.Objects;
         "	send \"Test\" to event-player"})
 public class EnchantmentListenerEvent extends SelfRegisteringSkriptEvent {
     static {
-        Skript.registerEvent("enchantmentevent", EnchantmentListenerEvent.class, EnchantmentEvent.class, "%string% for %customenchant%");
-        EventValues.registerEventValue(EnchantmentEvent.class, Player.class, new Getter<Player, EnchantmentEvent>() {
+        Skript.registerEvent("enchantmentevent", EnchantmentListenerEvent.class, CustomEnchantEvent.class, "%string% for %customenchant%");
+        EventValues.registerEventValue(CustomEnchantEvent.class, Player.class, new Getter<Player, CustomEnchantEvent>() {
             @Override
             @Nullable
-            public Player get(final EnchantmentEvent e) {
+            public Player get(final CustomEnchantEvent e) {
                 return (Player) e.getUser();
             }
         }, 0);

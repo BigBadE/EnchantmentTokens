@@ -5,6 +5,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
+import software.bigbade.enchantmenttokens.api.CustomEnchantment;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.VanillaEnchant;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
@@ -74,7 +75,7 @@ public class EnchantmentHandler {
         if (new ConfigurationType<>(true).getValue("enabled", enchantSection)) {
             VanillaEnchant vanillaEnchant = new VanillaEnchant(icon, enchantment);
             vanillaEnchants.add(vanillaEnchant);
-            for (Field field : EnchantmentBase.class.getDeclaredFields()) {
+            for (Field field : CustomEnchantment.class.getDeclaredFields()) {
                 ConfigurationManager.loadConfigForField(field, enchantSection, vanillaEnchant);
             }
             vanillaEnchant.loadConfig();

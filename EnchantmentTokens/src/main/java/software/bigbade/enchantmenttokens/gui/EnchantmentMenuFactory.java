@@ -103,7 +103,6 @@ public class EnchantmentMenuFactory implements MenuFactory {
         Inventory inventory = Bukkit.createInventory(null, 54, itemStack.getType().name().replace("_", " ").toLowerCase() + " " + TranslatedMessage.translate("tool.enchants"));
         SubInventory subInventory = new SubInventory(inventory);
 
-        subInventory.setOpener(player);
         subInventory.setItem(itemStack);
 
         for (int i = 0; i < 54; i++) {
@@ -132,6 +131,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
 
                     if(level <= base.getMaxLevel())
                         button.getItem().getItemMeta().getLore().add(ChatColor.GRAY + EnchantUtils.getPriceString(player.usingGems(), level, base));
+                    assert subInventory.getInventory() != null;
                     subInventory.addButton(button, subInventory.getInventory().firstEmpty());
                 });
     }
@@ -210,8 +210,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
         if(item.getType() == Material.AIR)
             return null;
         setupEncantItem(item, enchantPlayer.usingGems());
-        EnchantmentGUI enchantInv = new EnchantmentGUI(inventory);
-        enchantInv.setOpener(enchantPlayer);
+        EnchantmentGUI enchantInv = new CustomEnchantmentGUI(inventory);
         enchantInv.setItem(item);
         populate(enchantInv, item, enchantPlayer.getPlayer());
         enchantPlayer.setCurrentGUI(null);
@@ -246,6 +245,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
     23: Cancel
      */
     private void populate(EnchantmentGUI inventory, ItemStack item, Player player) {
+        assert inventory.getInventory() != null;
         inventory.getInventory().setItem(4, item);
         int rows = 2 + (int) Math.ceil(buttons.size() / 7f);
         for(int i = 1; i < rows-1; i++) {

@@ -5,7 +5,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
-import software.bigbade.enchantmenttokens.api.CustomEnchantment;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.VanillaEnchant;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
@@ -20,10 +19,10 @@ import java.util.*;
 import java.util.logging.Level;
 
 public class EnchantmentHandler {
-    private List<CustomEnchantment> enchantments = new ArrayList<>();
+    private List<EnchantmentBase> enchantments = new ArrayList<>();
     private List<VanillaEnchant> vanillaEnchants = new ArrayList<>();
     private List<SkriptEnchantment> skriptEnchantments = new ArrayList<>();
-    private List<CustomEnchantment> allEnchants = new ArrayList<>();
+    private List<EnchantmentBase> allEnchants = new ArrayList<>();
 
     private FileConfiguration config;
     private FileConfiguration skriptConfiguration;
@@ -35,7 +34,7 @@ public class EnchantmentHandler {
         skriptConfiguration = ConfigurationManager.loadConfigurationFile(new File(skriptPath));
     }
 
-    public void registerEnchants(Collection<CustomEnchantment> enchantments) {
+    public void registerEnchants(Collection<EnchantmentBase> enchantments) {
         List<Enchantment> vanillaRegistering = new ArrayList<>();
         ConfigurationSection section = ConfigurationManager.getSectionOrCreate(config, "enchants");
 
@@ -50,7 +49,7 @@ public class EnchantmentHandler {
         skriptEnchantments.forEach(Enchantment::registerEnchantment);
 
         this.enchantments.addAll(enchantments);
-        enchantments.forEach(Enchantment::registerEnchantment);
+        enchantments.forEach(base -> Enchantment.registerEnchantment(base.getEnchantment()));
 
         allEnchants.addAll(enchantments);
         allEnchants.addAll(vanillaEnchants);
@@ -89,13 +88,13 @@ public class EnchantmentHandler {
 
         Map<NamespacedKey, Enchantment> byKeys = (HashMap<NamespacedKey, Enchantment>) ReflectionManager.getValue(byKey, null);
         assert byKeys != null;
-        for (Enchantment enchantment : enchantments) {
+        for (EnchantmentBase enchantment : enchantments) {
             byKeys.remove(enchantment.getKey());
         }
 
         Map<NamespacedKey, String> byNames = (HashMap<NamespacedKey, String>) ReflectionManager.getValue(byName, null);
         assert byNames != null;
-        for (Enchantment enchantment : enchantments) {
+        for (EnchantmentBase enchantment : enchantments) {
             byNames.remove(enchantment.getKey());
         }
     }
@@ -108,7 +107,7 @@ public class EnchantmentHandler {
         allEnchants.add(enchantment);
     }
 
-    public List<CustomEnchantment> getEnchantments() {
+    public List<EnchantmentBase> getEnchantments() {
         return enchantments;
     }
 
@@ -116,7 +115,7 @@ public class EnchantmentHandler {
         return skriptEnchantments;
     }
 
-    public List<CustomEnchantment> getAllEnchants() {
+    public List<EnchantmentBase> getAllEnchants() {
         return allEnchants;
     }
 }

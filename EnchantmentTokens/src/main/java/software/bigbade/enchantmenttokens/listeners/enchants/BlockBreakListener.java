@@ -1,20 +1,19 @@
 package software.bigbade.enchantmenttokens.listeners.enchants;
 
-import org.bukkit.configuration.ConfigurationSection;
-import org.jetbrains.annotations.Nullable;
-import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
-import software.bigbade.enchantmenttokens.api.ListenerType;
-import software.bigbade.enchantmenttokens.events.CustomEnchantEvent;
-import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
-import software.bigbade.enchantmenttokens.listeners.SignPacketHandler;
-import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
-import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationType;
-import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 import org.bukkit.block.Sign;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
+import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
+import software.bigbade.enchantmenttokens.api.ListenerType;
+import software.bigbade.enchantmenttokens.events.CustomEnchantEvent;
+import software.bigbade.enchantmenttokens.listeners.SignPacketHandler;
+import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
+import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationType;
+import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
 
 import java.util.Random;

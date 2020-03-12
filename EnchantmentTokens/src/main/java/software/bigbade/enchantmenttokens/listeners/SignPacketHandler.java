@@ -11,7 +11,6 @@ import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
-import software.bigbade.enchantmenttokens.api.CustomEnchantment;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
 import software.bigbade.enchantmenttokens.utils.EnchantLogger;
@@ -66,7 +65,7 @@ public class SignPacketHandler {
                 });
     }
 
-    private String getPrice(CustomEnchantment base, PacketEvent event) {
+    private String getPrice(EnchantmentBase base, PacketEvent event) {
         String price = TranslatedMessage.translate("enchantment.notapplicable");
         ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
         if (base.canEnchantItem(itemStack)) {

@@ -9,11 +9,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
-import software.bigbade.enchantmenttokens.api.CustomEnchantment;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import software.bigbade.enchantmenttokens.api.VanillaEnchant;
-import software.bigbade.enchantmenttokens.events.CustomEnchantEvent;
 import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
 import software.bigbade.enchantmenttokens.utils.EnchantButton;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
@@ -138,7 +136,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
                 });
     }
 
-    private EnchantButton updateItem(CustomEnchantment base, int level) {
+    private EnchantButton updateItem(EnchantmentBase base, int level) {
         ItemStack item = EnchantmentMenuFactory.makeItem(base.getIcon(), ChatColor.GREEN + base.getName());
         addLevelLore(level, base.getMaxLevel(), item);
         assert item.getItemMeta() != null && item.getItemMeta().getLore() != null;
@@ -151,7 +149,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
         }
     }
 
-    private EnchantmentGUI generateCallback(EnchantmentPlayer player, CustomEnchantment base) {
+    private EnchantmentGUI generateCallback(EnchantmentPlayer player, EnchantmentBase base) {
         ItemStack itemStack = player.getCurrentGUI().getItem();
         long price = utils.addEnchantmentBase(itemStack, base, player);
         if(price==0)

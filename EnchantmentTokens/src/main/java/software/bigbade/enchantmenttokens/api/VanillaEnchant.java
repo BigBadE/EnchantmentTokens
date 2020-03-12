@@ -24,6 +24,8 @@ public class VanillaEnchant extends CustomEnchantment {
         return target.includes(itemStack.getType());
     }
 
+    @NotNull
+    @Override
     public Enchantment getEnchantment() {
         return enchantment;
     }

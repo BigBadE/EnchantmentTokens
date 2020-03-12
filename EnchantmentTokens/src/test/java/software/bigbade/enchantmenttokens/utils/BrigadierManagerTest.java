@@ -1,18 +1,13 @@
 package software.bigbade.enchantmenttokens.utils;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
-import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
-import org.easymock.EasyMock;
 import org.easymock.EasyMockSupport;
 import org.easymock.Mock;
+import org.junit.Assert;
 import org.junit.Test;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
-
-import java.util.logging.Logger;
 
 public class BrigadierManagerTest extends EasyMockSupport {
     @Mock
@@ -40,5 +35,6 @@ public class BrigadierManagerTest extends EasyMockSupport {
 
         //Bukkit.setServer(server);
         //BrigadierManager.register(tokens, command, "test");
+        Assert.assertEquals("BrigadierManager", BrigadierManager.class.getSimpleName());
     }
 }

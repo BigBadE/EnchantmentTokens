@@ -1,5 +1,6 @@
 package software.bigbade.enchantmenttokens.api;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
@@ -109,7 +110,8 @@ public class CustomEnchantment extends Enchantment implements EnchantmentBase {
 
     @Override
     public boolean canEnchantItem(@NotNull ItemStack itemStack) {
-        assert itemStack.getItemMeta() != null;
+        if(itemStack.getItemMeta() != null)
+            itemStack.setItemMeta(Bukkit.getItemFactory().getItemMeta(itemStack.getType()));
         if(!itemStack.hasItemMeta() || !itemStack.getItemMeta().hasEnchants())
             return targets.contains(itemStack.getType());
         for(Enchantment enchantment : itemStack.getEnchantments().keySet())
@@ -142,6 +144,15 @@ public class CustomEnchantment extends Enchantment implements EnchantmentBase {
 
     public void setIcon(Material icon) {
         this.icon = icon;
+    }
+
+    public ConfigurationSection getPriceSection() {
+        return price;
+    }
+
+    @NotNull
+    public Enchantment getEnchantment() {
+        return this;
     }
 
     @Override

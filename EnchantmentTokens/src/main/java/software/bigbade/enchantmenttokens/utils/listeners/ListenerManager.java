@@ -2,7 +2,6 @@ package software.bigbade.enchantmenttokens.utils.listeners;
 
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.events.CustomEnchantEvent;
-import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import software.bigbade.enchantmenttokens.listeners.enchants.EnchantmentListener;
 
 import java.util.HashMap;

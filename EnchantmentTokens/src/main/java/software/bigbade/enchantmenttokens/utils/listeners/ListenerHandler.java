@@ -8,7 +8,10 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
-import software.bigbade.enchantmenttokens.api.*;
+import software.bigbade.enchantmenttokens.api.EnchantListener;
+import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
+import software.bigbade.enchantmenttokens.api.EnchantmentBase;
+import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.events.CustomEnchantEvent;
 import software.bigbade.enchantmenttokens.listeners.*;
 import software.bigbade.enchantmenttokens.listeners.enchants.*;
@@ -95,16 +98,16 @@ public class ListenerHandler {
         }
     }
 
-    public void loadEnchantments(Map<String, Set<Class<CustomEnchantment>>> enchants) {
-        ConcurrentLinkedQueue<CustomEnchantment> enchantments = new ConcurrentLinkedQueue<>();
+    public void loadEnchantments(Map<String, Set<Class<EnchantmentBase>>> enchants) {
+        ConcurrentLinkedQueue<EnchantmentBase> enchantments = new ConcurrentLinkedQueue<>();
 
         Map<String, FileConfiguration> configs = new HashMap<>();
 
         enchants.keySet().forEach(key -> ConfigurationManager.loadConfigurationFile(new File(main.getDataFolder().getAbsolutePath() + FOLDER + key + ".yml")));
 
         enchants.forEach((addon, classes) -> {
-            for (Class<CustomEnchantment> clazz : classes) {
-                CustomEnchantment enchant = loadConfiguration(clazz, configs, addon);
+            for (Class<EnchantmentBase> clazz : classes) {
+                EnchantmentBase enchant = loadConfiguration(clazz, configs, addon);
 
                 if (enchant == null) continue;
                 enchant.loadConfig();
@@ -130,7 +133,7 @@ public class ListenerHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private void checkMethods(CustomEnchantment enchant, Class<?> clazz) {
+    private void checkMethods(EnchantmentBase enchant, Class<?> clazz) {
         for (Method method : clazz.getDeclaredMethods()) {
             if (!method.isAnnotationPresent(EnchantListener.class) || method.getReturnType() != EnchantmentListener.class)
                 continue;
@@ -141,17 +144,17 @@ public class ListenerHandler {
         }
     }
 
-    private boolean canEnchant(CustomEnchantment enchant, ListenerType type) {
+    private boolean canEnchant(EnchantmentBase enchant, ListenerType type) {
         return type.canTarget(enchant.getTargets());
     }
 
-    private CustomEnchantment loadConfiguration(Class<CustomEnchantment> clazz, Map<String, FileConfiguration> configs, String addon) {
+    private EnchantmentBase loadConfiguration(Class<EnchantmentBase> clazz, Map<String, FileConfiguration> configs, String addon) {
         FileConfiguration configuration = configs.computeIfAbsent(addon, key -> null);
 
         assert configuration != null;
         ConfigurationSection section = ConfigurationManager.getSectionOrCreate(configuration, "enchants");
 
-        final CustomEnchantment enchant = (CustomEnchantment) ReflectionManager.instantiate(clazz);
+        final EnchantmentBase enchant = (EnchantmentBase) ReflectionManager.instantiate(clazz);
 
         ConfigurationSection enchantSection = ConfigurationManager.getSectionOrCreate(section, clazz.getSimpleName().toLowerCase());
 

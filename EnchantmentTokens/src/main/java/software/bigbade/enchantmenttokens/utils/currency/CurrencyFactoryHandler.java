@@ -1,7 +1,6 @@
 package software.bigbade.enchantmenttokens.utils.currency;
 
 import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import software.bigbade.enchantmenttokens.utils.EnchantLogger;
@@ -9,7 +8,6 @@ import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationType;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentLoader;
-import software.bigbade.enchantmenttokens.utils.enchants.FakePlugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,7 +57,7 @@ public class CurrencyFactoryHandler {
         if (version >= 14) {
             boolean persistent = new ConfigurationType<>(true).getValue("usePersistentData", section);
             if (persistent)
-                return new LatestCurrencyFactory(new NamespacedKey(FakePlugin.ENCHANTMENTPLUGIN, "gems"));
+                return new LatestCurrencyFactory();
             else
                 return new GemCurrencyFactory(scheduler, filePath);
         } else

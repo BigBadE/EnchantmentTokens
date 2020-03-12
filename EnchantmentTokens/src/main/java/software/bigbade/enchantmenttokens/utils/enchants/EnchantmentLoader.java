@@ -3,7 +3,6 @@ package software.bigbade.enchantmenttokens.utils.enchants;
 import org.bukkit.Bukkit;
 import org.bukkit.enchantments.Enchantment;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
-import software.bigbade.enchantmenttokens.api.CustomEnchantment;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.utils.EnchantLogger;
@@ -23,7 +22,7 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 
 public class EnchantmentLoader {
-    private Map<String, Set<Class<CustomEnchantment>>> enchantments = new ConcurrentHashMap<>();
+    private Map<String, Set<Class<EnchantmentBase>>> enchantments = new ConcurrentHashMap<>();
     private Collection<EnchantmentAddon> addons = new ConcurrentLinkedQueue<>();
 
     public EnchantmentLoader(File folder, EnchantmentTokens main) {
@@ -68,11 +67,11 @@ public class EnchantmentLoader {
         try {
             EnchantmentAddon addon = null;
             List<Class<?>> classes = loadClasses(file);
-            Set<Class<CustomEnchantment>> enchantClasses = new HashSet<>();
+            Set<Class<EnchantmentBase>> enchantClasses = new HashSet<>();
 
             for (Class<?> clazz : classes)
                 if (clazz.isAssignableFrom(EnchantmentBase.class))
-                    enchantClasses.add((Class<CustomEnchantment>) clazz);
+                    enchantClasses.add((Class<EnchantmentBase>) clazz);
                 else if (clazz.isAssignableFrom(EnchantmentAddon.class)) {
                     addon = (EnchantmentAddon) clazz.getDeclaredConstructor().newInstance();
                     addons.add(addon);
@@ -103,7 +102,7 @@ public class EnchantmentLoader {
         return addons;
     }
 
-    public Map<String, Set<Class<CustomEnchantment>>> getEnchantments() {
+    public Map<String, Set<Class<EnchantmentBase>>> getEnchantments() {
         return enchantments;
     }
 }

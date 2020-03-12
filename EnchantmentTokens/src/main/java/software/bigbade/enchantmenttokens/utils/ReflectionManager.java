@@ -2,6 +2,7 @@ package software.bigbade.enchantmenttokens.utils;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -45,6 +46,15 @@ public class ReflectionManager {
             return clazz.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             EnchantLogger.log(Level.SEVERE, "Could not instantiate class " + clazz.getSimpleName());
+        }
+        return null;
+    }
+
+    public static Object instantiate(Constructor<?> constructor, Object... args) {
+        try {
+            return constructor.newInstance(args);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            EnchantLogger.log(Level.SEVERE, "Could not instantiate class " + constructor.getName());
         }
         return null;
     }

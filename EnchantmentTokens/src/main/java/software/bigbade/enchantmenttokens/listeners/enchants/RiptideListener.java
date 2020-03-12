@@ -4,7 +4,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerRiptideEvent;
 import software.bigbade.enchantmenttokens.api.ListenerType;
-import software.bigbade.enchantmenttokens.events.CustomEnchantEvent;
+import software.bigbade.enchantmenttokens.events.EventFactory;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
 public class RiptideListener extends BasicEnchantListener implements Listener {
@@ -14,6 +14,6 @@ public class RiptideListener extends BasicEnchantListener implements Listener {
 
     @EventHandler
     public void onRiptide(PlayerRiptideEvent event) {
-        callListeners(new CustomEnchantEvent(ListenerType.RIPTIDE, event.getItem()).setUser(event.getPlayer()));
+        callListeners(EventFactory.createEvent(ListenerType.RIPTIDE, event.getItem()).setUser(event.getPlayer()));
     }
 }

@@ -4,6 +4,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import software.bigbade.enchantmenttokens.utils.EnchantLogger;
+import software.bigbade.enchantmenttokens.utils.FileHelper;
+import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationType;
@@ -12,7 +14,6 @@ import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentLoader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Objects;
 import java.util.jar.JarFile;
@@ -79,7 +80,10 @@ public class CurrencyFactoryHandler {
     }
 
     private CurrencyFactory loadFactory(String type, File file) {
-        try (JarFile jarFile = new JarFile(file.getAbsolutePath()); InputStream stream = jarFile.getInputStream(jarFile.getEntry("config.yml"))) {
+        try (JarFile jarFile = FileHelper.getJarFile(file.getAbsolutePath());
+             InputStream stream = FileHelper.getJarStream(jarFile, "config.yml")) {
+            if(stream == null)
+                EnchantLogger.log(Level.SEVERE, "Invalid currency handler at {0}", file.getAbsolutePath());
             FileConfiguration configuration = ConfigurationManager.loadConfigurationStream(stream);
 
             if (!new ConfigurationType<>("error").getValue("name", configuration).equals(type))
@@ -87,16 +91,16 @@ public class CurrencyFactoryHandler {
 
             List<Class<?>> classes = EnchantmentLoader.loadClasses(file);
             return getFactory(classes);
-        } catch (IOException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            EnchantLogger.log("Could not load currency handler (is it valid?)", e);
+        } catch (IOException e) {
+            EnchantLogger.log("Could not open jar", e);
         }
         return null;
     }
 
-    private CurrencyFactory getFactory(List<Class<?>> classes) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    private CurrencyFactory getFactory(List<Class<?>> classes) {
         for (Class<?> clazz : classes) {
             if (clazz.getInterfaces()[0].equals(CurrencyFactory.class))
-                return (CurrencyFactory) clazz.getConstructors()[0].newInstance(section);
+                return (CurrencyFactory) ReflectionManager.instantiate(clazz.getConstructors()[0], section);
         }
         return null;
     }

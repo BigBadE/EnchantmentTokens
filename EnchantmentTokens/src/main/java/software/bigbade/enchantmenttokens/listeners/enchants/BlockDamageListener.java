@@ -6,7 +6,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import software.bigbade.enchantmenttokens.api.ListenerType;
-import software.bigbade.enchantmenttokens.events.CustomEnchantEvent;
+import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
+import software.bigbade.enchantmenttokens.events.EventFactory;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
 public class BlockDamageListener extends BasicEnchantListener implements Listener {
@@ -19,7 +20,7 @@ public class BlockDamageListener extends BasicEnchantListener implements Listene
     public void blockBreakStart(BlockDamageEvent event) {
         ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
         if(item.getType() != Material.AIR) {
-            CustomEnchantEvent enchantmentEvent = new CustomEnchantEvent(ListenerType.BLOCK_DAMAGED, item).setTargetBlock(event.getBlock()).setUser(event.getPlayer());
+            EnchantmentEvent enchantmentEvent = EventFactory.createEvent(ListenerType.BLOCK_DAMAGED, item).setTargetBlock(event.getBlock()).setUser(event.getPlayer());
             callListeners(enchantmentEvent);
         }
     }

@@ -53,7 +53,7 @@ public class EnchantmentListenerEvent extends SelfRegisteringSkriptEvent {
         main = (EnchantmentTokens) Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("EnchantmentTokens"));
         ListenerType listenerType = ListenerType.valueOf(type.getSingle().replace(" ", "_").toUpperCase());
         main.getListenerHandler().getListenerManager(listenerType).add(event ->
-                trigger.execute(event), enchantment.getSingle());
+                trigger.execute(event.getEvent()), enchantment.getSingle());
         return true;
     }
 

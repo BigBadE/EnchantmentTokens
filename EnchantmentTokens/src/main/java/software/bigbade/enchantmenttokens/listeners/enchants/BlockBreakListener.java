@@ -9,7 +9,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import software.bigbade.enchantmenttokens.api.ListenerType;
-import software.bigbade.enchantmenttokens.events.CustomEnchantEvent;
+import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
+import software.bigbade.enchantmenttokens.events.EventFactory;
 import software.bigbade.enchantmenttokens.listeners.SignPacketHandler;
 import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
 import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationType;
@@ -34,7 +35,7 @@ public class BlockBreakListener extends BasicEnchantListener implements Listener
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
-        CustomEnchantEvent enchantmentEvent = new CustomEnchantEvent(ListenerType.BLOCK_BREAK, item).setTargetBlock(event.getBlock()).setUser(event.getPlayer());
+        EnchantmentEvent enchantmentEvent = EventFactory.createEvent(ListenerType.BLOCK_BREAK, item).setTargetBlock(event.getBlock()).setUser(event.getPlayer());
         callListeners(enchantmentEvent);
 
         if (event.getBlock().getState() instanceof Sign) {

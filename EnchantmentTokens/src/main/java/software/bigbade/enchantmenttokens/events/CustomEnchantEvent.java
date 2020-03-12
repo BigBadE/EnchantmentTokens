@@ -34,7 +34,7 @@ public class CustomEnchantEvent extends Event implements EnchantmentEvent {
     }
 
     @NotNull
-    public CustomEnchantEvent setUser(Entity user) {
+    public EnchantmentEvent setUser(Entity user) {
         this.user = user;
         return this;
     }
@@ -45,7 +45,7 @@ public class CustomEnchantEvent extends Event implements EnchantmentEvent {
     }
 
     @NotNull
-    public CustomEnchantEvent setTargetEntity(Entity targetEntity) {
+    public EnchantmentEvent setTargetEntity(Entity targetEntity) {
         this.targetEntity = targetEntity;
         return this;
     }
@@ -54,8 +54,13 @@ public class CustomEnchantEvent extends Event implements EnchantmentEvent {
         return targetBlock;
     }
 
+    @Override
+    public Event getEvent() {
+        return this;
+    }
+
     @NotNull
-    public CustomEnchantEvent setTargetBlock(Block targetBlock) {
+    public EnchantmentEvent setTargetBlock(Block targetBlock) {
         this.targetBlock = targetBlock;
         return this;
     }
@@ -66,7 +71,7 @@ public class CustomEnchantEvent extends Event implements EnchantmentEvent {
     }
 
     @NotNull
-    public CustomEnchantEvent setItem(ItemStack item) {
+    public EnchantmentEvent setItem(ItemStack item) {
         this.item = item;
         return this;
     }

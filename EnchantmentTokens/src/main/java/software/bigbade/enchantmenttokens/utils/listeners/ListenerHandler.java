@@ -12,7 +12,8 @@ import software.bigbade.enchantmenttokens.api.EnchantListener;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.ListenerType;
-import software.bigbade.enchantmenttokens.events.CustomEnchantEvent;
+import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
+import software.bigbade.enchantmenttokens.events.EventFactory;
 import software.bigbade.enchantmenttokens.listeners.*;
 import software.bigbade.enchantmenttokens.listeners.enchants.*;
 import software.bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
@@ -79,7 +80,7 @@ public class ListenerHandler {
 
     public void onEnchant(ItemStack item, EnchantmentBase base, Player player) {
         ListenerManager manager = enchantListeners.get(ListenerType.ENCHANT);
-        CustomEnchantEvent enchantmentEvent = new CustomEnchantEvent(ListenerType.ENCHANT, item).setUser(player);
+        EnchantmentEvent enchantmentEvent = EventFactory.createEvent(ListenerType.ENCHANT, item).setUser(player);
         manager.callEvent(enchantmentEvent, base);
     }
 
@@ -139,7 +140,7 @@ public class ListenerHandler {
                 continue;
             ListenerType type = method.getAnnotation(EnchantListener.class).type();
             if (enchant != null && canEnchant(enchant, type)) {
-                enchantListeners.get(type).add((EnchantmentListener<CustomEnchantEvent>) ReflectionManager.invoke(method, enchant), enchant);
+                enchantListeners.get(type).add((EnchantmentListener<EnchantmentEvent>) ReflectionManager.invoke(method, enchant), enchant);
             }
         }
     }

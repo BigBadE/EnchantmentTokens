@@ -6,7 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import software.bigbade.enchantmenttokens.api.ListenerType;
-import software.bigbade.enchantmenttokens.events.CustomEnchantEvent;
+import software.bigbade.enchantmenttokens.events.EventFactory;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
 public class ProjectileShootListener extends BasicEnchantListener implements Listener {
@@ -25,9 +25,9 @@ public class ProjectileShootListener extends BasicEnchantListener implements Lis
         if(event.getEntity().getShooter() instanceof Player) {
             Player shooter = (Player) event.getEntity().getShooter();
             if (version > 14 && event.getEntityType() == EntityType.TRIDENT) {
-                callListeners(new CustomEnchantEvent(ListenerType.TRIDENT_THROW, null).setUser(shooter).setTargetEntity(event.getEntity()), tridentThrow);
+                callListeners(EventFactory.createEvent(ListenerType.TRIDENT_THROW, null).setUser(shooter).setTargetEntity(event.getEntity()), tridentThrow);
             } else {
-                callListeners(new CustomEnchantEvent(ListenerType.SHOOT, shooter.getInventory().getItemInMainHand()).setUser(shooter).setTargetEntity(event.getEntity()), projectileShoot);
+                callListeners(EventFactory.createEvent(ListenerType.SHOOT, shooter.getInventory().getItemInMainHand()).setUser(shooter).setTargetEntity(event.getEntity()), projectileShoot);
             }
         }
     }

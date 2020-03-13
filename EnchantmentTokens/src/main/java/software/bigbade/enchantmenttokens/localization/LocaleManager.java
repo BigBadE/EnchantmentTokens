@@ -12,11 +12,11 @@ import java.util.*;
 import java.util.logging.Level;
 
 public class LocaleManager {
-    private LocaleManager() {
-    }
+    public static Locale locale;
+    private LocaleManager() { }
 
     public static void updateLocale(ConfigurationSection section, Collection<EnchantmentAddon> addons) {
-        Locale locale = getLocale(section);
+        locale = getLocale(section);
 
         try {
             Map<String, ResourceBundle> resources = new HashMap<>();
@@ -26,7 +26,7 @@ public class LocaleManager {
                 resources.put(addon.getName(), new PropertyResourceBundle(getStream(addon.getName(), locale)));
             }
 
-            TranslatedMessage.updateBundles(resources);
+            TranslatedTextMessage.updateBundles(resources);
         } catch (IOException e) {
             EnchantLogger.log(Level.SEVERE, "Could not load Localization files.", e);
         }

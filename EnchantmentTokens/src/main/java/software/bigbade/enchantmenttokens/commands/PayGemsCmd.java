@@ -7,9 +7,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
-import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
+import software.bigbade.enchantmenttokens.localization.TranslatedTextMessage;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyAdditionHandler;
-import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
 import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
 
 public class PayGemsCmd implements CommandExecutor {
@@ -19,10 +18,12 @@ public class PayGemsCmd implements CommandExecutor {
         this.handler = handler;
     }
 
+    private static final String USAGE = new TranslatedTextMessage("command.pay.usage").getText();
+
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if(args.length != 2) {
-            commandSender.sendMessage(TranslatedMessage.translate("command.pay.usage"));
+            commandSender.sendMessage(USAGE);
         }
         if(commandSender instanceof Player) {
             Player target = Bukkit.getPlayer(args[0]);
@@ -33,21 +34,25 @@ public class PayGemsCmd implements CommandExecutor {
         return true;
     }
 
+    private static final TranslatedTextMessage NOTENOUGH = new TranslatedTextMessage("command.pay.notenough");
+    private static final TranslatedTextMessage PAY = new TranslatedTextMessage("command.pay");
+    private static final TranslatedTextMessage RECIEVE = new TranslatedTextMessage("command.pay.recieve");
+
     private void addGems(String gems, Player target, CommandSender sender) {
         try {
             long gemsLong = Long.parseLong(gems);
             EnchantmentPlayer player = handler.getPlayer((Player) sender);
             if(gemsLong == 1) {
-                sender.sendMessage(TranslatedMessage.translate("command.pay.notenough", EnchantUtils.getPriceString(player.usingGems(), 1)));
+                sender.sendMessage(NOTENOUGH.getText(CurrencyAdditionHandler.formatMoney(player.usingGems(), 1)));
                 return;
             }
-            sender.sendMessage(TranslatedMessage.translate("command.pay", EnchantUtils.getPriceString(player.usingGems(), gemsLong), target.getName()));
-            target.sendMessage(TranslatedMessage.translate("command.pay.receive", EnchantUtils.getPriceString(player.usingGems(), gemsLong), sender.getName()));
+            sender.sendMessage(PAY.getText(CurrencyAdditionHandler.formatMoney(player.usingGems(), gemsLong), target.getName()));
+            target.sendMessage(RECIEVE.getText(CurrencyAdditionHandler.formatMoney(player.usingGems(), gemsLong), sender.getName()));
             CurrencyAdditionHandler.addGems(handler.getPlayer(target), gemsLong);
 
             player.addGems(-gemsLong);
         } catch (NumberFormatException e) {
-            sender.sendMessage(TranslatedMessage.translate("command.add.notnumber", gems));
+            sender.sendMessage(CommandUtils.NOTANUMBER.getText(gems));
         }
     }
 }

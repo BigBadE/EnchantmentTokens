@@ -12,6 +12,7 @@ import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.VanillaEnchant;
 import software.bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
 import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
+import software.bigbade.enchantmenttokens.localization.TranslatedTextMessage;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 
 import java.util.ArrayList;
@@ -24,15 +25,16 @@ public class EnchantCmd implements CommandExecutor {
         this.handler = handler;
     }
 
+    private static final String USAGE = new TranslatedTextMessage("command.enchant.usage").getText();
     @Override
     public boolean onCommand(CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!sender.hasPermission("enchanttoken.admin") && !sender.isOp()) {
-            sender.sendMessage(TranslatedMessage.translate("command.permission"));
+            sender.sendMessage(CommandUtils.NOPERMISSION);
             return true;
         }
 
         if (args.length != 2 || !(sender instanceof Player)) {
-            sender.sendMessage(TranslatedMessage.translate("command.enchant.usage"));
+            sender.sendMessage(USAGE);
             return true;
         }
 
@@ -42,7 +44,7 @@ public class EnchantCmd implements CommandExecutor {
         try {
             level = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
-            sender.sendMessage(TranslatedMessage.translate("command.enchant.usage"));
+            sender.sendMessage(USAGE);
             return true;
         }
 

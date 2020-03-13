@@ -12,7 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
-import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
+import software.bigbade.enchantmenttokens.localization.TranslatedTextMessage;
 import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
 
@@ -65,8 +65,10 @@ public class SignPacketHandler {
                 });
     }
 
+    private static final String NOTAPPLICABLE = new TranslatedTextMessage("enchantment.notapplicable").getText();
+
     private String getPrice(EnchantmentBase base, PacketEvent event) {
-        String price = TranslatedMessage.translate("enchantment.notapplicable");
+        String price = NOTAPPLICABLE;
         ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
         if (base.canEnchantItem(itemStack)) {
             int level = EnchantUtils.getNextLevel(itemStack, base);

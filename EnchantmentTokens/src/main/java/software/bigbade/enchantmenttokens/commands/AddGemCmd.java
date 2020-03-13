@@ -6,7 +6,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyAdditionHandler;
 import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
 
@@ -20,7 +19,7 @@ public class AddGemCmd implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!sender.hasPermission("enchanttoken.admin") && !sender.isOp()) {
-            sender.sendMessage(TranslatedMessage.translate("command.permission"));
+            sender.sendMessage(CommandUtils.NOPERMISSION);
             return true;
         }
         if (args.length == 1) {
@@ -31,7 +30,7 @@ public class AddGemCmd implements CommandExecutor {
             if (target != null) {
                 addGems(args[1], target, sender);
             } else {
-                sender.sendMessage(TranslatedMessage.translate("command.add.noplayer", args[0]));
+                sender.sendMessage(CommandUtils.NOPLAYER.getText(args[0]));
             }
         }
         return true;
@@ -41,7 +40,7 @@ public class AddGemCmd implements CommandExecutor {
         try {
             CurrencyAdditionHandler.addGems(handler.getPlayer(target), Long.parseLong(gems));
         } catch (NumberFormatException e) {
-            sender.sendMessage(TranslatedMessage.translate("command.add.notnumber", gems));
+            sender.sendMessage(CommandUtils.NOTANUMBER.getText(gems));
         }
     }
 }

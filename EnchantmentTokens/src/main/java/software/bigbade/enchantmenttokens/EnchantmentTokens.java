@@ -60,6 +60,8 @@ public class EnchantmentTokens extends JavaPlugin {
      */
     @Override
     public void onEnable() {
+        LocaleManager.updateLocale(getConfig(), loader.getAddons());
+
         version = Integer.parseInt(Bukkit.getVersion().split("\\.")[1]);
         scheduler = new SchedulerHandler(this);
 
@@ -72,8 +74,6 @@ public class EnchantmentTokens extends JavaPlugin {
         registerEnchants();
 
         setupSkript();
-
-        LocaleManager.updateLocale(getConfig(), loader.getAddons());
 
         utils = new EnchantUtils(enchantmentHandler, playerHandler, listenerHandler, signHandler.getSigns());
 

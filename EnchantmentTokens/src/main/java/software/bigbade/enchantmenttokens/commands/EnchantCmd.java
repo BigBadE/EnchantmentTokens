@@ -10,9 +10,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.VanillaEnchant;
-import software.bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
-import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
 import software.bigbade.enchantmenttokens.localization.TranslatedTextMessage;
+import software.bigbade.enchantmenttokens.utils.RomanNumberConverter;
+import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 
 import java.util.ArrayList;
@@ -26,6 +26,7 @@ public class EnchantCmd implements CommandExecutor {
     }
 
     private static final String USAGE = new TranslatedTextMessage("command.enchant.usage").getText();
+
     @Override
     public boolean onCommand(CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!sender.hasPermission("enchanttoken.admin") && !sender.isOp()) {
@@ -56,9 +57,11 @@ public class EnchantCmd implements CommandExecutor {
                 return true;
             }
         }
-        sender.sendMessage(TranslatedMessage.translate("command.enchant.notfound"));
+        sender.sendMessage(EnchantUtils.ENCHANTMENTFAIL);
         return true;
     }
+
+    private static final TranslatedTextMessage ADDENCHANT = new TranslatedTextMessage("command.add");
 
     private void addEnchant(Player player, ItemStack item, EnchantmentBase base, int level) {
         item.addEnchantment(base.getEnchantment(), level);
@@ -67,9 +70,9 @@ public class EnchantCmd implements CommandExecutor {
         List<String> lore = meta.getLore();
         if (lore == null)
             lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY + base.getName() + ": " + EnchantmentGUIListener.getRomanNumeral(level));
+        lore.add(ChatColor.GRAY + base.getName() + ": " + RomanNumberConverter.getRomanNumeral(level));
         meta.setLore(lore);
         item.setItemMeta(meta);
-        player.sendMessage(TranslatedMessage.translate("command.add", base.getName()));
+        player.sendMessage(ADDENCHANT.getText(base.getName()));
     }
 }

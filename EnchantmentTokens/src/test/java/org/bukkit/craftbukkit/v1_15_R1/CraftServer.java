@@ -33,6 +33,8 @@ import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 public class CraftServer implements Server {
+    private static final String ERROR = "THIS SHOULD NOT BE USED OUTSIDE OF TESTING";
+    
     @NotNull
     @Override
     public String getName() {
@@ -54,54 +56,54 @@ public class CraftServer implements Server {
     @NotNull
     @Override
     public Collection<? extends Player> getOnlinePlayers() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public int getMaxPlayers() {
-        return 0;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public int getPort() {
-        return 0;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public int getViewDistance() {
-        return 0;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public String getIp() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public String getWorldType() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public boolean getGenerateStructures() {
-        return false;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public boolean getAllowEnd() {
-        return false;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public boolean getAllowNether() {
-        return false;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public boolean hasWhitelist() {
-        return false;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
@@ -112,7 +114,7 @@ public class CraftServer implements Server {
     @NotNull
     @Override
     public Set<OfflinePlayer> getWhitelistedPlayers() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
@@ -122,144 +124,145 @@ public class CraftServer implements Server {
 
     @Override
     public int broadcastMessage(@NotNull String s) {
-        return 0;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public String getUpdateFolder() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public File getUpdateFolderFile() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public long getConnectionThrottle() {
-        return 0;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public int getTicksPerAnimalSpawns() {
-        return 0;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public int getTicksPerMonsterSpawns() {
-        return 0;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public int getTicksPerWaterSpawns() {
-        return 0;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public int getTicksPerAmbientSpawns() {
-        return 0;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Nullable
     @Override
     public Player getPlayer(@NotNull String s) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Nullable
     @Override
     public Player getPlayerExact(@NotNull String s) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public List<Player> matchPlayer(@NotNull String s) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Nullable
     @Override
     public Player getPlayer(@NotNull UUID uuid) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public PluginManager getPluginManager() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public BukkitScheduler getScheduler() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public ServicesManager getServicesManager() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public List<World> getWorlds() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Nullable
     @Override
     public World createWorld(@NotNull WorldCreator worldCreator) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public boolean unloadWorld(@NotNull String s, boolean b) {
-        return false;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public boolean unloadWorld(@NotNull World world, boolean b) {
-        return false;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Nullable
     @Override
     public World getWorld(@NotNull String s) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Nullable
     @Override
     public World getWorld(@NotNull UUID uuid) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Nullable
     @Override
+    @Deprecated
     public MapView getMap(int i) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public MapView createMap(@NotNull World world) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public ItemStack createExplorerMap(@NotNull World world, @NotNull Location location, @NotNull StructureType structureType) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public ItemStack createExplorerMap(@NotNull World world, @NotNull Location location, @NotNull StructureType structureType, int i, boolean b) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
@@ -281,7 +284,7 @@ public class CraftServer implements Server {
     @Nullable
     @Override
     public PluginCommand getPluginCommand(@NotNull String s) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
@@ -291,24 +294,24 @@ public class CraftServer implements Server {
 
     @Override
     public boolean dispatchCommand(@NotNull CommandSender commandSender, @NotNull String s) throws CommandException {
-        return false;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public boolean addRecipe(@Nullable Recipe recipe) {
-        return false;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public List<Recipe> getRecipesFor(@NotNull ItemStack itemStack) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public Iterator<Recipe> recipeIterator() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
@@ -323,18 +326,18 @@ public class CraftServer implements Server {
 
     @Override
     public boolean removeRecipe(@NotNull NamespacedKey namespacedKey) {
-        return false;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public Map<String, String[]> getCommandAliases() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public int getSpawnRadius() {
-        return 0;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
@@ -344,17 +347,17 @@ public class CraftServer implements Server {
 
     @Override
     public boolean getOnlineMode() {
-        return false;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public boolean getAllowFlight() {
-        return false;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public boolean isHardcore() {
-        return false;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
@@ -364,25 +367,26 @@ public class CraftServer implements Server {
 
     @Override
     public int broadcast(@NotNull String s, @NotNull String s1) {
-        return 0;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
+    @Deprecated
     public OfflinePlayer getOfflinePlayer(@NotNull String s) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public OfflinePlayer getOfflinePlayer(@NotNull UUID uuid) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public Set<String> getIPBans() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
@@ -398,25 +402,25 @@ public class CraftServer implements Server {
     @NotNull
     @Override
     public Set<OfflinePlayer> getBannedPlayers() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public BanList getBanList(@NotNull BanList.Type type) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public Set<OfflinePlayer> getOperators() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public GameMode getDefaultGameMode() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
@@ -427,13 +431,13 @@ public class CraftServer implements Server {
     @NotNull
     @Override
     public ConsoleCommandSender getConsoleSender() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public File getWorldContainer() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
@@ -445,239 +449,240 @@ public class CraftServer implements Server {
     @NotNull
     @Override
     public Messenger getMessenger() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public HelpMap getHelpMap() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public Inventory createInventory(@Nullable InventoryHolder inventoryHolder, @NotNull InventoryType inventoryType) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public Inventory createInventory(@Nullable InventoryHolder inventoryHolder, @NotNull InventoryType inventoryType, @NotNull String s) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public Inventory createInventory(@Nullable InventoryHolder inventoryHolder, int i) throws IllegalArgumentException {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public Inventory createInventory(@Nullable InventoryHolder inventoryHolder, int i, @NotNull String s) throws IllegalArgumentException {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public Merchant createMerchant(@Nullable String s) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public int getMonsterSpawnLimit() {
-        return 0;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public int getAnimalSpawnLimit() {
-        return 0;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public int getWaterAnimalSpawnLimit() {
-        return 0;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public int getAmbientSpawnLimit() {
-        return 0;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public boolean isPrimaryThread() {
-        return false;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public String getMotd() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Nullable
     @Override
     public String getShutdownMessage() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public Warning.WarningState getWarningState() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public ItemFactory getItemFactory() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Nullable
     @Override
     public ScoreboardManager getScoreboardManager() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Nullable
     @Override
     public CachedServerIcon getServerIcon() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
-    public CachedServerIcon loadServerIcon(@NotNull File file) throws IllegalArgumentException, Exception {
-        return null;
+    public CachedServerIcon loadServerIcon(@NotNull File file) {
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
-    public CachedServerIcon loadServerIcon(@NotNull BufferedImage bufferedImage) throws IllegalArgumentException, Exception {
-        return null;
+    public CachedServerIcon loadServerIcon(@NotNull BufferedImage bufferedImage) {
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public void setIdleTimeout(int i) {
-
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public int getIdleTimeout() {
-        return 0;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public ChunkGenerator.ChunkData createChunkData(@NotNull World world) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public BossBar createBossBar(@Nullable String s, @NotNull BarColor barColor, @NotNull BarStyle barStyle, @NotNull BarFlag... barFlags) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public KeyedBossBar createBossBar(@NotNull NamespacedKey namespacedKey, @Nullable String s, @NotNull BarColor barColor, @NotNull BarStyle barStyle, @NotNull BarFlag... barFlags) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public Iterator<KeyedBossBar> getBossBars() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Nullable
     @Override
     public KeyedBossBar getBossBar(@NotNull NamespacedKey namespacedKey) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
     public boolean removeBossBar(@NotNull NamespacedKey namespacedKey) {
-        return false;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Nullable
     @Override
     public Entity getEntity(@NotNull UUID uuid) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Nullable
     @Override
     public Advancement getAdvancement(@NotNull NamespacedKey namespacedKey) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public Iterator<Advancement> advancementIterator() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public BlockData createBlockData(@NotNull Material material) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public BlockData createBlockData(@NotNull Material material, @Nullable Consumer<BlockData> consumer) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public BlockData createBlockData(@NotNull String s) throws IllegalArgumentException {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public BlockData createBlockData(@Nullable Material material, @Nullable String s) throws IllegalArgumentException {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Nullable
     @Override
     public <T extends Keyed> Tag<T> getTag(@NotNull String s, @NotNull NamespacedKey namespacedKey, @NotNull Class<T> aClass) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public <T extends Keyed> Iterable<Tag<T>> getTags(@NotNull String s, @NotNull Class<T> aClass) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Nullable
     @Override
     public LootTable getLootTable(@NotNull NamespacedKey namespacedKey) {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public List<Entity> selectEntities(@NotNull CommandSender commandSender, @NotNull String s) throws IllegalArgumentException {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
+    @Deprecated
     public UnsafeValues getUnsafe() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @NotNull
     @Override
     public Spigot spigot() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 
     @Override
@@ -688,6 +693,6 @@ public class CraftServer implements Server {
     @NotNull
     @Override
     public Set<String> getListeningPluginChannels() {
-        return null;
+        throw new IllegalArgumentException(ERROR);
     }
 }

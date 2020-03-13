@@ -25,14 +25,12 @@ import java.util.logging.Level;
 public class SignPacketHandler {
     private Set<Location> signs = new HashSet<>();
     private EnchantmentTokens main;
-    private boolean gems;
 
-    public SignPacketHandler(ProtocolManager manager, EnchantmentTokens main, boolean gems) {
+    public SignPacketHandler(ProtocolManager manager, EnchantmentTokens main) {
         EnchantLogger.log(Level.INFO, "Registering sign listener");
         manager.addPacketListener(new SignPacketLoadAdapter(main, this));
         manager.addPacketListener(new SignPacketUpdateAdapter(main, this));
         this.main = main;
-        this.gems = gems;
     }
 
     public void removeSign(Location location) {
@@ -72,7 +70,7 @@ public class SignPacketHandler {
         ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
         if (base.canEnchantItem(itemStack)) {
             int level = EnchantUtils.getNextLevel(itemStack, base);
-            price = EnchantUtils.getPriceString(gems, level, base);
+            price = EnchantUtils.getPriceString(level, base);
         }
         return price;
     }

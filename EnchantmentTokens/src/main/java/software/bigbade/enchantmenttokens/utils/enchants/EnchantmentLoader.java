@@ -1,12 +1,13 @@
 package software.bigbade.enchantmenttokens.utils.enchants;
 
-import org.bukkit.Bukkit;
 import org.bukkit.enchantments.Enchantment;
-import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
+import software.bigbade.enchantmenttokens.localization.LocaleManager;
 import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.ReflectionManager;
+import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
+import software.bigbade.enchantmenttokens.utils.listeners.ListenerHandler;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,9 +26,9 @@ public class EnchantmentLoader {
     private Map<String, Set<Class<EnchantmentBase>>> enchantments = new ConcurrentHashMap<>();
     private Collection<EnchantmentAddon> addons = new ConcurrentLinkedQueue<>();
 
-    public EnchantmentLoader(File folder, EnchantmentTokens main) {
+    public EnchantmentLoader(File folder, SchedulerHandler scheduler, ListenerHandler listenerHandler) {
         ReflectionManager.setValue(ReflectionManager.getField(Enchantment.class, "acceptingNew"), true, Enchantment.class);
-        Bukkit.getScheduler().runTaskAsynchronously(main, () -> {
+        scheduler.runTaskAsync(() -> {
             if (folder.listFiles() == null) {
                 return;
             }
@@ -37,8 +38,10 @@ public class EnchantmentLoader {
                     loadJar(enchants);
             }
 
-            main.getListenerHandler().loadAddons(addons);
-            main.getListenerHandler().loadEnchantments(enchantments);
+            scheduler.runTaskAsync(() -> LocaleManager.getInstance().updateLocale(addons));
+
+            listenerHandler.loadAddons(addons);
+            listenerHandler.loadEnchantments(enchantments);
         });
     }
 

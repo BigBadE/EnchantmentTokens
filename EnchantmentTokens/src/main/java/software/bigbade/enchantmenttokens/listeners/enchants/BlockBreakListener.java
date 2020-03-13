@@ -12,7 +12,7 @@ import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import software.bigbade.enchantmenttokens.events.EventFactory;
 import software.bigbade.enchantmenttokens.listeners.SignPacketHandler;
-import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
+import software.bigbade.enchantmenttokens.localization.TranslatedTextMessage;
 import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationType;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
@@ -32,6 +32,8 @@ public class BlockBreakListener extends BasicEnchantListener implements Listener
         this.playerHandler = playerHandler;
     }
 
+    private static final TranslatedTextMessage GETGEMS = new TranslatedTextMessage("enchantment.gems.get");
+
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
@@ -49,7 +51,7 @@ public class BlockBreakListener extends BasicEnchantListener implements Listener
             EnchantmentPlayer player = playerHandler.getPlayer(event.getPlayer());
             long gems = (long) getGems(player);
             player.addGems(gems);
-            event.getPlayer().sendMessage(TranslatedMessage.translate("enchantment.gems.get", "" + gems));
+            event.getPlayer().sendMessage(GETGEMS.getText("" + gems));
         }
     }
 

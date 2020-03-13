@@ -20,8 +20,7 @@ import software.bigbade.enchantmenttokens.utils.MetricManager;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.utils.configuration.ConfigurationType;
-import software.bigbade.enchantmenttokens.utils.currency.CurrencyFactory;
-import software.bigbade.enchantmenttokens.utils.currency.CurrencyFactoryHandler;
+import software.bigbade.enchantmenttokens.utils.currency.*;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentLoader;
@@ -29,6 +28,7 @@ import software.bigbade.enchantmenttokens.utils.listeners.ListenerHandler;
 import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.logging.Level;
 
 public class EnchantmentTokens extends JavaPlugin {
@@ -60,10 +60,10 @@ public class EnchantmentTokens extends JavaPlugin {
      */
     @Override
     public void onEnable() {
-        LocaleManager.updateLocale(getConfig(), loader.getAddons());
-
         version = Integer.parseInt(Bukkit.getVersion().split("\\.")[1]);
         scheduler = new SchedulerHandler(this);
+
+        new LocaleManager(getConfig()).updateLocale(Collections.emptyList());
 
         setupConfiguration();
 
@@ -90,7 +90,7 @@ public class EnchantmentTokens extends JavaPlugin {
 
     private void setupProtocolManager() {
         ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
-        signHandler = new SignPacketHandler(protocolManager, this, new ConfigurationType<>("gems").getValue("type", ConfigurationManager.getSectionOrCreate(getConfig(), "currency")).equalsIgnoreCase("vault"));
+        signHandler = new SignPacketHandler(protocolManager, this);
     }
 
     private void setupSkript() {
@@ -105,6 +105,8 @@ public class EnchantmentTokens extends JavaPlugin {
 
         CurrencyFactoryHandler handler = new CurrencyFactoryHandler(getDataFolder().getAbsolutePath(), scheduler, currency, version);
         currencyFactory = handler.load();
+
+        new CurrencyAdditionHandler(!(currencyFactory instanceof VaultCurrencyFactory));
 
         playerHandler = new EnchantmentPlayerHandler(currencyFactory);
     }
@@ -151,7 +153,7 @@ public class EnchantmentTokens extends JavaPlugin {
     public void registerEnchants() {
         listenerHandler = new ListenerHandler(this);
         enchantmentHandler = new EnchantmentHandler(getConfig(), getDataFolder().getAbsolutePath() + "\\skript.yml");
-        loader = new EnchantmentLoader(new File(getDataFolder().getPath() + "\\enchantments"), this);
+        loader = new EnchantmentLoader(new File(getDataFolder().getPath() + "\\enchantments"), scheduler, listenerHandler);
     }
 
     public EnchantmentHandler getEnchantmentHandler() {

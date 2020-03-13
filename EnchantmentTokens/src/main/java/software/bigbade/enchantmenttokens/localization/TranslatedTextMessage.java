@@ -1,16 +1,18 @@
 package software.bigbade.enchantmenttokens.localization;
 
+import software.bigbade.enchantmenttokens.EnchantmentTokens;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 public class TranslatedTextMessage implements ITranslatedText {
-    private static Map<String, ResourceBundle> bundles = new HashMap<>();
+    private static final Map<String, ResourceBundle> bundles = new HashMap<>();
 
     private final String resource;
 
     public TranslatedTextMessage(String key) {
-        resource = bundles.get("messages").getString(key);
+        resource = bundles.get(EnchantmentTokens.NAME).getString(key);
     }
 
     public TranslatedTextMessage(String namespace, String key) {
@@ -18,7 +20,7 @@ public class TranslatedTextMessage implements ITranslatedText {
     }
 
     public static void updateBundles(Map<String, ResourceBundle> bundles) {
-        TranslatedTextMessage.bundles = bundles;
+        TranslatedTextMessage.bundles.putAll(bundles);
     }
 
     @Override

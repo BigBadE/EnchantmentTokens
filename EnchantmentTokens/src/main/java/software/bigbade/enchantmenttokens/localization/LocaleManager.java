@@ -12,12 +12,20 @@ import java.util.*;
 import java.util.logging.Level;
 
 public class LocaleManager {
-    public static Locale locale;
-    private LocaleManager() { }
+    private final Locale locale;
 
-    public static void updateLocale(ConfigurationSection section, Collection<EnchantmentAddon> addons) {
+    private static LocaleManager localeManager;
+
+    public LocaleManager(ConfigurationSection section) {
         locale = getLocale(section);
+        setInstance(this);
+    }
 
+    private static synchronized void setInstance(LocaleManager manager) {
+        localeManager = manager;
+    }
+
+    public void updateLocale(Collection<EnchantmentAddon> addons) {
         try {
             Map<String, ResourceBundle> resources = new HashMap<>();
             resources.put(EnchantmentTokens.NAME, new PropertyResourceBundle(getStream("messages", locale)));
@@ -50,5 +58,13 @@ public class LocaleManager {
         if (languageStream == null)
             languageStream = EnchantmentTokens.class.getResourceAsStream("localization/messages-en_US.properties");
         return languageStream;
+    }
+
+    public static synchronized LocaleManager getInstance() {
+        return localeManager;
+    }
+
+    public Locale getLocale() {
+        return locale;
     }
 }

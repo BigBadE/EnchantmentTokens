@@ -38,7 +38,7 @@ public class AddGemCmd implements CommandExecutor {
 
     private void addGems(String gems, Player target, CommandSender sender) {
         try {
-            CurrencyAdditionHandler.addGems(handler.getPlayer(target), Long.parseLong(gems));
+            CurrencyAdditionHandler.getInstance().addGems(handler.getPlayer(target), Long.parseLong(gems));
         } catch (NumberFormatException e) {
             sender.sendMessage(CommandUtils.NOTANUMBER.getText(gems));
         }

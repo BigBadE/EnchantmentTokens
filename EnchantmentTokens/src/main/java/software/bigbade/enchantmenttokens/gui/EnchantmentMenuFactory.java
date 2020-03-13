@@ -12,8 +12,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import software.bigbade.enchantmenttokens.api.VanillaEnchant;
-import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
+import software.bigbade.enchantmenttokens.localization.TranslatedTextMessage;
 import software.bigbade.enchantmenttokens.utils.EnchantButton;
+import software.bigbade.enchantmenttokens.utils.currency.CurrencyAdditionHandler;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
@@ -29,10 +30,11 @@ public class EnchantmentMenuFactory implements MenuFactory {
     private EnchantmentHandler enchantmentHandler;
     private EnchantUtils utils;
 
-    private static final String PRICE = "enchantment.price";
+    private static final TranslatedTextMessage PRICE = new TranslatedTextMessage("enchantment.price");
 
+    private static final String BACK = new TranslatedTextMessage("enchant.back").getText();
     //Barrier used for exiting the GUI
-    private ItemStack exit = makeItem(Material.BARRIER, TranslatedMessage.translate("enchant.back"));
+    private ItemStack exit = makeItem(Material.BARRIER, BACK);
     private EnchantButton glassButton = new EnchantButton(glassPane, player -> genItemInventory(player, player.getCurrentGUI().getItem()));
 
     private List<EnchantButton> buttons = new ArrayList<>();
@@ -92,6 +94,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
             buttons.add(glassButton);
     }
 
+    private static final TranslatedTextMessage TOOLENCHANTS = new TranslatedTextMessage("tool.enchants");
     /**
      * Generate the GUI with every enchantment in it
      *
@@ -100,7 +103,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
      * @return Generated enchantment inventory
      */
     public SubInventory generateGUI(ItemStack itemStack, EnchantmentPlayer player) {
-        Inventory inventory = Bukkit.createInventory(null, 54, itemStack.getType().name().replace("_", " ").toLowerCase() + " " + TranslatedMessage.translate("tool.enchants"));
+        Inventory inventory = Bukkit.createInventory(null, 54,  TOOLENCHANTS.getText(itemStack.getType().name().replace("_", " ").toLowerCase()));
         SubInventory subInventory = new SubInventory(inventory);
 
         subInventory.setItem(itemStack);
@@ -112,13 +115,13 @@ public class EnchantmentMenuFactory implements MenuFactory {
 
         inventory.setItem(4, itemStack);
 
-        addItems(subInventory, player);
+        addItems(subInventory);
 
         subInventory.addButton(new EnchantButton(exit, item -> genItemInventory(player, subInventory.getItem())), 49);
         return subInventory;
     }
 
-    private void addItems(SubInventory subInventory, EnchantmentPlayer player) {
+    private void addItems(SubInventory subInventory) {
         ItemStack item = subInventory.getItem();
 
         enchantmentHandler.getAllEnchants().stream()
@@ -130,8 +133,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
                     assert button.getItem().getItemMeta() != null && button.getItem().getItemMeta().getLore() != null;
 
                     if(level <= base.getMaxLevel())
-                        button.getItem().getItemMeta().getLore().add(ChatColor.GRAY + EnchantUtils.getPriceString(player.usingGems(), level, base));
-                    assert subInventory.getInventory() != null;
+                        button.getItem().getItemMeta().getLore().add(ChatColor.GRAY + EnchantUtils.getPriceString(level, base));
                     subInventory.addButton(button, subInventory.getInventory().firstEmpty());
                 });
     }
@@ -172,15 +174,17 @@ public class EnchantmentMenuFactory implements MenuFactory {
         itemStack.setItemMeta(meta);
     }
 
+    private static final TranslatedTextMessage LEVEL = new TranslatedTextMessage("enchantment.level");
+    private static final String MAXED = new TranslatedTextMessage("enchantment.maxed").getText();
+
     private void addLevelLore(int level, int maxLevel, ItemStack target) {
         ItemMeta meta = target.getItemMeta();
         assert meta != null;
-        String levelString = TranslatedMessage.translate("enchantment.level");
+        String levelString;
         if (level <= maxLevel)
-            levelString += level;
+            levelString = LEVEL.getText(level + "");
         else
-            levelString += TranslatedMessage.translate("enchantment.maxed");
-
+            levelString = MAXED;
         List<String> lore = new ArrayList<>();
         lore.add(levelString);
         meta.setLore(lore);
@@ -209,7 +213,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
         Inventory inventory = Bukkit.createInventory(null, 9 * (2 + ((int) Math.ceil(buttons.size() / 7f))), "Enchantments");
         if(item.getType() == Material.AIR)
             return null;
-        setupEncantItem(item, enchantPlayer.usingGems());
+        setupEncantItem(item);
         EnchantmentGUI enchantInv = new CustomEnchantmentGUI(inventory);
         enchantInv.setItem(item);
         populate(enchantInv, item, enchantPlayer.getPlayer());
@@ -219,25 +223,24 @@ public class EnchantmentMenuFactory implements MenuFactory {
         return enchantInv;
     }
 
-    private void setupEncantItem(ItemStack item, boolean usingGems) {
+    private void setupEncantItem(ItemStack item) {
         ItemMeta meta = item.getItemMeta();
         assert meta != null;
-        addPrice(meta, usingGems);
+        addPrice(meta);
         item.setItemMeta(meta);
     }
 
-    private void addPrice(ItemMeta meta, boolean gems) {
+    private void addPrice(ItemMeta meta) {
         List<String> lore = meta.getLore();
         if (lore == null)
             lore = new ArrayList<>();
-        if (lore.isEmpty() || !lore.get(lore.size() - 1).startsWith(TranslatedMessage.translate(PRICE))) {
-            if (gems)
-                lore.add(TranslatedMessage.translate(PRICE) + "0G");
-            else
-                lore.add(TranslatedMessage.translate(PRICE) + " " + TranslatedMessage.translate("dollar.symbol", "0"));
+        if (lore.size() >= 2 || !PRICE.getText("").contains(lore.get(lore.size() - 1))) {
+            lore.add(CurrencyAdditionHandler.getInstance().formatMoney("0"));
         }
         meta.setLore(lore);
     }
+
+    private static final String CONFIRM = new TranslatedTextMessage("enchant.confirm").getText();
 
     /*
     Order:
@@ -245,7 +248,6 @@ public class EnchantmentMenuFactory implements MenuFactory {
     23: Cancel
      */
     private void populate(EnchantmentGUI inventory, ItemStack item, Player player) {
-        assert inventory.getInventory() != null;
         inventory.getInventory().setItem(4, item);
         int rows = 2 + (int) Math.ceil(buttons.size() / 7f);
         for(int i = 1; i < rows-1; i++) {
@@ -253,10 +255,10 @@ public class EnchantmentMenuFactory implements MenuFactory {
                 inventory.addButton(buttons.get((i-1)*7+i2), i*9+i2+1);
             }
         }
-        ItemStack newItem = makeItem(Material.REDSTONE_BLOCK, TranslatedMessage.translate("enchant.cancel"));
+        ItemStack newItem = makeItem(Material.REDSTONE_BLOCK, BACK);
         inventory.addButton(new EnchantButton(newItem, itemStack -> null), rows * 9 - 4);
 
-        newItem = makeItem(Material.EMERALD_BLOCK, TranslatedMessage.translate("enchant.confirm"));
+        newItem = makeItem(Material.EMERALD_BLOCK, CONFIRM);
         inventory.addButton(new EnchantButton(newItem, enchantmentPlayer -> {
             PlayerInventory playerInventory = player.getInventory();
             removePriceLine(enchantmentPlayer.getCurrentGUI().getItem(), handler.getPlayer(player));
@@ -276,7 +278,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
         assert meta != null;
         if (meta.getLore() != null) {
             String line = meta.getLore().get(meta.getLore().size() - 1);
-            long price = Long.parseLong(line.substring(9).replace("G", "").replace(TranslatedMessage.translate("dollar.symbol", ""), ""));
+            long price = Long.parseLong(line.substring(9).replace(CurrencyAdditionHandler.getInstance().formatMoney(""), ""));
             List<String> lore = meta.getLore();
             lore.remove(meta.getLore().size() - 1);
             meta.setLore(lore);
@@ -288,7 +290,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
     }
 
     private void generateButton(EnchantmentTarget target, Material material, String key) {
-        ItemStack item = makeItem(material, TranslatedMessage.translate(key));
+        ItemStack item = makeItem(material, new TranslatedTextMessage(key).getText());
         buttons.add(
                 new EnchantButton(item, player -> {
                     if ((target != null && target.includes(player.getCurrentGUI().getItem())) || player.getCurrentGUI().getItem().getType() == material)

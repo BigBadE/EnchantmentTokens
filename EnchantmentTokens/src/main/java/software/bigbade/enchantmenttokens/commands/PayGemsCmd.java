@@ -43,12 +43,12 @@ public class PayGemsCmd implements CommandExecutor {
             long gemsLong = Long.parseLong(gems);
             EnchantmentPlayer player = handler.getPlayer((Player) sender);
             if(gemsLong == 1) {
-                sender.sendMessage(NOTENOUGH.getText(CurrencyAdditionHandler.formatMoney(player.usingGems(), 1)));
+                sender.sendMessage(NOTENOUGH.getText(CurrencyAdditionHandler.getInstance().formatMoney("1")));
                 return;
             }
-            sender.sendMessage(PAY.getText(CurrencyAdditionHandler.formatMoney(player.usingGems(), gemsLong), target.getName()));
-            target.sendMessage(RECIEVE.getText(CurrencyAdditionHandler.formatMoney(player.usingGems(), gemsLong), sender.getName()));
-            CurrencyAdditionHandler.addGems(handler.getPlayer(target), gemsLong);
+            sender.sendMessage(PAY.getText(CurrencyAdditionHandler.getInstance().formatMoney("" + gemsLong), target.getName()));
+            target.sendMessage(RECIEVE.getText(CurrencyAdditionHandler.getInstance().formatMoney("" + gemsLong), sender.getName()));
+            CurrencyAdditionHandler.getInstance().addGems(handler.getPlayer(target), gemsLong);
 
             player.addGems(-gemsLong);
         } catch (NumberFormatException e) {

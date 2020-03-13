@@ -8,16 +8,34 @@ import software.bigbade.enchantmenttokens.localization.TranslatedTextMessage;
 public class CurrencyAdditionHandler {
     private static final TranslatedTextMessage ADDMONEY = new TranslatedTextMessage("command.add");
 
-    //Private constructor to hide implicit public one.
-    private CurrencyAdditionHandler() {}
+    private static CurrencyAdditionHandler instance;
 
-    public static String formatMoney(boolean usingGems, long amount) {
-        String priceStr = new TranslatedMoneyMessage(usingGems).getStringAmount("%,d");
-        return String.format(LocaleManager.locale, priceStr, amount);
+    private final boolean usingGems;
+
+    public CurrencyAdditionHandler(boolean usingGems) {
+        CurrencyAdditionHandler.setInstance(this);
+        this.usingGems = usingGems;
     }
 
-    public static void addGems(EnchantmentPlayer player, long amount) {
+    private static synchronized void setInstance(CurrencyAdditionHandler handler) {
+        instance = handler;
+    }
+
+    public static synchronized CurrencyAdditionHandler getInstance() {
+        return instance;
+    }
+
+    public String formatMoney(String amount) {
+        String priceStr = new TranslatedMoneyMessage().getStringAmount("%,d");
+        return String.format(LocaleManager.getInstance().getLocale(), priceStr, amount);
+    }
+
+    public void addGems(EnchantmentPlayer player, long amount) {
         player.addGems(amount);
-        player.getPlayer().sendMessage(ADDMONEY.getText(formatMoney(player.usingGems(), amount)));
+        player.getPlayer().sendMessage(ADDMONEY.getText(formatMoney("" + amount)));
+    }
+
+    public boolean isUsingGems() {
+        return usingGems;
     }
 }

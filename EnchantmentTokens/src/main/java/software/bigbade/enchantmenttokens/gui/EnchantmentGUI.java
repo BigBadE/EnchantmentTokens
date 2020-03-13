@@ -2,11 +2,12 @@ package software.bigbade.enchantmenttokens.gui;
 
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bigbade.enchantmenttokens.utils.EnchantButton;
 
 public interface EnchantmentGUI {
-    @Nullable
+    @NotNull
     Inventory getInventory();
 
     @Nullable

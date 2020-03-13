@@ -7,7 +7,7 @@ import org.easymock.Mock;
 import org.junit.Assert;
 import org.junit.Test;
 import software.bigbade.enchantmenttokens.localization.LocaleManager;
-import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
+import software.bigbade.enchantmenttokens.localization.TranslatedTextMessage;
 
 import java.util.Collections;
 
@@ -20,7 +20,7 @@ public class TranslateTest extends EasyMockSupport {
         EasyMock.expect(section.get("country-language")).andReturn("US");
         replayAll();
 
-        LocaleManager.updateLocale(section, Collections.emptyList());
-        Assert.assertEquals("Test", TranslatedMessage.translate("test"));
+        new LocaleManager(section).updateLocale(Collections.emptyList());
+        Assert.assertEquals("Test", new TranslatedTextMessage("test").getText());
     }
 }

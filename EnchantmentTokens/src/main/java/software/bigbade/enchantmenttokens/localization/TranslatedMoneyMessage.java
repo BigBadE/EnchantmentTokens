@@ -1,17 +1,13 @@
 package software.bigbade.enchantmenttokens.localization;
 
+import software.bigbade.enchantmenttokens.utils.currency.CurrencyAdditionHandler;
+
 public class TranslatedMoneyMessage implements ITranslatedText {
     private static final TranslatedTextMessage money = new TranslatedTextMessage("dollar.symbol");
     private static final TranslatedTextMessage gems = new TranslatedTextMessage("gems.symbol");
 
-    private boolean usingGems;
-
-    public TranslatedMoneyMessage(boolean usingGems) {
-        this.usingGems = usingGems;
-    }
-
     public String getStringAmount(String amount) {
-        if (usingGems)
+        if (CurrencyAdditionHandler.getInstance().isUsingGems())
             return gems.getText(amount);
         else
             return money.getText(amount);

@@ -5,7 +5,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
 import software.bigbade.enchantmenttokens.api.VanillaEnchant;
-import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 
 import java.util.ArrayList;
@@ -22,13 +21,13 @@ public class EnchantTabCompleter implements TabCompleter, IEnchantTabCompleter {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!sender.hasPermission("enchanttoken.admin") && !sender.isOp())
-            return Collections.singletonList(TranslatedMessage.translate("command.permission"));
+            return Collections.singletonList(CommandUtils.NOPERMISSION);
         if (args.length == 1) {
             return getKeys(args[0]);
         } else if (args.length == 2) {
             return checkInt(args[1]);
         } else {
-            return Collections.singletonList(TranslatedMessage.translate("command.arguments.toomany"));
+            return Collections.singletonList(CommandUtils.TOOMANYARGUMENTS);
         }
     }
 
@@ -38,7 +37,7 @@ public class EnchantTabCompleter implements TabCompleter, IEnchantTabCompleter {
                 Integer.parseInt(number);
             return Collections.emptyList();
         } catch (NumberFormatException e) {
-            return Collections.singletonList(TranslatedMessage.translate("command.add.notnumber", number));
+            return Collections.singletonList(CommandUtils.NOTANUMBER.getText(number));
         }
     }
 

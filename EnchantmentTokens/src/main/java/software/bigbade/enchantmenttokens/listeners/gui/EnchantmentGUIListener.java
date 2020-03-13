@@ -12,13 +12,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
 public class EnchantmentGUIListener implements Listener {
-    private static String[] c = {"", "C", "CC", "CCC", "CD", "D",
-            "DC", "DCC", "DCCC", "CM"};
-    private static String[] x = {"", "X", "XX", "XXX", "XL", "L",
-            "LX", "LXX", "LXXX", "XC"};
-    private static String[] i = {"", "I", "II", "III", "IV", "V",
-            "VI", "VII", "VIII", "IX"};
-
     private EnchantmentPlayerHandler handler;
     private SchedulerHandler scheduler;
 
@@ -48,7 +41,7 @@ public class EnchantmentGUIListener implements Listener {
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         EnchantmentPlayer enchantPlayer = handler.getPlayer((Player) event.getPlayer());
-        if (enchantPlayer.getCurrentGUI() != null && enchantPlayer.getCurrentGUI().getInventory() != null && enchantPlayer.getCurrentGUI().getInventory().equals(event.getInventory())) {
+        if (enchantPlayer.getCurrentGUI() != null && enchantPlayer.getCurrentGUI().getInventory().equals(event.getInventory())) {
             scheduler.runTaskLater(() -> {
                 EnchantmentGUI gui = enchantPlayer.getCurrentGUI();
                 enchantPlayer.setCurrentGUI(null);
@@ -56,11 +49,5 @@ public class EnchantmentGUIListener implements Listener {
                 enchantPlayer.setCurrentGUI(gui);
             }, 1L);
         }
-    }
-
-    public static String getRomanNumeral(int level) {
-        return c[level / 100] +
-                x[(level % 100) / 10] +
-                i[level % 10];
     }
 }

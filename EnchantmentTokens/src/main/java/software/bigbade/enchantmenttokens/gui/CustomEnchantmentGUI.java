@@ -2,6 +2,7 @@ package software.bigbade.enchantmenttokens.gui;
 
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import software.bigbade.enchantmenttokens.utils.EnchantButton;
 
 import java.util.HashMap;
@@ -16,6 +17,7 @@ public class CustomEnchantmentGUI implements EnchantmentGUI {
         this.inventory = inventory;
     }
 
+    @NotNull
     public Inventory getInventory() {
         return inventory;
     }

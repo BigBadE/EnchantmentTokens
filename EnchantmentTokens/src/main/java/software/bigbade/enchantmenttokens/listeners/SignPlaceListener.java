@@ -4,7 +4,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
-import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
+import software.bigbade.enchantmenttokens.localization.TranslatedTextMessage;
+import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 
 public class SignPlaceListener implements Listener {
@@ -14,9 +15,11 @@ public class SignPlaceListener implements Listener {
         this.handler = handler;
     }
 
+    private static final String ENCHANTMENT = new TranslatedTextMessage("enchantment").getText();
+
     @EventHandler
     public void onSignChange(SignChangeEvent event) {
-        if (("[" + TranslatedMessage.translate("enchantment") + "]").equalsIgnoreCase(event.getLine(0)) && event.getLine(1) != null) {
+        if (("[" + ENCHANTMENT + "]").equalsIgnoreCase(event.getLine(0)) && event.getLine(1) != null) {
             String name = event.getLine(1);
             assert name != null;
             for (EnchantmentBase base : handler.getAllEnchants()) {
@@ -25,13 +28,15 @@ public class SignPlaceListener implements Listener {
                     return;
                 }
             }
-            event.getPlayer().sendMessage(TranslatedMessage.translate("enchantment.add.fail"));
+            event.getPlayer().sendMessage(EnchantUtils.ENCHANTMENTFAIL);
         }
     }
 
+    private static final TranslatedTextMessage ADDENCHANTMENT = new TranslatedTextMessage("enchantment.add");
+
     private void updateSign(EnchantmentBase base, SignChangeEvent event) {
-        event.getPlayer().sendMessage(TranslatedMessage.translate("enchantment.add", base.getName()));
-        event.setLine(0, "[" + TranslatedMessage.translate("enchantment") + "]");
+        event.getPlayer().sendMessage(ADDENCHANTMENT.getText(base.getName()));
+        event.setLine(0, "[" + ENCHANTMENT + "]");
         event.setLine(1, base.getName());
     }
 }

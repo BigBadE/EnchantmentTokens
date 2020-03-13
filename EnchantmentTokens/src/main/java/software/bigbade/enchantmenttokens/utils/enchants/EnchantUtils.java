@@ -8,9 +8,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import software.bigbade.enchantmenttokens.api.VanillaEnchant;
-import software.bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
 import software.bigbade.enchantmenttokens.localization.TranslatedMoneyMessage;
 import software.bigbade.enchantmenttokens.localization.TranslatedTextMessage;
+import software.bigbade.enchantmenttokens.utils.RomanNumberConverter;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerHandler;
 import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
 
@@ -25,7 +25,7 @@ public class EnchantUtils {
     private ListenerHandler listenerHandler;
     private Set<Location> signs;
 
-    private static final String ENCHANTMENTFAIL = new TranslatedTextMessage("enchantment.add.fail").getText();
+    public static final String ENCHANTMENTFAIL = new TranslatedTextMessage("enchantment.add.fail").getText();
     private static final String MAXLEVEL = new TranslatedTextMessage("enchantment.max.message").getText();
     private static final String ENCHANTMENT = new TranslatedTextMessage("enchantment").getText();
 
@@ -41,9 +41,10 @@ public class EnchantUtils {
 
     /**
      * Adds enchantment with given name to item, removes gems, and sends messages.
+     *
      * @param itemStack item to enchant
-     * @param name name of the enchantment
-     * @param player who to take the gems from
+     * @param name      name of the enchantment
+     * @param player    who to take the gems from
      */
     public void addEnchantment(ItemStack itemStack, String name, Player player) {
         for (EnchantmentBase base : handler.getAllEnchants()) {
@@ -58,8 +59,9 @@ public class EnchantUtils {
 
     /**
      * Adds enchantment to item
-     * @param item Item to enchant
-     * @param base EnchantBase to add
+     *
+     * @param item              Item to enchant
+     * @param base              EnchantBase to add
      * @param enchantmentPlayer player that holds the item
      * @return price of the enchant
      */
@@ -72,22 +74,23 @@ public class EnchantUtils {
         long price = base.getDefaultPrice(level);
 
         if (enchantmentPlayer.getGems() < price) {
-            enchantmentPlayer.getPlayer().sendMessage(BUYFAIL.getText(getPriceString(enchantmentPlayer.usingGems(), level, base)));
+            enchantmentPlayer.getPlayer().sendMessage(BUYFAIL.getText(getPriceString(level, base)));
             return 0;
         }
         enchantmentPlayer.getPlayer().sendMessage(BUYSUCCESS.getText(base.getName(), "" + level));
         if (base instanceof VanillaEnchant) {
             item.addEnchantment(base.getEnchantment(), level);
-            updateSigns(level, base, signs, enchantmentPlayer);
-            return price;
+        } else {
+            ItemMeta meta = item.getItemMeta();
+            assert meta != null;
+            meta.addEnchant(base.getEnchantment(), level, true);
+            updateLore(meta, level, base);
+            item.setItemMeta(meta);
+            listenerHandler.onEnchant(item, base, enchantmentPlayer.getPlayer());
         }
-        ItemMeta meta = item.getItemMeta();
-        assert meta != null;
-        meta.addEnchant(base.getEnchantment(), level, true);
-        updateLore(meta, level, base);
-        item.setItemMeta(meta);
-        listenerHandler.onEnchant(item, base, enchantmentPlayer.getPlayer());
-        updateSigns(level, base, signs, enchantmentPlayer);
+        String[] updated = updateSignText(level, base);
+        for (Location location : signs)
+            enchantmentPlayer.getPlayer().sendSignChange(location, updated);
         return price;
     }
 
@@ -96,29 +99,29 @@ public class EnchantUtils {
         if (lore == null)
             lore = new ArrayList<>();
         if (level != 0)
-            lore.remove(ChatColor.GRAY + base.getName() + " " + EnchantmentGUIListener.getRomanNumeral(level - 1));
-        lore.add(ChatColor.GRAY + base.getName() + " " + EnchantmentGUIListener.getRomanNumeral(level));
+            lore.remove(ChatColor.GRAY + base.getName() + " " + RomanNumberConverter.getRomanNumeral(level - 1));
+        lore.add(ChatColor.GRAY + base.getName() + " " + RomanNumberConverter.getRomanNumeral(level));
         meta.setLore(lore);
     }
 
     public static int getNextLevel(ItemStack item, EnchantmentBase enchantment) {
-        if(!item.hasItemMeta() || !Objects.requireNonNull(item.getItemMeta()).hasEnchants()) return enchantment.getStartLevel();
+        if (!item.hasItemMeta() || !Objects.requireNonNull(item.getItemMeta()).hasEnchants())
+            return enchantment.getStartLevel();
         int level = item.getItemMeta().getEnchants().get(enchantment.getEnchantment());
-        return level==0 ? enchantment.getStartLevel() : level+1;
+        return level == 0 ? enchantment.getStartLevel() : level + 1;
     }
 
-    public static String getPriceString(boolean gems, int level, EnchantmentBase base) {
+    public static String getPriceString(int level, EnchantmentBase base) {
         if (level > base.getMaxLevel())
             return MAXLEVEL;
         else
-            return new TranslatedMoneyMessage(gems).getStringAmount(base.getDefaultPrice(level) + "");
+            return new TranslatedMoneyMessage().getStringAmount(base.getDefaultPrice(level) + "");
     }
 
-    private void updateSigns(int level, EnchantmentBase base, Set<Location> signs, EnchantmentPlayer player) {
-        for (Location location : signs)
-            if (level >= base.getMaxLevel())
-                player.getPlayer().sendSignChange(location, new String[]{"[" + ENCHANTMENT + "]", base.getName(), MAXLEVEL, ""});
-            else
-                player.getPlayer().sendSignChange(location, new String[]{"[" + ENCHANTMENT + "]", base.getName(), getPriceString(player.usingGems(), level, base), ""});
+    private String[] updateSignText(int level, EnchantmentBase base) {
+        if (level >= base.getMaxLevel())
+            return new String[]{"[" + ENCHANTMENT + "]", base.getName(), MAXLEVEL, ""};
+        else
+            return new String[]{"[" + ENCHANTMENT + "]", base.getName(), getPriceString(level, base), ""};
     }
 }

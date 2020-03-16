@@ -11,6 +11,7 @@ import software.bigbade.enchantmenttokens.commands.EnchantTabCompleter;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 
 import java.util.Collections;
+import java.util.List;
 
 public class EnchantTabCompleterTest extends EasyMockSupport {
     @Mock
@@ -31,7 +32,13 @@ public class EnchantTabCompleterTest extends EasyMockSupport {
         replayAll();
 
         EnchantTabCompleter tabCompleter = new EnchantTabCompleter(handler);
-        tabCompleter.onTabComplete(commandSender, EasyMock.mock(Command.class), "", new String[] { "tes" });
-        tabCompleter.onTabComplete(commandSender, EasyMock.mock(Command.class), "", new String[] { "namesp" });
+        List<String> results = tabCompleter.onTabComplete(commandSender, EasyMock.mock(Command.class), "", new String[]{"tes"});
+        assert results != null;
+        assert !results.isEmpty();
+        assert results.get(0).equals("namespace:test");
+        results = tabCompleter.onTabComplete(commandSender, EasyMock.mock(Command.class), "", new String[]{"namesp"});
+        assert results != null;
+        assert !results.isEmpty();
+        assert results.get(0).equals("namespace:test");
     }
 }

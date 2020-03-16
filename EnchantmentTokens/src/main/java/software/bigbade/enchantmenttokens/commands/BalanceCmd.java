@@ -23,7 +23,7 @@ public class BalanceCmd implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if(commandSender instanceof Player) {
             EnchantmentPlayer player = handler.getPlayer((Player) commandSender);
-            String priceString = CurrencyAdditionHandler.getInstance().formatMoney("" + player.getGems());
+            String priceString = CurrencyAdditionHandler.getInstance().formatMoney(player.getGems());
             commandSender.sendMessage(BALANCE.getText(priceString));
         }
         return true;

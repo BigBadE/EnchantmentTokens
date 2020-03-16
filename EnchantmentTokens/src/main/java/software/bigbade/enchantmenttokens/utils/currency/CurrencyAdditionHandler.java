@@ -25,14 +25,18 @@ public class CurrencyAdditionHandler {
         return instance;
     }
 
-    public String formatMoney(String amount) {
+    public String formatMoney(long amount) {
         String priceStr = new TranslatedMoneyMessage().getStringAmount("%,d");
         return String.format(LocaleManager.getInstance().getLocale(), priceStr, amount);
     }
 
+    public String getFormat() {
+        return ADDMONEY.getText("");
+    }
+
     public void addGems(EnchantmentPlayer player, long amount) {
         player.addGems(amount);
-        player.getPlayer().sendMessage(ADDMONEY.getText(formatMoney("" + amount)));
+        player.getPlayer().sendMessage(ADDMONEY.getText(formatMoney(amount)));
     }
 
     public boolean isUsingGems() {

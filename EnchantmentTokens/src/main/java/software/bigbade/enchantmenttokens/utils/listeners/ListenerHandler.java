@@ -39,8 +39,13 @@ public class ListenerHandler {
 
     public ListenerHandler(EnchantmentTokens main) {
         EnchantLogger.log(Level.INFO, "Looking for enchantments");
-        for (ListenerType type : ListenerType.values()) {
-            enchantListeners.put(type, new ListenerManager());
+
+        try {
+            for (ListenerType type : ListenerType.values()) {
+                enchantListeners.put(type, new ListenerManager());
+            }
+        } catch (NoSuchFieldError ignored) {
+            EnchantLogger.log(Level.INFO, "Skipped unsupported listener type");
         }
         this.main = main;
     }
@@ -58,9 +63,11 @@ public class ListenerHandler {
         Bukkit.getPluginManager().registerEvents(new PlayerLeaveListener(main.getPlayerHandler()), main);
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(main.getPlayerHandler()), main);
 
-        Bukkit.getPluginManager().registerEvents(new RiptideListener(enchantListeners.get(ListenerType.RIPTIDE)), main);
-        Bukkit.getPluginManager().registerEvents(new ProjectileShootListener(main.getVersion(), enchantListeners.get(ListenerType.TRIDENT_THROW), enchantListeners.get(ListenerType.SHOOT)), main);
-        Bukkit.getPluginManager().registerEvents(new DamageListener(enchantListeners.get(ListenerType.DAMAGE), enchantListeners.get(ListenerType.SHIELD_BLOCK)), main);
+        if (main.getVersion() > 14)
+            Bukkit.getPluginManager().registerEvents(new RiptideListener(enchantListeners.get(ListenerType.RIPTIDE)), main);
+        if (main.getVersion() > 13)
+            Bukkit.getPluginManager().registerEvents(new ProjectileShootListener(main.getVersion(), enchantListeners.get(ListenerType.CROSSBOW_SHOOT), enchantListeners.get(ListenerType.TRIDENT_THROW), enchantListeners.get(ListenerType.SHOOT)), main);
+        Bukkit.getPluginManager().registerEvents(new DamageListener(enchantListeners.get(ListenerType.DAMAGE), (main.getVersion() > 8) ? enchantListeners.get(ListenerType.SHIELD_BLOCK) : null), main);
         Bukkit.getPluginManager().registerEvents(new PotionListener(enchantListeners.get(ListenerType.POTION_APPLY), enchantListeners.get(ListenerType.POTION_REMOVE)), main);
 
         registerBlockBreak();

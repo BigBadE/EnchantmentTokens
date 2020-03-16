@@ -1,5 +1,6 @@
 package software.bigbade.enchantmenttokens.localization;
 
+import org.bukkit.ChatColor;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 
 import java.util.HashMap;
@@ -12,11 +13,11 @@ public class TranslatedTextMessage implements ITranslatedText {
     private final String resource;
 
     public TranslatedTextMessage(String key) {
-        resource = bundles.get(EnchantmentTokens.NAME).getString(key);
+        resource = ChatColor.translateAlternateColorCodes('&', bundles.get(EnchantmentTokens.NAME).getString(key));
     }
 
     public TranslatedTextMessage(String namespace, String key) {
-        resource = bundles.get(namespace).getString(key);
+        resource = ChatColor.translateAlternateColorCodes('&', bundles.get(namespace).getString(key));
     }
 
     public static void updateBundles(Map<String, ResourceBundle> bundles) {

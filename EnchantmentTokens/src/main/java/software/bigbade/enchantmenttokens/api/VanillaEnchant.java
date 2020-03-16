@@ -35,7 +35,7 @@ public class VanillaEnchant extends CustomEnchantment {
         return enchantment.conflictsWith(enchantment);
     }
 
-    private static String capitalizeString(String string) {
+    public static String capitalizeString(String string) {
         char[] chars = string.toLowerCase().toCharArray();
         boolean found = false;
         for (int i = 0; i < chars.length; i++) {

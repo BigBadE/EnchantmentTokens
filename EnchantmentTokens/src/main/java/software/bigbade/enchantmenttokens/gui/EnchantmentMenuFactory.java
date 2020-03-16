@@ -103,7 +103,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
      * @return Generated enchantment inventory
      */
     public SubInventory generateGUI(ItemStack itemStack, EnchantmentPlayer player) {
-        Inventory inventory = Bukkit.createInventory(null, 54,  TOOLENCHANTS.getText(itemStack.getType().name().replace("_", " ").toLowerCase()));
+        Inventory inventory = Bukkit.createInventory(null, 54, TOOLENCHANTS.getText(VanillaEnchant.capitalizeString(itemStack.getType().name().replace("_", " ").toLowerCase())));
         SubInventory subInventory = new SubInventory(inventory);
 
         subInventory.setItem(itemStack);
@@ -116,6 +116,8 @@ public class EnchantmentMenuFactory implements MenuFactory {
         inventory.setItem(4, itemStack);
 
         addItems(subInventory);
+
+        player.setCurrentGUI(subInventory);
 
         subInventory.addButton(new EnchantButton(exit, item -> genItemInventory(player, subInventory.getItem())), 49);
         return subInventory;
@@ -185,7 +187,9 @@ public class EnchantmentMenuFactory implements MenuFactory {
             levelString = LEVEL.getText(level + "");
         else
             levelString = MAXED;
-        List<String> lore = new ArrayList<>();
+        List<String> lore = meta.getLore();
+        if(lore == null)
+            lore = new ArrayList<>();
         lore.add(levelString);
         meta.setLore(lore);
         target.setItemMeta(meta);
@@ -195,7 +199,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
         assert item.getItemMeta() != null;
         List<String> lore = item.getItemMeta().getLore();
         assert lore != null;
-        String priceStr = lore.get(lore.size() - 1).replaceAll(ChatColor.COLOR_CHAR + ".", "");
+        String priceStr = ChatColor.stripColor(lore.get(lore.size() - 1));
         long oldPrice = Long.parseLong(priceStr.replaceAll("[^\\d.]", ""));
         long newPrice = price + oldPrice;
         priceStr = priceStr.replace("" + oldPrice, "" + newPrice);
@@ -210,7 +214,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
     }
 
     public EnchantmentGUI genItemInventory(EnchantmentPlayer enchantPlayer, ItemStack item) {
-        Inventory inventory = Bukkit.createInventory(null, 9 * (2 + ((int) Math.ceil(buttons.size() / 7f))), "Enchantments");
+        Inventory inventory = Bukkit.createInventory(null, 9 * (2 + ((int) Math.ceil(buttons.size() / 7f))), TOOLENCHANTS.getText(VanillaEnchant.capitalizeString(item.getType().name().replace("_", " ").toLowerCase())));
         if(item.getType() == Material.AIR)
             return null;
         setupEncantItem(item);
@@ -234,8 +238,8 @@ public class EnchantmentMenuFactory implements MenuFactory {
         List<String> lore = meta.getLore();
         if (lore == null)
             lore = new ArrayList<>();
-        if (lore.size() >= 2 || !PRICE.getText("").contains(lore.get(lore.size() - 1))) {
-            lore.add(CurrencyAdditionHandler.getInstance().formatMoney("0"));
+        if (lore.isEmpty() || !PRICE.getText("").startsWith(lore.get(lore.size() - 1))) {
+            lore.add(PRICE.getText(CurrencyAdditionHandler.getInstance().formatMoney(0)));
         }
         meta.setLore(lore);
     }
@@ -278,7 +282,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
         assert meta != null;
         if (meta.getLore() != null) {
             String line = meta.getLore().get(meta.getLore().size() - 1);
-            long price = Long.parseLong(line.substring(9).replace(CurrencyAdditionHandler.getInstance().formatMoney(""), ""));
+            long price = Long.parseLong(line.substring(9).replace(CurrencyAdditionHandler.getInstance().getFormat(), ""));
             List<String> lore = meta.getLore();
             lore.remove(meta.getLore().size() - 1);
             meta.setLore(lore);

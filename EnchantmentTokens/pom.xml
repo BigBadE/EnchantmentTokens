@@ -17,6 +17,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <modules>
+        <module>EnchantmentTokensDevelopment</module>
+        <module>EnchantmentTokensPublic</module>
+    </modules>
+
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>

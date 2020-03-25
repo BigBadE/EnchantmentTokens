@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.eclipse.jdt.annotation.Nullable;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
+import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
 import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
@@ -28,9 +29,9 @@ public class BaseParser extends Parser<SkriptEnchantment> {
     @Nullable
     public SkriptEnchantment parse(final String name, final ParseContext context) {
         EnchantmentHandler enchantmentHandler = main.getEnchantmentHandler();
-        for(SkriptEnchantment enchantment : enchantmentHandler.getSkriptEnchantments()) {
+        for(EnchantmentBase enchantment : enchantmentHandler.getSkriptEnchant()) {
             if(enchantment.getName().equals(name)) {
-                return enchantment;
+                return (SkriptEnchantment) enchantment;
             }
         }
 
@@ -39,9 +40,9 @@ public class BaseParser extends Parser<SkriptEnchantment> {
             return null;
         }
 
-        for(SkriptEnchantment enchantment : enchantmentHandler.getSkriptEnchantments())
+        for(EnchantmentBase enchantment : enchantmentHandler.getSkriptEnchant())
             if (enchantment.getName().equalsIgnoreCase(name))
-                return enchantment;
+                return (SkriptEnchantment) enchantment;
         SkriptEnchantment enchantment = new SkriptEnchantment(name, Material.BEDROCK);
         enchantmentHandler.addSkriptEnchant(enchantment);
         return enchantment;

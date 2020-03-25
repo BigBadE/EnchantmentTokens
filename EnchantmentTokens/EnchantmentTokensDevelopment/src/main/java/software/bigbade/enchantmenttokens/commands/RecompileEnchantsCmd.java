@@ -6,6 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import software.bigbade.enchantmenttokens.api.StringUtils;
 
 public class RecompileEnchantsCmd implements CommandExecutor {
     private EnchantmentTokens main;
@@ -17,7 +18,7 @@ public class RecompileEnchantsCmd implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if(!sender.hasPermission("enchanttoken.admin") && !sender.isOp()) {
-            sender.sendMessage(ChatColor.RED + "You do not have permission to run this command");
+            sender.sendMessage(ChatColor.stripColor(StringUtils.COMMAND_ERROR_PERMISSION));
         } else {
             main.unregisterEnchants();
             main.registerEnchants();

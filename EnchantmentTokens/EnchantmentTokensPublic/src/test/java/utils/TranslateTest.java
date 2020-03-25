@@ -1,4 +1,4 @@
-package software.bigbade.enchantmenttokens.utils;
+package utils;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.easymock.EasyMock;
@@ -7,7 +7,7 @@ import org.easymock.Mock;
 import org.junit.Assert;
 import org.junit.Test;
 import software.bigbade.enchantmenttokens.localization.LocaleManager;
-import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
+import software.bigbade.enchantmenttokens.localization.TranslatedString;
 
 import java.util.Collections;
 
@@ -21,6 +21,6 @@ public class TranslateTest extends EasyMockSupport {
         replayAll();
 
         LocaleManager.updateLocale(section, Collections.emptyList());
-        Assert.assertEquals("Test", TranslatedMessage.translate("test"));
+        Assert.assertEquals("Test", new TranslatedString("test").translate());
     }
 }

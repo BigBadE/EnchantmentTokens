@@ -3,6 +3,7 @@ package software.bigbade.enchantmenttokens.commands;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabCompleter;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
+import software.bigbade.enchantmenttokens.configuration.ConfigurationType;
 import software.bigbade.enchantmenttokens.utils.BrigadierManager;
 
 import java.util.Objects;
@@ -20,7 +21,7 @@ public class CommandManager {
         registerCommand(main, "gembalance", new GenericTabCompleter(0, null), new BalanceCmd(main.getPlayerHandler()));
         registerCommand(main, "enchantlist", new GenericTabCompleter(0, "enchanttoken.list"), new EnchantmentListCommand(main.getEnchantmentHandler()));
         registerCommand(main, "reloadenchants", new GenericTabCompleter(0, "enchanttoken.admin"), new RecompileEnchantsCmd(main));
-        registerCommand(main, "paygems", new GemsTabCompleter(false), new PayGemsCmd(main.getPlayerHandler()));
+        registerCommand(main, "paygems", new GemsTabCompleter(false), new PayGemsCmd(main.getPlayerHandler(), new ConfigurationType<>(1).getValue("minimumPay", main.getConfig())));
     }
 
     private static void registerCommand(EnchantmentTokens main, String name, TabCompleter tabCompleter, CommandExecutor executor) {

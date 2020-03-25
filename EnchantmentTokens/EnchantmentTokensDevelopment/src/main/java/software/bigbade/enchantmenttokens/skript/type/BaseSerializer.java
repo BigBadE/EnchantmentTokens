@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
+import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
 
 import java.io.StreamCorruptedException;
@@ -33,9 +34,9 @@ public class BaseSerializer extends Serializer<SkriptEnchantment> {
     @Override
     protected SkriptEnchantment deserialize(final Fields fields) throws StreamCorruptedException {
         NamespacedKey key = (NamespacedKey) fields.getObject("key");
-        for(SkriptEnchantment enchantment : main.getEnchantmentHandler().getSkriptEnchantments()) {
+        for(EnchantmentBase enchantment : main.getEnchantmentHandler().getSkriptEnchant()) {
             if(enchantment.getKey().equals(key)) {
-                return enchantment;
+                return (SkriptEnchantment) enchantment;
             }
         }
         SkriptEnchantment enchantment = new SkriptEnchantment(key.getKey(), Material.BEDROCK);

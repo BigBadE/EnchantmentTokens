@@ -8,9 +8,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
-import software.bigbade.enchantmenttokens.api.CustomEnchantment;
+import software.bigbade.enchantmenttokens.api.EnchantmentBase;
+import software.bigbade.enchantmenttokens.api.StringUtils;
 import software.bigbade.enchantmenttokens.api.VanillaEnchant;
-import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
 import software.bigbade.enchantmenttokens.utils.RomanNumeralConverter;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 
@@ -27,11 +27,11 @@ public class EnchantCmd implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!sender.hasPermission("enchanttoken.admin") && !sender.isOp()) {
-            sender.sendMessage(TranslatedMessage.translate("command.permission"));
+            sender.sendMessage(StringUtils.COMMAND_ERROR_PERMISSION);
             return true;
         }
         if (args.length != 2 || !(sender instanceof Player)) {
-            sender.sendMessage(TranslatedMessage.translate("command.enchant.usage"));
+            sender.sendMessage(StringUtils.COMMAND_ENCHANT_USAGE);
             return true;
         }
 
@@ -41,11 +41,11 @@ public class EnchantCmd implements CommandExecutor {
         try {
             level = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
-            sender.sendMessage(TranslatedMessage.translate("command.enchant.usage"));
+            sender.sendMessage(StringUtils.COMMAND_ENCHANT_USAGE);
             return true;
         }
 
-        for (CustomEnchantment enchantment : handler.getAllEnchants()) {
+        for (EnchantmentBase enchantment : handler.getAllEnchants()) {
             if (enchantment instanceof VanillaEnchant)
                 continue;
             if (enchantment.getKey().toString().equals(args[0])) {
@@ -53,12 +53,12 @@ public class EnchantCmd implements CommandExecutor {
                 return true;
             }
         }
-        sender.sendMessage(TranslatedMessage.translate("command.enchant.notfound"));
+        sender.sendMessage(StringUtils.COMMAND_ERROR_NO_ENCHANTMENT);
         return true;
     }
 
-    private void addEnchant(Player player, ItemStack item, CustomEnchantment base, int level) {
-        item.addEnchantment(base, level);
+    private void addEnchant(Player player, ItemStack item, EnchantmentBase base, int level) {
+        item.addEnchantment(base.getEnchantment(), level);
         ItemMeta meta = item.getItemMeta();
         assert meta != null;
         List<String> lore = meta.getLore();
@@ -67,6 +67,6 @@ public class EnchantCmd implements CommandExecutor {
         lore.add(ChatColor.GRAY + base.getName() + ": " + RomanNumeralConverter.getRomanNumeral(level));
         meta.setLore(lore);
         item.setItemMeta(meta);
-        player.sendMessage(TranslatedMessage.translate("command.add", base.getName()));
+        player.sendMessage(StringUtils.COMMAND_ADD.translate(base.getName()));
     }
 }

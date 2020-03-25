@@ -7,11 +7,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import software.bigbade.enchantmenttokens.utils.players.PlayerHandler;
 
 public class PlayerLeaveListener implements Listener {
-    private EnchantmentPlayerHandler playerHandler;
+    private PlayerHandler playerHandler;
 
-    public PlayerLeaveListener(EnchantmentPlayerHandler handler) {
+    public PlayerLeaveListener(PlayerHandler handler) {
         this.playerHandler = handler;
     }
 

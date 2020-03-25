@@ -27,7 +27,7 @@ import java.util.logging.Level;
 public class CustomEnchantmentHandler implements EnchantmentHandler {
     private List<EnchantmentBase> enchantments = new ArrayList<>();
     private List<VanillaEnchant> vanillaEnchants = new ArrayList<>();
-    private List<SkriptEnchantment> skriptEnchantments = new ArrayList<>();
+    private List<EnchantmentBase> skriptEnchantments = new ArrayList<>();
     private List<EnchantmentBase> allEnchants = new ArrayList<>();
 
     private FileConfiguration config;
@@ -52,7 +52,7 @@ public class CustomEnchantmentHandler implements EnchantmentHandler {
 
         vanillaRegistering.forEach(enchantment -> loadVanillaConfig(enchantment, section));
 
-        skriptEnchantments.forEach(Enchantment::registerEnchantment);
+        skriptEnchantments.forEach(base -> Enchantment.registerEnchantment(base.getEnchantment()));
 
         this.enchantments.addAll(enchantments);
         enchantments.forEach(base -> Enchantment.registerEnchantment(base.getEnchantment()));
@@ -105,7 +105,7 @@ public class CustomEnchantmentHandler implements EnchantmentHandler {
         }
     }
 
-    public void addSkriptEnchant(SkriptEnchantment enchantment) {
+    public void addSkriptEnchant(EnchantmentBase enchantment) {
         for (Field field : enchantment.getClass().getSuperclass().getDeclaredFields())
             ConfigurationManager.loadConfigForField(field, ConfigurationManager.getSectionOrCreate(skriptConfiguration, enchantment.getName()), enchantment);
         enchantment.loadConfig();
@@ -115,7 +115,7 @@ public class CustomEnchantmentHandler implements EnchantmentHandler {
 
     public List<EnchantmentBase> getCustomEnchants() { return enchantments; }
 
-    public List<SkriptEnchantment> getSkriptEnchantments() {
+    public List<EnchantmentBase> getSkriptEnchant() {
         return skriptEnchantments;
     }
 

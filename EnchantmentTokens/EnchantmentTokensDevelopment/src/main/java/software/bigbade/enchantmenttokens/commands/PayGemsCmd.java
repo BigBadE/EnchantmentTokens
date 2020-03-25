@@ -7,22 +7,24 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
-import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
+import software.bigbade.enchantmenttokens.api.StringUtils;
+import software.bigbade.enchantmenttokens.localization.TranslatedPrice;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyAdditionHandler;
-import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
-import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
+import software.bigbade.enchantmenttokens.utils.players.PlayerHandler;
 
 public class PayGemsCmd implements CommandExecutor {
-    private EnchantmentPlayerHandler handler;
+    private PlayerHandler handler;
+    private long minTokens;
 
-    public PayGemsCmd(EnchantmentPlayerHandler handler) {
+    public PayGemsCmd(PlayerHandler handler, long minTokens) {
         this.handler = handler;
+        this.minTokens = minTokens;
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if(args.length != 2) {
-            commandSender.sendMessage(TranslatedMessage.translate("command.pay.usage"));
+            commandSender.sendMessage(StringUtils.COMMAND_PAY_USAGE);
         }
         if(commandSender instanceof Player) {
             Player target = Bukkit.getPlayer(args[0]);
@@ -38,16 +40,16 @@ public class PayGemsCmd implements CommandExecutor {
             long gemsLong = Long.parseLong(gems);
             EnchantmentPlayer player = handler.getPlayer((Player) sender);
             if(gemsLong == 1) {
-                sender.sendMessage(TranslatedMessage.translate("command.pay.notenough", EnchantUtils.getPriceString(player.usingGems(), 1)));
+                sender.sendMessage(StringUtils.COMMAND_PAY_NOT_ENOUGH.translate(new TranslatedPrice().translate(minTokens + "")));
                 return;
             }
-            sender.sendMessage(TranslatedMessage.translate("command.pay", EnchantUtils.getPriceString(player.usingGems(), gemsLong), target.getName()));
-            target.sendMessage(TranslatedMessage.translate("command.pay.receive", EnchantUtils.getPriceString(player.usingGems(), gemsLong), sender.getName()));
+            sender.sendMessage(StringUtils.COMMAND_PAY.translate(new TranslatedPrice().translate("" + gemsLong), target.getName()));
+            target.sendMessage(StringUtils.COMMAND_PAY_RECEIVE.translate(new TranslatedPrice().translate("" + gemsLong), sender.getName()));
             CurrencyAdditionHandler.addGems(handler.getPlayer(target), gemsLong);
 
             player.addGems(-gemsLong);
         } catch (NumberFormatException e) {
-            sender.sendMessage(TranslatedMessage.translate("command.add.notnumber", gems));
+            sender.sendMessage(StringUtils.COMMAND_ERROR_NOT_NUMBER.translate(gems));
         }
     }
 }

@@ -21,4 +21,15 @@ public interface EnchantmentHandler {
      * @return All registered custom enchantments, excluding vanilla or skript enchantments
      */
     List<EnchantmentBase> getCustomEnchants();
+
+    /**
+     * Gets Skript enchantments
+     * @return All registered skript enchantments
+     */
+    List<EnchantmentBase> getSkriptEnchant();
+
+    /**
+     * Add Skript enchantment
+     */
+    void addSkriptEnchant(EnchantmentBase base);
 }

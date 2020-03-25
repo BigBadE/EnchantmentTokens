@@ -1,15 +1,15 @@
 package software.bigbade.enchantmenttokens.listeners;
 
-import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import software.bigbade.enchantmenttokens.utils.players.PlayerHandler;
 
 public class PlayerJoinListener implements Listener {
 
-    private EnchantmentPlayerHandler playerHandler;
+    private PlayerHandler playerHandler;
 
-    public PlayerJoinListener(EnchantmentPlayerHandler handler) {
+    public PlayerJoinListener(PlayerHandler handler) {
         playerHandler = handler;
     }
 

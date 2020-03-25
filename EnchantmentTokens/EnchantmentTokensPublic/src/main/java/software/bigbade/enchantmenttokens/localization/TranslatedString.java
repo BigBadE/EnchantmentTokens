@@ -13,6 +13,8 @@ public class TranslatedString implements ITranslatedMessage {
         ResourceBundle bundle = LocaleManager.getBundle(namespace);
         if (bundle != null) {
             message = ChatColor.translateAlternateColorCodes('&', bundle.getString(key));
+        } else {
+            message = "NO BUNDLE FOUND";
         }
     }
 
@@ -23,7 +25,9 @@ public class TranslatedString implements ITranslatedMessage {
     @Override
     public String translate(String... args) {
         String text = message;
+        System.out.println("Translating " + message);
         for (String argument : args) {
+            System.out.println("Putting in " + argument);
             text = text.replaceFirst("%s", argument.replace("$", "\\$"));
         }
         return text;

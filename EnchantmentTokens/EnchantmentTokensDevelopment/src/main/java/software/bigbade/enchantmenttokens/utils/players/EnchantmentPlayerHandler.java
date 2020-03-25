@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class EnchantmentPlayerHandler {
+public class EnchantmentPlayerHandler implements PlayerHandler {
     private List<EnchantmentPlayer> players = new ArrayList<>();
     private CurrencyFactory currencyFactory;
 

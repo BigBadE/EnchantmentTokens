@@ -9,6 +9,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.commands.CommandManager;
+import software.bigbade.enchantmenttokens.configuration.ConfigurationManager;
+import software.bigbade.enchantmenttokens.configuration.ConfigurationType;
 import software.bigbade.enchantmenttokens.currency.CurrencyFactory;
 import software.bigbade.enchantmenttokens.gui.EnchantmentMenuFactory;
 import software.bigbade.enchantmenttokens.gui.MenuFactory;
@@ -18,22 +20,23 @@ import software.bigbade.enchantmenttokens.skript.type.SkriptManager;
 import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.MetricManager;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
-import software.bigbade.enchantmenttokens.configuration.ConfigurationManager;
-import software.bigbade.enchantmenttokens.configuration.ConfigurationType;
+import software.bigbade.enchantmenttokens.utils.SignHandler;
+import software.bigbade.enchantmenttokens.utils.currency.CurrencyAdditionHandler;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyFactoryHandler;
+import software.bigbade.enchantmenttokens.utils.currency.VaultCurrencyFactory;
+import software.bigbade.enchantmenttokens.utils.enchants.CustomEnchantUtils;
+import software.bigbade.enchantmenttokens.utils.enchants.CustomEnchantmentHandler;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentLoader;
 import software.bigbade.enchantmenttokens.utils.listeners.EnchantListenerHandler;
 import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
+import software.bigbade.enchantmenttokens.utils.players.PlayerHandler;
 
 import java.io.File;
 import java.util.logging.Level;
 
 public class CustomEnchantmentTokens extends EnchantmentTokens {
-    //Name used for NamespacedKey namespaces
-    public static final String NAME = "enchantmenttokens";
-
     private File enchantmentFolder = new File(getDataFolder().getPath() + "\\enchantments");
 
     private EnchantmentLoader loader;
@@ -77,7 +80,7 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
 
         LocaleManager.updateLocale(getConfig(), loader.getAddons());
 
-        utils = new EnchantUtils(enchantmentHandler, playerHandler, listenerHandler, signHandler.getSigns());
+        utils = new CustomEnchantUtils(enchantmentHandler, playerHandler, listenerHandler, signHandler.getSigns());
 
         factory = new EnchantmentMenuFactory(version, playerHandler, utils, enchantmentHandler);
 
@@ -92,7 +95,7 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
 
     private void setupProtocolManager() {
         ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
-        signHandler = new SignPacketHandler(protocolManager, this, new ConfigurationType<>("gems").getValue("type", ConfigurationManager.getSectionOrCreate(getConfig(), "currency")).equalsIgnoreCase("vault"));
+        signHandler = new SignPacketHandler(protocolManager, this);
     }
 
     private void setupSkript() {
@@ -107,6 +110,8 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
 
         CurrencyFactoryHandler handler = new CurrencyFactoryHandler(getDataFolder().getAbsolutePath(), scheduler, currency, version);
         currencyFactory = handler.load();
+
+        CurrencyAdditionHandler.initialize(currencyFactory instanceof VaultCurrencyFactory);
 
         playerHandler = new EnchantmentPlayerHandler(currencyFactory);
     }
@@ -146,51 +151,63 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
         saveConfig();
     }
 
+    @Override
     public void unregisterEnchants() {
         enchantmentHandler.unregisterEnchants();
     }
 
+    @Override
     public void registerEnchants() {
         listenerHandler = new EnchantListenerHandler(this);
-        enchantmentHandler = new EnchantmentHandler(getConfig(), getDataFolder().getAbsolutePath() + "\\skript.yml");
+        enchantmentHandler = new CustomEnchantmentHandler(getConfig(), getDataFolder().getAbsolutePath() + "\\skript.yml");
         loader = new EnchantmentLoader(enchantmentFolder, this);
     }
 
+    @Override
     public EnchantmentHandler getEnchantmentHandler() {
         return enchantmentHandler;
     }
 
+    @Override
     public EnchantListenerHandler getListenerHandler() {
         return listenerHandler;
     }
 
-    public EnchantmentPlayerHandler getPlayerHandler() {
+    @Override
+    public PlayerHandler getPlayerHandler() {
         return playerHandler;
     }
 
+    @Override
     public CurrencyFactory getCurrencyHandler() {
         return currencyFactory;
     }
 
+    @Override
     public int getVersion() {
         return version;
     }
 
-    public SignPacketHandler getSignHandler() {
+    @Override
+    public SignHandler getSignHandler() {
         return signHandler;
     }
 
+    @Override
     public EnchantUtils getUtils() {
         return utils;
     }
 
+    @Override
     public MenuFactory getMenuFactory() {
         return factory;
     }
 
+    @Override
     public SchedulerHandler getScheduler() {
         return scheduler;
     }
 
+    @Override
     public File getEnchantmentFolder() { return enchantmentFolder; }
 }

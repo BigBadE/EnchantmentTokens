@@ -9,10 +9,6 @@ import static org.junit.Assert.*;
 public class ReflectionManagerTest {
     private boolean worked = false;
 
-    public ReflectionManagerTest() {
-
-    }
-
     @Test
     public void testReflectionManager() {
         ReflectionManagerTest test = (ReflectionManagerTest) ReflectionManager.instantiate(getClass());

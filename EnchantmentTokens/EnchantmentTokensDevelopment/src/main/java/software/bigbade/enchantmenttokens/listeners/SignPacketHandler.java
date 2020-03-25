@@ -12,8 +12,10 @@ import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
-import software.bigbade.enchantmenttokens.localization.TranslatedString;
+import software.bigbade.enchantmenttokens.api.StringUtils;
+import software.bigbade.enchantmenttokens.localization.TranslatedPrice;
 import software.bigbade.enchantmenttokens.utils.EnchantLogger;
+import software.bigbade.enchantmenttokens.utils.SignHandler;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
 
 import java.util.ArrayList;
@@ -22,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
-public class SignPacketHandler {
+public class SignPacketHandler implements SignHandler {
     private Set<Location> signs = new HashSet<>();
     private EnchantmentTokens main;
 
@@ -39,6 +41,11 @@ public class SignPacketHandler {
 
     public Set<Location> getSigns() {
         return signs;
+    }
+
+    @Override
+    public void addSign(Location sign) {
+        signs.add(sign);
     }
 
     void handlePacket(NbtCompound compound, PacketEvent event, boolean map) {
@@ -64,11 +71,11 @@ public class SignPacketHandler {
     }
 
     private void updateSign(EnchantmentBase base, NbtCompound compound, PacketEvent event) {
-        String price = TranslatedMessage.translate("enchantment.notapplicable");
+        String price = StringUtils.NOT_APPLICABLE;
         ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
         if (base.canEnchantItem(itemStack)) {
-            int level = EnchantUtils.getNextLevel(itemStack, base);
-            price = EnchantUtils.getPriceString(gems, level, base);
+            int level = EnchantUtils.getInstance().getNextLevel(itemStack, base);
+            price = StringUtils.PRICE.translate(new TranslatedPrice().translate("" + base.getDefaultPrice(level)));
         }
         compound.put("Text3", "{\"extra\":[{\"text\":\"Price: " + price + "\"}],\"text\":\"\"}");
     }

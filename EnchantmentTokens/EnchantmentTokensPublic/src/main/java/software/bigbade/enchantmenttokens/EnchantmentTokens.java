@@ -4,6 +4,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import software.bigbade.enchantmenttokens.currency.CurrencyFactory;
 import software.bigbade.enchantmenttokens.gui.MenuFactory;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
+import software.bigbade.enchantmenttokens.utils.SignHandler;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerHandler;
@@ -20,7 +21,7 @@ public abstract class EnchantmentTokens extends JavaPlugin {
 
     public abstract void unregisterEnchants();
 
-    abstract void registerEnchants();
+    public abstract void registerEnchants();
 
     public void setLogger(Logger logger) {
         setEnchantLogger(logger);
@@ -44,7 +45,7 @@ public abstract class EnchantmentTokens extends JavaPlugin {
 
     public abstract int getVersion();
 
-    public abstract SignPacketHandler getSignHandler();
+    public abstract SignHandler getSignHandler();
 
     public abstract EnchantUtils getUtils();
 

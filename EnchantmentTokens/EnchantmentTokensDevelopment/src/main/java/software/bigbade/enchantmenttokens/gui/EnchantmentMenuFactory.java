@@ -9,8 +9,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
-import software.bigbade.enchantmenttokens.api.CustomEnchantment;
+import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
+import software.bigbade.enchantmenttokens.api.StringUtils;
 import software.bigbade.enchantmenttokens.api.VanillaEnchant;
 import software.bigbade.enchantmenttokens.localization.TranslatedPrice;
 import software.bigbade.enchantmenttokens.localization.TranslatedString;
@@ -33,9 +34,9 @@ public class EnchantmentMenuFactory implements MenuFactory {
 
     //Barrier used for exiting the GUI
     private ItemStack exit = makeItem(Material.BARRIER, new TranslatedString("enchant.back").translate());
-    private CustomEnchantButton glassButton = new CustomEnchantButton(glassPane, player -> genItemInventory(player, player.getCurrentGUI().getItem()));
+    private EnchantButton glassButton = new CustomEnchantButton(glassPane, player -> genItemInventory(player, player.getCurrentGUI().getItem()));
 
-    private List<CustomEnchantButton> buttons = new ArrayList<>();
+    private List<EnchantButton> buttons = new ArrayList<>();
 
     private static final String MAXED = new TranslatedString("enchantment.maxed").translate();
     private static final TranslatedString LEVEL = new TranslatedString("enchantment.level");
@@ -49,11 +50,10 @@ public class EnchantmentMenuFactory implements MenuFactory {
         generateButtons();
     }
 
-    public void addButton(CustomEnchantButton button) {
+    public void addButton(EnchantButton button) {
         buttons.add(button);
     }
 
-    private static final String FISHINGROD = "tool.fishingrod";
     /*
     Order:
     9: (14+) Crossbow
@@ -68,30 +68,30 @@ public class EnchantmentMenuFactory implements MenuFactory {
      */
     private void generateButtons() {
         if (version >= 14)
-            generateButton(EnchantmentTarget.CROSSBOW, Material.CROSSBOW, "tool.crossbow");
+            generateButton(EnchantmentTarget.CROSSBOW, Material.CROSSBOW, StringUtils.TOOL_CROSSBOW);
         if (version >= 13)
-            generateButton(EnchantmentTarget.TRIDENT, Material.TRIDENT, "tool.trident");
+            generateButton(EnchantmentTarget.TRIDENT, Material.TRIDENT, StringUtils.TOOL_TRIDENT);
         else if (version >= 9)
-            generateButton(EnchantmentTarget.FISHING_ROD, Material.FISHING_ROD, FISHINGROD);
-        generateButton(EnchantmentTarget.TOOL, Material.DIAMOND_PICKAXE, "tool.tool");
-        generateButton(EnchantmentTarget.WEAPON, Material.DIAMOND_SWORD, "tool.sword");
+            generateButton(EnchantmentTarget.FISHING_ROD, Material.FISHING_ROD, StringUtils.TOOL_FISHING_ROD);
+        generateButton(EnchantmentTarget.TOOL, Material.DIAMOND_PICKAXE, StringUtils.TOOL_TOOLS);
+        generateButton(EnchantmentTarget.WEAPON, Material.DIAMOND_SWORD, StringUtils.TOOL_SWORD);
         if (version == 13 || version < 8)
-            generateButton(EnchantmentTarget.FISHING_ROD, Material.FISHING_ROD, FISHINGROD);
-        generateButton(EnchantmentTarget.ARMOR, Material.DIAMOND_CHESTPLATE, "tool.armor");
-        generateButton(EnchantmentTarget.BOW, Material.BOW, "tool.bow");
+            generateButton(EnchantmentTarget.FISHING_ROD, Material.FISHING_ROD, StringUtils.TOOL_FISHING_ROD);
+        generateButton(EnchantmentTarget.ARMOR, Material.DIAMOND_CHESTPLATE, StringUtils.TOOL_ARMOR);
+        generateButton(EnchantmentTarget.BOW, Material.BOW, StringUtils.TOOL_BOW);
         if (version >= 14)
-            generateButton(EnchantmentTarget.FISHING_ROD, Material.FISHING_ROD, FISHINGROD);
+            generateButton(EnchantmentTarget.FISHING_ROD, Material.FISHING_ROD, StringUtils.TOOL_FISHING_ROD);
         else if (version >= 9)
-            generateButton(null, Material.SHIELD, "tool.shield");
+            generateButton(null, Material.SHIELD, StringUtils.TOOL_SHIELD);
         if (version >= 14) {
             addEmptyItems(3);
-            generateButton(null, Material.SHIELD, "tool.shield");
+            generateButton(null, Material.SHIELD, StringUtils.TOOL_SHIELD);
             addEmptyItems(3);
         }
     }
 
     private void addEmptyItems(int amount) {
-        for(int i = 0; i < amount; i++)
+        for (int i = 0; i < amount; i++)
             buttons.add(glassButton);
     }
 
@@ -128,7 +128,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
         int next = subInventory.getInventory().firstEmpty();
         ItemStack item = subInventory.getItem();
 
-        for (CustomEnchantment enchantment : enchantmentHandler.getAllEnchants()) {
+        for (EnchantmentBase enchantment : enchantmentHandler.getAllEnchants()) {
             if (!enchantment.canEnchantItem(item))
                 continue;
             CustomEnchantButton button = updateItem(enchantment, item, player);
@@ -137,14 +137,15 @@ public class EnchantmentMenuFactory implements MenuFactory {
         }
     }
 
-    private CustomEnchantButton updateItem(CustomEnchantment base, ItemStack stack, EnchantmentPlayer player) {
+    private CustomEnchantButton updateItem(EnchantmentBase base, ItemStack stack, EnchantmentPlayer player) {
         ItemStack item = EnchantmentMenuFactory.makeItem(base.getIcon(), ChatColor.GREEN + base.getName());
-        int level = addLoreAndGetLevel(stack, base, item, player.usingGems());
+        int level = utils.getNextLevel(stack, base) - 1;
+        addLore(base, item, level);
         if (level <= base.getMaxLevel()) {
             return new CustomEnchantButton(item, enchantmentPlayer -> {
                 ItemStack itemStack = enchantmentPlayer.getCurrentGUI().getItem();
                 long price = utils.addEnchantmentBase(itemStack, base, player);
-                if(price==0)
+                if (price == 0)
                     return generateGUI(itemStack, player);
                 if (!(base instanceof VanillaEnchant))
                     swapLines(itemStack);
@@ -169,24 +170,23 @@ public class EnchantmentMenuFactory implements MenuFactory {
         itemStack.setItemMeta(meta);
     }
 
-    private int addLoreAndGetLevel(ItemStack item, CustomEnchantment base, ItemStack target, boolean gems) {
-        int level = EnchantUtils.getNextLevel(item, base);
+    private void addLore(EnchantmentBase base, ItemStack target, int level) {
         ItemMeta meta = target.getItemMeta();
         assert meta != null;
-        String priceStr = ChatColor.GRAY + EnchantUtils.getPriceString(gems, level, base);
+        String priceStr = ChatColor.GRAY + StringUtils.PRICE.translate(new TranslatedPrice().translate("" + base.getDefaultPrice(level)));
+        System.out.println("Pricestr: " + priceStr);
         String levelStr;
         if (level <= base.getMaxLevel())
             levelStr = LEVEL.translate("" + level);
         else
             levelStr = MAXED;
 
-        if (level > base.maxLevel)
+        if (level > base.getMaxLevel())
             meta.setLore(Collections.singletonList(levelStr));
         else
             meta.setLore(Arrays.asList(levelStr, priceStr));
 
         target.setItemMeta(meta);
-        return level;
     }
 
     private void updatePriceStr(long price, ItemStack item) {
@@ -221,8 +221,11 @@ public class EnchantmentMenuFactory implements MenuFactory {
         List<String> lore = meta.getLore();
         if (lore == null)
             lore = new ArrayList<>();
-        if (lore.isEmpty() || !lore.get(lore.size() - 1).startsWith(TranslatedMessage.translate(PRICE))) {
-            lore.add(new TranslatedPrice().translate("0"));
+
+        if (lore.isEmpty()) {
+            int length = StringUtils.PRICE.translate("").length() - lore.get(lore.size() - 1).length();
+            if (!lore.get(lore.size() - 1).contains(StringUtils.PRICE.translate(Collections.nCopies(length, ".").toString())))
+                lore.add(StringUtils.PRICE.translate(new TranslatedPrice().translate("0")));
         }
         meta.setLore(lore);
         item.setItemMeta(meta);
@@ -244,15 +247,15 @@ public class EnchantmentMenuFactory implements MenuFactory {
     private void populate(CustomEnchantmentGUI inventory, ItemStack item, Player player) {
         inventory.getInventory().setItem(4, item);
         int rows = 2 + (int) Math.ceil(buttons.size() / 7f);
-        for(int i = 1; i < rows-1; i++) {
-            for(int i2 = 0; i2 < Math.min(7, buttons.size()-(i-1)*7); i2++) {
-                inventory.addButton(buttons.get((i-1)*7+i2), i*9+i2+1);
+        for (int i = 1; i < rows - 1; i++) {
+            for (int i2 = 0; i2 < Math.min(7, buttons.size() - (i - 1) * 7); i2++) {
+                inventory.addButton(buttons.get((i - 1) * 7 + i2), i * 9 + i2 + 1);
             }
         }
-        ItemStack newItem = makeItem(Material.REDSTONE_BLOCK, TranslatedMessage.translate("enchant.cancel"));
+        ItemStack newItem = makeItem(Material.REDSTONE_BLOCK, StringUtils.GUI_CANCEL);
         inventory.addButton(new CustomEnchantButton(newItem, itemStack -> null), rows * 9 - 4);
 
-        newItem = makeItem(Material.EMERALD_BLOCK, TranslatedMessage.translate("enchant.confirm"));
+        newItem = makeItem(Material.EMERALD_BLOCK, StringUtils.GUI_CONFIRM);
         inventory.addButton(new CustomEnchantButton(newItem, enchantmentPlayer -> {
             PlayerInventory playerInventory = player.getInventory();
             removePriceLine(enchantmentPlayer.getCurrentGUI().getItem(), handler.getPlayer(player));
@@ -261,7 +264,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
         }), rows * 9 - 6);
 
         int i = inventory.getInventory().firstEmpty();
-        while( i != -1) {
+        while (i != -1) {
             inventory.getInventory().setItem(i, glassPane);
             i = inventory.getInventory().firstEmpty();
         }
@@ -272,7 +275,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
         assert meta != null;
         if (meta.getLore() != null) {
             String line = meta.getLore().get(meta.getLore().size() - 1);
-            long price = Long.parseLong(line.substring(9).replace("G", "").replace(TranslatedMessage.translate("dollar.symbol", ""), ""));
+            long price = Long.parseLong(line.replaceAll("[^\\d.]", ""));
             List<String> lore = meta.getLore();
             lore.remove(meta.getLore().size() - 1);
             meta.setLore(lore);
@@ -283,8 +286,8 @@ public class EnchantmentMenuFactory implements MenuFactory {
         }
     }
 
-    private void generateButton(EnchantmentTarget target, Material material, String key) {
-        ItemStack item = makeItem(material, TranslatedMessage.translate(key));
+    private void generateButton(EnchantmentTarget target, Material material, String name) {
+        ItemStack item = makeItem(material, name);
         buttons.add(
                 new CustomEnchantButton(item, player -> {
                     if ((target != null && target.includes(player.getCurrentGUI().getItem())) || player.getCurrentGUI().getItem().getType() == material)

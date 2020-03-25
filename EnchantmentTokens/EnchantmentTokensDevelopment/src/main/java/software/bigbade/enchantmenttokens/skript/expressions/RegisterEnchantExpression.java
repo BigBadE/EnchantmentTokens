@@ -13,6 +13,7 @@ import ch.njol.util.Kleenean;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
+import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
 import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
@@ -51,10 +52,10 @@ public class RegisterEnchantExpression extends SimpleExpression<SkriptEnchantmen
     protected SkriptEnchantment[] get(Event event) {
         String nameStr = name.getSingle(event);
         EnchantmentHandler enchantmentHandler = main.getEnchantmentHandler();
-        for(SkriptEnchantment enchantment : enchantmentHandler.getSkriptEnchantments()) {
+        for(EnchantmentBase enchantment : enchantmentHandler.getSkriptEnchant()) {
             if(enchantment.getName().equals(nameStr)) {
                 enchantment.setIcon(icon.getSingle(event).getMaterial());
-                return new SkriptEnchantment[] { enchantment };
+                return new SkriptEnchantment[] { (SkriptEnchantment) enchantment };
             }
         }
 

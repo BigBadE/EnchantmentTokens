@@ -3,8 +3,8 @@ package software.bigbade.enchantmenttokens.listeners;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
-import software.bigbade.enchantmenttokens.api.CustomEnchantment;
-import software.bigbade.enchantmenttokens.localization.TranslatedMessage;
+import software.bigbade.enchantmenttokens.api.EnchantmentBase;
+import software.bigbade.enchantmenttokens.api.StringUtils;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 
 public class SignPlaceListener implements Listener {
@@ -16,22 +16,22 @@ public class SignPlaceListener implements Listener {
 
     @EventHandler
     public void onSignChange(SignChangeEvent event) {
-        if (("[" + TranslatedMessage.translate("enchantment") + "]").equalsIgnoreCase(event.getLine(0)) && event.getLine(1) != null) {
+        if (("[" + StringUtils.ENCHANTMENT + "]").equalsIgnoreCase(event.getLine(0)) && event.getLine(1) != null) {
             String name = event.getLine(1);
             assert name != null;
-            for (CustomEnchantment base : handler.getAllEnchants()) {
+            for (EnchantmentBase base : handler.getAllEnchants()) {
                 if (name.equalsIgnoreCase(base.getName())) {
                     updateSign(base, event);
                     return;
                 }
             }
-            event.getPlayer().sendMessage(TranslatedMessage.translate("enchantment.add.fail"));
+            event.getPlayer().sendMessage(StringUtils.ENCHANTMENT_ADD_FAIL);
         }
     }
 
-    private void updateSign(CustomEnchantment base, SignChangeEvent event) {
-        event.getPlayer().sendMessage(TranslatedMessage.translate("enchantment.add", base.getName()));
-        event.setLine(0, "[" + TranslatedMessage.translate("enchantment") + "]");
+    private void updateSign(EnchantmentBase base, SignChangeEvent event) {
+        event.getPlayer().sendMessage(StringUtils.ENCHANTMENT_ADD.translate(base.getName()));
+        event.setLine(0, "[" + StringUtils.ENCHANTMENT + "]");
         event.setLine(1, base.getName());
     }
 }

@@ -13,8 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class CustomEnchantment extends Enchantment implements EnchantmentBase {
-
+public class CustomEnchantment extends Enchantment implements EnchantmentBase {
     private final List<Material> targets = new ArrayList<>();
     private boolean treasure = false;
     private final List<Enchantment> conflicts = new ArrayList<>();
@@ -45,6 +44,11 @@ public abstract class CustomEnchantment extends Enchantment implements Enchantme
         super(new NamespacedKey(new FakePlugin(namespace), name.toLowerCase()));
         this.name = name;
         this.icon = icon;
+    }
+
+    @Override
+    public Enchantment getEnchantment() {
+        return this;
     }
 
     public void onDisable() { }
@@ -108,7 +112,7 @@ public abstract class CustomEnchantment extends Enchantment implements Enchantme
 
     @Override
     public boolean canEnchantItem(@NotNull ItemStack itemStack) {
-        if(!itemStack.hasItemMeta() || !itemStack.getItemMeta().hasEnchants())
+        if(itemStack.getItemMeta() == null || !itemStack.getItemMeta().hasEnchants())
             return targets.contains(itemStack.getType());
         for(Enchantment enchantment : itemStack.getEnchantments().keySet())
             if(conflicts.contains(enchantment))

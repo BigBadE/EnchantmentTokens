@@ -55,7 +55,7 @@ public class CustomEnchantUtils extends EnchantUtils {
         long price = base.getDefaultPrice(level);
 
         if (enchantmentPlayer.getGems() < price) {
-            enchantmentPlayer.getPlayer().sendMessage(StringUtils.ENCHANTMENT_BOUGHT_SUCCESS.translate(StringUtils.PRICE.translate(new TranslatedPrice().translate("" + base.getDefaultPrice(level)))));
+            enchantmentPlayer.getPlayer().sendMessage(StringUtils.ENCHANTMENT_BOUGHT_FAIL.translate(new TranslatedPrice().translate("" + base.getDefaultPrice(level))));
             return 0;
         }
         enchantmentPlayer.getPlayer().sendMessage(StringUtils.ENCHANTMENT_BOUGHT_SUCCESS.translate(base.getName(), "" + level));

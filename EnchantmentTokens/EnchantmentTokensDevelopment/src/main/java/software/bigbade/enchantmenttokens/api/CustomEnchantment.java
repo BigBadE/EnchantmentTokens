@@ -51,7 +51,9 @@ public class CustomEnchantment extends Enchantment implements EnchantmentBase {
         return this;
     }
 
-    public void onDisable() { }
+    public void onDisable() {
+        //Overridden by subclasses
+    }
 
     public long getDefaultPrice(int level) {
         for (PriceIncreaseTypes types : PriceIncreaseTypes.values()) {
@@ -71,6 +73,10 @@ public class CustomEnchantment extends Enchantment implements EnchantmentBase {
         }
         price.set("type", PriceIncreaseTypes.CUSTOM.name().toLowerCase());
         PriceIncreaseTypes.CUSTOM.loadConfig(this);
+    }
+
+    public ConfigurationSection getPriceSection() {
+        return price;
     }
 
     @NotNull

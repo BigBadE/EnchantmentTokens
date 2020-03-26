@@ -17,7 +17,6 @@ import software.bigbade.enchantmenttokens.gui.MenuFactory;
 import software.bigbade.enchantmenttokens.listeners.SignPacketHandler;
 import software.bigbade.enchantmenttokens.localization.LocaleManager;
 import software.bigbade.enchantmenttokens.skript.type.SkriptManager;
-import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.MetricManager;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 import software.bigbade.enchantmenttokens.utils.SignHandler;
@@ -88,7 +87,7 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
 
         setupAutosave();
 
-        EnchantLogger.log(Level.INFO, "Successfully enabled EnchantmentTokens");
+        EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Successfully enabled EnchantmentTokens");
 
         saveConfig();
     }
@@ -111,7 +110,7 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
         CurrencyFactoryHandler handler = new CurrencyFactoryHandler(getDataFolder().getAbsolutePath(), scheduler, currency, version);
         currencyFactory = handler.load();
 
-        CurrencyAdditionHandler.initialize(currencyFactory instanceof VaultCurrencyFactory);
+        CurrencyAdditionHandler.initialize(!(currencyFactory instanceof VaultCurrencyFactory));
 
         playerHandler = new EnchantmentPlayerHandler(currencyFactory);
     }

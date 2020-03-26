@@ -5,14 +5,13 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
+import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.CustomEnchantment;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.VanillaEnchant;
-import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
-import software.bigbade.enchantmenttokens.utils.EnchantLogger;
-import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationType;
+import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -47,7 +46,7 @@ public class CustomEnchantmentHandler implements EnchantmentHandler {
         for (String name : new ConfigurationType<>(Collections.singletonList("Fortune")).getValue("vanillaEnchants", section)) {
             Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(name.toLowerCase().replace(" ", "_")));
             if (enchantment != null) vanillaRegistering.add(enchantment);
-            else EnchantLogger.log(Level.SEVERE, "Could not find an enchantment by the name {0}", name);
+            else EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not find an enchantment by the name {0}", name);
         }
 
         vanillaRegistering.forEach(enchantment -> loadVanillaConfig(enchantment, section));
@@ -62,7 +61,7 @@ public class CustomEnchantmentHandler implements EnchantmentHandler {
 
         ConfigurationManager.saveConfiguration(new File(skriptPath), skriptConfiguration);
 
-        EnchantLogger.log(Level.INFO, "Registered enchantments");
+        EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Registered enchantments");
     }
 
     private void loadVanillaConfig(Enchantment enchantment, ConfigurationSection section) {

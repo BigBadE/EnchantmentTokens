@@ -15,7 +15,6 @@ import org.bukkit.event.Event;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
-import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 
 import java.util.logging.Level;
@@ -59,7 +58,7 @@ public class RegisterEnchantExpression extends SimpleExpression<SkriptEnchantmen
             }
         }
 
-        EnchantLogger.log(Level.SEVERE, "{0} does not have a tool set.", nameStr);
+        EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "{0} does not have a tool set.", nameStr);
         return new SkriptEnchantment[] { null };
     }
 

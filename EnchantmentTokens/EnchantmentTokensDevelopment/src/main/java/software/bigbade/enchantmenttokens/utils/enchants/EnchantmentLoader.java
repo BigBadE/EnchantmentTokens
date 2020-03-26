@@ -7,7 +7,6 @@ import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.CustomEnchantment;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
-import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 
 import java.io.File;
@@ -66,7 +65,7 @@ public class EnchantmentLoader {
                     classes.add(loaded);
             }
         } catch (IOException e) {
-            EnchantLogger.log("Could not load external jar file", e);
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not load external jar file", e);
         }
         return classes;
     }
@@ -86,7 +85,7 @@ public class EnchantmentLoader {
                     addons.add(addon);
             }
         if (addon == null) {
-            EnchantLogger.log(Level.SEVERE, "Jar " + file.getName() + " has no or a bugged EnchantmentAddon class, skipping loading enchants");
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Jar " + file.getName() + " has no or a bugged EnchantmentAddon class, skipping loading enchants");
         } else {
             enchantments.put(addon.getName(), enchantClasses);
         }
@@ -111,7 +110,7 @@ public class EnchantmentLoader {
             className = className.replace('/', '.');
             return cl.loadClass(className);
         } catch (IOException | ClassNotFoundException e) {
-            EnchantLogger.log("Problem loading classes", e);
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Problem loading classes", e);
         }
         return null;
     }

@@ -29,10 +29,12 @@ public abstract class EnchantUtils {
     public abstract int getNextLevel(ItemStack item, EnchantmentBase enchantment);
 
     static void setInstance(EnchantUtils instance)  {
+        if(instance == null)
+            throw new IllegalStateException("Instance already set!");
         EnchantUtils.instance = instance;
     }
 
     public static EnchantUtils getInstance() {
-        return instance;
+        return EnchantUtils.instance;
     }
 }

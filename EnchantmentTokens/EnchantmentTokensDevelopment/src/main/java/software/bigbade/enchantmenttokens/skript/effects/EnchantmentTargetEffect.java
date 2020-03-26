@@ -9,8 +9,8 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import org.bukkit.event.Event;
+import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
-import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.MaterialGroupUtils;
 
 import java.util.logging.Level;
@@ -34,7 +34,7 @@ public class EnchantmentTargetEffect extends Effect {
         try {
             enchantment.getSingle(event).addTargets(MaterialGroupUtils.valueOf(type.toUpperCase().replace(" ", "_")).getMaterials());
         } catch (IllegalArgumentException e) {
-            EnchantLogger.log(Level.SEVERE, "Type {0} doesn't exist!", type);
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Type {0} doesnt exist!", type);
         }
     }
 

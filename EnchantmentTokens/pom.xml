@@ -96,7 +96,7 @@
                 </includes>
             </resource>
             <resource>
-                <directory>../</directory>
+                <directory>../../</directory>
                 <includes>
                     <include>localization/*.properties</include>
                     <include>commodore/*.commodore</include>

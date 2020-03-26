@@ -28,7 +28,6 @@ import software.bigbade.enchantmenttokens.listeners.enchants.PotionListener;
 import software.bigbade.enchantmenttokens.listeners.enchants.ProjectileShootListener;
 import software.bigbade.enchantmenttokens.listeners.enchants.RiptideListener;
 import software.bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
-import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationType;
@@ -53,7 +52,7 @@ public class EnchantListenerHandler implements ListenerHandler {
     private static final String FOLDER = "\\enchantments\\";
 
     public EnchantListenerHandler(EnchantmentTokens main) {
-        EnchantLogger.log(Level.INFO, "Looking for enchantments");
+        EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Looking for enchantments");
         for (ListenerType type : ListenerType.values()) {
             enchantListeners.put(type, new ListenerManager());
         }
@@ -134,7 +133,7 @@ public class EnchantListenerHandler implements ListenerHandler {
 
         Bukkit.getScheduler().runTask(main, () -> {
             registerListeners();
-            EnchantLogger.log(Level.INFO, "Finishing loading enchantments");
+            EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Finishing loading enchantments");
             main.getEnchantmentHandler().registerEnchants(enchantments);
             main.saveConfig();
         });

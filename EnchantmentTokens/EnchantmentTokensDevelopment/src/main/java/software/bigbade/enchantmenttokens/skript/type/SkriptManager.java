@@ -3,8 +3,8 @@ package software.bigbade.enchantmenttokens.skript.type;
 import ch.njol.skript.SkriptAddon;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.registrations.Classes;
+import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
-import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -19,7 +19,7 @@ public class SkriptManager {
                     .serializer(new BaseSerializer()));
             addon.loadClasses("software.bigbade.enchantmenttokens", "skript");
         } catch (IOException e) {
-            EnchantLogger.log(Level.SEVERE, "Could not load Skript compatibility", e);
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not load Skript compatibility", e);
         }
     }
 }

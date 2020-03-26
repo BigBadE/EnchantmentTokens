@@ -9,7 +9,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
-import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 
 import java.util.Objects;
@@ -36,7 +35,7 @@ public class BaseParser extends Parser<SkriptEnchantment> {
         }
 
         if(!NAME_PATTERN.matcher(name.toLowerCase()).matches()) {
-            EnchantLogger.log(Level.SEVERE, "{0} has invalid characters, must have a-z, 0-9, and some symbols(._-]+)", name);
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "{0} has invalid characters, must have a-z, 0-9, and some symbols(._-]+)", name);
             return null;
         }
 

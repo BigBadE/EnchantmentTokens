@@ -1,17 +1,14 @@
 package software.bigbade.enchantmenttokens.listeners.gui;
 
-import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
-import software.bigbade.enchantmenttokens.gui.CustomEnchantmentGUI;
-import software.bigbade.enchantmenttokens.gui.EnchantButton;
-import software.bigbade.enchantmenttokens.gui.EnchantmentGUI;
-import software.bigbade.enchantmenttokens.utils.CustomEnchantButton;
-import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
-import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
+import software.bigbade.enchantmenttokens.gui.EnchantButton;
+import software.bigbade.enchantmenttokens.gui.EnchantmentGUI;
+import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 import software.bigbade.enchantmenttokens.utils.players.PlayerHandler;
 
 public class EnchantmentGUIListener implements Listener {

@@ -4,8 +4,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.currency.CurrencyFactory;
-import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationType;
@@ -47,10 +47,10 @@ public class CurrencyFactoryHandler {
                 return factory;
             else {
                 if (factory == null) {
-                    EnchantLogger.log(Level.SEVERE, "Could not find type {0}, defaulted to gems", type);
+                    EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not find type {0}, defaulted to gems", type);
                     section.set("type", "gems");
                 }
-                EnchantLogger.log(Level.SEVERE, "Could not load currency factory");
+                EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not load currency factory");
                 return loadGemFactory();
             }
         }
@@ -91,7 +91,7 @@ public class CurrencyFactoryHandler {
             List<Class<?>> classes = EnchantmentLoader.loadClasses(file);
             return getFactory(classes);
         } catch (IOException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            EnchantLogger.log("Could not load currency handler (is it valid?)", e);
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not load currency handler (is it valid?)", e);
         }
         return null;
     }

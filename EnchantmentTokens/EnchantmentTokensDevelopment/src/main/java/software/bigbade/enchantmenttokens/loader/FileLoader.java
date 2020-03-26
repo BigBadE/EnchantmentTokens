@@ -1,9 +1,9 @@
 package software.bigbade.enchantmenttokens.loader;
 
+import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.utils.ByteUtils;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationManager;
 import org.bukkit.entity.Player;
-import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 
 import java.io.*;
 import java.util.Map;
@@ -45,7 +45,7 @@ public class FileLoader {
                 cache.put(player.getUniqueId(), gems);
                 return gems;
             } catch (IOException e) {
-                EnchantLogger.log(Level.SEVERE, "Could not read player data", e);
+                EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not read player data", e);
             }
         }
         return 0;
@@ -57,7 +57,7 @@ public class FileLoader {
                 try {
                     savePlayer(player, gems);
                 } catch (IOException e) {
-                    EnchantLogger.log("Could not save player data", e);
+                    EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not save player data", e);
                 }
                 cache.remove(removing.getKey());
                 return;
@@ -98,7 +98,7 @@ public class FileLoader {
             }
             return -1;
         } catch (IOException e) {
-            EnchantLogger.log(Level.SEVERE, "Error reading player save data", e);
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Error reading player save data", e);
         }
         return -1;
     }

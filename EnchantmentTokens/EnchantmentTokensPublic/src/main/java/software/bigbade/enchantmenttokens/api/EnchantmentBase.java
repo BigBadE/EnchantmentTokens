@@ -2,12 +2,12 @@ package software.bigbade.enchantmenttokens.api;
 
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.List;
 
 public interface EnchantmentBase {
@@ -20,6 +20,8 @@ public interface EnchantmentBase {
     Enchantment getEnchantment();
 
     NamespacedKey getKey();
+
+    ConfigurationSection getPriceSection();
 
     @NotNull
     EnchantmentTarget getItemTarget();

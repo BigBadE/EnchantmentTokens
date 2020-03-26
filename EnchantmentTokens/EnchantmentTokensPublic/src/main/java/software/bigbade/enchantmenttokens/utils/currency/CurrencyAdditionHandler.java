@@ -9,6 +9,9 @@ import software.bigbade.enchantmenttokens.localization.TranslatedPrice;
 public final class CurrencyAdditionHandler {
     private static Boolean usingGems;
 
+    //Private constructor to hide implicit public one
+    private CurrencyAdditionHandler() {}
+
     public static void initialize(boolean usingGems) {
         if (CurrencyAdditionHandler.usingGems != null)
             throw new IllegalStateException("Already initialized");

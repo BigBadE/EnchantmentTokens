@@ -1,12 +1,11 @@
 package software.bigbade.enchantmenttokens.listeners;
 
-import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
-import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import software.bigbade.enchantmenttokens.utils.players.PlayerHandler;
 
 public class PlayerLeaveListener implements Listener {

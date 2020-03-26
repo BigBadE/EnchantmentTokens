@@ -111,11 +111,7 @@
                                 </relocation>
                                 <relocation>
                                     <pattern>me.lucko.commodore</pattern>
-                                    <shadedPattern>software.bigbade.enchantmenttokens</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>EnchantmentTokensLocalization</pattern>
-                                    <shadedPattern>Localization</shadedPattern>
+                                    <shadedPattern>software.bigbade.enchantmenttokens.commodore</shadedPattern>
                                 </relocation>
                             </relocations>
                             <minimizeJar>true</minimizeJar>
@@ -123,11 +119,8 @@
                                 <filter>
                                     <artifact>*:*</artifact>
                                     <excludes>
-                                        <exclude>META-INF/maven/software.bigbade.enchantmenttokens/EnchantmentTokens/*</exclude>
-                                        <exclude>META-INF/maven/com.codingforcookies/ArmorEquipEvent/*</exclude>
-                                        <exclude>META-INF/maven/org.bstats/bstats-bukkit/*</exclude>
-                                        <exclude>META-INF/maven/me.lucko/commodore/*</exclude>
-                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                        <exclude>com/mojang/brigadier/**</exclude>
+                                        <exclude>META-INF/**</exclude>
                                     </excludes>
                                 </filter>
                             </filters>

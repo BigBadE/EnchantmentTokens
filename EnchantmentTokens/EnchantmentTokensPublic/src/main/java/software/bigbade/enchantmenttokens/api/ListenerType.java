@@ -37,7 +37,6 @@ public enum ListenerType {
     DAMAGE(EnchantmentTarget.ALL),
     //Player riptide with trident
     RIPTIDE(EnchantmentTarget.TRIDENT);
-    //TODO add more listener types
 
     private List<EnchantmentTarget> targets;
 

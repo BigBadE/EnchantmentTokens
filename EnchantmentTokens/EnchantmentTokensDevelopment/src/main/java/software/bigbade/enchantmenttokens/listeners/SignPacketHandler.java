@@ -14,7 +14,6 @@ import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.StringUtils;
 import software.bigbade.enchantmenttokens.localization.TranslatedPrice;
-import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.SignHandler;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
 
@@ -29,7 +28,7 @@ public class SignPacketHandler implements SignHandler {
     private EnchantmentTokens main;
 
     public SignPacketHandler(ProtocolManager manager, EnchantmentTokens main) {
-        EnchantLogger.log(Level.INFO, "Registering sign listener");
+        EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Registering sign listener");
         manager.addPacketListener(new SignPacketLoadAdapter(main, this));
         manager.addPacketListener(new SignPacketUpdateAdapter(main, this));
         this.main = main;

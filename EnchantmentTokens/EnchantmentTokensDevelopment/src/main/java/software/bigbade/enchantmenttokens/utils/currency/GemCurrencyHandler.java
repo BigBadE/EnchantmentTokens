@@ -1,7 +1,7 @@
 package software.bigbade.enchantmenttokens.utils.currency;
 
+import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.loader.FileLoader;
-import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -25,10 +25,10 @@ public class GemCurrencyHandler extends EnchantCurrencyHandler {
                 setAmount(future.get(1, TimeUnit.MILLISECONDS));
                 Bukkit.getScheduler().cancelTask(id.get());
             } catch (InterruptedException e) {
-                EnchantLogger.log(Level.SEVERE, "gem thread interrupted", e);
+                EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "gem thread interrupted", e);
                 Thread.currentThread().interrupt();
             } catch (ExecutionException e) {
-                EnchantLogger.log(Level.SEVERE, "Could not load gems", e);
+                EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not load gems", e);
             } catch (TimeoutException ignored) {
                 //Ignore timeouts
             }

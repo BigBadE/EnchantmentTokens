@@ -20,14 +20,14 @@ public class BrigadierManager {
         Commodore commodore = CommodoreProvider.getCommodore(tokens);
         try (InputStream is = BrigadierManager.class.getResourceAsStream("/commodore/" + command.getName() + ".commodore")) {
             if(is == null) {
-                EnchantLogger.log(Level.SEVERE, "Could not load commodore file");
+                EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not load commodore file");
                 return;
             }
             LiteralCommandNode<?> commandNode = CommodoreFileFormat.parse(is);
             commodore.register(command, commandNode, player ->
                     permission != null && player.hasPermission(permission) || player.isOp());
         } catch (IOException e) {
-            EnchantLogger.log("Error loading commodore", e);
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Error loading commodore", e);
         }
     }
 }

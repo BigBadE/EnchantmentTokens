@@ -4,7 +4,7 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
-import software.bigbade.enchantmenttokens.utils.EnchantLogger;
+import software.bigbade.enchantmenttokens.EnchantmentTokens;
 
 import java.util.logging.Level;
 
@@ -16,7 +16,7 @@ public class VaultCurrencyFactory extends EnchantCurrencyFactory {
         super("vault");
         RegisteredServiceProvider<Economy> rsp = server.getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
-            EnchantLogger.log(Level.SEVERE, "Could not find Vault, though Vault is specified as the currency handler.");
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not find Vault, though Vault is specified as the currency handler.");
             loaded = false;
             return;
         }

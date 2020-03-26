@@ -6,6 +6,9 @@ import software.bigbade.enchantmenttokens.localization.TranslatedString;
  * StringUtils loads all localization strings of the selected language into memory.
  */
 public class StringUtils {
+    //Private constructor to hide implicit public one
+    private StringUtils() {}
+
     /**
      * General messages
      */
@@ -43,7 +46,7 @@ public class StringUtils {
     public static final String TOOL_CROSSBOW = new TranslatedString("tool.crossbow").translate();
     public static final String TOOL_TRIDENT = new TranslatedString("tool.trident").translate();
     public static final String TOOL_FISHING_ROD = new TranslatedString("tool.fishing-rod").translate();
-    public static final String TOOL_TOOLS = new TranslatedString("tool.tools").translate();
+    public static final String TOOL_TOOLS = new TranslatedString("tool.tool").translate();
     public static final String TOOL_SWORD = new TranslatedString("tool.sword").translate();
     public static final String TOOL_ARMOR = new TranslatedString("tool.armor").translate();
     public static final String TOOL_BOW = new TranslatedString("tool.bow").translate();
@@ -76,6 +79,11 @@ public class StringUtils {
     //Args: list of enchants
     public static final TranslatedString COMMAND_LIST = new TranslatedString("command.list");
 
-    public static final String DOLLAR_SYMBOL = new TranslatedString("dollar.symbol").translate();
-    public static final String GEMS_SYMBOL = new TranslatedString("gems.symbol").translate();
+    public static final TranslatedString DOLLAR_SYMBOL = new TranslatedString("dollar.symbol");
+    public static final TranslatedString GEMS_SYMBOL = new TranslatedString("gems.symbol");
+
+    /**
+     * Strings used for configuration.
+     */
+    public static final String INCREASE = "increase";
 }

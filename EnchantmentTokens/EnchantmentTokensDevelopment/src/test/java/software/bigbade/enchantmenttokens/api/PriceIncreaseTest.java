@@ -4,7 +4,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.easymock.EasyMock;
 import org.easymock.EasyMockSupport;
 import org.easymock.Mock;
-import org.junit.Assert;
 import org.junit.Test;
 
 public class PriceIncreaseTest extends EasyMockSupport {
@@ -13,11 +12,11 @@ public class PriceIncreaseTest extends EasyMockSupport {
 
     @Test
     public void testPriceIncreases() {
-        EasyMock.expect(section.getInt("0")).andReturn(100);
+        EasyMock.expect(section.getInt("0")).andReturn(100).times(2);
         replayAll();
 
-        //Assert.assertEquals(100, section.getInt("0"));
-        Assert.assertEquals(100, PriceIncreaseTypes.CUSTOM.getPrice(0, section));
+        assert section.getInt("0") == 100;
+        assert PriceIncreaseTypes.CUSTOM.getPrice(0, section) == 100;
         verifyAll();
     }
 }

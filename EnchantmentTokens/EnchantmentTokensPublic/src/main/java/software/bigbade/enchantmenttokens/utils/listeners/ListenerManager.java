@@ -1,6 +1,5 @@
 package software.bigbade.enchantmenttokens.utils.listeners;
 
-import org.bukkit.enchantments.Enchantment;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 
@@ -19,19 +18,15 @@ public class ListenerManager {
     }
 
     public void callEvent(EnchantmentEvent event, EnchantmentBase base) {
-        for (Map.Entry<EnchantmentBase, EnchantmentListener<EnchantmentEvent>> listenerEntry : listeners.entrySet()) {
-            if (listenerEntry.getKey().equals(base)) {
-                listenerEntry.getValue().apply(event);
-            }
-        }
+        listeners.forEach((enchant, listener) -> {
+            if (enchant.equals(base))
+                listener.apply(event);
+        });
     }
 
     public void callEvent(EnchantmentEvent event) {
-        listeners.forEach((base, listener) -> {
-            for (Enchantment enchantment : event.getItem().getEnchantments().keySet()) {
-                if (enchantment.getKey().equals(base.getKey()))
-                    listener.apply(event);
-            }
-        });
+        event.getItem().getEnchantments().keySet().stream()
+                .filter(enchantment -> enchantment instanceof EnchantmentBase)
+                .forEach(enchantment -> listeners.get(enchantment).apply(event));
     }
 }

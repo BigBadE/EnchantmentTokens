@@ -6,6 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
+import software.bigbade.enchantmenttokens.events.EventFactory;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
 public class ArmorEquipListener extends BasicEnchantListener implements Listener {
@@ -22,12 +23,12 @@ public class ArmorEquipListener extends BasicEnchantListener implements Listener
     public void onArmorEquip(ArmorEquipEvent event) {
         ItemStack item = event.getOldArmorPiece();
         if(item != null) {
-            EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.UNEQUIP, item).setUser(event.getPlayer());
+            EnchantmentEvent enchantmentEvent = EventFactory.createEvent(ListenerType.UNEQUIP, item).setUser(event.getPlayer());
             callListeners(enchantmentEvent, oldArmorListeners);
         }
         item = event.getNewArmorPiece();
         if(item != null) {
-            EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.EQUIP, item).setUser(event.getPlayer());
+            EnchantmentEvent enchantmentEvent = EventFactory.createEvent(ListenerType.EQUIP, item).setUser(event.getPlayer());
             callListeners(enchantmentEvent, newArmorListeners);
         }
     }

@@ -17,12 +17,12 @@ public class BasicEnchantListener {
 
     public void callListeners(EnchantmentEvent event) {
         listeners.callEvent(event);
-        Bukkit.getPluginManager().callEvent(event);
+        Bukkit.getPluginManager().callEvent(event.getEvent());
     }
 
     public void callListeners(EnchantmentEvent event, ListenerManager listeners) {
         listeners.callEvent(event);
-        Bukkit.getPluginManager().callEvent(event);
+        Bukkit.getPluginManager().callEvent(event.getEvent());
     }
 
     public void callForAllItems(Player player, ListenerManager manager, EnchantmentEvent event) {

@@ -113,6 +113,10 @@
                                     <pattern>me.lucko.commodore</pattern>
                                     <shadedPattern>software.bigbade.enchantmenttokens.commodore</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>com.codingforcookies.armorequip</pattern>
+                                    <shadedPattern>software.bigbade.enchantmenttokens.armorequip</shadedPattern>
+                                </relocation>
                             </relocations>
                             <minimizeJar>true</minimizeJar>
                             <filters>

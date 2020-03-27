@@ -4,70 +4,41 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemStack;
 import software.bigbade.enchantmenttokens.api.wrappers.ITargetWrapper;
 
 import javax.annotation.Nonnull;
 
-public abstract class EnchantmentBase extends Enchantment {
-    @ConfigurationField
-    private String name;
-    @ConfigurationField
-    private Material icon;
+public interface EnchantmentBase {
+    @Nonnull
+    NamespacedKey getKey();
 
-    @SuppressWarnings("ConstantConditions")
-    public EnchantmentBase(@Nonnull NamespacedKey key, @Nonnull Material icon, String defaultName) {
-        super(key);
-        if(name == null)
-            setName(defaultName);
-        if(getIcon() == null)
-            setIcon(icon);
-    }
+    void setName(String name);
 
-    private void setName(String name) {
-        this.name = name;
-    }
+    Material getIcon();
 
-    public Material getIcon() {
-        return icon;
-    }
+    void setIcon(Material icon);
 
-    public void setIcon(Material icon) {
-        this.icon = icon;
-    }
+    int getStartLevel();
 
-    public abstract void onDisable();
+    int getMaxLevel();
 
-    public abstract long getDefaultPrice(int level);
+    void onDisable();
 
-    public abstract void loadConfig();
+    long getDefaultPrice(int level);
 
-    public abstract Enchantment getEnchantment();
+    void loadConfig();
 
-    public abstract ConfigurationSection getPriceSection();
+    boolean canEnchantItem(ItemStack item);
 
-    public abstract ITargetWrapper getTargets();
+    Enchantment getEnchantment();
+
+    ConfigurationSection getPrice();
+
+    void setTarget(ITargetWrapper target);
+
+    ITargetWrapper getTarget();
 
     @Nonnull
-    public String getEnchantName() {
-        return name;
-    }
-
-    @Override
-    @Nonnull
-    @Deprecated
-    public String getName() {
-        return getEnchantName();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof CustomEnchantment)
-            return hashCode() == obj.hashCode();
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return getKey().hashCode();
-    }
+    String getEnchantName();
 }

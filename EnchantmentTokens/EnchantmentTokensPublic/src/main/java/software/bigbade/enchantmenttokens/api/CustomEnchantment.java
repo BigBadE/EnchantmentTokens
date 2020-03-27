@@ -1,36 +1,72 @@
 package software.bigbade.enchantmenttokens.api;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemStack;
+import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.wrappers.EnchantmentConflictWrapper;
 import software.bigbade.enchantmenttokens.api.wrappers.IConflictWrapper;
 import software.bigbade.enchantmenttokens.api.wrappers.ITargetWrapper;
 
 import javax.annotation.Nonnull;
+import java.util.logging.Level;
 
-public class CustomEnchantment extends EnchantmentBase {
-    private ITargetWrapper targets;
+public class CustomEnchantment extends Enchantment implements EnchantmentBase {
+    @Getter
+    @Setter
+    private ITargetWrapper target;
     private IConflictWrapper conflicts = new EnchantmentConflictWrapper();
+    @Setter
     private boolean treasure = false;
+    @Setter
     private boolean cursed;
 
+    @Getter
+    @ConfigurationField
+    private String name;
+
+    @ConfigurationField
+    private String iconString = "DEFAULT";
+
+    @Getter
+    private Material icon;
+
+    @Getter
+    @Setter
     @ConfigurationField
     private int maxLevel = 3;
-    @ConfigurationField
-    private int minLevel = 1;
 
+    @Getter
+    @Setter
+    @ConfigurationField
+    private int startLevel = 1;
+
+    @Getter()
     @ConfigurationField
     private ConfigurationSection price = null;
 
     @ConfigurationField("price")
     private String type = "custom";
 
+    @SuppressWarnings("ConstantConditions")
     public CustomEnchantment(NamespacedKey key, Material icon, String defaultName) {
-        super(key, icon, defaultName);
+        super(key);
+        if (name == null)
+            setName(defaultName);
+        if (iconString.equals("DEFAULT"))
+            setIcon(icon);
+        else {
+            Material material = Material.getMaterial(iconString);
+            if (material == null)
+                EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Invalid icon name {0}", iconString);
+            else
+                setIcon(material);
+        }
     }
 
     @Override
@@ -62,24 +98,27 @@ public class CustomEnchantment extends EnchantmentBase {
         PriceIncreaseTypes.CUSTOM.loadConfig(this);
     }
 
-    public ConfigurationSection getPriceSection() {
-        return price;
+    public void setIcon(Material icon) {
+        if (this.icon != null)
+            throw new IllegalStateException("Enchantment already has an icon!");
+        this.icon = icon;
+    }
+
+    @Nonnull
+    public String getEnchantName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        if (this.name != null)
+            throw new IllegalStateException("Enchantment already has a name!");
+        this.name = name;
     }
 
     @Nonnull
     @Override
     public EnchantmentTarget getItemTarget() {
         return EnchantmentTarget.ALL;
-    }
-
-    @Override
-    public int getMaxLevel() {
-        return maxLevel;
-    }
-
-    @Override
-    public int getStartLevel() {
-        return minLevel;
     }
 
     @Override
@@ -100,25 +139,11 @@ public class CustomEnchantment extends EnchantmentBase {
     @Override
     public boolean canEnchantItem(@Nonnull ItemStack itemStack) {
         if (itemStack.getItemMeta() == null || !itemStack.getItemMeta().hasEnchants())
-            return targets.canTarget(itemStack.getType());
+            return target.canTarget(itemStack.getType());
         for (Enchantment enchantment : itemStack.getEnchantments().keySet())
             if (conflicts.conflicts(enchantment))
                 return false;
-        return targets.canTarget(itemStack.getType());
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
-    public void setTreasure(boolean treasure) {
-        this.treasure = treasure;
+        return target.canTarget(itemStack.getType());
     }
 
     public void addConflict(Enchantment conflict) {
@@ -129,23 +154,15 @@ public class CustomEnchantment extends EnchantmentBase {
         conflicts.addTarget(namespace, name);
     }
 
-    public void setTarget(ITargetWrapper target) {
-        this.targets = target;
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Enchantment)
+            return getKey().equals(((Enchantment) obj).getKey());
+        return false;
     }
 
-    public ITargetWrapper getTargets() {
-        return targets;
-    }
-
-    public void setCursed(boolean cursed) {
-        this.cursed = cursed;
-    }
-
-    public void setMaxLevel(int maxLevel) {
-        this.maxLevel = maxLevel;
-    }
-
-    public void setStartLevel(int minLevel) {
-        this.minLevel = minLevel;
+    @Override
+    public int hashCode() {
+        return getKey().hashCode();
     }
 }

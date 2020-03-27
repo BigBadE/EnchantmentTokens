@@ -30,13 +30,6 @@ public class EnchantmentAddon implements Plugin {
         pluginFile = new PluginDescriptionFile(fileStream);
     }
 
-    /**
-     * Called after the configuration is loaded but before the plugin is enabled.
-     */
-    public void loadConfig() {
-        //Overridden by subclasses
-    }
-
     @Override
     public void onEnable() {
         //Overridden by subclasses

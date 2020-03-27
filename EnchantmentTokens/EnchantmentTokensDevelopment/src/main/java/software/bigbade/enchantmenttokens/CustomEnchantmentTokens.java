@@ -5,8 +5,7 @@ import ch.njol.skript.SkriptAddon;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
-import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
+import org.bukkit.plugin.Plugin;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.commands.CommandManager;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationManager;
@@ -141,7 +140,7 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
 
     @Override
     public void onDisable() {
-        loader.getAddons().forEach(EnchantmentAddon::onDisable);
+        loader.getAddons().forEach(Plugin::onDisable);
         enchantmentHandler.getAllEnchants().forEach(EnchantmentBase::onDisable);
         playerHandler.shutdown();
         currencyFactory.shutdown();

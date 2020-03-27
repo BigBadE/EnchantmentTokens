@@ -90,7 +90,6 @@ public class CustomEnchantUtils extends EnchantUtils {
         if(item.getItemMeta() == null || !item.getItemMeta().hasEnchants()) return enchantment.getStartLevel();
         if(!item.getItemMeta().hasEnchant(enchantment.getEnchantment()))
             return 1;
-        System.out.println("Got here");
         return item.getItemMeta().getEnchants().get(enchantment.getEnchantment());
     }
 

@@ -1,8 +1,8 @@
 package software.bigbade.enchantmenttokens.localization;
 
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.plugin.Plugin;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
-import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationType;
 
 import javax.annotation.Nullable;
@@ -23,14 +23,14 @@ public class LocaleManager {
 
     private LocaleManager() { }
 
-    public static void updateLocale(ConfigurationSection section, Collection<EnchantmentAddon> addons) {
+    public static void updateLocale(ConfigurationSection section, Collection<Plugin> addons) {
         locale = getLocale(section);
 
         try {
             Map<String, ResourceBundle> resources = new HashMap<>();
             resources.put(EnchantmentTokens.NAME, new PropertyResourceBundle(getStream("messages", locale)));
 
-            for (EnchantmentAddon addon : addons) {
+            for (Plugin addon : addons) {
                 resources.put(addon.getName(), new PropertyResourceBundle(getStream(addon.getName(), locale)));
             }
 

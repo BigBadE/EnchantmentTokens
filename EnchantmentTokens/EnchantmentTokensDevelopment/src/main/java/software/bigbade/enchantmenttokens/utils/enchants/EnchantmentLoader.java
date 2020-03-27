@@ -2,6 +2,7 @@ package software.bigbade.enchantmenttokens.utils.enchants;
 
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.plugin.InvalidDescriptionException;
+import org.bukkit.plugin.Plugin;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.CustomEnchantment;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
@@ -32,7 +33,7 @@ import java.util.logging.Level;
 
 public class EnchantmentLoader {
     private Map<EnchantmentAddon, Set<Class<EnchantmentBase>>> enchantments = new ConcurrentHashMap<>();
-    private Collection<EnchantmentAddon> addons = new ConcurrentLinkedQueue<>();
+    private Collection<Plugin> addons = new ConcurrentLinkedQueue<>();
 
     public EnchantmentLoader(File folder, EnchantmentTokens main) {
         ReflectionManager.setValue(ReflectionManager.getField(Enchantment.class, "acceptingNew"), true, Enchantment.class);
@@ -115,7 +116,7 @@ public class EnchantmentLoader {
         return null;
     }
 
-    public Collection<EnchantmentAddon> getAddons() {
+    public Collection<Plugin> getAddons() {
         return addons;
     }
 }

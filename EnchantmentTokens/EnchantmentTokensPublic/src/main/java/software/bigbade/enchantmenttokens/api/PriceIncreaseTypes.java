@@ -10,24 +10,24 @@ public enum PriceIncreaseTypes {
     CUSTOM((level, section) ->
             section.getInt(level + ""), enchant -> {
         for (int i = enchant.getStartLevel(); i < enchant.getMaxLevel() + 1; i++) {
-            if (enchant.getPriceSection().get(i + "") == null) {
-                enchant.getPriceSection().set(i + "", i * 10);
+            if (enchant.getPrice().get(i + "") == null) {
+                enchant.getPrice().set(i + "", i * 10);
             }
         }
-        for (String key : enchant.getPriceSection().getKeys(true)) {
+        for (String key : enchant.getPrice().getKeys(true)) {
             try {
                 if (!key.equals("type") && (Integer.parseInt(key) < enchant.getStartLevel() || Integer.parseInt(key) > enchant.getMaxLevel() + 1)) {
-                    enchant.getPriceSection().set(key, null);
+                    enchant.getPrice().set(key, null);
                 }
             } catch (NumberFormatException e) {
-                enchant.getPriceSection().set(key, null);
+                enchant.getPrice().set(key, null);
             }
         }
     }),
     LINEAR((level, section) -> level * new ConfigurationType<>(10).getValue(StringUtils.INCREASE, section),
             enchant -> {
-                if (!enchant.getPriceSection().isSet(StringUtils.INCREASE))
-                    enchant.getPriceSection().set(StringUtils.INCREASE, 10);
+                if (!enchant.getPrice().isSet(StringUtils.INCREASE))
+                    enchant.getPrice().set(StringUtils.INCREASE, 10);
             });
 
     private BiFunction<Integer, ConfigurationSection, Integer> function;

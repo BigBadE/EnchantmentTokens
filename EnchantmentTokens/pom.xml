@@ -37,47 +37,6 @@
             <artifactId>craftbukkit</artifactId>
             <version>1.15.2-R0.1-SNAPSHOT</version>
         </dependency>
-        <!--Used for interacting with Brigadier-->
-        <dependency>
-            <groupId>me.lucko</groupId>
-            <artifactId>commodore</artifactId>
-            <version>1.5</version>
-            <scope>compile</scope>
-        </dependency>
-        <!--Used to intercept packets-->
-        <dependency>
-            <groupId>com.comphenix.protocol</groupId>
-            <artifactId>ProtocolLib</artifactId>
-            <version>4.5.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <!--Used for Vault CurrencyFactory-->
-        <dependency>
-            <groupId>com.github.MilkBowl</groupId>
-            <artifactId>VaultAPI</artifactId>
-            <version>1.7</version>
-            <scope>provided</scope>
-        </dependency>
-        <!--Used for Skript integration-->
-        <dependency>
-            <groupId>com.github.SkriptLang</groupId>
-            <artifactId>Skript</artifactId>
-            <version>2.4</version>
-            <scope>provided</scope>
-        </dependency>
-        <!--Shaded in for armor equipping events-->
-        <dependency>
-            <groupId>com.codingforcookies</groupId>
-            <artifactId>ArmorEquipEvent</artifactId>
-            <version>1.7.3</version>
-        </dependency>
-        <!--Uses for stats-->
-        <dependency>
-            <groupId>org.bstats</groupId>
-            <artifactId>bstats-bukkit</artifactId>
-            <version>1.7</version>
-            <scope>compile</scope>
-        </dependency>
         <!--All the testing APIs used for Unit Tests-->
         <dependency>
             <groupId>junit</groupId>

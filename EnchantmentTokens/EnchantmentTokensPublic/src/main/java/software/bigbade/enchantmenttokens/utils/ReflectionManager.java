@@ -64,6 +64,7 @@ public class ReflectionManager {
         return null;
     }
 
+    @Nonnull
     public static Object instantiate(Constructor<?> constructor, Object... args) {
         try {
             return constructor.newInstance(args);

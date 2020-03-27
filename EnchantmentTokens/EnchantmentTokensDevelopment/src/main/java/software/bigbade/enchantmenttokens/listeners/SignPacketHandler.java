@@ -61,7 +61,7 @@ public class SignPacketHandler implements SignHandler {
         }
         if (!text.get(0).equals("[Enchantment]")) return;
         main.getEnchantmentHandler().getAllEnchants().forEach(base -> {
-            if (base.getName().equalsIgnoreCase(text.get(1))) {
+            if (base.getEnchantName().equalsIgnoreCase(text.get(1))) {
                 if (map)
                     signs.add(new Location(event.getPlayer().getWorld(), compound.getInteger("x"), compound.getInteger("y"), compound.getInteger("z")));
                 updateSign(base, compound, event);

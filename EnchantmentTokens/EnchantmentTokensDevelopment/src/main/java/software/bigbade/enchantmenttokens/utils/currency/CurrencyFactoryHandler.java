@@ -5,12 +5,10 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
-import software.bigbade.enchantmenttokens.currency.CurrencyFactory;
-import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationType;
+import software.bigbade.enchantmenttokens.currency.CurrencyFactory;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentLoader;
-import software.bigbade.enchantmenttokens.utils.enchants.FakePlugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,16 +20,12 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 
 public class CurrencyFactoryHandler {
+    private EnchantmentTokens main;
     private ConfigurationSection section;
-    private int version;
-    private String filePath;
-    private SchedulerHandler scheduler;
 
-    public CurrencyFactoryHandler(String filePath, SchedulerHandler scheduler, ConfigurationSection section, int version) {
-        this.filePath = filePath;
-        this.scheduler = scheduler;
-        this.section = section;
-        this.version = version;
+    public CurrencyFactoryHandler(EnchantmentTokens main) {
+        this.main = main;
+        section = ConfigurationManager.getSectionOrCreate(main.getConfig(), "currency");
     }
 
     public CurrencyFactory load() {
@@ -57,18 +51,18 @@ public class CurrencyFactoryHandler {
     }
 
     private CurrencyFactory loadGemFactory() {
-        if (version >= 14) {
+        if (main.getVersion() >= 14) {
             boolean persistent = new ConfigurationType<>(true).getValue("usePersistentData", section);
             if (persistent)
-                return new LatestCurrencyFactory(new NamespacedKey(FakePlugin.ENCHANTMENTPLUGIN, "gems"));
+                return new LatestCurrencyFactory(new NamespacedKey(main, "gems"));
             else
-                return new GemCurrencyFactory(scheduler, filePath);
+                return new GemCurrencyFactory(main.getScheduler(), main.getDataFolder().getAbsolutePath());
         } else
-            return new GemCurrencyFactory(scheduler, filePath);
+            return new GemCurrencyFactory(main.getScheduler(), main.getDataFolder().getAbsolutePath());
     }
 
     private CurrencyFactory loadExternalJar(String type) {
-        File found = ConfigurationManager.getFolder(filePath + "\\storage");
+        File found = ConfigurationManager.getFolder(main.getDataFolder().getAbsolutePath() + "\\storage");
         if (found.listFiles() == null)
             return null;
         for (File subfile : Objects.requireNonNull(found.listFiles())) {

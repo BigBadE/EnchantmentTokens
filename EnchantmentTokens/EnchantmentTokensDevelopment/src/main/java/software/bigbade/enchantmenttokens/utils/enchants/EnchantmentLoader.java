@@ -2,13 +2,13 @@ package software.bigbade.enchantmenttokens.utils.enchants;
 
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.plugin.InvalidDescriptionException;
-import org.jetbrains.annotations.Nullable;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.CustomEnchantment;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,7 +31,7 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 
 public class EnchantmentLoader {
-    private Map<String, Set<Class<EnchantmentBase>>> enchantments = new ConcurrentHashMap<>();
+    private Map<EnchantmentAddon, Set<Class<EnchantmentBase>>> enchantments = new ConcurrentHashMap<>();
     private Collection<EnchantmentAddon> addons = new ConcurrentLinkedQueue<>();
 
     public EnchantmentLoader(File folder, EnchantmentTokens main) {
@@ -87,7 +87,7 @@ public class EnchantmentLoader {
         if (addon == null) {
             EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Jar " + file.getName() + " has no or a bugged EnchantmentAddon class, skipping loading enchants");
         } else {
-            enchantments.put(addon.getName(), enchantClasses);
+            enchantments.put(addon, enchantClasses);
         }
     }
 
@@ -117,9 +117,5 @@ public class EnchantmentLoader {
 
     public Collection<EnchantmentAddon> getAddons() {
         return addons;
-    }
-
-    public Map<String, Set<Class<EnchantmentBase>>> getEnchantments() {
-        return enchantments;
     }
 }

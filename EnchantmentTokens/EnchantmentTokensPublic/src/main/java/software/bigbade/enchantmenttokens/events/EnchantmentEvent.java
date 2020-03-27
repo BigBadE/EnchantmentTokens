@@ -4,26 +4,27 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public interface EnchantmentEvent {
-    @NotNull
+    @Nonnull
     EnchantmentEvent setUser(Entity user);
-    @NotNull
+    @Nonnull
     Entity getUser();
 
-    @NotNull
+    @Nonnull
     EnchantmentEvent setItem(ItemStack item);
-    @NotNull
+    @Nonnull
     ItemStack getItem();
 
-    @NotNull
+    @Nonnull
     EnchantmentEvent setTargetEntity(Entity entity);
     @Nullable
     Entity getTargetEntity();
 
-    @NotNull
+    @Nonnull
     EnchantmentEvent setTargetBlock(Block block);
     @Nullable
     Block getTargetBlock();

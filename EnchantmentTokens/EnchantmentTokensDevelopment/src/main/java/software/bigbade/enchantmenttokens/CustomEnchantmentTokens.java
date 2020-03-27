@@ -105,9 +105,7 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
     }
 
     private void setupCurrency() {
-        ConfigurationSection currency = ConfigurationManager.getSectionOrCreate(getConfig(), "currency");
-
-        CurrencyFactoryHandler handler = new CurrencyFactoryHandler(getDataFolder().getAbsolutePath(), scheduler, currency, version);
+        CurrencyFactoryHandler handler = new CurrencyFactoryHandler(this);
         currencyFactory = handler.load();
 
         CurrencyAdditionHandler.initialize(!(currencyFactory instanceof VaultCurrencyFactory));

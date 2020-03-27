@@ -1,22 +1,25 @@
 package software.bigbade.enchantmenttokens.api;
 
 import org.bukkit.configuration.ConfigurationSection;
-import org.easymock.EasyMock;
-import org.easymock.EasyMockSupport;
-import org.easymock.Mock;
+import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import software.bigbade.enchantmenttokens.commands.EnchantTabCompleter;
 
-public class PriceIncreaseTest extends EasyMockSupport {
-    @Mock
-    private ConfigurationSection section = mock(ConfigurationSection.class);
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.when;
+
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ EnchantTabCompleter.class })
+public class PriceIncreaseTest {
 
     @Test
     public void testPriceIncreases() {
-        EasyMock.expect(section.getInt("0")).andReturn(100).times(2);
-        replayAll();
+        ConfigurationSection section = mock(ConfigurationSection.class);
+        when(section.getInt("0")).thenReturn(100);
 
-        assert section.getInt("0") == 100;
-        assert PriceIncreaseTypes.CUSTOM.getPrice(0, section) == 100;
-        verifyAll();
+        Assert.assertEquals(100, PriceIncreaseTypes.CUSTOM.getPrice(0, section));
     }
 }

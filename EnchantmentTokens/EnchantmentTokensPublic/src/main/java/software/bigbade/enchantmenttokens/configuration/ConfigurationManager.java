@@ -11,6 +11,7 @@ import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,10 +20,12 @@ import java.util.logging.Level;
 
 public class ConfigurationManager {
     //Private constructor to hide inherent public constructor
-    private ConfigurationManager() { }
+    private ConfigurationManager() {
+    }
 
     /**
      * Loads YamlConfiguration from file
+     *
      * @param config File object of the .yml file
      * @return YamlConfiguration instance of the file
      */
@@ -39,9 +42,9 @@ public class ConfigurationManager {
 
     /**
      * Loads YamlConfiguration from stream, used for compressed config files.
+     *
      * @param stream InputStream of file.
      * @return YamlConfiguration instance of stream.
-     *
      * @see ConfigurationManager#loadConfigurationFile(File)
      */
     public static FileConfiguration loadConfigurationStream(InputStream stream) {
@@ -56,8 +59,8 @@ public class ConfigurationManager {
 
     /**
      * Deletes file and catches exceptions
-     * @param file file to delete
      *
+     * @param file file to delete
      * @see Files#delete(Path)
      * @see File#delete()
      */
@@ -73,15 +76,19 @@ public class ConfigurationManager {
 
     /**
      * Loads configuration field at path given by location
-     * @param field The field to check and load the value in
-     * @param section The section to read/write to
-     * @param target Object target
      *
+     * @param field   The field to check and load the value in
+     * @param section The section to read/write to
+     * @param target  Object target
      * @see ConfigurationField
      */
     public static void loadConfigForField(Field field, ConfigurationSection section, Object target) {
         if (!field.isAnnotationPresent(ConfigurationField.class))
             return;
+        field.setAccessible(true);
+        if (Modifier.isStatic(field.getModifiers())) {
+            target = null;
+        }
         String location = field.getAnnotation(ConfigurationField.class).value() + "." + field.getName();
         if (field.getType().equals(ConfigurationSection.class)) {
             ConfigurationSection newSection = section.getConfigurationSection(location);
@@ -90,16 +97,18 @@ public class ConfigurationManager {
             ReflectionManager.setValue(field, newSection, target);
         } else {
             Object value = Objects.requireNonNull(section).get(location);
-            if (value != null)
+            if (value != null && value.getClass().isAssignableFrom(field.getType())) {
                 ReflectionManager.setValue(field, value, target);
-            else
-                section.set(location, ReflectionManager.getValue(field, target));
+                return;
+            }
+            section.set(location, ReflectionManager.getValue(field, target));
         }
     }
 
     /**
      * Saved FileConfiguration from memory to File and catches exceptions
-     * @param file File to save configuration to
+     *
+     * @param file          File to save configuration to
      * @param configuration FileConfiguration to save from memory
      */
     public static void saveConfiguration(File file, FileConfiguration configuration) {
@@ -113,8 +122,9 @@ public class ConfigurationManager {
 
     /**
      * Saves ConfigurationGuide.txt
+     *
      * @param scheduler SchedulerHandler to schedule the task with
-     * @param path Path to the file
+     * @param path      Path to the file
      */
     public static void saveConfigurationGuide(SchedulerHandler scheduler, String path) {
         File configGuide = new File(path + "\\ConfigurationGuide.txt");
@@ -125,13 +135,13 @@ public class ConfigurationManager {
 
     /**
      * Writes loaded resource file to path
+     *
      * @param path Path of the file
      * @param name Name of the resource
-     *
      * @see ConfigurationManager#saveConfigurationGuide(SchedulerHandler, String)
      */
     public static void writeInternalFile(String path, String name) {
-        try(OutputStream out = new FileOutputStream(path + "/" + name); InputStream stream = Objects.requireNonNull(ConfigurationManager.class.getClassLoader().getResourceAsStream(name))) {
+        try (OutputStream out = new FileOutputStream(path + "/" + name); InputStream stream = Objects.requireNonNull(ConfigurationManager.class.getClassLoader().getResourceAsStream(name))) {
             int readBytes;
             byte[] buffer = new byte[4096];
             while ((readBytes = stream.read(buffer)) > 0) {
@@ -144,6 +154,7 @@ public class ConfigurationManager {
 
     /**
      * Creates folder and catches exceptions
+     *
      * @param path Path to save folder to
      */
     public static void createFolder(String path) {
@@ -154,6 +165,7 @@ public class ConfigurationManager {
 
     /**
      * Gets folder or creates it if one isn't found
+     *
      * @param path Path to the folder
      * @return File instance of the folder
      */
@@ -165,6 +177,7 @@ public class ConfigurationManager {
 
     /**
      * Checks if folder exists, and if it doesn't safely creates folder there.
+     *
      * @param file File instance of the folder
      */
     public static void createFolder(File file) {
@@ -174,6 +187,7 @@ public class ConfigurationManager {
 
     /**
      * Checks if file exists, and if it doesn't safely creates file there.
+     *
      * @param file File instance
      */
     public static void createFile(File file) {
@@ -187,7 +201,8 @@ public class ConfigurationManager {
 
     /**
      * Gets section, or creates it if it is not found
-     * @param section Section to look in
+     *
+     * @param section    Section to look in
      * @param subsection Name of subsection
      * @return ConfigurationSection instance of subsection
      */

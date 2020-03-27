@@ -17,7 +17,7 @@ public interface ListenerHandler {
 
     void onEnchant(ItemStack item, EnchantmentBase base, Player player);
 
-    void loadEnchantments(Map<String, Set<Class<EnchantmentBase>>> enchants);
+    void loadEnchantments(Map<EnchantmentAddon, Set<Class<EnchantmentBase>>> enchants);
 
     ListenerManager getListenerManager(ListenerType type);
 }

@@ -10,6 +10,7 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import org.bukkit.event.Event;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
+import software.bigbade.enchantmenttokens.api.wrappers.MaterialTargetWrapper;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
 import software.bigbade.enchantmenttokens.utils.MaterialGroupUtils;
 
@@ -32,7 +33,7 @@ public class EnchantmentTargetEffect extends Effect {
     protected void execute(Event event) {
         String type = target.getSingle(event);
         try {
-            enchantment.getSingle(event).addTargets(MaterialGroupUtils.valueOf(type.toUpperCase().replace(" ", "_")).getMaterials());
+            enchantment.getSingle(event).setTarget(new MaterialTargetWrapper(MaterialGroupUtils.valueOf(type.toUpperCase().replace(" ", "_")).getMaterials()));
         } catch (IllegalArgumentException e) {
             EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Type {0} doesnt exist!", type);
         }
@@ -40,7 +41,7 @@ public class EnchantmentTargetEffect extends Effect {
 
     @Override
     public String toString(Event event, boolean b) {
-        return "Set material of " + enchantment.getSingle(event).getName() + " to " + target.getSingle(event);
+        return "Set material of " + enchantment.getSingle(event).getEnchantName() + " to " + target.getSingle(event);
     }
 
     @SuppressWarnings("unchecked")

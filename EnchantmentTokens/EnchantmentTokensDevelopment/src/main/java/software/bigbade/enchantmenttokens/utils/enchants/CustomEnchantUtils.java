@@ -16,7 +16,6 @@ import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 public class CustomEnchantUtils extends EnchantUtils {
@@ -36,7 +35,7 @@ public class CustomEnchantUtils extends EnchantUtils {
     @Override
     public void addEnchantment(ItemStack itemStack, String name, Player player) {
         for (EnchantmentBase base : handler.getAllEnchants()) {
-            if (base.getName().equals(name) && base.canEnchantItem(itemStack)) {
+            if (base.getEnchantName().equals(name) && base.canEnchantItem(itemStack)) {
                 EnchantmentPlayer enchantmentPlayer = playerHandler.getPlayer(player);
                 enchantmentPlayer.addGems(-addEnchantmentBase(itemStack, base, enchantmentPlayer));
                 return;
@@ -58,7 +57,7 @@ public class CustomEnchantUtils extends EnchantUtils {
             enchantmentPlayer.getPlayer().sendMessage(StringUtils.ENCHANTMENT_BOUGHT_FAIL.translate(new TranslatedPrice().translate("" + base.getDefaultPrice(level))));
             return 0;
         }
-        enchantmentPlayer.getPlayer().sendMessage(StringUtils.ENCHANTMENT_BOUGHT_SUCCESS.translate(base.getName(), "" + level));
+        enchantmentPlayer.getPlayer().sendMessage(StringUtils.ENCHANTMENT_BOUGHT_SUCCESS.translate(base.getEnchantName(), "" + level));
         if (base instanceof VanillaEnchant) {
             item.addEnchantment(base.getEnchantment(), level);
             updateSigns(level, base, signs, enchantmentPlayer);
@@ -79,8 +78,8 @@ public class CustomEnchantUtils extends EnchantUtils {
         if (lore == null)
             lore = new ArrayList<>();
         if (level != 0)
-            lore.remove(ChatColor.GRAY + base.getName() + " " + RomanNumeralConverter.getRomanNumeral(level - 1));
-        lore.add(ChatColor.GRAY + base.getName() + " " + RomanNumeralConverter.getRomanNumeral(level));
+            lore.remove(ChatColor.GRAY + base.getEnchantName() + " " + RomanNumeralConverter.getRomanNumeral(level - 1));
+        lore.add(ChatColor.GRAY + base.getEnchantName() + " " + RomanNumeralConverter.getRomanNumeral(level));
         meta.setLore(lore);
     }
 
@@ -88,16 +87,18 @@ public class CustomEnchantUtils extends EnchantUtils {
     public int getNextLevel(ItemStack item, EnchantmentBase enchantment) {
         if(enchantment instanceof VanillaEnchant)
             return item.getEnchantmentLevel(enchantment.getEnchantment())+1;
-        if(!item.hasItemMeta() || !Objects.requireNonNull(item.getItemMeta()).hasEnchants()) return enchantment.getStartLevel();
-        int level = item.getItemMeta().getEnchants().get(enchantment.getEnchantment());
-        return level==0 ? enchantment.getStartLevel() : level+1;
+        if(item.getItemMeta() == null || !item.getItemMeta().hasEnchants()) return enchantment.getStartLevel();
+        if(!item.getItemMeta().hasEnchant(enchantment.getEnchantment()))
+            return 1;
+        System.out.println("Got here");
+        return item.getItemMeta().getEnchants().get(enchantment.getEnchantment());
     }
 
     private void updateSigns(int level, EnchantmentBase base, Set<Location> signs, EnchantmentPlayer player) {
         for (Location location : signs)
             if (level >= base.getMaxLevel())
-                player.getPlayer().sendSignChange(location, new String[]{"[" + StringUtils.ENCHANTMENT + "]", base.getName(), StringUtils.PRICE_MAXED, ""});
+                player.getPlayer().sendSignChange(location, new String[]{"[" + StringUtils.ENCHANTMENT + "]", base.getEnchantName(), StringUtils.PRICE_MAXED, ""});
             else
-                player.getPlayer().sendSignChange(location, new String[]{"[" + StringUtils.ENCHANTMENT + "]", base.getName(), StringUtils.PRICE.translate(new TranslatedPrice().translate("" + base.getDefaultPrice(level))), ""});
+                player.getPlayer().sendSignChange(location, new String[]{"[" + StringUtils.ENCHANTMENT + "]", base.getEnchantName(), StringUtils.PRICE.translate(new TranslatedPrice().translate("" + base.getDefaultPrice(level))), ""});
     }
 }

@@ -1,8 +1,8 @@
 package software.bigbade.enchantmenttokens.utils;
 
-import org.jetbrains.annotations.NotNull;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -12,8 +12,8 @@ import java.util.logging.Level;
 public class ReflectionManager {
     private ReflectionManager() {}
 
-    @NotNull
-    public static Field getField(@NotNull Class<?> clazz, @NotNull String name) {
+    @Nonnull
+    public static Field getField(@Nonnull Class<?> clazz, @Nonnull String name) {
         Field field = null;
         try {
             field = clazz.getDeclaredField(name);
@@ -23,6 +23,19 @@ public class ReflectionManager {
         }
         assert field != null;
         return field;
+    }
+
+    @Nonnull
+    public static Method getMethod(@Nonnull Class<?> clazz, @Nonnull String name) {
+        Method method = null;
+        try {
+            method = clazz.getDeclaredMethod(name);
+            method.setAccessible(true);
+        } catch (NoSuchMethodException e) {
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Version changes with enchantments, please report this and the MC version");
+        }
+        assert method != null;
+        return method;
     }
 
     public static Object getValue(Field field, Object instance) {
@@ -55,7 +68,7 @@ public class ReflectionManager {
         try {
             return constructor.newInstance(args);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            EnchantLogger.log(Level.SEVERE, "Could not instantiate class " + constructor.getName());
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not instantiate class " + constructor.getName());
         }
         return null;
     }

@@ -3,8 +3,8 @@ package software.bigbade.enchantmenttokens.listeners.enchants;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerRiptideEvent;
+import software.bigbade.enchantmenttokens.api.EventFactory;
 import software.bigbade.enchantmenttokens.api.ListenerType;
-import software.bigbade.enchantmenttokens.events.EventFactory;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
 public class RiptideListener extends BasicEnchantListener implements Listener {

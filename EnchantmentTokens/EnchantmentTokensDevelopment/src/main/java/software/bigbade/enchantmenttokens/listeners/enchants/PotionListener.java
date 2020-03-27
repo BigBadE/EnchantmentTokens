@@ -4,8 +4,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
+import software.bigbade.enchantmenttokens.api.EventFactory;
 import software.bigbade.enchantmenttokens.api.ListenerType;
-import software.bigbade.enchantmenttokens.events.EventFactory;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
 public class PotionListener extends BasicEnchantListener implements Listener {

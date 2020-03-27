@@ -10,10 +10,10 @@ import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
@@ -47,19 +47,19 @@ public class EnchantmentAddon implements Plugin {
         //Overridden by subclasses
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public File getDataFolder() {
         return folder;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public PluginDescriptionFile getDescription() {
         return pluginFile;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public FileConfiguration getConfig() {
         throw new UnsupportedOperationException(NOTUSED);
@@ -67,7 +67,7 @@ public class EnchantmentAddon implements Plugin {
 
     @Nullable
     @Override
-    public InputStream getResource(@NotNull String s) {
+    public InputStream getResource(@Nonnull String s) {
         throw new UnsupportedOperationException(NOTUSED);
     }
 
@@ -82,7 +82,7 @@ public class EnchantmentAddon implements Plugin {
     }
 
     @Override
-    public void saveResource(@NotNull String s, boolean b) {
+    public void saveResource(@Nonnull String s, boolean b) {
         throw new UnsupportedOperationException(NOTUSED);
     }
 
@@ -91,13 +91,13 @@ public class EnchantmentAddon implements Plugin {
         throw new UnsupportedOperationException(NOTUSED);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public PluginLoader getPluginLoader() {
         throw new UnsupportedOperationException(NOTUSED);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public Server getServer() {
         return Bukkit.getServer();
@@ -125,30 +125,30 @@ public class EnchantmentAddon implements Plugin {
 
     @Nullable
     @Override
-    public ChunkGenerator getDefaultWorldGenerator(@NotNull String s, @Nullable String s1) {
+    public ChunkGenerator getDefaultWorldGenerator(@Nonnull String s, @Nullable String s1) {
         throw new UnsupportedOperationException(NOTUSED);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public Logger getLogger() {
         return EnchantmentTokens.getEnchantLogger();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public String getName() {
         return pluginFile.getName();
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+    public boolean onCommand(@Nonnull CommandSender commandSender, @Nonnull Command command, @Nonnull String s, @Nonnull String[] strings) {
         throw new UnsupportedOperationException(NOTUSED);
     }
 
     @Nullable
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+    public List<String> onTabComplete(@Nonnull CommandSender commandSender, @Nonnull Command command, @Nonnull String s, @Nonnull String[] strings) {
         throw new UnsupportedOperationException(NOTUSED);
     }
 }

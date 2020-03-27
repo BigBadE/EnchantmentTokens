@@ -132,7 +132,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
     }
 
     private EnchantButton updateItem(EnchantmentBase base, ItemStack stack, EnchantmentPlayer player) {
-        ItemStack item = EnchantmentMenuFactory.makeItem(base.getIcon(), ChatColor.GREEN + base.getName());
+        ItemStack item = EnchantmentMenuFactory.makeItem(base.getIcon(), ChatColor.GREEN + base.getEnchantName());
         int level = utils.getNextLevel(stack, base);
         addLore(base, item, level);
         if (level <= base.getMaxLevel()) {

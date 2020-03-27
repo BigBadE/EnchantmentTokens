@@ -7,13 +7,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.NotNull;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.StringUtils;
 import software.bigbade.enchantmenttokens.api.VanillaEnchant;
 import software.bigbade.enchantmenttokens.utils.RomanNumeralConverter;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class EnchantCmd implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
         if (!sender.hasPermission("enchanttoken.admin") && !sender.isOp()) {
             sender.sendMessage(StringUtils.COMMAND_ERROR_PERMISSION);
             return true;
@@ -64,9 +64,9 @@ public class EnchantCmd implements CommandExecutor {
         List<String> lore = meta.getLore();
         if (lore == null)
             lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY + base.getName() + ": " + RomanNumeralConverter.getRomanNumeral(level));
+        lore.add(ChatColor.GRAY + base.getEnchantName() + ": " + RomanNumeralConverter.getRomanNumeral(level));
         meta.setLore(lore);
         item.setItemMeta(meta);
-        player.sendMessage(StringUtils.COMMAND_ADD.translate(base.getName()));
+        player.sendMessage(StringUtils.COMMAND_ADD.translate(base.getEnchantName()));
     }
 }

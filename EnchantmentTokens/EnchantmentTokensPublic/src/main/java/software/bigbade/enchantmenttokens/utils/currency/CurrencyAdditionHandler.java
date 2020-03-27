@@ -1,10 +1,11 @@
 package software.bigbade.enchantmenttokens.utils.currency;
 
-import org.jetbrains.annotations.NotNull;
 import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import software.bigbade.enchantmenttokens.api.StringUtils;
 import software.bigbade.enchantmenttokens.localization.LocaleManager;
 import software.bigbade.enchantmenttokens.localization.TranslatedPrice;
+
+import javax.annotation.Nonnull;
 
 public final class CurrencyAdditionHandler {
     private static Boolean usingGems;
@@ -25,10 +26,10 @@ public final class CurrencyAdditionHandler {
 
     public static void addGems(EnchantmentPlayer player, long amount) {
         player.addGems(amount);
-        player.getPlayer().sendMessage(StringUtils.ENCHANTMENT_ADD.translate(formatMoney(amount)));
+        player.getPlayer().sendMessage(StringUtils.COMMAND_ADD.translate(formatMoney(amount)));
     }
 
-    @NotNull
+    @Nonnull
     public static Boolean isUsingGems() {
         if (usingGems == null)
             throw new IllegalStateException("Not initialized");

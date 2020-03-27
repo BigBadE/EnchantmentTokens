@@ -1,11 +1,16 @@
 package software.bigbade.enchantmenttokens.utils;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import software.bigbade.enchantmenttokens.commands.EnchantTabCompleter;
 
 import java.lang.reflect.Field;
 
 import static org.junit.Assert.*;
 
+@PrepareForTest({ ReflectionManager.class })
 public class ReflectionManagerTest {
     private boolean worked = false;
 

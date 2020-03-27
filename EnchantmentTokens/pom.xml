@@ -24,47 +24,61 @@
     </modules>
 
     <dependencies>
+        <!--Spigot-->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.15.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <!--Used for CraftBukkit source code, SHOULD NOT BE USED-->
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>craftbukkit</artifactId>
+            <version>1.15.2-R0.1-SNAPSHOT</version>
+        </dependency>
+        <!--Used for interacting with Brigadier-->
         <dependency>
             <groupId>me.lucko</groupId>
             <artifactId>commodore</artifactId>
             <version>1.5</version>
             <scope>compile</scope>
         </dependency>
+        <!--Used to intercept packets-->
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
             <version>4.5.0</version>
             <scope>provided</scope>
         </dependency>
+        <!--Used for Vault CurrencyFactory-->
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
             <version>1.7</version>
             <scope>provided</scope>
         </dependency>
+        <!--Used for Skript integration-->
         <dependency>
             <groupId>com.github.SkriptLang</groupId>
             <artifactId>Skript</artifactId>
             <version>2.4</version>
             <scope>provided</scope>
         </dependency>
+        <!--Shaded in for armor equipping events-->
         <dependency>
             <groupId>com.codingforcookies</groupId>
             <artifactId>ArmorEquipEvent</artifactId>
             <version>1.7.3</version>
         </dependency>
+        <!--Uses for stats-->
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
             <version>1.7</version>
             <scope>compile</scope>
         </dependency>
+        <!--All the testing APIs used for Unit Tests-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -72,15 +86,34 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymock</artifactId>
-            <version>4.2</version>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>3.3.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.intellij</groupId>
-            <artifactId>annotations</artifactId>
-            <version>12.0</version>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>2.0.6</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito2</artifactId>
+            <version>2.0.6</version>
+            <scope>test</scope>
+        </dependency>
+        <!--Annotation library-->
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+        <!--Used for some useful annotations-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.10</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

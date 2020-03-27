@@ -2,61 +2,57 @@ package software.bigbade.enchantmenttokens.api;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.EnchantmentTarget;
+import software.bigbade.enchantmenttokens.api.wrappers.EnchantmentTargetWrapper;
+import software.bigbade.enchantmenttokens.api.wrappers.ITargetWrapper;
+import software.bigbade.enchantmenttokens.api.wrappers.MaterialTargetWrapper;
 
-import java.util.Arrays;
 import java.util.List;
 
 public enum ListenerType {
     //On block starting hit
-    BLOCK_DAMAGED(EnchantmentTarget.TOOL),
+    BLOCK_DAMAGED(new EnchantmentTargetWrapper(EnchantmentTarget.TOOL)),
     //On block destroyed
-    BLOCK_BREAK(EnchantmentTarget.TOOL),
+    BLOCK_BREAK(new EnchantmentTargetWrapper(EnchantmentTarget.TOOL)),
     //Armor equipped
-    EQUIP(EnchantmentTarget.ARMOR),
+    EQUIP(new EnchantmentTargetWrapper(EnchantmentTarget.ARMOR)),
     //Armor unequipped
-    UNEQUIP(EnchantmentTarget.ARMOR),
+    UNEQUIP(new EnchantmentTargetWrapper(EnchantmentTarget.ARMOR)),
     //Item swapped to
-    HELD(EnchantmentTarget.ALL),
+    HELD(new EnchantmentTargetWrapper(EnchantmentTarget.ALL)),
     //Item swapped off
-    SWAPPED(EnchantmentTarget.ALL),
+    SWAPPED(new EnchantmentTargetWrapper(EnchantmentTarget.ALL)),
     //On current enchantment applied to an item
-    ENCHANT(EnchantmentTarget.ALL),
+    ENCHANT(new EnchantmentTargetWrapper(EnchantmentTarget.ALL)),
     //On user death
-    DEATH(EnchantmentTarget.ALL),
+    DEATH(new EnchantmentTargetWrapper(EnchantmentTarget.ALL)),
     //Potion apply
-    POTION_APPLY(EnchantmentTarget.ALL),
+    POTION_APPLY(new EnchantmentTargetWrapper(EnchantmentTarget.ALL)),
     //Potion remove
-    POTION_REMOVE(EnchantmentTarget.ALL),
+    POTION_REMOVE(new EnchantmentTargetWrapper(EnchantmentTarget.ALL)),
     //Shield block
-    SHIELD_BLOCK(EnchantmentTarget.ALL),
+    SHIELD_BLOCK(new MaterialTargetWrapper("SHIELD")),
     //Trident throw
-    TRIDENT_THROW(EnchantmentTarget.TRIDENT),
-    //Bow/crossbow shoot
-    SHOOT(EnchantmentTarget.BOW, EnchantmentTarget.CROSSBOW),
+    TRIDENT_THROW(new EnchantmentTargetWrapper("TRIDENT")),
+    //Bow shoot
+    SHOOT(new EnchantmentTargetWrapper(EnchantmentTarget.BOW)),
+    //Crossbow shoot
+    CROSSBOW_SHOOT(new EnchantmentTargetWrapper("CROSSBOW")),
     //Entity damage
-    DAMAGE(EnchantmentTarget.ALL),
+    DAMAGE(new EnchantmentTargetWrapper(EnchantmentTarget.ALL)),
     //Player riptide with trident
-    RIPTIDE(EnchantmentTarget.TRIDENT);
+    RIPTIDE(new EnchantmentTargetWrapper("TRIDENT"));
 
-    private List<EnchantmentTarget> targets;
+    private ITargetWrapper target;
 
-    ListenerType(EnchantmentTarget... targets) {
-        this.targets = Arrays.asList(targets);
-    }
-
-    public boolean canTarget(EnchantmentTarget target) {
-        if(target == null) return false;
-        if (target == EnchantmentTarget.ALL) return true;
-        for (EnchantmentTarget found : targets)
-            if (found == target)
-                return true;
-        return false;
+    ListenerType(ITargetWrapper target) {
+        this.target = target;
     }
 
     public boolean canTarget(List<Material> materials) {
-        return targets.stream().anyMatch(type -> {
-            for (Material material : materials) if (type.includes(material)) return true;
-            return false;
-        });
+        return target.canTarget(materials);
+    }
+
+    public boolean canTarget(ITargetWrapper wrapper) {
+        return target.canTarget(wrapper);
     }
 }

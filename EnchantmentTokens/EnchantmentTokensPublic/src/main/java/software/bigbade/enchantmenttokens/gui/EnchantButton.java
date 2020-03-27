@@ -1,9 +1,10 @@
 package software.bigbade.enchantmenttokens.gui;
 
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public interface EnchantButton {
     /**
@@ -12,8 +13,8 @@ public interface EnchantButton {
      * @return The inventory to open. Return null to close the inventory
      */
     @Nullable
-    EnchantmentGUI click(@NotNull EnchantmentPlayer player);
+    EnchantmentGUI click(@Nonnull EnchantmentPlayer player);
 
-    @NotNull
+    @Nonnull
     ItemStack getItem();
 }

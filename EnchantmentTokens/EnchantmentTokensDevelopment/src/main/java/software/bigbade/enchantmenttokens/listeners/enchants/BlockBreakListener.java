@@ -6,8 +6,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
 import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
+import software.bigbade.enchantmenttokens.api.EventFactory;
 import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.api.StringUtils;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationType;
@@ -16,6 +16,7 @@ import software.bigbade.enchantmenttokens.utils.SignHandler;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 import software.bigbade.enchantmenttokens.utils.players.PlayerHandler;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 
 public class BlockBreakListener extends BasicEnchantListener implements Listener {
@@ -34,7 +35,7 @@ public class BlockBreakListener extends BasicEnchantListener implements Listener
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
-        EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.BLOCK_BREAK, item).setTargetBlock(event.getBlock()).setUser(event.getPlayer());
+        EnchantmentEvent enchantmentEvent = EventFactory.createEvent(ListenerType.BLOCK_BREAK, item).setTargetBlock(event.getBlock()).setUser(event.getPlayer());
         callListeners(enchantmentEvent);
 
         if (event.getBlock().getState() instanceof Sign) {

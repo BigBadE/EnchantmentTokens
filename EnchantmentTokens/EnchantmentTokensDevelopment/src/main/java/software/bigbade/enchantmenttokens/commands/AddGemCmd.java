@@ -5,10 +5,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 import software.bigbade.enchantmenttokens.api.StringUtils;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyAdditionHandler;
 import software.bigbade.enchantmenttokens.utils.players.PlayerHandler;
+
+import javax.annotation.Nonnull;
 
 public class AddGemCmd implements CommandExecutor {
     private PlayerHandler handler;
@@ -18,7 +19,7 @@ public class AddGemCmd implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
         if (!sender.hasPermission("enchanttoken.admin") && !sender.isOp()) {
             sender.sendMessage(StringUtils.COMMAND_ERROR_PERMISSION);
             return true;

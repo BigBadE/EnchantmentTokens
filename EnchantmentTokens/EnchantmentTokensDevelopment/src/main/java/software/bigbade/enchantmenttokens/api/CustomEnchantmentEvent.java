@@ -1,15 +1,16 @@
-package software.bigbade.enchantmenttokens.events;
+package software.bigbade.enchantmenttokens.api;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import software.bigbade.enchantmenttokens.api.ListenerType;
+import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 
-public class CustomEnchantEvent extends Event implements EnchantmentEvent {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+public class CustomEnchantmentEvent extends Event implements EnchantmentEvent {
     private Entity user;
     private Entity targetEntity;
     private Block targetBlock;
@@ -18,7 +19,7 @@ public class CustomEnchantEvent extends Event implements EnchantmentEvent {
 
     private static HandlerList handlers = new HandlerList();
 
-    public CustomEnchantEvent(ListenerType type, ItemStack item) {
+    public CustomEnchantmentEvent(ListenerType type, ItemStack item) {
         this.type = type;
         this.item = item;
     }
@@ -28,12 +29,12 @@ public class CustomEnchantEvent extends Event implements EnchantmentEvent {
         return handlers;
     }
 
-    @NotNull
+    @Nonnull
     public Entity getUser() {
         return user;
     }
 
-    @NotNull
+    @Nonnull
     public EnchantmentEvent setUser(Entity user) {
         this.user = user;
         return this;
@@ -44,7 +45,7 @@ public class CustomEnchantEvent extends Event implements EnchantmentEvent {
         return targetEntity;
     }
 
-    @NotNull
+    @Nonnull
     public EnchantmentEvent setTargetEntity(Entity targetEntity) {
         this.targetEntity = targetEntity;
         return this;
@@ -59,24 +60,24 @@ public class CustomEnchantEvent extends Event implements EnchantmentEvent {
         return this;
     }
 
-    @NotNull
+    @Nonnull
     public EnchantmentEvent setTargetBlock(Block targetBlock) {
         this.targetBlock = targetBlock;
         return this;
     }
 
-    @NotNull
+    @Nonnull
     public ItemStack getItem() {
         return item;
     }
 
-    @NotNull
+    @Nonnull
     public EnchantmentEvent setItem(ItemStack item) {
         this.item = item;
         return this;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return getHandlerList();

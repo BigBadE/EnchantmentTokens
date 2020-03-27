@@ -1,11 +1,11 @@
 package software.bigbade.enchantmenttokens.localization;
 
 import org.bukkit.configuration.ConfigurationSection;
-import org.jetbrains.annotations.Nullable;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationType;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;

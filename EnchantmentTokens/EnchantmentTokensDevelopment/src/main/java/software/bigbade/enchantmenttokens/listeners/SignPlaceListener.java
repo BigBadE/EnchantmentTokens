@@ -20,7 +20,7 @@ public class SignPlaceListener implements Listener {
             String name = event.getLine(1);
             assert name != null;
             for (EnchantmentBase base : handler.getAllEnchants()) {
-                if (name.equalsIgnoreCase(base.getName())) {
+                if (name.equalsIgnoreCase(base.getEnchantName())) {
                     updateSign(base, event);
                     return;
                 }
@@ -30,8 +30,8 @@ public class SignPlaceListener implements Listener {
     }
 
     private void updateSign(EnchantmentBase base, SignChangeEvent event) {
-        event.getPlayer().sendMessage(StringUtils.ENCHANTMENT_ADD.translate(base.getName()));
+        event.getPlayer().sendMessage(StringUtils.ENCHANTMENT_ADD.translate(base.getEnchantName()));
         event.setLine(0, "[" + StringUtils.ENCHANTMENT + "]");
-        event.setLine(1, base.getName());
+        event.setLine(1, base.getEnchantName());
     }
 }

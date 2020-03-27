@@ -10,6 +10,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import org.bukkit.event.Event;
+import software.bigbade.enchantmenttokens.api.wrappers.MaterialTargetWrapper;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
 
 @Name("EnchantmentTarget")
@@ -28,12 +29,12 @@ public class EnchantmentTargetMaterialEffect extends Effect {
     protected void execute(Event event) {
         SkriptEnchantment skriptEnchantment = enchantment.getSingle(event);
         for (ItemType type : itemType.getAll(event))
-            skriptEnchantment.addTargets(type.getMaterial());
+            skriptEnchantment.setTarget(new MaterialTargetWrapper(type.getMaterial()));
     }
 
     @Override
     public String toString(Event event, boolean b) {
-        return "Set material of " + enchantment.getSingle(event).getName() + " to " + itemType.getSingle(event).toString();
+        return "Set material of " + enchantment.getSingle(event).getEnchantName() + " to " + itemType.getSingle(event).toString();
     }
 
     @SuppressWarnings("unchecked")

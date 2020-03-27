@@ -5,12 +5,13 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import software.bigbade.enchantmenttokens.api.StringUtils;
 import software.bigbade.enchantmenttokens.localization.TranslatedPrice;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyAdditionHandler;
 import software.bigbade.enchantmenttokens.utils.players.PlayerHandler;
+
+import javax.annotation.Nonnull;
 
 public class PayGemsCmd implements CommandExecutor {
     private PlayerHandler handler;
@@ -22,7 +23,7 @@ public class PayGemsCmd implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@Nonnull CommandSender commandSender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
         if(args.length != 2) {
             commandSender.sendMessage(StringUtils.COMMAND_PAY_USAGE);
         }

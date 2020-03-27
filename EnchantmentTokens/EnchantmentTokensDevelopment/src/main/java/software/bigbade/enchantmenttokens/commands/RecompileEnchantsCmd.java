@@ -1,12 +1,13 @@
 package software.bigbade.enchantmenttokens.commands;
 
-import org.jetbrains.annotations.NotNull;
-import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.StringUtils;
+
+import javax.annotation.Nonnull;
 
 public class RecompileEnchantsCmd implements CommandExecutor {
     private EnchantmentTokens main;
@@ -16,7 +17,7 @@ public class RecompileEnchantsCmd implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
         if(!sender.hasPermission("enchanttoken.admin") && !sender.isOp()) {
             sender.sendMessage(ChatColor.stripColor(StringUtils.COMMAND_ERROR_PERMISSION));
         } else {

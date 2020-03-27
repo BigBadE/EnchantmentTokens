@@ -4,53 +4,70 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.enchantments.EnchantmentTarget;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import software.bigbade.enchantmenttokens.api.wrappers.ITargetWrapper;
 
-import java.util.List;
+import javax.annotation.Nonnull;
 
-public interface EnchantmentBase {
-    void onDisable();
+public abstract class EnchantmentBase extends Enchantment {
+    @ConfigurationField
+    private String name;
+    @ConfigurationField
+    private Material icon;
 
-    long getDefaultPrice(int level);
+    @SuppressWarnings("ConstantConditions")
+    public EnchantmentBase(@Nonnull NamespacedKey key, @Nonnull Material icon, String defaultName) {
+        super(key);
+        if(name == null)
+            setName(defaultName);
+        if(getIcon() == null)
+            setIcon(icon);
+    }
 
-    void loadConfig();
+    private void setName(String name) {
+        this.name = name;
+    }
 
-    Enchantment getEnchantment();
+    public Material getIcon() {
+        return icon;
+    }
 
-    NamespacedKey getKey();
+    public void setIcon(Material icon) {
+        this.icon = icon;
+    }
 
-    ConfigurationSection getPriceSection();
+    public abstract void onDisable();
 
-    @NotNull
-    EnchantmentTarget getItemTarget();
+    public abstract long getDefaultPrice(int level);
 
-    String getName();
+    public abstract void loadConfig();
 
-    int getMaxLevel();
+    public abstract Enchantment getEnchantment();
 
-    int getStartLevel();
+    public abstract ConfigurationSection getPriceSection();
 
-    boolean isTreasure();
+    public abstract ITargetWrapper getTargets();
 
-    boolean conflictsWith(@NotNull Enchantment enchantment);
+    @Nonnull
+    public String getEnchantName() {
+        return name;
+    }
 
-    boolean isCursed();
+    @Override
+    @Nonnull
+    @Deprecated
+    public String getName() {
+        return getEnchantName();
+    }
 
-    boolean canEnchantItem(@NotNull ItemStack itemStack);
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof CustomEnchantment)
+            return hashCode() == obj.hashCode();
+        return false;
+    }
 
-    void setTreasure(boolean treasure);
-
-    void addConflict(Enchantment conflict);
-
-    void addTargets(Material... targets);
-
-    List<Material> getTargets();
-
-    Material getIcon();
-
-    void setCursed(boolean cursed);
-
-    void setIcon(Material icon);
+    @Override
+    public int hashCode() {
+        return getKey().hashCode();
+    }
 }

@@ -26,7 +26,7 @@ public class ListenerManager {
 
     public void callEvent(EnchantmentEvent event) {
         event.getItem().getEnchantments().keySet().stream()
-                .filter(enchantment -> enchantment instanceof EnchantmentBase)
+                .filter(enchantment -> enchantment instanceof EnchantmentBase && listeners.containsKey(enchantment))
                 .forEach(enchantment -> listeners.get(enchantment).apply(event));
     }
 }

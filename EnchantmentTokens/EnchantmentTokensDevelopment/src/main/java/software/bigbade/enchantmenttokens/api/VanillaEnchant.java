@@ -4,23 +4,24 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public class VanillaEnchant extends CustomEnchantment {
     private Enchantment enchantment;
     private EnchantmentTarget target;
 
     public VanillaEnchant(Material icon, Enchantment enchantment) {
-        super(capitalizeString(enchantment.getKey().getKey()), icon);
+        super(enchantment.getKey(), icon, capitalizeString(enchantment.getKey().getKey()));
         this.enchantment = enchantment;
-        maxLevel = enchantment.getMaxLevel();
-        minLevel = enchantment.getStartLevel();
+        setMaxLevel(enchantment.getMaxLevel());
+        setStartLevel(enchantment.getStartLevel());
         target = enchantment.getItemTarget();
         setTreasure(enchantment.isTreasure());
     }
 
     @Override
-    public boolean canEnchantItem(@NotNull ItemStack itemStack) {
+    public boolean canEnchantItem(@Nonnull ItemStack itemStack) {
         return target.includes(itemStack.getType());
     }
 
@@ -30,7 +31,7 @@ public class VanillaEnchant extends CustomEnchantment {
     }
 
     @Override
-    public boolean conflictsWith(@NotNull Enchantment other) {
+    public boolean conflictsWith(@Nonnull Enchantment other) {
         return enchantment.conflictsWith(enchantment);
     }
 

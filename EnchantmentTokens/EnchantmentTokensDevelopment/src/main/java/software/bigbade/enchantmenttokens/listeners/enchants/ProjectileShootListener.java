@@ -6,12 +6,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import software.bigbade.enchantmenttokens.api.EventFactory;
 import software.bigbade.enchantmenttokens.api.ListenerType;
-import software.bigbade.enchantmenttokens.events.EventFactory;
-import software.bigbade.enchantmenttokens.utils.EnchantLogger;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
-
-import java.util.logging.Level;
 
 public class ProjectileShootListener extends BasicEnchantListener implements Listener {
     private ListenerManager crossbowShoot;

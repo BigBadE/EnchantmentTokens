@@ -3,15 +3,20 @@ package software.bigbade.enchantmenttokens.utils.listeners;
 import com.codingforcookies.armorequip.ArmorListener;
 import com.codingforcookies.armorequip.DispenserArmorListener;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantListener;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
+import software.bigbade.enchantmenttokens.api.EventFactory;
 import software.bigbade.enchantmenttokens.api.ListenerType;
+import software.bigbade.enchantmenttokens.configuration.ConfigurationManager;
+import software.bigbade.enchantmenttokens.configuration.ConfigurationType;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import software.bigbade.enchantmenttokens.listeners.ChunkUnloadListener;
 import software.bigbade.enchantmenttokens.listeners.InventoryMoveListener;
@@ -22,18 +27,18 @@ import software.bigbade.enchantmenttokens.listeners.SignPlaceListener;
 import software.bigbade.enchantmenttokens.listeners.enchants.ArmorEquipListener;
 import software.bigbade.enchantmenttokens.listeners.enchants.BlockBreakListener;
 import software.bigbade.enchantmenttokens.listeners.enchants.BlockDamageListener;
-import software.bigbade.enchantmenttokens.listeners.enchants.DamageListener;
+import software.bigbade.enchantmenttokens.listeners.enchants.PlayerDamageListener;
 import software.bigbade.enchantmenttokens.listeners.enchants.PlayerDeathListener;
 import software.bigbade.enchantmenttokens.listeners.enchants.PotionListener;
 import software.bigbade.enchantmenttokens.listeners.enchants.ProjectileShootListener;
 import software.bigbade.enchantmenttokens.listeners.enchants.RiptideListener;
 import software.bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
 import software.bigbade.enchantmenttokens.utils.ReflectionManager;
-import software.bigbade.enchantmenttokens.configuration.ConfigurationManager;
-import software.bigbade.enchantmenttokens.configuration.ConfigurationType;
 import software.bigbade.enchantmenttokens.utils.currency.VaultCurrencyFactory;
 
+import javax.annotation.Nullable;
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -49,6 +54,8 @@ public class EnchantListenerHandler implements ListenerHandler {
     private Map<ListenerType, ListenerManager> enchantListeners = new ConcurrentHashMap<>();
     private EnchantmentTokens main;
 
+    private ListenerManager enchantListener;
+
     private static final String FOLDER = "\\enchantments\\";
 
     public EnchantListenerHandler(EnchantmentTokens main) {
@@ -60,6 +67,8 @@ public class EnchantListenerHandler implements ListenerHandler {
     }
 
     public void registerListeners() {
+        enchantListener = enchantListeners.get(ListenerType.ENCHANT);
+
         Bukkit.getPluginManager().registerEvents(new ArmorListener(new ArrayList<>()), main);
         Bukkit.getPluginManager().registerEvents(new DispenserArmorListener(), main);
 
@@ -72,9 +81,10 @@ public class EnchantListenerHandler implements ListenerHandler {
         Bukkit.getPluginManager().registerEvents(new PlayerLeaveListener(main.getPlayerHandler()), main);
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(main.getPlayerHandler()), main);
 
-        Bukkit.getPluginManager().registerEvents(new RiptideListener(enchantListeners.get(ListenerType.RIPTIDE)), main);
-        Bukkit.getPluginManager().registerEvents(new ProjectileShootListener(main.getVersion(), enchantListeners.get(ListenerType.TRIDENT_THROW), enchantListeners.get(ListenerType.SHOOT)), main);
-        Bukkit.getPluginManager().registerEvents(new DamageListener(enchantListeners.get(ListenerType.DAMAGE), enchantListeners.get(ListenerType.SHIELD_BLOCK)), main);
+        if (main.getVersion() >= 13)
+            Bukkit.getPluginManager().registerEvents(new RiptideListener(enchantListeners.get(ListenerType.RIPTIDE)), main);
+        Bukkit.getPluginManager().registerEvents(new ProjectileShootListener(main.getVersion(), enchantListeners.get(ListenerType.TRIDENT_THROW), enchantListeners.get(ListenerType.SHOOT), enchantListeners.get(ListenerType.CROSSBOW_SHOOT)), main);
+        Bukkit.getPluginManager().registerEvents(new PlayerDamageListener(enchantListeners.get(ListenerType.DAMAGE), enchantListeners.get(ListenerType.SHIELD_BLOCK)), main);
         Bukkit.getPluginManager().registerEvents(new PotionListener(enchantListeners.get(ListenerType.POTION_APPLY), enchantListeners.get(ListenerType.POTION_REMOVE)), main);
 
         registerBlockBreak();
@@ -93,9 +103,8 @@ public class EnchantListenerHandler implements ListenerHandler {
     }
 
     public void onEnchant(ItemStack item, EnchantmentBase base, Player player) {
-        ListenerManager manager = enchantListeners.get(ListenerType.ENCHANT);
-        EnchantmentEvent enchantmentEvent = new EnchantmentEvent(ListenerType.ENCHANT, item).setUser(player);
-        manager.callEvent(enchantmentEvent, base);
+        EnchantmentEvent enchantmentEvent = EventFactory.createEvent(ListenerType.ENCHANT, item).setUser(player);
+        enchantListener.callEvent(enchantmentEvent, base);
     }
 
     public void loadAddons(Collection<EnchantmentAddon> addons) {
@@ -113,17 +122,16 @@ public class EnchantListenerHandler implements ListenerHandler {
         }
     }
 
-    public void loadEnchantments(Map<String, Set<Class<EnchantmentBase>>> enchants) {
+    public void loadEnchantments(Map<EnchantmentAddon, Set<Class<EnchantmentBase>>> enchants) {
         ConcurrentLinkedQueue<EnchantmentBase> enchantments = new ConcurrentLinkedQueue<>();
 
-        Map<String, FileConfiguration> configs = new HashMap<>();
+        Map<EnchantmentAddon, FileConfiguration> configs = new HashMap<>();
 
-        enchants.keySet().forEach(key -> ConfigurationManager.loadConfigurationFile(new File(main.getDataFolder().getAbsolutePath() + FOLDER + key + ".yml")));
+        enchants.keySet().forEach(addon -> configs.put(addon, ConfigurationManager.loadConfigurationFile(new File(main.getDataFolder().getAbsolutePath() + FOLDER + addon + ".yml"))));
 
         enchants.forEach((addon, classes) -> {
             for (Class<EnchantmentBase> clazz : classes) {
-                EnchantmentBase enchant = loadConfiguration(clazz, configs, addon);
-
+                EnchantmentBase enchant = loadClass(clazz, configs.get(addon), addon);
                 if (enchant == null) continue;
                 enchant.loadConfig();
                 enchantments.add(enchant);
@@ -138,7 +146,7 @@ public class EnchantListenerHandler implements ListenerHandler {
             main.saveConfig();
         });
 
-        for (Map.Entry<String, FileConfiguration> configuration : configs.entrySet()) {
+        for (Map.Entry<EnchantmentAddon, FileConfiguration> configuration : configs.entrySet()) {
             ConfigurationManager.saveConfiguration(new File(main.getDataFolder().getAbsolutePath() + FOLDER + configuration.getKey() + ".yml"), configuration.getValue());
         }
     }
@@ -163,25 +171,40 @@ public class EnchantListenerHandler implements ListenerHandler {
         return type.canTarget(enchant.getTargets());
     }
 
-    private EnchantmentBase loadConfiguration(Class<EnchantmentBase> clazz, Map<String, FileConfiguration> configs, String addon) {
-        FileConfiguration configuration = configs.computeIfAbsent(addon, key -> null);
-
+    @Nullable
+    @SuppressWarnings("unchecked")
+    private EnchantmentBase loadClass(Class<? extends EnchantmentBase> clazz, FileConfiguration configuration, EnchantmentAddon addon) {
         assert configuration != null;
         ConfigurationSection section = ConfigurationManager.getSectionOrCreate(configuration, "enchants");
 
-        final EnchantmentBase enchant = (EnchantmentBase) ReflectionManager.instantiate(clazz);
+        Constructor<?> constructor;
+        try {
+            constructor = clazz.getConstructor();
+        } catch (NoSuchMethodException e) {
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "No constructor found for enchant {0}", clazz.getSimpleName());
+            return null;
+        }
+        if(constructor.getParameterTypes().length > 1 || !constructor.getParameterTypes()[0].equals(NamespacedKey.class)) {
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Incorrect constructor found for enchant {0}", clazz.getSimpleName());
+        }
+        final EnchantmentBase enchant = (EnchantmentBase) ReflectionManager.instantiate(constructor, new NamespacedKey(addon, getEnchantName(clazz)));
 
         ConfigurationSection enchantSection = ConfigurationManager.getSectionOrCreate(section, clazz.getSimpleName().toLowerCase());
 
-        for (Field field : clazz.getDeclaredFields()) {
-            ConfigurationManager.loadConfigForField(field, enchantSection, enchant);
-        }
-        for (Field field : clazz.getSuperclass().getDeclaredFields()) {
-            ConfigurationManager.loadConfigForField(field, enchantSection, enchant);
+        Class<? extends EnchantmentBase> currentClass = clazz;
+        while (currentClass.getSuperclass() != Enchantment.class) {
+            for (Field field : currentClass.getDeclaredFields()) {
+                ConfigurationManager.loadConfigForField(field, enchantSection, enchant);
+            }
+            currentClass = (Class<? extends EnchantmentBase>) currentClass.getSuperclass();
         }
 
         boolean enabled = new ConfigurationType<>(true).getValue("enabled", enchantSection);
 
         return (enabled) ? enchant : null;
+    }
+
+    private String getEnchantName(Class<? extends EnchantmentBase> clazz) {
+        return (String) ReflectionManager.invoke(ReflectionManager.getMethod(clazz, "getEnchantName"), null);
     }
 }

@@ -52,7 +52,7 @@ public class RegisterEnchantExpression extends SimpleExpression<SkriptEnchantmen
         String nameStr = name.getSingle(event);
         EnchantmentHandler enchantmentHandler = main.getEnchantmentHandler();
         for(EnchantmentBase enchantment : enchantmentHandler.getSkriptEnchant()) {
-            if(enchantment.getName().equals(nameStr)) {
+            if(enchantment.getKey().getKey().equals(nameStr)) {
                 enchantment.setIcon(icon.getSingle(event).getMaterial());
                 return new SkriptEnchantment[] { (SkriptEnchantment) enchantment };
             }

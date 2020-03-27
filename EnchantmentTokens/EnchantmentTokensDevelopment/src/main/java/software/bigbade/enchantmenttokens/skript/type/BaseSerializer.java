@@ -39,7 +39,7 @@ public class BaseSerializer extends Serializer<SkriptEnchantment> {
                 return (SkriptEnchantment) enchantment;
             }
         }
-        SkriptEnchantment enchantment = new SkriptEnchantment(key.getKey(), Material.BEDROCK);
+        SkriptEnchantment enchantment = new SkriptEnchantment(key, key.getKey(), Material.BEDROCK);
         main.getEnchantmentHandler().addSkriptEnchant(enchantment);
         return enchantment;
     }

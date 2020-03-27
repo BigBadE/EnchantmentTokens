@@ -4,9 +4,9 @@ import com.codingforcookies.armorequip.ArmorEquipEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import software.bigbade.enchantmenttokens.api.EventFactory;
 import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
-import software.bigbade.enchantmenttokens.events.EventFactory;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
 public class ArmorEquipListener extends BasicEnchantListener implements Listener {

@@ -106,7 +106,7 @@ public class CustomEnchantmentHandler implements EnchantmentHandler {
 
     public void addSkriptEnchant(EnchantmentBase enchantment) {
         for (Field field : enchantment.getClass().getSuperclass().getDeclaredFields())
-            ConfigurationManager.loadConfigForField(field, ConfigurationManager.getSectionOrCreate(skriptConfiguration, enchantment.getName()), enchantment);
+            ConfigurationManager.loadConfigForField(field, ConfigurationManager.getSectionOrCreate(skriptConfiguration, enchantment.getKey().getKey()), enchantment);
         enchantment.loadConfig();
         skriptEnchantments.add(enchantment);
         allEnchants.add(enchantment);

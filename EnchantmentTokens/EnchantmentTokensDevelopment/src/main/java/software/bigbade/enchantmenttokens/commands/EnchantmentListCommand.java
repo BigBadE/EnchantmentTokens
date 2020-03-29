@@ -21,7 +21,7 @@ public class EnchantmentListCommand implements CommandExecutor {
             sender.sendMessage(StringUtils.COMMAND_ERROR_PERMISSION);
         } else {
             StringBuilder builder = new StringBuilder();
-            handler.getAllEnchants().forEach(enchant -> builder.append(enchant.getEnchantName()).append(" (").append(enchant.getKey().getKey()).append(")").append(", "));
+            handler.getAllEnchants().forEach(enchant -> builder.append(enchant.getEnchantmentName()).append(" (").append(enchant.getKey().getKey()).append(")").append(", "));
             if (builder.length() > 0)
                 builder.setLength(builder.length() - 2);
             sender.sendMessage(StringUtils.COMMAND_LIST.translate(builder.toString()));

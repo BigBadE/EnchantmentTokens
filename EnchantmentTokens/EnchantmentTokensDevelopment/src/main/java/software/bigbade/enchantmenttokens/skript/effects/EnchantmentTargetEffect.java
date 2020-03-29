@@ -41,7 +41,7 @@ public class EnchantmentTargetEffect extends Effect {
 
     @Override
     public String toString(Event event, boolean b) {
-        return "Set material of " + enchantment.getSingle(event).getEnchantName() + " to " + target.getSingle(event);
+        return "Set material of " + enchantment.getSingle(event).getEnchantmentName() + " to " + target.getSingle(event);
     }
 
     @SuppressWarnings("unchecked")

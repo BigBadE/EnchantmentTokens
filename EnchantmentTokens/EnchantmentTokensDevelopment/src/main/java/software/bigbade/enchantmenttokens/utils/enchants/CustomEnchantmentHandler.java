@@ -46,7 +46,8 @@ public class CustomEnchantmentHandler implements EnchantmentHandler {
         for (String name : new ConfigurationType<>(Collections.singletonList("Fortune")).getValue("vanillaEnchants", section)) {
             Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(name.toLowerCase().replace(" ", "_")));
             if (enchantment != null) vanillaRegistering.add(enchantment);
-            else EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not find an enchantment by the name {0}", name);
+            else
+                EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not find an enchantment by the name {0}", name);
         }
 
         vanillaRegistering.forEach(enchantment -> loadVanillaConfig(enchantment, section));
@@ -54,7 +55,6 @@ public class CustomEnchantmentHandler implements EnchantmentHandler {
         skriptEnchantments.forEach(base -> Enchantment.registerEnchantment(base.getEnchantment()));
 
         this.enchantments.addAll(enchantments);
-        enchantments.forEach(base -> Enchantment.registerEnchantment(base.getEnchantment()));
 
         allEnchants.addAll(enchantments);
         allEnchants.addAll(vanillaEnchants);
@@ -112,7 +112,9 @@ public class CustomEnchantmentHandler implements EnchantmentHandler {
         allEnchants.add(enchantment);
     }
 
-    public List<EnchantmentBase> getCustomEnchants() { return enchantments; }
+    public List<EnchantmentBase> getCustomEnchants() {
+        return enchantments;
+    }
 
     public List<EnchantmentBase> getSkriptEnchant() {
         return skriptEnchantments;

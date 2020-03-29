@@ -1,7 +1,6 @@
 package software.bigbade.enchantmenttokens.commands;
 
 import org.bukkit.ChatColor;
-import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -36,7 +35,7 @@ public class EnchantTabCompleter implements TabCompleter, IEnchantTabCompleter {
 
     private List<String> checkInt(String number) {
         try {
-            if (!number.isEmpty())
+            if (number.trim().length() > 0)
                 Integer.parseInt(number);
             return Collections.emptyList();
         } catch (NumberFormatException e) {
@@ -47,9 +46,9 @@ public class EnchantTabCompleter implements TabCompleter, IEnchantTabCompleter {
     public List<String> getKeys(String name) {
         List<String> suggestions = new ArrayList<>();
         for (EnchantmentBase base : handler.getAllEnchants()) {
-            NamespacedKey key = base.getKey();
-            if (key.toString().startsWith(name) || key.getKey().startsWith(name)) {
-                suggestions.add(key.toString());
+            String key = base.getKey().getNamespace() + ":" + base.getEnchantmentName();
+            if (key.startsWith(name) || base.getEnchantmentName().startsWith(name)) {
+                suggestions.add(key);
                 if(suggestions.size() > 5)
                     break;
             }

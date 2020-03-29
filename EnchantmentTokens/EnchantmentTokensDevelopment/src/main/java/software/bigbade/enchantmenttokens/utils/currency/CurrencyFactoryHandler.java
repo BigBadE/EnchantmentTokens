@@ -8,12 +8,13 @@ import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationType;
 import software.bigbade.enchantmenttokens.currency.CurrencyFactory;
+import software.bigbade.enchantmenttokens.utils.FileHelper;
+import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentLoader;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Objects;
 import java.util.jar.JarFile;
@@ -76,7 +77,7 @@ public class CurrencyFactoryHandler {
     }
 
     private CurrencyFactory loadFactory(String type, File file) {
-        try (JarFile jarFile = new JarFile(file.getAbsolutePath()); InputStream stream = jarFile.getInputStream(jarFile.getEntry("config.yml"))) {
+        try (JarFile jarFile = FileHelper.getJarFile(file.getAbsolutePath()); InputStream stream = FileHelper.getJarStream(jarFile, "config.yml")) {
             FileConfiguration configuration = ConfigurationManager.loadConfigurationStream(stream);
 
             if (!new ConfigurationType<>("gems").getValue("name", configuration).equals(type))
@@ -84,16 +85,16 @@ public class CurrencyFactoryHandler {
 
             List<Class<?>> classes = EnchantmentLoader.loadClasses(file);
             return getFactory(classes);
-        } catch (IOException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+        } catch (IOException e) {
             EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not load currency handler (is it valid?)", e);
         }
         return null;
     }
 
-    private CurrencyFactory getFactory(List<Class<?>> classes) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    private CurrencyFactory getFactory(List<Class<?>> classes) {
         for (Class<?> clazz : classes) {
             if (clazz.getInterfaces()[0].equals(CurrencyFactory.class))
-                return (CurrencyFactory) clazz.getConstructors()[0].newInstance(section);
+                return (CurrencyFactory) ReflectionManager.instantiate(clazz.getConstructors()[0], section);
         }
         return null;
     }

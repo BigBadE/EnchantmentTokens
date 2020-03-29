@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -127,7 +128,7 @@ public class EnchantListenerHandler implements ListenerHandler {
 
         Map<EnchantmentAddon, FileConfiguration> configs = new HashMap<>();
 
-        enchants.keySet().forEach(addon -> configs.put(addon, ConfigurationManager.loadConfigurationFile(new File(main.getDataFolder().getAbsolutePath() + FOLDER + addon + ".yml"))));
+        enchants.keySet().forEach(addon -> configs.put(addon, ConfigurationManager.loadConfigurationFile(new File(main.getDataFolder().getAbsolutePath() + FOLDER + addon.getName() + ".yml"))));
 
         enchants.forEach((addon, classes) -> {
             for (Class<EnchantmentBase> clazz : classes) {
@@ -147,7 +148,7 @@ public class EnchantListenerHandler implements ListenerHandler {
         });
 
         for (Map.Entry<EnchantmentAddon, FileConfiguration> configuration : configs.entrySet()) {
-            ConfigurationManager.saveConfiguration(new File(main.getDataFolder().getAbsolutePath() + FOLDER + configuration.getKey() + ".yml"), configuration.getValue());
+            ConfigurationManager.saveConfiguration(new File(main.getDataFolder().getAbsolutePath() + FOLDER + configuration.getKey().getName() + ".yml"), configuration.getValue());
         }
     }
 
@@ -168,6 +169,10 @@ public class EnchantListenerHandler implements ListenerHandler {
     }
 
     private boolean canEnchant(EnchantmentBase enchant, ListenerType type) {
+        if(enchant.getTarget() == null) {
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "No target set for enchantment {0}", enchant.getEnchantmentName());
+            return false;
+        }
         return type.canTarget(enchant.getTarget());
     }
 
@@ -183,7 +188,9 @@ public class EnchantListenerHandler implements ListenerHandler {
             EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "No constructor found for enchant {0}", clazz.getSimpleName());
             return null;
         }
-        final EnchantmentBase enchant = (EnchantmentBase) ReflectionManager.instantiate(constructor, new NamespacedKey(addon, getEnchantName(clazz)));
+        final EnchantmentBase enchant = (EnchantmentBase) ReflectionManager.instantiate(constructor, new NamespacedKey(addon, clazz.getSimpleName()));
+
+        Objects.requireNonNull(enchant);
 
         ConfigurationSection enchantSection = ConfigurationManager.getSectionOrCreate(section, enchant.getKey().getKey());
 
@@ -197,15 +204,11 @@ public class EnchantListenerHandler implements ListenerHandler {
     @SuppressWarnings("unchecked")
     private void loadConfiguration(ConfigurationSection section, Enchantment base) {
         Class<? extends Enchantment> currentClass = base.getClass();
-        while (currentClass.getSuperclass() != Enchantment.class) {
+        while (currentClass != Enchantment.class) {
             for (Field field : currentClass.getDeclaredFields()) {
                 ConfigurationManager.loadConfigForField(field, section, base);
             }
             currentClass = (Class<? extends Enchantment>) currentClass.getSuperclass();
         }
-    }
-
-    private String getEnchantName(Class<? extends EnchantmentBase> clazz) {
-        return (String) ReflectionManager.invoke(ReflectionManager.getMethod(clazz, "getEnchantName"), null);
     }
 }

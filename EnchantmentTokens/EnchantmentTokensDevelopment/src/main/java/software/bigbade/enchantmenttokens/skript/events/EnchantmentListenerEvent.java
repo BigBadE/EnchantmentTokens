@@ -78,6 +78,6 @@ public class EnchantmentListenerEvent extends SelfRegisteringSkriptEvent {
 
     @Override
     public String toString(Event event, boolean b) {
-        return type.getSingle(event) + " listener for " + enchantment.getSingle(event).getEnchantName();
+        return type.getSingle(event) + " listener for " + enchantment.getSingle(event).getEnchantmentName();
     }
 }

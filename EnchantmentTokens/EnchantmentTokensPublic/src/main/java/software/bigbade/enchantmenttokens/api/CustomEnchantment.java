@@ -26,7 +26,6 @@ public class CustomEnchantment extends Enchantment implements EnchantmentBase {
     @Setter
     private boolean cursed;
 
-    @Getter
     @ConfigurationField
     private String name;
 
@@ -53,20 +52,10 @@ public class CustomEnchantment extends Enchantment implements EnchantmentBase {
     @ConfigurationField("price")
     private String type = "custom";
 
-    @SuppressWarnings("ConstantConditions")
     public CustomEnchantment(NamespacedKey key, Material icon, String defaultName) {
         super(key);
-        if (name == null)
-            setName(defaultName);
-        if (iconString.equals("DEFAULT"))
-            setIcon(icon);
-        else {
-            Material material = Material.getMaterial(iconString);
-            if (material == null)
-                EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Invalid icon name {0}", iconString);
-            else
-                setIcon(material);
-        }
+        setEnchantName(defaultName);
+        setIcon(icon);
     }
 
     @Override
@@ -96,6 +85,13 @@ public class CustomEnchantment extends Enchantment implements EnchantmentBase {
         }
         price.set("type", PriceIncreaseTypes.CUSTOM.name().toLowerCase());
         PriceIncreaseTypes.CUSTOM.loadConfig(this);
+        if(!iconString.equals("DEFAULT")) {
+            Material material = Material.getMaterial(iconString);
+            if (material == null)
+                EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Invalid icon name {0}", iconString);
+            else
+                setIcon(material);
+        }
     }
 
     public void setIcon(Material icon) {
@@ -105,14 +101,19 @@ public class CustomEnchantment extends Enchantment implements EnchantmentBase {
     }
 
     @Nonnull
-    public String getEnchantName() {
+    public String getEnchantmentName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setEnchantName(String name) {
         if (this.name != null)
-            throw new IllegalStateException("Enchantment already has a name!");
+            throw new IllegalStateException("Enchantment already has a name " + this.name + ", could not be set to " + name);
         this.name = name;
+    }
+
+    @Nonnull
+    public String getName() {
+        return getEnchantmentName();
     }
 
     @Nonnull

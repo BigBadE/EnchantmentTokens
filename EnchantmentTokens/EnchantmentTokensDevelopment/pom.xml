@@ -32,6 +32,16 @@
             <artifactId>ProtocolLib</artifactId>
             <version>4.5.0</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>cglib</groupId>
+                    <artifactId>cglib-nodep</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.comphenix.executors</groupId>
+                    <artifactId>BukkitExecutors</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!--Used for Vault CurrencyFactory-->
         <dependency>
@@ -52,6 +62,28 @@
             <artifactId>Skript</artifactId>
             <version>2.4</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.destroystokyo.paper</groupId>
+                    <artifactId>paper-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>findbugs</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sk89q.worldguard</groupId>
+                    <artifactId>worldguard-legacy</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.github.marcelo-mason</groupId>
+                    <artifactId>PreciousStones</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.milkbowl.vault</groupId>
+                    <artifactId>Vault</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!--Shaded in for armor equipping events-->
         <dependency>

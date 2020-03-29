@@ -3,6 +3,7 @@ package software.bigbade.enchantmenttokens.utils;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -25,16 +26,15 @@ public class ReflectionManager {
         return field;
     }
 
-    @Nonnull
+    @Nullable
     public static Method getMethod(@Nonnull Class<?> clazz, @Nonnull String name) {
-        Method method = null;
+        Method method;
         try {
             method = clazz.getDeclaredMethod(name);
             method.setAccessible(true);
         } catch (NoSuchMethodException e) {
-            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Version changes with enchantments, please report this and the MC version");
+            return null;
         }
-        assert method != null;
         return method;
     }
 
@@ -64,14 +64,15 @@ public class ReflectionManager {
         return null;
     }
 
-    @Nonnull
+    @Nullable
     public static Object instantiate(Constructor<?> constructor, Object... args) {
         try {
+            System.out.println("Constructor: " + constructor + ", args: " + args[0]);
             return constructor.newInstance(args);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not instantiate class " + constructor.getName());
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not instantiate class " + constructor.getName(), e);
+            return null;
         }
-        return null;
     }
 
     public static Object invoke(Method method, Object instance, Object... args) {

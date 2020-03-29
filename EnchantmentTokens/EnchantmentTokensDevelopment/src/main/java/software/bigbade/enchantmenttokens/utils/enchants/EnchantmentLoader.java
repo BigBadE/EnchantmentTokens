@@ -78,15 +78,15 @@ public class EnchantmentLoader {
         Set<Class<EnchantmentBase>> enchantClasses = new HashSet<>();
 
         for (Class<?> clazz : classes)
-            if (clazz.isAssignableFrom(CustomEnchantment.class))
+            if (CustomEnchantment.class.isAssignableFrom(clazz))
                 enchantClasses.add((Class<EnchantmentBase>) clazz);
-            else if (clazz.isAssignableFrom(EnchantmentAddon.class)) {
+            else if (EnchantmentAddon.class.isAssignableFrom(clazz)) {
                 addon = loadAddon(file, (Class<EnchantmentAddon>) clazz, main);
                 if (addon != null)
                     addons.add(addon);
             }
         if (addon == null) {
-            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Jar " + file.getName() + " has no or a bugged EnchantmentAddon class, skipping loading enchants");
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Jar " + file.getName() + " has a bugged/no EnchantmentAddon class, skipping loading enchants");
         } else {
             enchantments.put(addon, enchantClasses);
         }

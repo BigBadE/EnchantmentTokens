@@ -36,6 +36,7 @@
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit</artifactId>
             <version>1.15.2-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <!--All the testing APIs used for Unit Tests-->
         <dependency>
@@ -67,6 +68,7 @@
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
             <version>3.0.2</version>
+            <scope>provided</scope>
         </dependency>
         <!--Used for some useful annotations-->
         <dependency>

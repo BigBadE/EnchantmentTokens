@@ -35,7 +35,7 @@ public class CustomEnchantUtils extends EnchantUtils {
     @Override
     public void addEnchantment(ItemStack itemStack, String name, Player player) {
         for (EnchantmentBase base : handler.getAllEnchants()) {
-            if (base.getEnchantName().equals(name) && base.canEnchantItem(itemStack)) {
+            if (base.getEnchantmentName().equals(name) && base.canEnchantItem(itemStack)) {
                 EnchantmentPlayer enchantmentPlayer = playerHandler.getPlayer(player);
                 enchantmentPlayer.addGems(-addEnchantmentBase(itemStack, base, enchantmentPlayer));
                 return;
@@ -57,7 +57,7 @@ public class CustomEnchantUtils extends EnchantUtils {
             enchantmentPlayer.getPlayer().sendMessage(StringUtils.ENCHANTMENT_BOUGHT_FAIL.translate(new TranslatedPrice().translate("" + base.getDefaultPrice(level))));
             return 0;
         }
-        enchantmentPlayer.getPlayer().sendMessage(StringUtils.ENCHANTMENT_BOUGHT_SUCCESS.translate(base.getEnchantName(), "" + level));
+        enchantmentPlayer.getPlayer().sendMessage(StringUtils.ENCHANTMENT_BOUGHT_SUCCESS.translate(base.getEnchantmentName(), "" + level));
         if (base instanceof VanillaEnchant) {
             item.addEnchantment(base.getEnchantment(), level);
             updateSigns(level, base, signs, enchantmentPlayer);
@@ -78,8 +78,8 @@ public class CustomEnchantUtils extends EnchantUtils {
         if (lore == null)
             lore = new ArrayList<>();
         if (level != 0)
-            lore.remove(ChatColor.GRAY + base.getEnchantName() + " " + RomanNumeralConverter.getRomanNumeral(level - 1));
-        lore.add(ChatColor.GRAY + base.getEnchantName() + " " + RomanNumeralConverter.getRomanNumeral(level));
+            lore.remove(ChatColor.GRAY + base.getEnchantmentName() + " " + RomanNumeralConverter.getRomanNumeral(level - 1));
+        lore.add(ChatColor.GRAY + base.getEnchantmentName() + " " + RomanNumeralConverter.getRomanNumeral(level));
         meta.setLore(lore);
     }
 
@@ -96,8 +96,8 @@ public class CustomEnchantUtils extends EnchantUtils {
     private void updateSigns(int level, EnchantmentBase base, Set<Location> signs, EnchantmentPlayer player) {
         for (Location location : signs)
             if (level >= base.getMaxLevel())
-                player.getPlayer().sendSignChange(location, new String[]{"[" + StringUtils.ENCHANTMENT + "]", base.getEnchantName(), StringUtils.PRICE_MAXED, ""});
+                player.getPlayer().sendSignChange(location, new String[]{"[" + StringUtils.ENCHANTMENT + "]", base.getEnchantmentName(), StringUtils.PRICE_MAXED, ""});
             else
-                player.getPlayer().sendSignChange(location, new String[]{"[" + StringUtils.ENCHANTMENT + "]", base.getEnchantName(), StringUtils.PRICE.translate(new TranslatedPrice().translate("" + base.getDefaultPrice(level))), ""});
+                player.getPlayer().sendSignChange(location, new String[]{"[" + StringUtils.ENCHANTMENT + "]", base.getEnchantmentName(), StringUtils.PRICE.translate(new TranslatedPrice().translate("" + base.getDefaultPrice(level))), ""});
     }
 }

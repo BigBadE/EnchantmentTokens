@@ -64,9 +64,9 @@ public class EnchantCmd implements CommandExecutor {
         List<String> lore = meta.getLore();
         if (lore == null)
             lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY + base.getEnchantName() + ": " + RomanNumeralConverter.getRomanNumeral(level));
+        lore.add(ChatColor.GRAY + base.getEnchantmentName() + ": " + RomanNumeralConverter.getRomanNumeral(level));
         meta.setLore(lore);
         item.setItemMeta(meta);
-        player.sendMessage(StringUtils.COMMAND_ADD.translate(base.getEnchantName()));
+        player.sendMessage(StringUtils.COMMAND_ADD.translate(base.getEnchantmentName()));
     }
 }

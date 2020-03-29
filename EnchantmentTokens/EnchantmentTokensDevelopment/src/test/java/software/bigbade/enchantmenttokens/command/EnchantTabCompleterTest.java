@@ -31,8 +31,7 @@ public class EnchantTabCompleterTest {
 
         EnchantmentHandler handler = mock(EnchantmentHandler.class);
         NamespacedKey key = mock(NamespacedKey.class);
-        when(key.toString()).thenReturn("namespace:test");
-        when(key.getKey()).thenReturn("test");
+        when(key.getNamespace()).thenReturn("namespace");
         when(handler.getAllEnchants()).thenReturn(Collections.singletonList(new CustomEnchantment(key,null, "test") {
 
         }));

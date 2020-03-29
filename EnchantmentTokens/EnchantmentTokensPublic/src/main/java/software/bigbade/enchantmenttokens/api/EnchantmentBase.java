@@ -13,8 +13,6 @@ public interface EnchantmentBase {
     @Nonnull
     NamespacedKey getKey();
 
-    void setName(String name);
-
     Material getIcon();
 
     void setIcon(Material icon);
@@ -40,5 +38,5 @@ public interface EnchantmentBase {
     ITargetWrapper getTarget();
 
     @Nonnull
-    String getEnchantName();
+    String getEnchantmentName();
 }

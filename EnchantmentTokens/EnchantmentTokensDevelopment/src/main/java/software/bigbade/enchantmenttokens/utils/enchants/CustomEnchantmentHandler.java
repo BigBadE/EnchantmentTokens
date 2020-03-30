@@ -1,6 +1,5 @@
 package software.bigbade.enchantmenttokens.utils.enchants;
 
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -52,9 +51,10 @@ public class CustomEnchantmentHandler implements EnchantmentHandler {
 
         vanillaRegistering.forEach(enchantment -> loadVanillaConfig(enchantment, section));
 
-        skriptEnchantments.forEach(base -> Enchantment.registerEnchantment(base.getEnchantment()));
-
         this.enchantments.addAll(enchantments);
+        registerEnchantments(enchantments);
+
+        registerEnchantments(skriptEnchantments);
 
         allEnchants.addAll(enchantments);
         allEnchants.addAll(vanillaEnchants);
@@ -64,20 +64,32 @@ public class CustomEnchantmentHandler implements EnchantmentHandler {
         EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Registered enchantments");
     }
 
+    @SuppressWarnings("unchecked")
+    private void registerEnchantments(Collection<EnchantmentBase> enchantments) {
+        Map<NamespacedKey, Enchantment> keyEnchantmentMap = ((Map<NamespacedKey, Enchantment>) ReflectionManager.getValue(ReflectionManager.getField(Enchantment.class, "byKey"), null));
+        Map<String, Enchantment> nameEnchantmentMap = ((Map<String, Enchantment>) ReflectionManager.getValue(ReflectionManager.getField(Enchantment.class, "byName"), null));
+
+        for (EnchantmentBase base : enchantments) {
+            assert keyEnchantmentMap != null;
+            keyEnchantmentMap.computeIfAbsent(base.getKey(), key -> {
+                assert nameEnchantmentMap != null;
+                nameEnchantmentMap.computeIfPresent(base.getEnchantmentName(), (name, enchantment) -> {
+                    EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Duplicate enchantment names: {0} and {1}", new Object[] {base.getKey(), enchantment.getKey()});
+                    return base.getEnchantment();
+                });
+                keyEnchantmentMap.put(base.getKey(), base.getEnchantment());
+                return base.getEnchantment();
+            });
+        }
+    }
+
     private void loadVanillaConfig(Enchantment enchantment, ConfigurationSection section) {
         ConfigurationSection enchantSection = section.getConfigurationSection(enchantment.getKey().getKey());
         if (enchantSection == null)
             enchantSection = section.createSection(enchantment.getKey().getKey());
-        String iconName = new ConfigurationType<>("Bedrock").getValue("icon", enchantSection);
-        Material icon = Material.getMaterial(iconName.toUpperCase().replace(" ", "_"));
-
-        if (icon == null) {
-            enchantSection.set("icon", "Bedrock");
-            icon = Material.BEDROCK;
-        }
 
         if (new ConfigurationType<>(true).getValue("enabled", enchantSection)) {
-            VanillaEnchant vanillaEnchant = new VanillaEnchant(icon, enchantment);
+            VanillaEnchant vanillaEnchant = new VanillaEnchant(enchantment);
             vanillaEnchants.add(vanillaEnchant);
             for (Field field : CustomEnchantment.class.getDeclaredFields()) {
                 ConfigurationManager.loadConfigForField(field, enchantSection, vanillaEnchant);

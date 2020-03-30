@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import software.bigbade.enchantmenttokens.api.StringUtils;
-import software.bigbade.enchantmenttokens.localization.TranslatedPrice;
+import software.bigbade.enchantmenttokens.localization.TranslatedPriceMessage;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyAdditionHandler;
 import software.bigbade.enchantmenttokens.utils.players.PlayerHandler;
 
@@ -41,11 +41,11 @@ public class PayGemsCmd implements CommandExecutor {
             long gemsLong = Long.parseLong(gems);
             EnchantmentPlayer player = handler.getPlayer((Player) sender);
             if(gemsLong == 1) {
-                sender.sendMessage(StringUtils.COMMAND_PAY_NOT_ENOUGH.translate(new TranslatedPrice().translate(minTokens + "")));
+                sender.sendMessage(StringUtils.COMMAND_PAY_NOT_ENOUGH.translate(new TranslatedPriceMessage().translate(minTokens + "")));
                 return;
             }
-            sender.sendMessage(StringUtils.COMMAND_PAY.translate(new TranslatedPrice().translate("" + gemsLong), target.getName()));
-            target.sendMessage(StringUtils.COMMAND_PAY_RECEIVE.translate(new TranslatedPrice().translate("" + gemsLong), sender.getName()));
+            sender.sendMessage(StringUtils.COMMAND_PAY.translate(new TranslatedPriceMessage().translate("" + gemsLong), target.getName()));
+            target.sendMessage(StringUtils.COMMAND_PAY_RECEIVE.translate(new TranslatedPriceMessage().translate("" + gemsLong), sender.getName()));
             CurrencyAdditionHandler.addGems(handler.getPlayer(target), gemsLong);
 
             player.addGems(-gemsLong);

@@ -67,7 +67,6 @@ public class ReflectionManager {
     @Nullable
     public static Object instantiate(Constructor<?> constructor, Object... args) {
         try {
-            System.out.println("Constructor: " + constructor + ", args: " + args[0]);
             return constructor.newInstance(args);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not instantiate class " + constructor.getName(), e);

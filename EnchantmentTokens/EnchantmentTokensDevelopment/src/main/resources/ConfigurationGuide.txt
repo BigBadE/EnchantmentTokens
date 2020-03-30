@@ -17,11 +17,14 @@ If your language of choice is not supported, you can create a translation at htt
 CURRENCY METHOD:
 
 There are a multitude of ways EnchantmentTokens handles currency.
-Currently you can only use "gems". It is planned to add Vault support.
-There are currently 2 methods of saving, persistent data and flat file.
+Currently you can use:
+"gems", "vault", and "experience".
+
+There are currently 2 methods of gem saving, persistent data and flat file.
 Persistent data is only available for 1.14+.
 Flat file saves all data to a separate file in the data folder.
-MySQL and MongoDB support is planned.
+MongoDB Support (https://github.com/BigBadE/EnchantmentTokensMongo/releases) and MySQL (https://github.com/BigBadE/EnchantmentTokensMySQL/releases)
+support can be added, by dragging the jar into the "storage" folder.
 
 AUTOSAVE TIME:
 
@@ -50,7 +53,10 @@ name: THIS CAN BE USED FOR TRANSLATING NAMES, BUT SHOULD NOT BE USED FOR CUSTOM 
 icon: The item that shows up when choosing the enchantment in the enchantment GUI. Name should be uppercase with underscores instead of spaces.
 (Some items have different names in-game then in the code, check Minecraft gamepedia for the correct name, under Data Values and Namespaced ID.
 price: This section controls the pricing of the enchantment.
-type: Currently there is just "custom", which allows you to set the price for every level. Soon quadratic and polynomia function support will be added.
+type:
+"custom": define the price of each level
+"linear": define a linear increase in price
+
 CUSTOM ENCHANTMENTS:
 
 Custom enchantments have all the values as Vanilla Enchantments. They also have an enabled setting, so if for instance you get a pack of

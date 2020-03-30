@@ -21,6 +21,8 @@ import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 import software.bigbade.enchantmenttokens.utils.SignHandler;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyAdditionHandler;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyFactoryHandler;
+import software.bigbade.enchantmenttokens.utils.currency.ExperienceCurrencyFactory;
+import software.bigbade.enchantmenttokens.utils.currency.GemCurrencyFactory;
 import software.bigbade.enchantmenttokens.utils.currency.VaultCurrencyFactory;
 import software.bigbade.enchantmenttokens.utils.enchants.CustomEnchantUtils;
 import software.bigbade.enchantmenttokens.utils.enchants.CustomEnchantmentHandler;
@@ -107,7 +109,7 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
         CurrencyFactoryHandler handler = new CurrencyFactoryHandler(this);
         currencyFactory = handler.load();
 
-        CurrencyAdditionHandler.initialize(!(currencyFactory instanceof VaultCurrencyFactory));
+        CurrencyAdditionHandler.initialize(!(currencyFactory instanceof VaultCurrencyFactory) && !(currencyFactory instanceof ExperienceCurrencyFactory), currencyFactory instanceof ExperienceCurrencyFactory);
 
         playerHandler = new EnchantmentPlayerHandler(currencyFactory);
     }

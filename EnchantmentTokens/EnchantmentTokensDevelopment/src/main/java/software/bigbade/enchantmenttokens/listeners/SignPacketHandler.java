@@ -13,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.StringUtils;
-import software.bigbade.enchantmenttokens.localization.TranslatedPrice;
+import software.bigbade.enchantmenttokens.localization.TranslatedPriceMessage;
 import software.bigbade.enchantmenttokens.utils.SignHandler;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
 
@@ -74,7 +74,7 @@ public class SignPacketHandler implements SignHandler {
         ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
         if (base.canEnchantItem(itemStack)) {
             int level = EnchantUtils.getInstance().getNextLevel(itemStack, base);
-            price = StringUtils.PRICE.translate(new TranslatedPrice().translate("" + base.getDefaultPrice(level)));
+            price = StringUtils.PRICE.translate(new TranslatedPriceMessage().translate("" + base.getDefaultPrice(level)));
         }
         compound.put("Text3", "{\"extra\":[{\"text\":\"Price: " + price + "\"}],\"text\":\"\"}");
     }

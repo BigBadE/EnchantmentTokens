@@ -13,7 +13,7 @@ import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import software.bigbade.enchantmenttokens.api.StringUtils;
 import software.bigbade.enchantmenttokens.api.VanillaEnchant;
-import software.bigbade.enchantmenttokens.localization.TranslatedPrice;
+import software.bigbade.enchantmenttokens.localization.TranslatedPriceMessage;
 import software.bigbade.enchantmenttokens.utils.CustomEnchantButton;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
@@ -167,7 +167,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
     private void addLore(EnchantmentBase base, ItemStack target, int level) {
         ItemMeta meta = target.getItemMeta();
         assert meta != null;
-        String priceStr = ChatColor.GRAY + StringUtils.PRICE.translate(new TranslatedPrice().translate("" + base.getDefaultPrice(level)));
+        String priceStr = ChatColor.GRAY + StringUtils.PRICE.translate(new TranslatedPriceMessage().translate("" + base.getDefaultPrice(level)));
         String levelStr;
         if (level <= base.getMaxLevel())
             levelStr = StringUtils.LEVEL.translate("" + level);
@@ -234,10 +234,10 @@ public class EnchantmentMenuFactory implements MenuFactory {
 
     private void addPriceLine(List<String> lore) {
         if (lore.isEmpty()) {
-            lore.add(StringUtils.PRICE.translate(new TranslatedPrice().translate("0")));
+            lore.add(StringUtils.PRICE.translate(new TranslatedPriceMessage().translate("0")));
         } else {
             if (!lore.get(lore.size() - 1).startsWith(StringUtils.PRICE.translate("")))
-                lore.add(StringUtils.PRICE.translate(new TranslatedPrice().translate("0")));
+                lore.add(StringUtils.PRICE.translate(new TranslatedPriceMessage().translate("0")));
         }
     }
 

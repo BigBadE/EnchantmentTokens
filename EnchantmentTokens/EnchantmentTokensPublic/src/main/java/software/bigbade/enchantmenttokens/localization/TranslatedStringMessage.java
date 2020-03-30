@@ -5,11 +5,11 @@ import software.bigbade.enchantmenttokens.EnchantmentTokens;
 
 import java.util.ResourceBundle;
 
-public class TranslatedString implements ITranslatedMessage {
+public class TranslatedStringMessage implements ITranslatedMessage {
     private String message;
 
     //Private constructor to hide implicit public one.
-    public TranslatedString(String namespace, String key) {
+    public TranslatedStringMessage(String namespace, String key) {
         ResourceBundle bundle = LocaleManager.getBundle(namespace);
         if (bundle != null) {
             message = ChatColor.translateAlternateColorCodes('&', bundle.getString(key));
@@ -18,7 +18,7 @@ public class TranslatedString implements ITranslatedMessage {
         }
     }
 
-    public TranslatedString(String key) {
+    public TranslatedStringMessage(String key) {
         this(EnchantmentTokens.NAME, key);
     }
 

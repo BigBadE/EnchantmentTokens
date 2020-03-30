@@ -2,13 +2,14 @@ package software.bigbade.enchantmenttokens.api;
 
 import org.bukkit.configuration.ConfigurationSection;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationType;
+import software.bigbade.enchantmenttokens.utils.math.AlgebraicCalculator;
 
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 public enum PriceIncreaseTypes {
     CUSTOM((level, section) ->
-            section.getInt(level + ""), enchant -> {
+            section.getLong(level + ""), enchant -> {
         for (int i = enchant.getStartLevel(); i < enchant.getMaxLevel() + 1; i++) {
             if (enchant.getPrice().get(i + "") == null) {
                 enchant.getPrice().set(i + "", i * 10);
@@ -24,16 +25,15 @@ public enum PriceIncreaseTypes {
             }
         }
     }),
-    LINEAR((level, section) -> level * new ConfigurationType<>(10).getValue(StringUtils.INCREASE, section),
-            enchant -> {
-                if (!enchant.getPrice().isSet(StringUtils.INCREASE))
-                    enchant.getPrice().set(StringUtils.INCREASE, 10);
-            });
+    LINEAR((level, section) -> level * new ConfigurationType<>(10L).getValue(StringUtils.INCREASE, section),
+            enchant ->
+                    new ConfigurationType<>(10).getValue("increase", enchant.getPrice())),
+    ALGEBRAIC((level, section) -> AlgebraicCalculator.getInstance().getPrice(level), enchant -> new AlgebraicCalculator(new ConfigurationType<>("x^2+x-2").getValue("equation", enchant.getPrice())));
 
-    private BiFunction<Integer, ConfigurationSection, Integer> function;
+    private BiFunction<Integer, ConfigurationSection, Long> function;
     private Consumer<EnchantmentBase> setup;
 
-    PriceIncreaseTypes(BiFunction<Integer, ConfigurationSection, Integer> function, Consumer<EnchantmentBase> setup) {
+    PriceIncreaseTypes(BiFunction<Integer, ConfigurationSection, Long> function, Consumer<EnchantmentBase> setup) {
         this.function = function;
         this.setup = setup;
     }

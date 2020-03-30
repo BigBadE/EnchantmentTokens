@@ -11,8 +11,8 @@ public class VanillaEnchant extends CustomEnchantment {
     private Enchantment enchantment;
     private EnchantmentTarget target;
 
-    public VanillaEnchant(Material icon, Enchantment enchantment) {
-        super(enchantment.getKey(), icon, capitalizeString(enchantment.getKey().getKey()));
+    public VanillaEnchant(Enchantment enchantment) {
+        super(enchantment.getKey(), Material.BEDROCK, capitalizeString(enchantment.getKey().getKey()));
         this.enchantment = enchantment;
         setMaxLevel(enchantment.getMaxLevel());
         setStartLevel(enchantment.getStartLevel());

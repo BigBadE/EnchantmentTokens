@@ -157,8 +157,8 @@ public class CustomEnchantment extends Enchantment implements EnchantmentBase {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Enchantment)
-            return getKey().equals(((Enchantment) obj).getKey());
+        if (obj instanceof CustomEnchantment)
+            return hashCode() == obj.hashCode();
         return false;
     }
 

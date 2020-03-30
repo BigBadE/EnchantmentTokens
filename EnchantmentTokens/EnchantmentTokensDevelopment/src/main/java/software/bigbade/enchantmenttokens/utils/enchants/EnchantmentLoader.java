@@ -36,7 +36,6 @@ public class EnchantmentLoader {
     private Collection<Plugin> addons = new ConcurrentLinkedQueue<>();
 
     public EnchantmentLoader(File folder, EnchantmentTokens main) {
-        ReflectionManager.setValue(ReflectionManager.getField(Enchantment.class, "acceptingNew"), true, Enchantment.class);
         main.getScheduler().runTaskAsync(() -> {
             if (folder.listFiles() == null) {
                 return;

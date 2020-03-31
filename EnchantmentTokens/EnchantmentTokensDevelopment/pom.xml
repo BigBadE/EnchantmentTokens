@@ -41,6 +41,13 @@
             <version>1.5</version>
             <scope>compile</scope>
         </dependency>
+        <!--Brigadier-->
+        <dependency>
+            <groupId>com.mojang</groupId>
+            <artifactId>brigadier</artifactId>
+            <version>1.0.17</version>
+            <scope>provided</scope>
+        </dependency>
         <!--Used to intercept packets-->
         <dependency>
             <groupId>com.comphenix.protocol</groupId>

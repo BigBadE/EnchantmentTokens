@@ -142,7 +142,6 @@
                                 <filter>
                                     <artifact>*:*</artifact>
                                     <excludes>
-                                        <exclude>com/mojang/brigadier/**</exclude>
                                         <exclude>META-INF/**</exclude>
                                     </excludes>
                                 </filter>

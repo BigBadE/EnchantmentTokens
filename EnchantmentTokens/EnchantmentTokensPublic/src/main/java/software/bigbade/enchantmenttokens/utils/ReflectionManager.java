@@ -26,6 +26,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Objects;
 import java.util.logging.Level;
 
 public class ReflectionManager {
@@ -40,20 +41,21 @@ public class ReflectionManager {
         } catch (NoSuchFieldException e) {
             EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Version changes with enchantments, please report this and the MC version");
         }
-        assert field != null;
+        Objects.requireNonNull(field);
         return field;
     }
 
-    public static Object getValue(Field field, Object instance) {
+    @Nonnull
+    public static Object getValue(@Nonnull Field field, @Nullable Object instance) {
         try {
             return field.get(instance);
         } catch (IllegalAccessException e) {
             EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not get field reflexively");
         }
-        return null;
+        throw new IllegalStateException("Could not get value for field " + field.getName() + " with instance " + instance);
     }
 
-    public static void setValue(Field field, Object value, Object instance) {
+    public static void setValue(@Nonnull Field field, @Nullable Object value, @Nullable Object instance) {
         try {
             field.set(instance, value);
         } catch (IllegalAccessException e) {
@@ -61,26 +63,28 @@ public class ReflectionManager {
         }
     }
 
-    public static Object instantiate(Class<?> clazz) {
+    @Nonnull
+    public static Object instantiate(@Nonnull Class<?> clazz) {
         try {
             return clazz.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not instantiate class " + clazz.getSimpleName());
         }
-        return null;
+        throw new IllegalStateException("Could not instantiate class " + clazz.getSimpleName());
     }
 
-    @Nullable
-    public static Object instantiate(Constructor<?> constructor, Object... args) {
+    @Nonnull
+    public static Object instantiate(@Nonnull Constructor<?> constructor, @Nullable Object... args) {
         try {
             return constructor.newInstance(args);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not instantiate class " + constructor.getName(), e);
-            return null;
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Error instantiating constructor " + constructor.getName(), e);
         }
+        throw new IllegalStateException("Could not instantiate constructor " + constructor.getName());
     }
 
-    public static Object invoke(Method method, Object instance, Object... args) {
+    @Nullable
+    public static Object invoke(@Nonnull Method method, @Nullable Object instance, @Nullable Object... args) {
         try {
             return method.invoke(instance, args);
         } catch (IllegalAccessException | InvocationTargetException e) {

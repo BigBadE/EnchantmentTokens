@@ -75,6 +75,7 @@
         <module>EnchantmentTokensLibraries</module>
         <module>EnchantmentTokens</module>
         <module>EnchantmentTokensCurrency</module>
+        <module>Localization</module>
     </modules>
 
     <contributors>

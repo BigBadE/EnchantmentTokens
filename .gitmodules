@@ -14,3 +14,7 @@
 	path = Localization
 	url = https://github.com/BigBadE/EnchantmentTokensLocalization
 	update = rebase
+[submodule "EnchantmentTokens/EnchantmentTokensPublic"]
+	path = EnchantmentTokens/EnchantmentTokensPublic
+	url = https://github.com/BigBadE/EnchantmentTokensPublic
+	update = rebase

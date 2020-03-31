@@ -1,11 +1,19 @@
+/*
+ * Copyright (c) 2020 BigBadE, All rights reserved
+ */
+
 package software.bigbade.enchantmenttokens.loader;
 
-import software.bigbade.enchantmenttokens.EnchantmentTokens;
-import software.bigbade.enchantmenttokens.utils.ByteUtils;
-import software.bigbade.enchantmenttokens.configuration.ConfigurationManager;
 import org.bukkit.entity.Player;
+import software.bigbade.enchantmenttokens.EnchantmentTokens;
+import software.bigbade.enchantmenttokens.configuration.ConfigurationManager;
+import software.bigbade.enchantmenttokens.utils.ByteUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 BigBadE, All rights reserved
+ */
+
 package software.bigbade.enchantmenttokens.utils.enchants;
 
 import org.bukkit.NamespacedKey;
@@ -20,6 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 
 public class CustomEnchantmentHandler implements EnchantmentHandler {
@@ -70,16 +75,20 @@ public class CustomEnchantmentHandler implements EnchantmentHandler {
         Map<String, Enchantment> nameEnchantmentMap = ((Map<String, Enchantment>) ReflectionManager.getValue(ReflectionManager.getField(Enchantment.class, "byName"), null));
 
         for (EnchantmentBase base : enchantments) {
-            assert keyEnchantmentMap != null;
-            keyEnchantmentMap.computeIfAbsent(base.getKey(), key -> {
-                assert nameEnchantmentMap != null;
-                nameEnchantmentMap.computeIfPresent(base.getEnchantmentName(), (name, enchantment) -> {
-                    EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Duplicate enchantment names: {0} and {1}", new Object[] {base.getKey(), enchantment.getKey()});
-                    return base.getEnchantment();
-                });
+            Objects.requireNonNull(keyEnchantmentMap);
+            if (keyEnchantmentMap.containsKey(base.getKey())) {
+                EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Duplicate key {0} found, make sure the same addon jar is not copy pasted!", base.getKey());
+            } else {
+                Objects.requireNonNull(nameEnchantmentMap);
+                if (nameEnchantmentMap.containsKey(base.getEnchantmentName())) {
+                    NamespacedKey old = nameEnchantmentMap.get(base.getEnchantmentName()).getKey();
+                    EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Duplicate enchantments {0} and {1}, replacing old one (MAY CAUSE ERRORS)", new Object[]{base.getKey(), old});
+                    keyEnchantmentMap.remove(old);
+                    nameEnchantmentMap.remove(base.getEnchantmentName());
+                }
                 keyEnchantmentMap.put(base.getKey(), base.getEnchantment());
-                return base.getEnchantment();
-            });
+                nameEnchantmentMap.put(base.getEnchantmentName(), base.getEnchantment());
+            }
         }
     }
 

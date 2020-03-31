@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 BigBadE, All rights reserved
+ */
+
 package software.bigbade.enchantmenttokens.utils.players;
 
 import org.bukkit.entity.Player;

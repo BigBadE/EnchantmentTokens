@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 BigBadE, All rights reserved
+ */
+
 package software.bigbade.enchantmenttokens.skript.type;
 
 import ch.njol.skript.classes.Serializer;

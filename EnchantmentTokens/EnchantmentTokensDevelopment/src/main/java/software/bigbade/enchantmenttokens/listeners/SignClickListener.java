@@ -1,6 +1,9 @@
+/*
+ * Copyright (c) 2020 BigBadE, All rights reserved
+ */
+
 package software.bigbade.enchantmenttokens.listeners;
 
-import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -8,6 +11,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
 
 public class SignClickListener implements Listener {
     private EnchantUtils utils;

@@ -1,3 +1,21 @@
+/*
+ * Addons for the Custom Enchantment API in Minecraft
+ * Copyright (C) 2020 BigBadE
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package software.bigbade.enchantmenttokens.api;
 
 import lombok.Getter;
@@ -29,7 +47,7 @@ public class CustomEnchantment extends Enchantment implements EnchantmentBase {
     @ConfigurationField
     private String name;
 
-    @ConfigurationField
+    @ConfigurationField(name = "icon")
     private String iconString = "DEFAULT";
 
     @Getter
@@ -45,11 +63,11 @@ public class CustomEnchantment extends Enchantment implements EnchantmentBase {
     @ConfigurationField
     private int startLevel = 1;
 
-    @Getter()
-    @ConfigurationField
-    private ConfigurationSection price = null;
+    @Getter
+    @ConfigurationField(name = "price")
+    private ConfigurationSection priceSection = null;
 
-    @ConfigurationField("price")
+    @ConfigurationField(location = "price")
     private String type = "custom";
 
     public CustomEnchantment(NamespacedKey key, Material icon, String defaultName) {
@@ -70,10 +88,10 @@ public class CustomEnchantment extends Enchantment implements EnchantmentBase {
     public long getDefaultPrice(int level) {
         for (PriceIncreaseTypes types : PriceIncreaseTypes.values()) {
             if (type.toUpperCase().replace(" ", "").equals(types.name())) {
-                return types.getPrice(level, price);
+                return types.getPrice(level, priceSection);
             }
         }
-        return PriceIncreaseTypes.CUSTOM.getPrice(level, price);
+        return PriceIncreaseTypes.CUSTOM.getPrice(level, priceSection);
     }
 
     public void loadConfig() {
@@ -83,7 +101,7 @@ public class CustomEnchantment extends Enchantment implements EnchantmentBase {
                 return;
             }
         }
-        price.set("type", PriceIncreaseTypes.CUSTOM.name().toLowerCase());
+        priceSection.set("type", PriceIncreaseTypes.CUSTOM.name().toLowerCase());
         PriceIncreaseTypes.CUSTOM.loadConfig(this);
         if(!iconString.equals("DEFAULT")) {
             Material material = Material.getMaterial(iconString);

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 BigBadE, All rights reserved
+ */
+
 package software.bigbade.enchantmenttokens;
 
 import ch.njol.skript.Skript;
@@ -22,7 +26,6 @@ import software.bigbade.enchantmenttokens.utils.SignHandler;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyAdditionHandler;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyFactoryHandler;
 import software.bigbade.enchantmenttokens.utils.currency.ExperienceCurrencyFactory;
-import software.bigbade.enchantmenttokens.utils.currency.GemCurrencyFactory;
 import software.bigbade.enchantmenttokens.utils.currency.VaultCurrencyFactory;
 import software.bigbade.enchantmenttokens.utils.enchants.CustomEnchantUtils;
 import software.bigbade.enchantmenttokens.utils.enchants.CustomEnchantmentHandler;

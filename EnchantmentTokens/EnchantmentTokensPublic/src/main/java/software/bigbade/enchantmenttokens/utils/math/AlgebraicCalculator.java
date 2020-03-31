@@ -1,6 +1,26 @@
+/*
+ * Addons for the Custom Enchantment API in Minecraft
+ * Copyright (C) 2020 BigBadE
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package software.bigbade.enchantmenttokens.utils.math;
 
+import org.bukkit.configuration.ConfigurationSection;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
+import software.bigbade.enchantmenttokens.configuration.ConfigurationType;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -10,15 +30,14 @@ import java.util.logging.Level;
 public class AlgebraicCalculator {
     private ScriptEngine engine;
     private String equation;
-
     private static AlgebraicCalculator instance;
 
-    public AlgebraicCalculator(String equation) {
-        if(instance != null)
-            throw new IllegalStateException("Already initalized!");
+    public AlgebraicCalculator(ConfigurationSection section) {
+        equation = new ConfigurationType<>("x^2+2x-4").getValue("equation", section);
+        if (instance != null)
+            throw new IllegalStateException("Already initialized!");
         ScriptEngineManager mgr = new ScriptEngineManager();
         engine = mgr.getEngineByName("JavaScript");
-        this.equation = equation;
         setInstance(this);
     }
 
@@ -30,9 +49,9 @@ public class AlgebraicCalculator {
         return instance;
     }
 
-    public long getPrice(long level) {
+    public int getPrice(int level) {
         try {
-            return (long) engine.eval(equation.replace("x", "" + level));
+            return (int) engine.eval(equation.replace("x", "" + level));
         } catch (ScriptException e) {
             EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Invalid equation {0}", equation);
         }

@@ -1,13 +1,16 @@
+/*
+ * Copyright (c) 2020 BigBadE, All rights reserved
+ */
+
 package software.bigbade.enchantmenttokens.utils.enchants;
 
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.CustomEnchantment;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
-import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -72,33 +75,32 @@ public class EnchantmentLoader {
 
     @SuppressWarnings("unchecked")
     private void loadJar(File file, EnchantmentTokens main) {
-        EnchantmentAddon addon = null;
         List<Class<?>> classes = loadClasses(file);
         Set<Class<EnchantmentBase>> enchantClasses = new HashSet<>();
 
         for (Class<?> clazz : classes)
             if (CustomEnchantment.class.isAssignableFrom(clazz))
                 enchantClasses.add((Class<EnchantmentBase>) clazz);
-            else if (EnchantmentAddon.class.isAssignableFrom(clazz)) {
-                addon = loadAddon(file, (Class<EnchantmentAddon>) clazz, main);
-                if (addon != null)
-                    addons.add(addon);
-            }
-        if (addon == null) {
-            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Jar " + file.getName() + " has a bugged/no EnchantmentAddon class, skipping loading enchants");
-        } else {
+        EnchantmentAddon addon = loadAddon(file, main);
+        if (addon != null) {
+            addons.add(addon);
             enchantments.put(addon, enchantClasses);
+        } else {
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Jar " + file.getName() + " has a bugged/no EnchantmentAddon class, skipping loading enchants");
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Nullable
-    private EnchantmentAddon loadAddon(File file, Class<EnchantmentAddon> clazz, EnchantmentTokens main) {
+    private EnchantmentAddon loadAddon(File file, EnchantmentTokens main) {
         try (JarFile jarFile = new JarFile(file.getAbsolutePath()); InputStream stream = jarFile.getInputStream(jarFile.getEntry("addon.yml"))) {
+            PluginDescriptionFile descriptionFile = new PluginDescriptionFile(stream);
+            Class<EnchantmentAddon> clazz = (Class<EnchantmentAddon>) Class.forName(descriptionFile.getMain());
             EnchantmentAddon addon = clazz.getDeclaredConstructor().newInstance();
-            addon.setup(main, stream);
+            addon.setup(main, descriptionFile);
             return addon;
-        } catch (IOException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException | InvalidDescriptionException e) {
-            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Problem loading addon " + file.getName() + " class " + clazz.getSimpleName(), e);
+        } catch (IOException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException | InvalidDescriptionException | ClassNotFoundException e) {
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Problem loading addon " + file.getName(), e);
         }
         return null;
     }

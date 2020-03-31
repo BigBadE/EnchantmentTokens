@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 BigBadE, All rights reserved
+ */
+
 package software.bigbade.enchantmenttokens.utils.listeners;
 
 import com.codingforcookies.armorequip.ArmorListener;
@@ -37,6 +41,7 @@ import software.bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
 import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 import software.bigbade.enchantmenttokens.utils.currency.VaultCurrencyFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -117,8 +122,6 @@ public class EnchantListenerHandler implements ListenerHandler {
                 ConfigurationManager.loadConfigForField(field, configuration, addon);
             }
 
-            checkMethods(null, addon.getClass());
-
             addon.onEnable();
         }
     }
@@ -157,12 +160,12 @@ public class EnchantListenerHandler implements ListenerHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private void checkMethods(EnchantmentBase enchant, Class<?> clazz) {
-        for (Method method : clazz.getDeclaredMethods()) {
+    private void checkMethods(@Nonnull EnchantmentBase enchant, Class<?> clazz) {
+        for (Method method : clazz.getMethods()) {
             if (!method.isAnnotationPresent(EnchantListener.class) || method.getReturnType() != EnchantmentListener.class)
                 continue;
             ListenerType type = method.getAnnotation(EnchantListener.class).type();
-            if (enchant != null && canEnchant(enchant, type)) {
+            if (canEnchant(enchant, type)) {
                 enchantListeners.get(type).add((EnchantmentListener<EnchantmentEvent>) ReflectionManager.invoke(method, enchant), enchant);
             }
         }

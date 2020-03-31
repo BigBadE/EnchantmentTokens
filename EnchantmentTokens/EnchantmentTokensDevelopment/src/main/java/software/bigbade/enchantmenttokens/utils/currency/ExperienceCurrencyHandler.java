@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 BigBadE, All rights reserved
+ */
+
 package software.bigbade.enchantmenttokens.utils.currency;
 
 import org.bukkit.entity.Player;
@@ -9,6 +13,7 @@ public class ExperienceCurrencyHandler implements CurrencyHandler {
     public ExperienceCurrencyHandler(Player player) {
         this.player = player;
     }
+
     @Override
     public long getAmount() {
         return player.getLevel();

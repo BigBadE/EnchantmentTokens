@@ -1,147 +1,27 @@
+/*
+ * Addons for the Custom Enchantment API in Minecraft
+ * Copyright (C) 2020 BigBadE
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package software.bigbade.enchantmenttokens.api;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Server;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginLoader;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.File;
-import java.io.InputStream;
-import java.util.List;
-import java.util.logging.Logger;
-
-public class EnchantmentAddon implements Plugin {
-    private File folder;
-    private PluginDescriptionFile pluginFile;
-
-    private static final String NOTUSED = "This method should NOT be called by Addons, check the developer guide for proper use!";
-
-    public final void setup(EnchantmentTokens main, InputStream fileStream) throws InvalidDescriptionException {
-        folder = main.getEnchantmentFolder();
-        pluginFile = new PluginDescriptionFile(fileStream);
-    }
-
-    @Override
-    public void onEnable() {
-        //Overridden by subclasses
-    }
-
-    @Override
-    public void onDisable() {
-        //Overridden by subclasses
-    }
-
-    @Nonnull
-    @Override
-    public File getDataFolder() {
-        return folder;
-    }
-
-    @Nonnull
-    @Override
-    public PluginDescriptionFile getDescription() {
-        return pluginFile;
-    }
-
-    @Nonnull
-    @Override
-    public FileConfiguration getConfig() {
-        throw new UnsupportedOperationException(NOTUSED);
-    }
-
-    @Nullable
-    @Override
-    public InputStream getResource(@Nonnull String s) {
-        throw new UnsupportedOperationException(NOTUSED);
-    }
-
-    @Override
-    public void saveConfig() {
-        throw new UnsupportedOperationException(NOTUSED);
-    }
-
-    @Override
-    public void saveDefaultConfig() {
-        throw new UnsupportedOperationException(NOTUSED);
-    }
-
-    @Override
-    public void saveResource(@Nonnull String s, boolean b) {
-        throw new UnsupportedOperationException(NOTUSED);
-    }
-
-    @Override
-    public void reloadConfig() {
-        throw new UnsupportedOperationException(NOTUSED);
-    }
-
-    @Nonnull
-    @Override
-    public PluginLoader getPluginLoader() {
-        throw new UnsupportedOperationException(NOTUSED);
-    }
-
-    @Nonnull
-    @Override
-    public Server getServer() {
-        return Bukkit.getServer();
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
-    @Override
-    public void onLoad() {
-        throw new UnsupportedOperationException(NOTUSED);
-    }
-
-    @Override
-    public boolean isNaggable() {
-        throw new UnsupportedOperationException(NOTUSED);
-    }
-
-    @Override
-    public void setNaggable(boolean b) {
-        throw new UnsupportedOperationException(NOTUSED);
-    }
-
-    @Nullable
-    @Override
-    public ChunkGenerator getDefaultWorldGenerator(@Nonnull String s, @Nullable String s1) {
-        throw new UnsupportedOperationException(NOTUSED);
-    }
-
-    @Nonnull
-    @Override
-    public Logger getLogger() {
-        return EnchantmentTokens.getEnchantLogger();
-    }
-
-    @Nonnull
-    @Override
-    public String getName() {
-        return pluginFile.getName();
-    }
-
-    @Override
-    public boolean onCommand(@Nonnull CommandSender commandSender, @Nonnull Command command, @Nonnull String s, @Nonnull String[] strings) {
-        throw new UnsupportedOperationException(NOTUSED);
-    }
-
-    @Nullable
-    @Override
-    public List<String> onTabComplete(@Nonnull CommandSender commandSender, @Nonnull Command command, @Nonnull String s, @Nonnull String[] strings) {
-        throw new UnsupportedOperationException(NOTUSED);
-    }
+public interface EnchantmentAddon extends Plugin {
+    void setup(EnchantmentTokens main, PluginDescriptionFile file);
 }

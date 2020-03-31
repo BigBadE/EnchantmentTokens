@@ -1,3 +1,21 @@
+/*
+ * Addons for the Custom Enchantment API in Minecraft
+ * Copyright (C) 2020 BigBadE
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package software.bigbade.enchantmenttokens.configuration;
 
 import org.bukkit.configuration.ConfigurationSection;
@@ -9,7 +27,12 @@ import software.bigbade.enchantmenttokens.api.ConfigurationField;
 import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
@@ -89,7 +112,8 @@ public class ConfigurationManager {
         if (Modifier.isStatic(field.getModifiers())) {
             target = null;
         }
-        String location = field.getAnnotation(ConfigurationField.class).value() + "." + field.getName();
+        ConfigurationField annotation = field.getAnnotation(ConfigurationField.class);
+        String location = annotation.location() + "." + field.getName();
         if (field.getType().equals(ConfigurationSection.class)) {
             ConfigurationSection newSection = section.getConfigurationSection(location);
             if (newSection == null)
@@ -101,7 +125,8 @@ public class ConfigurationManager {
                 ReflectionManager.setValue(field, value, target);
                 return;
             }
-            section.set(location, ReflectionManager.getValue(field, target));
+            String name = (annotation.name().equals("")) ? location : annotation.name();
+            section.set(name, ReflectionManager.getValue(field, target));
         }
     }
 

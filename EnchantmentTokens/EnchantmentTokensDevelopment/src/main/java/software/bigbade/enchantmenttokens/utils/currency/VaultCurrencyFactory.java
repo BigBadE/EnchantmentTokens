@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2020 BigBadE, All rights reserved
+ */
+
 package software.bigbade.enchantmenttokens.utils.currency;
 
 import net.milkbowl.vault.economy.Economy;
@@ -22,6 +26,7 @@ public class VaultCurrencyFactory extends EnchantCurrencyFactory {
         }
         economy = rsp.getProvider();
     }
+
     @Override
     public EnchantCurrencyHandler newInstance(Player player) {
         return new VaultCurrencyHandler(player, economy);

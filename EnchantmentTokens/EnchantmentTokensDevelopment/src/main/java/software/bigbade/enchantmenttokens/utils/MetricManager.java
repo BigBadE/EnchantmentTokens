@@ -1,7 +1,11 @@
+/*
+ * Copyright (c) 2020 BigBadE, All rights reserved
+ */
+
 package software.bigbade.enchantmenttokens.utils;
 
-import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import org.bstats.bukkit.Metrics;
+import software.bigbade.enchantmenttokens.EnchantmentTokens;
 
 public class MetricManager {
     public MetricManager(EnchantmentTokens main) {

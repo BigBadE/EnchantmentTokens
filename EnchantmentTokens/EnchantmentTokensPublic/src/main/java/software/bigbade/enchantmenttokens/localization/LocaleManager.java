@@ -46,7 +46,7 @@ public class LocaleManager {
 
         try {
             Map<String, ResourceBundle> resources = new HashMap<>();
-            resources.put(EnchantmentTokens.NAME, new PropertyResourceBundle(getStream("messages", locale)));
+            resources.put(EnchantmentTokens.NAME, new PropertyResourceBundle(getStream(EnchantmentTokens.NAME, locale)));
 
             for (Plugin addon : addons) {
                 resources.put(addon.getName(), new PropertyResourceBundle(getStream(addon.getName(), locale)));

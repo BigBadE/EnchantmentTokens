@@ -2,10 +2,6 @@
 	path = wiki
 	url = https://github.com/BigBadE/EnchantmentTokens.wiki.git
 	update = rebase
-[submodule "Localization"]
-	path = Localization
-	url = https://github.com/BigBadE/EnchantmentTokensLocalization
-	update = rebase
 [submodule "EnchantmentTokensCurrency/EnchantmentTokensMongo"]
 	path = EnchantmentTokensCurrency/EnchantmentTokensMongo
 	url = https://github.com/BigBadE/EnchantmentTokensMongo
@@ -13,4 +9,8 @@
 [submodule "EnchantmentTokensCurrency/EnchantmentTokensMySQL"]
 	path = EnchantmentTokensCurrency/EnchantmentTokensMySQL
 	url = https://github.com/BigBadE/EnchantmentTokensMySQL
+	update = rebase
+[submodule "Localization"]
+	path = Localization
+	url = https://github.com/BigBadE/EnchantmentTokensLocalization
 	update = rebase

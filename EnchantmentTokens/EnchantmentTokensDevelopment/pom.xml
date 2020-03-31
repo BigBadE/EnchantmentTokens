@@ -1,22 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Addons for the Custom Enchantment API in Minecraft
-  ~ Copyright (C) 2020 BigBadE
-  ~
-  ~ This program is free software: you can redistribute it and/or modify
-  ~ it under the terms of the GNU General Public License as published by
-  ~ the Free Software Foundation, either version 3 of the License, or
-  ~ (at your option) any later version.
-  ~
-  ~ This program is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~ GNU General Public License for more details.
-  ~
-  ~ You should have received a copy of the GNU General Public License
-  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  ~ Copyright (c) 2020 BigBadE, All rights reserved
   -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -25,17 +10,29 @@
     <parent>
         <groupId>software.bigbade.enchantmenttokens</groupId>
         <artifactId>EnchantmentTokens</artifactId>
-        <version>1.1</version>
+        <version>1.0</version>
     </parent>
 
     <artifactId>EnchantmentTokensDevelopment</artifactId>
-    <version>1.1</version>
+    <version>1.0</version>
+
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>software.bigbade.enchantmenttokens</groupId>
             <artifactId>EnchantmentTokensPublic</artifactId>
-            <version>1.1</version>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>software.bigbade.enchantmenttokens</groupId>
+            <artifactId>Localization</artifactId>
+            <version>1.0</version>
         </dependency>
         <!--Used for interacting with Brigadier-->
         <dependency>

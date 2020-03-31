@@ -48,14 +48,6 @@
             <version>1.15.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-        <!--Used for CraftBukkit source code, SHOULD NOT BE USED-->
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit</artifactId>
-            <version>1.15.2-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
         <!--All the testing APIs used for Unit Tests-->
         <dependency>
             <groupId>junit</groupId>

@@ -4,11 +4,11 @@
 
 package software.bigbade.enchantmenttokens.utils.currency;
 
-import javafx.util.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.loader.FileLoader;
+import software.bigbade.enchantmenttokens.loader.Pair;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 
 import java.util.Locale;

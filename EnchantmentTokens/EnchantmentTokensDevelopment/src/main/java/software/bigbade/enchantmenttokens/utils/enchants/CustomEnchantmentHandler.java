@@ -44,17 +44,11 @@ public class CustomEnchantmentHandler implements EnchantmentHandler {
     }
 
     public void registerEnchants(Collection<EnchantmentBase> enchantments) {
-        List<Enchantment> vanillaRegistering = new ArrayList<>();
         ConfigurationSection section = ConfigurationManager.getSectionOrCreate(config, "enchants");
 
         for (String name : new ConfigurationType<>(Collections.singletonList("Fortune")).getValue("vanillaEnchants", section)) {
-            Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(name.toLowerCase().replace(" ", "_")));
-            if (enchantment != null) vanillaRegistering.add(enchantment);
-            else
-                EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not find an enchantment by the name {0}", name);
+            registerVanillaEnchantment(name, section);
         }
-
-        vanillaRegistering.forEach(enchantment -> loadVanillaConfig(enchantment, section));
 
         this.enchantments.addAll(enchantments);
         registerEnchantments(enchantments);
@@ -67,6 +61,13 @@ public class CustomEnchantmentHandler implements EnchantmentHandler {
         ConfigurationManager.saveConfiguration(new File(skriptPath), skriptConfiguration);
 
         EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Registered enchantments");
+    }
+
+    private void registerVanillaEnchantment(String name, ConfigurationSection section) {
+        Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(name.toLowerCase().replace(" ", "_")));
+        if (enchantment != null) loadVanillaConfig(enchantment, section);
+        else
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not find an enchantment by the name {0}", name);
     }
 
     @SuppressWarnings("unchecked")
@@ -113,13 +114,11 @@ public class CustomEnchantmentHandler implements EnchantmentHandler {
         Field byName = ReflectionManager.getField(Enchantment.class, "byName");
 
         Map<NamespacedKey, Enchantment> byKeys = (HashMap<NamespacedKey, Enchantment>) ReflectionManager.getValue(byKey, null);
-        assert byKeys != null;
         for (EnchantmentBase enchantment : enchantments) {
             byKeys.remove(enchantment.getKey());
         }
 
         Map<NamespacedKey, String> byNames = (HashMap<NamespacedKey, String>) ReflectionManager.getValue(byName, null);
-        assert byNames != null;
         for (EnchantmentBase enchantment : enchantments) {
             byNames.remove(enchantment.getKey());
         }

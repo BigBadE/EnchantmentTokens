@@ -69,6 +69,15 @@ public class EnchantmentMenuFactory implements MenuFactory {
     17: (14+) Shield
      */
     private void generateButtons() {
+        addHeaderButtons();
+        if (version == 13 || version < 8)
+            generateButton(EnchantmentTarget.FISHING_ROD, Material.FISHING_ROD, StringUtils.TOOL_FISHING_ROD);
+        generateButton(EnchantmentTarget.ARMOR, Material.DIAMOND_CHESTPLATE, StringUtils.TOOL_ARMOR);
+        generateButton(EnchantmentTarget.BOW, Material.BOW, StringUtils.TOOL_BOW);
+        addFooterButtons();
+    }
+
+    private void addHeaderButtons() {
         if (version >= 14)
             generateButton(EnchantmentTarget.CROSSBOW, Material.CROSSBOW, StringUtils.TOOL_CROSSBOW);
         if (version >= 13)
@@ -77,10 +86,9 @@ public class EnchantmentMenuFactory implements MenuFactory {
             generateButton(EnchantmentTarget.FISHING_ROD, Material.FISHING_ROD, StringUtils.TOOL_FISHING_ROD);
         generateButton(EnchantmentTarget.TOOL, Material.DIAMOND_PICKAXE, StringUtils.TOOL_TOOLS);
         generateButton(EnchantmentTarget.WEAPON, Material.DIAMOND_SWORD, StringUtils.TOOL_SWORD);
-        if (version == 13 || version < 8)
-            generateButton(EnchantmentTarget.FISHING_ROD, Material.FISHING_ROD, StringUtils.TOOL_FISHING_ROD);
-        generateButton(EnchantmentTarget.ARMOR, Material.DIAMOND_CHESTPLATE, StringUtils.TOOL_ARMOR);
-        generateButton(EnchantmentTarget.BOW, Material.BOW, StringUtils.TOOL_BOW);
+    }
+
+    private void addFooterButtons() {
         if (version >= 14)
             generateButton(EnchantmentTarget.FISHING_ROD, Material.FISHING_ROD, StringUtils.TOOL_FISHING_ROD);
         else if (version >= 9)

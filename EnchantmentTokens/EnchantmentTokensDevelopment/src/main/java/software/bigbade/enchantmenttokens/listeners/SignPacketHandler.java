@@ -22,7 +22,9 @@ import software.bigbade.enchantmenttokens.localization.TranslatedStringMessage;
 import software.bigbade.enchantmenttokens.utils.SignHandler;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -53,31 +55,38 @@ public class SignPacketHandler implements SignHandler {
         signs.add(sign);
     }
 
-    void handlePacket(NbtCompound compound, PacketEvent event, boolean map) {
+    void handlePacket(NbtCompound compound, PacketEvent event) {
+        List<String> text = getText(compound);
+        if (text.isEmpty())
+            return;
+        if (!text.get(0).equals("[" + new TranslatedStringMessage(Locale.getDefault(), StringUtils.ENCHANTMENT) + "]"))
+            return;
+        main.getEnchantmentHandler().getAllEnchants().stream()
+                .filter(base -> base.getEnchantmentName().equalsIgnoreCase(text.get(1)))
+                .forEach(base -> {
+                    if (event.getPacketType() == PacketType.Play.Server.MAP_CHUNK)
+                        signs.add(new Location(event.getPlayer().getWorld(), compound.getInteger("x"), compound.getInteger("y"), compound.getInteger("z")));
+                    updateSign(base, compound, event);
+                });
+    }
+
+    @Nonnull
+    private List<String> getText(NbtCompound compound) {
         List<String> text = new ArrayList<>();
         for (int i = 1; i < 5; i++) {
             try {
                 text.add(compound.getString("Text" + i).split("text\":\"")[1].split("\"}")[0]);
             } catch (ArrayIndexOutOfBoundsException | IllegalArgumentException ignored) {
                 if (i != 3)
-                    return;
+                    return Collections.emptyList();
                 else
                     break;
             }
         }
-        if (!text.get(0).equals("[" + new TranslatedStringMessage(Locale.getDefault(), StringUtils.ENCHANTMENT) + "]"))
-            return;
-        main.getEnchantmentHandler().getAllEnchants().forEach(base -> {
-            if (base.getEnchantmentName().equalsIgnoreCase(text.get(1))) {
-                if (map)
-                    signs.add(new Location(event.getPlayer().getWorld(), compound.getInteger("x"), compound.getInteger("y"), compound.getInteger("z")));
-                updateSign(base, compound, event);
-            }
-        });
+        return text;
     }
 
     private void updateSign(EnchantmentBase base, NbtCompound compound, PacketEvent event) {
-
         Locale locale = main.getPlayerHandler().getPlayer(event.getPlayer()).getLanguage();
         String price = new TranslatedStringMessage(locale, StringUtils.NOT_APPLICABLE).translate();
         ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
@@ -103,7 +112,7 @@ class SignPacketLoadAdapter extends PacketAdapter {
         List<NbtBase<?>> compounds = container.getListNbtModifier().read(0);
         for (int i = 0; i < compounds.size(); i++) {
             NbtCompound compound = (NbtCompound) compounds.get(i);
-            handler.handlePacket(compound, event, true);
+            handler.handlePacket(compound, event);
             compounds.set(i, compound);
         }
         container.getListNbtModifier().write(0, compounds);
@@ -123,7 +132,7 @@ class SignPacketUpdateAdapter extends PacketAdapter {
         PacketContainer container = event.getPacket();
         if (container.getIntegers().getValues().get(0) == 9) {
             NbtCompound compound = (NbtCompound) container.getNbtModifier().read(0);
-            handler.handlePacket(compound, event, false);
+            handler.handlePacket(compound, event);
             container.getNbtModifier().write(0, compound);
         }
     }

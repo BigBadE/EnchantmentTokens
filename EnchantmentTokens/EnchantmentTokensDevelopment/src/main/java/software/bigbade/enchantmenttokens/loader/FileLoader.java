@@ -4,7 +4,6 @@
 
 package software.bigbade.enchantmenttokens.loader;
 
-import javafx.util.Pair;
 import org.bukkit.entity.Player;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationManager;

@@ -18,12 +18,14 @@ import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.StringUtils;
 import software.bigbade.enchantmenttokens.localization.TranslatedPriceMessage;
+import software.bigbade.enchantmenttokens.localization.TranslatedStringMessage;
 import software.bigbade.enchantmenttokens.utils.SignHandler;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -63,7 +65,8 @@ public class SignPacketHandler implements SignHandler {
                     break;
             }
         }
-        if (!text.get(0).equals("[Enchantment]")) return;
+        if (!text.get(0).equals("[" + new TranslatedStringMessage(Locale.getDefault(), StringUtils.ENCHANTMENT) + "]"))
+            return;
         main.getEnchantmentHandler().getAllEnchants().forEach(base -> {
             if (base.getEnchantmentName().equalsIgnoreCase(text.get(1))) {
                 if (map)
@@ -74,11 +77,13 @@ public class SignPacketHandler implements SignHandler {
     }
 
     private void updateSign(EnchantmentBase base, NbtCompound compound, PacketEvent event) {
-        String price = StringUtils.NOT_APPLICABLE;
+
+        Locale locale = main.getPlayerHandler().getPlayer(event.getPlayer()).getLanguage();
+        String price = new TranslatedStringMessage(locale, StringUtils.NOT_APPLICABLE).translate();
         ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
         if (base.canEnchantItem(itemStack)) {
             int level = EnchantUtils.getInstance().getNextLevel(itemStack, base);
-            price = StringUtils.PRICE.translate(new TranslatedPriceMessage().translate("" + base.getDefaultPrice(level)));
+            price = new TranslatedStringMessage(locale, StringUtils.PRICE).translate(new TranslatedPriceMessage(locale).translate("" + base.getDefaultPrice(level)));
         }
         compound.put("Text3", "{\"extra\":[{\"text\":\"Price: " + price + "\"}],\"text\":\"\"}");
     }

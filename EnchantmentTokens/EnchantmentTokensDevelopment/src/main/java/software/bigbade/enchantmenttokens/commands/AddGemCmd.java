@@ -9,11 +9,14 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import software.bigbade.enchantmenttokens.api.StringUtils;
+import software.bigbade.enchantmenttokens.localization.TranslatedStringMessage;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyAdditionHandler;
 import software.bigbade.enchantmenttokens.utils.players.PlayerHandler;
 
 import javax.annotation.Nonnull;
+import java.util.Locale;
 
 public class AddGemCmd implements CommandExecutor {
     private PlayerHandler handler;
@@ -24,10 +27,12 @@ public class AddGemCmd implements CommandExecutor {
 
     @Override
     public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
-        if (!sender.hasPermission("enchanttoken.admin") && !sender.isOp()) {
-            sender.sendMessage(StringUtils.COMMAND_ERROR_PERMISSION);
+        if (!sender.hasPermission(StringUtils.PERMISSION_ADMIN) && !sender.isOp()) {
+            Locale locale = CommandUtils.getLocale(sender, handler);
+            sender.sendMessage(new TranslatedStringMessage(locale, StringUtils.COMMAND_ERROR_PERMISSION).translate());
             return true;
         }
+
         if (args.length == 1) {
             if (sender instanceof Player)
                 addGems(args[0], (Player) sender, sender);
@@ -36,7 +41,8 @@ public class AddGemCmd implements CommandExecutor {
             if (target != null) {
                 addGems(args[1], target, sender);
             } else {
-                sender.sendMessage(StringUtils.COMMAND_ERROR_NO_PLAYER.translate(args[0]));
+                Locale locale = CommandUtils.getLocale(sender, handler);
+                sender.sendMessage(new TranslatedStringMessage(locale, StringUtils.COMMAND_ERROR_NO_PLAYER).translate(args[0]));
             }
         }
         return true;
@@ -44,9 +50,12 @@ public class AddGemCmd implements CommandExecutor {
 
     private void addGems(String gems, Player target, CommandSender sender) {
         try {
-            CurrencyAdditionHandler.addGems(handler.getPlayer(target), Long.parseLong(gems));
+            EnchantmentPlayer player = handler.getPlayer(target);
+            CurrencyAdditionHandler.addGems(player, Long.parseLong(gems));
+            target.sendMessage(new TranslatedStringMessage(player.getLanguage(), StringUtils.COMMAND_PAY_RECEIVE).translate(gems, sender.getName()));
         } catch (NumberFormatException e) {
-            sender.sendMessage(StringUtils.COMMAND_ERROR_NOT_NUMBER.translate(gems));
+            Locale locale = CommandUtils.getLocale(sender, handler);
+            sender.sendMessage(new TranslatedStringMessage(locale, StringUtils.COMMAND_ERROR_NOT_NUMBER).translate(gems));
         }
     }
 }

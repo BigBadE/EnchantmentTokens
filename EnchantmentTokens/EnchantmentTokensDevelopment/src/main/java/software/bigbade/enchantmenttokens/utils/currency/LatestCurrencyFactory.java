@@ -8,16 +8,18 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 
 public class LatestCurrencyFactory extends EnchantCurrencyFactory {
-    private NamespacedKey key;
+    private final NamespacedKey gems;
+    private final NamespacedKey locale;
 
-    public LatestCurrencyFactory(NamespacedKey key) {
+    public LatestCurrencyFactory(NamespacedKey gems, NamespacedKey locale) {
         super("gems");
-        this.key = key;
+        this.gems = gems;
+        this.locale = locale;
     }
 
     @Override
     public EnchantCurrencyHandler newInstance(Player player) {
-        return new LatestCurrencyHandler(player, key);
+        return new LatestCurrencyHandler(player, gems, locale);
     }
 
     @Override

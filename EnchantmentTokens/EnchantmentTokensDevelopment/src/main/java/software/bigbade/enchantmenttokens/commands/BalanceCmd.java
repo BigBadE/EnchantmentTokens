@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import software.bigbade.enchantmenttokens.api.StringUtils;
+import software.bigbade.enchantmenttokens.localization.TranslatedStringMessage;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyAdditionHandler;
 import software.bigbade.enchantmenttokens.utils.players.PlayerHandler;
 
@@ -26,7 +27,7 @@ public class BalanceCmd implements CommandExecutor {
     public boolean onCommand(@Nonnull CommandSender commandSender, @Nonnull Command command, @Nonnull String s, @Nonnull String[] strings) {
         if(commandSender instanceof Player) {
             EnchantmentPlayer player = handler.getPlayer((Player) commandSender);
-            commandSender.sendMessage(StringUtils.COMMAND_BALANCE.translate(CurrencyAdditionHandler.formatMoney(player.getGems())));
+            commandSender.sendMessage(new TranslatedStringMessage(player.getLanguage(), StringUtils.COMMAND_BALANCE).translate(CurrencyAdditionHandler.formatMoney(player.getLanguage(), player.getGems())));
         }
         return true;
     }

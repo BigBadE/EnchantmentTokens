@@ -4,12 +4,14 @@
 
 package software.bigbade.enchantmenttokens.utils.currency;
 
+import javafx.util.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.loader.FileLoader;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 
+import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -28,12 +30,14 @@ public class GemCurrencyHandler extends EnchantCurrencyHandler {
         super("gemsOld");
         this.fileLoader = fileLoader;
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        Callable<Long> callable = () -> fileLoader.getGems(player);
-        Future<Long> future = executor.submit(callable);
+        Callable<Pair<Long, Locale>> callable = () -> fileLoader.getData(player);
+        Future<Pair<Long, Locale>> future = executor.submit(callable);
         final AtomicInteger id = new AtomicInteger();
         id.set(scheduler.runTaskAsyncRepeating(() -> {
             try {
-                setAmount(future.get(1, TimeUnit.MILLISECONDS));
+                Pair<Long, Locale> data = future.get(1, TimeUnit.MILLISECONDS);
+                setAmount(data.getKey());
+                setLocale(data.getValue());
                 Bukkit.getScheduler().cancelTask(id.get());
             } catch (InterruptedException e) {
                 EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "gem thread interrupted", e);
@@ -50,8 +54,8 @@ public class GemCurrencyHandler extends EnchantCurrencyHandler {
     @Override
     public void savePlayer(Player player, boolean async) {
         if (async)
-            CompletableFuture.runAsync(() -> fileLoader.removePlayer(player, getAmount()));
+            CompletableFuture.runAsync(() -> fileLoader.removePlayer(player, getAmount(), getLocale()));
         else
-            fileLoader.removePlayer(player, getAmount());
+            fileLoader.removePlayer(player, getAmount(), getLocale());
     }
 }

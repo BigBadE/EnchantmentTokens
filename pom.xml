@@ -72,10 +72,10 @@
     </licenses>
 
     <modules>
+        <module>Localization</module>
         <module>EnchantmentTokensLibraries</module>
         <module>EnchantmentTokens</module>
         <module>EnchantmentTokensCurrency</module>
-        <module>Localization</module>
     </modules>
 
     <contributors>
@@ -139,6 +139,12 @@
                             </relocations>
                             <minimizeJar>true</minimizeJar>
                             <filters>
+                                <filter>
+                                    <artifact>software.bigbade.enchantmenttokens</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
                                 <filter>
                                     <artifact>*:*</artifact>
                                     <excludes>

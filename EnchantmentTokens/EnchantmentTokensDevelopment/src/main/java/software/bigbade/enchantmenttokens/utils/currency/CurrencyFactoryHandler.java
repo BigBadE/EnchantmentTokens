@@ -59,7 +59,7 @@ public class CurrencyFactoryHandler {
         if (main.getVersion() >= 14) {
             boolean persistent = new ConfigurationType<>(true).getValue("usePersistentData", section);
             if (persistent)
-                return new LatestCurrencyFactory(new NamespacedKey(main, "gems"));
+                return new LatestCurrencyFactory(new NamespacedKey(main, "gems"), new NamespacedKey(main, "locale"));
             else
                 return new GemCurrencyFactory(main.getScheduler(), main.getDataFolder().getAbsolutePath());
         } else

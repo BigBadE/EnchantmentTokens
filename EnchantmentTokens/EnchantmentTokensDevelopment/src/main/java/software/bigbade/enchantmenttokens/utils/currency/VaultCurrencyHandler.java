@@ -7,6 +7,8 @@ package software.bigbade.enchantmenttokens.utils.currency;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.entity.Player;
 
+import java.util.Locale;
+
 public class VaultCurrencyHandler extends EnchantCurrencyHandler {
     private Player player;
     private Economy economy;
@@ -31,5 +33,15 @@ public class VaultCurrencyHandler extends EnchantCurrencyHandler {
     @Override
     public void addAmount(long amount) {
         economy.depositPlayer(player, amount);
+    }
+
+    @Override
+    public Locale getLocale() {
+        return Locale.getDefault();
+    }
+
+    @Override
+    public void setLocale(Locale language) {
+        //Not supported by Vault
     }
 }

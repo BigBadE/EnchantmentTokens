@@ -9,6 +9,8 @@ import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import software.bigbade.enchantmenttokens.currency.CurrencyHandler;
 import software.bigbade.enchantmenttokens.gui.EnchantmentGUI;
 
+import java.util.Locale;
+
 public class CustomEnchantmentPlayer implements EnchantmentPlayer {
     private Player player;
 
@@ -64,5 +66,15 @@ public class CustomEnchantmentPlayer implements EnchantmentPlayer {
 
     public void setHandler(CurrencyHandler handler) {
         this.handler = handler;
+    }
+
+    @Override
+    public Locale getLanguage() {
+        return handler.getLocale();
+    }
+
+    @Override
+    public void setLanguage(Locale language) {
+        handler.setLocale(language);
     }
 }

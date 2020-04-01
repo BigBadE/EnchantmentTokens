@@ -27,8 +27,9 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import software.bigbade.enchantmenttokens.api.CustomEnchantment;
-import software.bigbade.enchantmenttokens.commands.EnchantTabCompleter;
+import software.bigbade.enchantmenttokens.commands.tabcompleter.EnchantTabCompleter;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
+import software.bigbade.enchantmenttokens.utils.players.PlayerHandler;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -50,12 +51,14 @@ public class EnchantTabCompleterTest {
         EnchantmentHandler handler = mock(EnchantmentHandler.class);
         NamespacedKey key = mock(NamespacedKey.class);
         when(key.getNamespace()).thenReturn("namespace");
-        when(handler.getAllEnchants()).thenReturn(Collections.singletonList(new CustomEnchantment(key,null, "test") {
+        when(handler.getAllEnchants()).thenReturn(Collections.singletonList(new CustomEnchantment(key, null, "test") {
 
         }));
 
+        PlayerHandler playerHandler = mock(PlayerHandler.class);
+
         Command command = mock(Command.class);
-        EnchantTabCompleter tabCompleter = new EnchantTabCompleter(handler);
+        EnchantTabCompleter tabCompleter = new EnchantTabCompleter(handler, playerHandler);
         testTabComplete(tabCompleter.onTabComplete(commandSender, command, "", new String[]{"tes"}));
         testTabComplete(tabCompleter.onTabComplete(commandSender, command, "", new String[]{"namesp"}));
 

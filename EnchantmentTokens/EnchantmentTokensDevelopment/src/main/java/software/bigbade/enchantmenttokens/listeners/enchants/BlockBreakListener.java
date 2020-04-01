@@ -16,6 +16,7 @@ import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.api.StringUtils;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationType;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
+import software.bigbade.enchantmenttokens.localization.TranslatedStringMessage;
 import software.bigbade.enchantmenttokens.utils.SignHandler;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 import software.bigbade.enchantmenttokens.utils.players.PlayerHandler;
@@ -53,7 +54,7 @@ public class BlockBreakListener extends BasicEnchantListener implements Listener
             EnchantmentPlayer player = playerHandler.getPlayer(event.getPlayer());
             long gems = (long) getGems(player);
             player.addGems(gems);
-            event.getPlayer().sendMessage(StringUtils.GEMS_FIND.translate("" + gems));
+            event.getPlayer().sendMessage(new TranslatedStringMessage(player.getLanguage(), StringUtils.GEMS_FIND).translate("" + gems));
         }
     }
 

@@ -14,12 +14,14 @@ import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import software.bigbade.enchantmenttokens.api.StringUtils;
 import software.bigbade.enchantmenttokens.api.VanillaEnchant;
 import software.bigbade.enchantmenttokens.localization.TranslatedPriceMessage;
+import software.bigbade.enchantmenttokens.localization.TranslatedStringMessage;
 import software.bigbade.enchantmenttokens.utils.RomanNumeralConverter;
 import software.bigbade.enchantmenttokens.utils.listeners.EnchantListenerHandler;
 import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 public class CustomEnchantUtils extends EnchantUtils {
@@ -38,33 +40,33 @@ public class CustomEnchantUtils extends EnchantUtils {
 
     @Override
     public void addEnchantment(ItemStack itemStack, String name, Player player) {
+        EnchantmentPlayer enchantmentPlayer = playerHandler.getPlayer(player);
         for (EnchantmentBase base : handler.getAllEnchants()) {
             if (base.getEnchantmentName().equals(name) && base.canEnchantItem(itemStack)) {
-                EnchantmentPlayer enchantmentPlayer = playerHandler.getPlayer(player);
                 enchantmentPlayer.addGems(-addEnchantmentBase(itemStack, base, enchantmentPlayer));
                 return;
             }
         }
-        player.sendMessage(StringUtils.COMMAND_ERROR_NO_ENCHANTMENT);
+        player.sendMessage(new TranslatedStringMessage(enchantmentPlayer.getLanguage(), StringUtils.COMMAND_ERROR_NO_ENCHANTMENT).translate());
     }
 
     @Override
     public long addEnchantmentBase(ItemStack item, EnchantmentBase base, EnchantmentPlayer enchantmentPlayer) {
         int level = getNextLevel(item, base);
         if (level > base.getMaxLevel()) {
-            enchantmentPlayer.getPlayer().sendMessage(StringUtils.MAXED_MESSAGE);
+            enchantmentPlayer.getPlayer().sendMessage(new TranslatedStringMessage(enchantmentPlayer.getLanguage(), StringUtils.MAXED_MESSAGE).translate());
             return 0;
         }
         long price = base.getDefaultPrice(level);
 
         if (enchantmentPlayer.getGems() < price) {
-            enchantmentPlayer.getPlayer().sendMessage(StringUtils.ENCHANTMENT_BOUGHT_FAIL.translate(new TranslatedPriceMessage().translate("" + base.getDefaultPrice(level))));
+            enchantmentPlayer.getPlayer().sendMessage(new TranslatedStringMessage(enchantmentPlayer.getLanguage(), StringUtils.ENCHANTMENT_BOUGHT_FAIL).translate(new TranslatedPriceMessage(enchantmentPlayer.getLanguage()).translate("" + base.getDefaultPrice(level))));
             return 0;
         }
-        enchantmentPlayer.getPlayer().sendMessage(StringUtils.ENCHANTMENT_BOUGHT_SUCCESS.translate(base.getEnchantmentName(), "" + level));
+        enchantmentPlayer.getPlayer().sendMessage(new TranslatedStringMessage(enchantmentPlayer.getLanguage(), StringUtils.ENCHANTMENT_BOUGHT_SUCCESS).translate(base.getEnchantmentName(), "" + level));
         if (base instanceof VanillaEnchant) {
             item.addEnchantment(base.getEnchantment(), level);
-            updateSigns(level, base, signs, enchantmentPlayer);
+            updateSigns(base, signs, enchantmentPlayer);
             return price;
         }
         ItemMeta meta = item.getItemMeta();
@@ -73,7 +75,7 @@ public class CustomEnchantUtils extends EnchantUtils {
         updateLore(meta, level, base);
         item.setItemMeta(meta);
         listenerHandler.onEnchant(item, base, enchantmentPlayer.getPlayer());
-        updateSigns(level, base, signs, enchantmentPlayer);
+        updateSigns(base, signs, enchantmentPlayer);
         return price;
     }
 
@@ -89,20 +91,17 @@ public class CustomEnchantUtils extends EnchantUtils {
 
     @Override
     public int getNextLevel(ItemStack item, EnchantmentBase enchantment) {
-        if(enchantment instanceof VanillaEnchant)
-            return item.getEnchantmentLevel(enchantment.getEnchantment())+1;
-        if(item.getItemMeta() == null || !item.getItemMeta().hasEnchants()) return enchantment.getStartLevel();
-        if(!item.getItemMeta().hasEnchant(enchantment.getEnchantment())) {
+        if (enchantment instanceof VanillaEnchant)
+            return item.getEnchantmentLevel(enchantment.getEnchantment()) + 1;
+        if (item.getItemMeta() == null || !item.getItemMeta().hasEnchants()) return enchantment.getStartLevel();
+        if (!item.getItemMeta().hasEnchant(enchantment.getEnchantment())) {
             return 1;
         }
-        return item.getItemMeta().getEnchants().get(enchantment.getEnchantment())+1;
+        return item.getItemMeta().getEnchants().get(enchantment.getEnchantment()) + 1;
     }
 
-    private void updateSigns(int level, EnchantmentBase base, Set<Location> signs, EnchantmentPlayer player) {
+    private void updateSigns(EnchantmentBase base, Set<Location> signs, EnchantmentPlayer player) {
         for (Location location : signs)
-            if (level >= base.getMaxLevel())
-                player.getPlayer().sendSignChange(location, new String[]{"[" + StringUtils.ENCHANTMENT + "]", base.getEnchantmentName(), StringUtils.PRICE_MAXED, ""});
-            else
-                player.getPlayer().sendSignChange(location, new String[]{"[" + StringUtils.ENCHANTMENT + "]", base.getEnchantmentName(), StringUtils.PRICE.translate(new TranslatedPriceMessage().translate("" + base.getDefaultPrice(level))), ""});
+            player.getPlayer().sendSignChange(location, new String[]{"[" + new TranslatedStringMessage(Locale.getDefault(), StringUtils.ENCHANTMENT) + "]", base.getEnchantmentName(), "", ""});
     }
 }

@@ -7,6 +7,8 @@ package software.bigbade.enchantmenttokens.utils.currency;
 import org.bukkit.entity.Player;
 import software.bigbade.enchantmenttokens.currency.CurrencyHandler;
 
+import java.util.Locale;
+
 public class ExperienceCurrencyHandler implements CurrencyHandler {
     private Player player;
 
@@ -32,6 +34,15 @@ public class ExperienceCurrencyHandler implements CurrencyHandler {
     @Override
     public void savePlayer(Player player, boolean async) {
         //Not used, because Bukkit handles it
+    }
+
+    @Override
+    public Locale getLocale() {
+        return Locale.getDefault();
+    }
+
+    @Override
+    public void setLocale(Locale language) {
     }
 
     @Override

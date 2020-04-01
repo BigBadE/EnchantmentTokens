@@ -76,20 +76,23 @@ public class CustomEnchantmentHandler implements EnchantmentHandler {
         Map<String, Enchantment> nameEnchantmentMap = ((Map<String, Enchantment>) ReflectionManager.getValue(ReflectionManager.getField(Enchantment.class, "byName"), null));
 
         for (EnchantmentBase base : enchantments) {
-            Objects.requireNonNull(keyEnchantmentMap);
-            if (keyEnchantmentMap.containsKey(base.getKey())) {
-                EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Duplicate key {0} found, make sure the same addon jar is not copy pasted!", base.getKey());
-            } else {
-                Objects.requireNonNull(nameEnchantmentMap);
-                if (nameEnchantmentMap.containsKey(base.getEnchantmentName())) {
-                    NamespacedKey old = nameEnchantmentMap.get(base.getEnchantmentName()).getKey();
-                    EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Duplicate enchantments {0} and {1}, replacing old one (MAY CAUSE ERRORS)", new Object[]{base.getKey(), old});
-                    keyEnchantmentMap.remove(old);
-                    nameEnchantmentMap.remove(base.getEnchantmentName());
-                }
-                keyEnchantmentMap.put(base.getKey(), base.getEnchantment());
-                nameEnchantmentMap.put(base.getEnchantmentName(), base.getEnchantment());
+            registerBaseToMaps(base, keyEnchantmentMap, nameEnchantmentMap);
+        }
+    }
+
+    private void registerBaseToMaps(EnchantmentBase base, Map<NamespacedKey, Enchantment> keys, Map<String, Enchantment> names) {
+        Objects.requireNonNull(keys);
+        if (keys.containsKey(base.getKey())) {
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Duplicate key {0} found, make sure the same addon jar is not copy pasted!", base.getKey());
+        } else {
+            Objects.requireNonNull(names);
+            if (names.containsKey(base.getEnchantmentName())) {
+                NamespacedKey old = names.get(base.getEnchantmentName()).getKey();
+                EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Duplicate enchantment names {0} and {1}, skipping (WILL CAUSE ERRORS)", new Object[]{base.getKey(), old});
+                return;
             }
+            keys.put(base.getKey(), base.getEnchantment());
+            names.put(base.getEnchantmentName(), base.getEnchantment());
         }
     }
 

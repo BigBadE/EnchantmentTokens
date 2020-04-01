@@ -41,17 +41,21 @@ public class CurrencyFactoryHandler {
         } else if ("vault".equalsIgnoreCase(type)) {
             return new VaultCurrencyFactory(Bukkit.getServer());
         } else {
-            CurrencyFactory factory = loadExternalJar(type);
-            if (factory != null && factory.loaded())
-                return factory;
-            else {
-                if (factory == null) {
-                    EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not find type {0}, defaulted to gems", type);
-                    section.set("type", "gems");
-                }
-                EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not load currency factory");
-                return loadGemFactory();
+            return loadExternalFactory(type);
+        }
+    }
+
+    private CurrencyFactory loadExternalFactory(String type) {
+        CurrencyFactory factory = loadExternalJar(type);
+        if (factory != null && factory.loaded())
+            return factory;
+        else {
+            if (factory == null) {
+                EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not find type {0}, defaulted to gems", type);
+                section.set("type", "gems");
             }
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not load currency factory");
+            return loadGemFactory();
         }
     }
 

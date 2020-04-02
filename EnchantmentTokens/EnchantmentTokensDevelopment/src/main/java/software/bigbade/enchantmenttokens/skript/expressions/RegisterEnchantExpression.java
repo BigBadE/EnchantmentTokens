@@ -21,8 +21,6 @@ import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 
-import java.util.logging.Level;
-
 @Name("Register enchantment")
 @Description("Registers an enchantment with given name.")
 @Examples({"on Skript start:",
@@ -61,8 +59,6 @@ public class RegisterEnchantExpression extends SimpleExpression<SkriptEnchantmen
                 return new SkriptEnchantment[] { (SkriptEnchantment) enchantment };
             }
         }
-
-        EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "{0} does not have a tool set.", nameStr);
         return new SkriptEnchantment[] { null };
     }
 

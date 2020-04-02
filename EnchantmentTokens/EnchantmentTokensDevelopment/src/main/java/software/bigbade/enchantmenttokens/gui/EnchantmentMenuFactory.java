@@ -287,7 +287,9 @@ public class EnchantmentMenuFactory implements MenuFactory {
 
     private EnchantButton translate(Locale locale, EnchantButton button) {
         Objects.requireNonNull(button.getItem().getItemMeta());
-        ItemStack item = ItemUtils.createItem(button.getItem().getType(), new TranslatedStringMessage(locale, button.getItem().getItemMeta().getDisplayName()).translate());
+        String name = button.getItem().getItemMeta().getDisplayName();
+        if (name.equals(" ")) return button;
+        ItemStack item = ItemUtils.createItem(button.getItem().getType(), new TranslatedStringMessage(locale, name).translate());
         EnchantButton newButton = button.clone();
         newButton.setItem(item);
         return newButton;

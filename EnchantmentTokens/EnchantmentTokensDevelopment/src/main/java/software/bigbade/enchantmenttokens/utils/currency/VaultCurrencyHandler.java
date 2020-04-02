@@ -12,6 +12,7 @@ import java.util.Locale;
 public class VaultCurrencyHandler extends EnchantCurrencyHandler {
     private Player player;
     private Economy economy;
+    private Locale locale = Locale.getDefault();
 
     public VaultCurrencyHandler(Player player, Economy economy) {
         super("vault");
@@ -37,11 +38,11 @@ public class VaultCurrencyHandler extends EnchantCurrencyHandler {
 
     @Override
     public Locale getLocale() {
-        return Locale.getDefault();
+        return locale;
     }
 
     @Override
     public void setLocale(Locale language) {
-        //Not supported by Vault
+        locale = language;
     }
 }

@@ -120,8 +120,6 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
     private void setupAutosave() {
         int autosaveTime = new ConfigurationType<>(15).getValue("autosaveTime", getConfig());
 
-        saveConfig();
-
         autosaveTime *= 20 * 60;
 
         Bukkit.getScheduler().runTaskTimer(this, () -> playerHandler.autosave(scheduler), autosaveTime, autosaveTime);
@@ -131,6 +129,8 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
         getConfig().options().copyHeader(true);
         saveDefaultConfig();
         boolean metrics = new ConfigurationType<>(true).getValue("metrics", getConfig());
+
+        saveConfig();
 
         if (metrics) {
             new MetricManager(this);

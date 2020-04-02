@@ -24,6 +24,7 @@ public class CommandManager {
 
     public static void registerCommands(EnchantmentTokens main) {
         EnchantMenuCmd menuCmd = new EnchantMenuCmd(main.getMenuFactory(), main.getPlayerHandler());
+        registerCommand(main, "enchantmenttokens", null, new EnchantmentTokensCmd(main.getPlayerHandler()));
         registerCommand(main, "adminenchant", new EnchantTabCompleter(main.getEnchantmentHandler(), main.getPlayerHandler()), new EnchantCmd(main.getEnchantmentHandler(), main.getPlayerHandler()));
         registerCommand(main, "addgems", new GemsTabCompleter(true, main.getPlayerHandler()), new AddGemCmd(main.getPlayerHandler()));
         registerCommand(main, "tokenenchant", new GenericTabCompleter(0, null, main.getPlayerHandler()), menuCmd);
@@ -35,7 +36,7 @@ public class CommandManager {
 
     private static void registerCommand(EnchantmentTokens main, String name, TabCompleter tabCompleter, CommandExecutor executor) {
         Objects.requireNonNull(main.getCommand(name)).setExecutor(executor);
-        if (main.getVersion() >= 13) {
+        if (main.getVersion() >= 13 && tabCompleter != null) {
             Objects.requireNonNull(main.getCommand(name)).setTabCompleter(tabCompleter);
             BrigadierManager.register(main, Objects.requireNonNull(main.getCommand(name)), ((IEnchantTabCompleter) tabCompleter).getPermission());
         }

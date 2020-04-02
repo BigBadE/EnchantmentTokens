@@ -11,6 +11,7 @@ import java.util.Locale;
 
 public class ExperienceCurrencyHandler implements CurrencyHandler {
     private Player player;
+    private Locale locale = Locale.getDefault();
 
     public ExperienceCurrencyHandler(Player player) {
         this.player = player;
@@ -38,11 +39,12 @@ public class ExperienceCurrencyHandler implements CurrencyHandler {
 
     @Override
     public Locale getLocale() {
-        return Locale.getDefault();
+        return locale;
     }
 
     @Override
     public void setLocale(Locale language) {
+        locale = language;
     }
 
     @Override

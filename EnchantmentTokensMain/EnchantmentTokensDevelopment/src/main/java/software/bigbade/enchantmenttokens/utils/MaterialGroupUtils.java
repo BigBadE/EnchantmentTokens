@@ -23,7 +23,7 @@ public enum MaterialGroupUtils {
     LEGGINGS(new Material[] { Material.LEATHER_LEGGINGS, Material.CHAINMAIL_LEGGINGS, Material.IRON_LEGGINGS, Material.GOLDEN_LEGGINGS, Material.DIAMOND_LEGGINGS }),
     BOOTS(new Material[] { Material.LEATHER_BOOTS, Material.CHAINMAIL_BOOTS, Material.IRON_BOOTS, Material.GOLDEN_BOOTS, Material.DIAMOND_BOOTS }),
     ARMOR(joinAll(LEATHER_ARMOR.getMaterials(), CHAINMAIL_ARMOR.getMaterials(), IRON_ARMOR.getMaterials(), GOLD_ARMOR.getMaterials(), DIAMOND_ARMOR.getMaterials()));
-    private Material[] materials;
+    private final Material[] materials;
 
     MaterialGroupUtils(Material[] materials) {
         this.materials = materials;

@@ -26,11 +26,11 @@ import java.util.List;
 import java.util.Map;
 
 public class EnchantmentConflictWrapper implements IConflictWrapper {
-    private Map<String, List<String>> conflicts = new HashMap<>();
+    private final Map<String, List<String>> conflicts = new HashMap<>();
 
     @Override
     public boolean conflicts(Enchantment enchantment) {
-        return false;
+        return conflicts.get(enchantment.getKey().getNamespace()).contains(enchantment.getKey().getKey());
     }
 
     @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")

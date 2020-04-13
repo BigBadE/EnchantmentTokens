@@ -27,7 +27,7 @@ import java.util.Objects;
  * Used for safe casting of unknown configuration types
  */
 public class ConfigurationType<T> {
-    private T defaultValue;
+    private final T defaultValue;
 
     public ConfigurationType(@Nonnull T defaultValue) {
         this.defaultValue = defaultValue;

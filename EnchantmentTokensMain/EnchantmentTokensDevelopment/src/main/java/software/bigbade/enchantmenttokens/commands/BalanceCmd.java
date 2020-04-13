@@ -17,7 +17,7 @@ import software.bigbade.enchantmenttokens.utils.players.PlayerHandler;
 import javax.annotation.Nonnull;
 
 public class BalanceCmd implements CommandExecutor {
-    private PlayerHandler handler;
+    private final PlayerHandler handler;
 
     public BalanceCmd(PlayerHandler handler) {
         this.handler = handler;

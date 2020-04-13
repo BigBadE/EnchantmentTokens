@@ -19,11 +19,11 @@
 package software.bigbade.enchantmenttokens.utils;
 
 public class RomanNumeralConverter {
-    private static String[] c = {"", "C", "CC", "CCC", "CD", "D",
+    private static final String[] c = {"", "C", "CC", "CCC", "CD", "D",
             "DC", "DCC", "DCCC", "CM"};
-    private static String[] x = {"", "X", "XX", "XXX", "XL", "L",
+    private static final String[] x = {"", "X", "XX", "XXX", "XL", "L",
             "LX", "LXX", "LXXX", "XC"};
-    private static String[] i = {"", "I", "II", "III", "IV", "V",
+    private static final String[] i = {"", "I", "II", "III", "IV", "V",
             "VI", "VII", "VIII", "IX"};
 
     //Private constructor to hide implicit public one

@@ -57,8 +57,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 
 public class EnchantListenerHandler implements ListenerHandler {
-    private Map<ListenerType, ListenerManager> enchantListeners = new ConcurrentHashMap<>();
-    private EnchantmentTokens main;
+    private final Map<ListenerType, ListenerManager> enchantListeners = new ConcurrentHashMap<>();
+    private final EnchantmentTokens main;
 
     private ListenerManager enchantListener;
 

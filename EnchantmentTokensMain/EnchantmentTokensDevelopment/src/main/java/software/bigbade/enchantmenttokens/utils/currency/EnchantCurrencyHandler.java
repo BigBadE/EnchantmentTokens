@@ -11,7 +11,7 @@ import java.util.Locale;
 
 public abstract class EnchantCurrencyHandler implements CurrencyHandler {
     private long gems = -1;
-    private String name;
+    private final String name;
     private Locale locale;
 
     public EnchantCurrencyHandler(String name) {

@@ -40,7 +40,7 @@ import java.io.File;
 import java.util.logging.Level;
 
 public class CustomEnchantmentTokens extends EnchantmentTokens {
-    private File enchantmentFolder = new File(getDataFolder().getPath() + "\\enchantments");
+    private final File enchantmentFolder = new File(getDataFolder().getPath() + "\\enchantments");
 
     private EnchantmentLoader loader;
 

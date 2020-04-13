@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ListenerManager {
-    private Map<EnchantmentBase, EnchantmentListener<EnchantmentEvent>> listeners = new HashMap<>();
+    private final Map<EnchantmentBase, EnchantmentListener<EnchantmentEvent>> listeners = new HashMap<>();
 
     public void add(EnchantmentListener<EnchantmentEvent> listener, EnchantmentBase base) {
         listeners.put(base, listener);

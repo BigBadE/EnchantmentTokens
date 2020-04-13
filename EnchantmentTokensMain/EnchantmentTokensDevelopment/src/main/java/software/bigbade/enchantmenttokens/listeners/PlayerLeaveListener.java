@@ -13,7 +13,7 @@ import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import software.bigbade.enchantmenttokens.utils.players.PlayerHandler;
 
 public class PlayerLeaveListener implements Listener {
-    private PlayerHandler playerHandler;
+    private final PlayerHandler playerHandler;
 
     public PlayerLeaveListener(PlayerHandler handler) {
         this.playerHandler = handler;

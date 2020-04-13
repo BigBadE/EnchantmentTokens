@@ -28,8 +28,8 @@ import javax.script.ScriptException;
 import java.util.logging.Level;
 
 public class AlgebraicCalculator {
-    private ScriptEngine engine;
-    private String equation;
+    private final ScriptEngine engine;
+    private final String equation;
     private static AlgebraicCalculator instance;
 
     public AlgebraicCalculator(ConfigurationSection section) {

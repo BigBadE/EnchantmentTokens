@@ -25,10 +25,10 @@ import javax.annotation.Nullable;
 import java.util.Random;
 
 public class BlockBreakListener extends BasicEnchantListener implements Listener {
-    private SignHandler handler;
-    private ConfigurationSection section;
-    private Random random = new Random();
-    private PlayerHandler playerHandler;
+    private final SignHandler handler;
+    private final ConfigurationSection section;
+    private final Random random = new Random();
+    private final PlayerHandler playerHandler;
 
     public BlockBreakListener(ListenerManager enchantListeners, SignHandler handler, @Nullable ConfigurationSection section, @Nullable PlayerHandler playerHandler) {
         super(enchantListeners);

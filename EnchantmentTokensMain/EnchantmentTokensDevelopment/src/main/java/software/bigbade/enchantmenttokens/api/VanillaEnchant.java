@@ -12,8 +12,8 @@ import org.bukkit.inventory.ItemStack;
 import javax.annotation.Nonnull;
 
 public class VanillaEnchant extends CustomEnchantment {
-    private Enchantment enchantment;
-    private EnchantmentTarget target;
+    private final Enchantment enchantment;
+    private final EnchantmentTarget target;
 
     public VanillaEnchant(Enchantment enchantment) {
         super(enchantment.getKey(), Material.BEDROCK, capitalizeString(enchantment.getKey().getKey()));

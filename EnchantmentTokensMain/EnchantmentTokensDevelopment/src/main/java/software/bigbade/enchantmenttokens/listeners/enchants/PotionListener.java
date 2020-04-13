@@ -13,8 +13,8 @@ import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
 public class PotionListener extends BasicEnchantListener implements Listener {
-    private ListenerManager potionAdd;
-    private ListenerManager potionRemove;
+    private final ListenerManager potionAdd;
+    private final ListenerManager potionRemove;
 
     public PotionListener(ListenerManager potionAdd, ListenerManager potionRemove) {
         super(null);

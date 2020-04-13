@@ -9,8 +9,8 @@ import software.bigbade.enchantmenttokens.loader.FileLoader;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 
 public class GemCurrencyFactory extends EnchantCurrencyFactory {
-    private SchedulerHandler scheduler;
-    private FileLoader loader;
+    private final SchedulerHandler scheduler;
+    private final FileLoader loader;
 
     public GemCurrencyFactory(SchedulerHandler scheduler, String dataPath) {
         super("gems");

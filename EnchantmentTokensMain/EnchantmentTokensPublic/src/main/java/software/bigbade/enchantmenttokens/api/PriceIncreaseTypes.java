@@ -47,8 +47,8 @@ public enum PriceIncreaseTypes {
     ALGEBRAIC((level, section) -> AlgebraicCalculator.getInstance().getPrice(level),
             enchant -> new AlgebraicCalculator(enchant.getPriceSection()));
 
-    private BiFunction<Integer, ConfigurationSection, Integer> function;
-    private Consumer<EnchantmentBase> setup;
+    private final BiFunction<Integer, ConfigurationSection, Integer> function;
+    private final Consumer<EnchantmentBase> setup;
 
     PriceIncreaseTypes(BiFunction<Integer, ConfigurationSection, Integer> function, Consumer<EnchantmentBase> setup) {
         this.function = function;

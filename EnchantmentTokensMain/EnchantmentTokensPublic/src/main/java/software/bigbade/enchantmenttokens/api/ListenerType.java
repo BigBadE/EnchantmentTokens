@@ -60,7 +60,7 @@ public enum ListenerType {
     //Player riptide with trident
     RIPTIDE(new EnchantmentTargetWrapper("TRIDENT"));
 
-    private ITargetWrapper target;
+    private final ITargetWrapper target;
 
     ListenerType(ITargetWrapper target) {
         this.target = target;

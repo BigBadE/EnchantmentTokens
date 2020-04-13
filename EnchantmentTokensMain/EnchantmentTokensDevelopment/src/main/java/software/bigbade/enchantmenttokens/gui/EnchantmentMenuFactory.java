@@ -34,14 +34,14 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class EnchantmentMenuFactory implements MenuFactory {
-    private ItemStack glassPane = ItemUtils.createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
-    private int version;
-    private EnchantmentPlayerHandler handler;
-    private EnchantmentHandler enchantmentHandler;
-    private EnchantUtils utils;
+    private final ItemStack glassPane = ItemUtils.createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
+    private final int version;
+    private final EnchantmentPlayerHandler handler;
+    private final EnchantmentHandler enchantmentHandler;
+    private final EnchantUtils utils;
 
 
-    private List<EnchantButton> buttons = new ArrayList<>();
+    private final List<EnchantButton> buttons = new ArrayList<>();
 
     public EnchantmentMenuFactory(int version, EnchantmentPlayerHandler handler, EnchantUtils utils, EnchantmentHandler enchantmentHandler) {
         this.version = version;

@@ -38,7 +38,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 
 public class LocaleManager {
-    private static Map<Locale, List<AddonResourceBundle>> bundles = new HashMap<>();
+    private static final Map<Locale, List<AddonResourceBundle>> bundles = new HashMap<>();
 
     @Getter
     private static final Locale[] supportedLocales = new Locale[]{Locale.US, Locale.UK};

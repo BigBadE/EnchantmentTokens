@@ -25,8 +25,8 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 
 public class CurrencyFactoryHandler {
-    private EnchantmentTokens main;
-    private ConfigurationSection section;
+    private final EnchantmentTokens main;
+    private final ConfigurationSection section;
 
     public CurrencyFactoryHandler(EnchantmentTokens main) {
         this.main = main;

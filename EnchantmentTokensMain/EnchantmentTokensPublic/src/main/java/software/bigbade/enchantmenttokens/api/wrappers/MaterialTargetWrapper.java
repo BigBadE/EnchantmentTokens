@@ -24,7 +24,7 @@ import org.bukkit.enchantments.EnchantmentTarget;
 import java.util.List;
 
 public class MaterialTargetWrapper implements ITargetWrapper {
-    private Material[] materials;
+    private final Material[] materials;
 
     public MaterialTargetWrapper(String... materials) {
         this.materials = new Material[materials.length];

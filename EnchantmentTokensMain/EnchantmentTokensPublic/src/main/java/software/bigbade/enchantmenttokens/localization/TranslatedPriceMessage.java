@@ -28,7 +28,7 @@ import java.util.Map;
 public final class TranslatedPriceMessage implements ITranslatedMessage {
     private static final Map<Locale, ITranslatedMessage> PRICES = getPriceMessages();
 
-    private Locale locale;
+    private final Locale locale;
 
     @Override
     public String translate(String... args) {

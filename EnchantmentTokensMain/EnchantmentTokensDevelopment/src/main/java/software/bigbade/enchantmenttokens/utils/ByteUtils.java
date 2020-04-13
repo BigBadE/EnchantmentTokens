@@ -7,7 +7,7 @@ package software.bigbade.enchantmenttokens.utils;
 import java.nio.ByteBuffer;
 
 public class ByteUtils {
-    private ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+    private final ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
 
     public byte[] longToBytes(long x) {
         buffer.clear();

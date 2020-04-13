@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
 import java.util.Locale;
 
 public class AddGemCmd implements CommandExecutor {
-    private PlayerHandler handler;
+    private final PlayerHandler handler;
 
     public AddGemCmd(PlayerHandler handler) {
         this.handler = handler;

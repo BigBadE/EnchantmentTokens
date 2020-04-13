@@ -16,8 +16,8 @@ import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 import javax.annotation.Nullable;
 
 public class PlayerDamageListener extends BasicEnchantListener implements Listener {
-    private ListenerManager hit;
-    private ListenerManager block;
+    private final ListenerManager hit;
+    private final ListenerManager block;
 
     public PlayerDamageListener(ListenerManager hit, @Nullable ListenerManager block) {
         this.hit = hit;

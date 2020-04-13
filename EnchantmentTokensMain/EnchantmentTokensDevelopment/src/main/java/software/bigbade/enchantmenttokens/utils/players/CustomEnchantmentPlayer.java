@@ -12,7 +12,7 @@ import software.bigbade.enchantmenttokens.gui.EnchantmentGUI;
 import java.util.Locale;
 
 public class CustomEnchantmentPlayer implements EnchantmentPlayer {
-    private Player player;
+    private final Player player;
 
     private EnchantmentGUI currentGUI;
 

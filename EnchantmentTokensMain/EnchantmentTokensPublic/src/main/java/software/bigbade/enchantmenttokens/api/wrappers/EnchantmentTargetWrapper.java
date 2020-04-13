@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 public class EnchantmentTargetWrapper implements ITargetWrapper {
-    private EnchantmentTarget[] targets;
+    private final EnchantmentTarget[] targets;
 
     public EnchantmentTargetWrapper(EnchantmentTarget... targets) {
         this.targets = targets;

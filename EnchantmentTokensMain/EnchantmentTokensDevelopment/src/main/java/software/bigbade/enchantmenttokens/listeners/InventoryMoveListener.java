@@ -22,11 +22,11 @@ import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 import java.util.Set;
 
 public class InventoryMoveListener extends BasicEnchantListener implements Listener {
-    private Set<Location> signs;
-    private SchedulerHandler scheduler;
+    private final Set<Location> signs;
+    private final SchedulerHandler scheduler;
 
-    private ListenerManager swapOn;
-    private ListenerManager swapOff;
+    private final ListenerManager swapOn;
+    private final ListenerManager swapOff;
 
     public InventoryMoveListener(ListenerManager swapOn, ListenerManager swapOff, Set<Location> signs, SchedulerHandler scheduler) {
         super(null);

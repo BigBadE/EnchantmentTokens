@@ -21,9 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public class FileLoader {
-    private String path;
-    private ByteUtils utils = new ByteUtils();
-    private Map<UUID, Pair<Long, Locale>> cache = new ConcurrentHashMap<>();
+    private final String path;
+    private final ByteUtils utils = new ByteUtils();
+    private final Map<UUID, Pair<Long, Locale>> cache = new ConcurrentHashMap<>();
 
     public FileLoader(String path) {
         this.path = path;

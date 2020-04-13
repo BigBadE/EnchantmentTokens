@@ -23,7 +23,7 @@ Current features:
     - Signs
     
 - Currently supported events:
-    - See [Events.md](development/Events.md)
+    - See [Events](https://raw.githubusercontent.com/wiki/BigBadE/EnchantmentTokensPublic/development/Events.md)
     
 - Supported Currencies:
     - Gems (custom currency)

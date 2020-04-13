@@ -14,8 +14,8 @@ import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
 public class ArmorEquipListener extends BasicEnchantListener implements Listener {
-    private ListenerManager oldArmorListeners;
-    private ListenerManager newArmorListeners;
+    private final ListenerManager oldArmorListeners;
+    private final ListenerManager newArmorListeners;
 
     public ArmorEquipListener(ListenerManager oldArmorListeners, ListenerManager newArmorListeners) {
         super(null);

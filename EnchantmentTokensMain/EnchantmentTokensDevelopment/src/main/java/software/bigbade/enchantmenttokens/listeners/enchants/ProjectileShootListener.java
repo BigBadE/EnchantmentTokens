@@ -15,10 +15,10 @@ import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
 public class ProjectileShootListener extends BasicEnchantListener implements Listener {
-    private ListenerManager crossbowShoot;
-    private ListenerManager tridentThrow;
-    private ListenerManager bowShoot;
-    private int version;
+    private final ListenerManager crossbowShoot;
+    private final ListenerManager tridentThrow;
+    private final ListenerManager bowShoot;
+    private final int version;
 
     public ProjectileShootListener(int version, ListenerManager crossbowShoot, ListenerManager tridentThrow, ListenerManager bowShoot) {
         this.version = version;

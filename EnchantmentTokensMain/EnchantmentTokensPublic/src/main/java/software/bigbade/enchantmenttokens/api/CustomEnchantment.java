@@ -38,7 +38,9 @@ public class CustomEnchantment extends Enchantment implements EnchantmentBase {
     @Getter
     @Setter
     private ITargetWrapper target;
-    private IConflictWrapper conflicts = new EnchantmentConflictWrapper();
+
+    private final IConflictWrapper conflicts = new EnchantmentConflictWrapper();
+
     @Setter
     private boolean treasure = false;
     @Setter
@@ -47,8 +49,9 @@ public class CustomEnchantment extends Enchantment implements EnchantmentBase {
     @ConfigurationField
     private String name;
 
+    @SuppressWarnings("FieldMayBeFinal")
     @ConfigurationField(name = "icon")
-    private String iconString = "DEFAULT";
+    private final String iconString = "DEFAULT";
 
     @Getter
     private Material icon;
@@ -63,12 +66,14 @@ public class CustomEnchantment extends Enchantment implements EnchantmentBase {
     @ConfigurationField
     private int startLevel = 1;
 
+    @SuppressWarnings("FieldMayBeFinal")
     @Getter
     @ConfigurationField(name = "price")
-    private ConfigurationSection priceSection = null;
+    private final ConfigurationSection priceSection = null;
 
+    @SuppressWarnings("FieldMayBeFinal")
     @ConfigurationField(location = "price")
-    private String type = "custom";
+    private final String type = "custom";
 
     public CustomEnchantment(NamespacedKey key, Material icon, String defaultName) {
         super(key);
@@ -130,6 +135,7 @@ public class CustomEnchantment extends Enchantment implements EnchantmentBase {
     }
 
     @Nonnull
+    @Deprecated
     public String getName() {
         return getEnchantmentName();
     }
@@ -151,6 +157,7 @@ public class CustomEnchantment extends Enchantment implements EnchantmentBase {
     }
 
     @Override
+    @Deprecated
     public boolean isCursed() {
         return cursed;
     }

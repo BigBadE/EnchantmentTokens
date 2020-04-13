@@ -25,10 +25,10 @@ import java.util.Locale;
 import java.util.Set;
 
 public class CustomEnchantUtils extends EnchantUtils {
-    private EnchantmentHandler handler;
-    private EnchantmentPlayerHandler playerHandler;
-    private EnchantListenerHandler listenerHandler;
-    private Set<Location> signs;
+    private final EnchantmentHandler handler;
+    private final EnchantmentPlayerHandler playerHandler;
+    private final EnchantListenerHandler listenerHandler;
+    private final Set<Location> signs;
 
     public CustomEnchantUtils(EnchantmentHandler handler, EnchantmentPlayerHandler playerHandler, EnchantListenerHandler listenerHandler, Set<Location> signs) {
         setInstance(this);

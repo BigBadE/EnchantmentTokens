@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class TranslatedStringMessage implements ITranslatedMessage {
-    private String message;
+    private final String message;
 
     //Private constructor to hide implicit public one.
     public TranslatedStringMessage(String namespace, Locale locale, String key) {

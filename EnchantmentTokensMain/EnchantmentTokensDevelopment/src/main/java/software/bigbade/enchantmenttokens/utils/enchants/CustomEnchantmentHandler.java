@@ -28,14 +28,14 @@ import java.util.Objects;
 import java.util.logging.Level;
 
 public class CustomEnchantmentHandler implements EnchantmentHandler {
-    private List<EnchantmentBase> enchantments = new ArrayList<>();
-    private List<VanillaEnchant> vanillaEnchants = new ArrayList<>();
-    private List<EnchantmentBase> skriptEnchantments = new ArrayList<>();
-    private List<EnchantmentBase> allEnchants = new ArrayList<>();
+    private final List<EnchantmentBase> enchantments = new ArrayList<>();
+    private final List<VanillaEnchant> vanillaEnchants = new ArrayList<>();
+    private final List<EnchantmentBase> skriptEnchantments = new ArrayList<>();
+    private final List<EnchantmentBase> allEnchants = new ArrayList<>();
 
-    private FileConfiguration config;
-    private FileConfiguration skriptConfiguration;
-    private String skriptPath;
+    private final FileConfiguration config;
+    private final FileConfiguration skriptConfiguration;
+    private final String skriptPath;
 
     public CustomEnchantmentHandler(FileConfiguration config, String skriptPath) {
         this.config = config;

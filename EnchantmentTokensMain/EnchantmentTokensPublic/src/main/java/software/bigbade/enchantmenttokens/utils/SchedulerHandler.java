@@ -22,7 +22,7 @@ import org.bukkit.Bukkit;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 
 public class SchedulerHandler {
-    private EnchantmentTokens main;
+    private final EnchantmentTokens main;
 
     public SchedulerHandler(EnchantmentTokens main) {
         this.main = main;

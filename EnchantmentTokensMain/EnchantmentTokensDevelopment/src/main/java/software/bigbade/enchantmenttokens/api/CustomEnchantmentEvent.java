@@ -19,9 +19,9 @@ public class CustomEnchantmentEvent extends Event implements EnchantmentEvent {
     private Entity targetEntity;
     private Block targetBlock;
     private ItemStack item;
-    private ListenerType type;
+    private final ListenerType type;
 
-    private static HandlerList handlers = new HandlerList();
+    private static final HandlerList handlers = new HandlerList();
 
     public CustomEnchantmentEvent(ListenerType type, ItemStack item) {
         this.type = type;

@@ -14,8 +14,8 @@ import java.util.Map;
 public class CustomEnchantmentGUI implements EnchantmentGUI {
     private EnchantmentPlayer opener;
     private ItemStack item;
-    private Inventory inventory;
-    private Map<Integer, EnchantButton> buttons = new HashMap<>();
+    private final Inventory inventory;
+    private final Map<Integer, EnchantButton> buttons = new HashMap<>();
 
     public CustomEnchantmentGUI(Inventory inventory) {
         this.inventory = inventory;

@@ -22,7 +22,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>software.bigbade.enchantmenttokens</groupId>
-    <artifactId>EnchantmentTokensMain</artifactId>
+    <artifactId>EnchantmentTokens</artifactId>
     <packaging>pom</packaging>
     <version>1.0</version>
 
@@ -74,7 +74,7 @@
     <modules>
         <module>Localization</module>
         <module>EnchantmentTokensLibraries</module>
-        <module>EnchantmentTokens</module>
+        <module>EnchantmentTokensMain</module>
         <module>EnchantmentTokensCurrency</module>
     </modules>
 

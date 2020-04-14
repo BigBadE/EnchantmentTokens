@@ -29,12 +29,15 @@ import static org.junit.Assert.assertTrue;
 
 @PrepareForTest({ ReflectionManager.class })
 public class ReflectionManagerTest {
+    @SuppressWarnings({"FieldMayBeFinal", "unused"})
+    private boolean worked = false;
+
     @Test
     public void testReflectionManager() {
         ReflectionManagerTest test = (ReflectionManagerTest) ReflectionManager.instantiate(getClass());
         assertNotNull(test);
         Field field = ReflectionManager.getField(getClass(), "worked");
-        assertEquals(false, ReflectionManager.getValue(field, test));
+        assertNotNull(field);
         ReflectionManager.setValue(field, true, test);
         assertTrue((boolean) ReflectionManager.getValue(field, test));
     }

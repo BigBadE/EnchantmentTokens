@@ -17,13 +17,13 @@ import ch.njol.skript.util.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.eclipse.jdt.annotation.Nullable;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.CustomEnchantmentEvent;
 import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 @Name("Register an enchantment listener")
@@ -34,9 +34,9 @@ public class EnchantmentListenerEvent extends SelfRegisteringSkriptEvent {
     static {
         Skript.registerEvent("enchantmentevent", EnchantmentListenerEvent.class, CustomEnchantmentEvent.class, "%string% for %customenchant%");
         EventValues.registerEventValue(CustomEnchantmentEvent.class, Player.class, new Getter<Player, CustomEnchantmentEvent>() {
+            @Nonnull
             @Override
-            @Nullable
-            public Player get(final CustomEnchantmentEvent e) {
+            public Player get(@Nonnull final CustomEnchantmentEvent e) {
                 return (Player) e.getUser();
             }
         }, 0);
@@ -51,7 +51,7 @@ public class EnchantmentListenerEvent extends SelfRegisteringSkriptEvent {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Literal<?>[] literals, int i, SkriptParser.ParseResult parseResult) {
+    public boolean init(Literal<?>[] literals, int i, @Nonnull SkriptParser.ParseResult parseResult) {
         type = (Literal<String>) literals[0];
         enchantment = (Literal<SkriptEnchantment>) literals[1];
         main = (EnchantmentTokens) Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("EnchantmentTokens"));
@@ -62,15 +62,15 @@ public class EnchantmentListenerEvent extends SelfRegisteringSkriptEvent {
     }
 
     @Override
-    public void register(Trigger trigger) {
+    public void register(@Nonnull Trigger trigger) {
         this.trigger = trigger;
     }
 
     @Override
-    public void unregister(Trigger trigger) {
+    public void unregister(@Nonnull Trigger trigger) {
         this.trigger = null;
-        for(ListenerType listenerType : ListenerType.values()) {
-            ListenerManager manager = main.getListenerHandler().getListenerManager(listenerType);
+        for (ListenerType listenerType : ListenerType.values()) {
+            ListenerManager<?> manager = main.getListenerHandler().getListenerManager(listenerType);
             manager.getListeners().keySet().removeIf(base -> base instanceof SkriptEnchantment);
         }
     }
@@ -80,6 +80,7 @@ public class EnchantmentListenerEvent extends SelfRegisteringSkriptEvent {
         //No idea what this does
     }
 
+    @Nonnull
     @Override
     public String toString(Event event, boolean b) {
         return type.getSingle(event) + " listener for " + enchantment.getSingle(event).getEnchantmentName();

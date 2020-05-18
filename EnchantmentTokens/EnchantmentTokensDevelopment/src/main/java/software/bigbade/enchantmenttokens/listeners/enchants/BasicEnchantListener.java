@@ -5,42 +5,48 @@
 package software.bigbade.enchantmenttokens.listeners.enchants;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
 public class BasicEnchantListener {
-    private ListenerManager listeners;
+    private ListenerManager<?> listeners;
 
     public BasicEnchantListener() {}
 
-    public BasicEnchantListener(ListenerManager listeners) {
+    public BasicEnchantListener(ListenerManager<?> listeners) {
         this.listeners = listeners;
     }
 
-    public void callListeners(EnchantmentEvent event) {
+    public void callListeners(EnchantmentEvent<?> event) {
         listeners.callEvent(event);
-        Bukkit.getPluginManager().callEvent(event.getEvent());
+        Bukkit.getPluginManager().callEvent(event.getSelfEvent());
     }
 
-    public void callListeners(EnchantmentEvent event, ListenerManager listeners) {
+    public void callListeners(EnchantmentEvent<?> event, ListenerManager<?> listeners) {
         listeners.callEvent(event);
-        Bukkit.getPluginManager().callEvent(event.getEvent());
+        Bukkit.getPluginManager().callEvent(event.getSelfEvent());
     }
 
-    public void callForAllItems(Player player, ListenerManager manager, EnchantmentEvent event) {
+    public void callForAllItems(Player player, ListenerManager<?> listener, EnchantmentEvent<?> event) {
         for (ItemStack item : player.getInventory().getArmorContents()) {
-            event.setItem(item);
-            callListeners(event, manager);
+            callListenerForItem(item, listener, event);
         }
-        event.setItem(player.getInventory().getItemInMainHand());
-        callListeners(event, manager);
-        event.setItem(player.getInventory().getItemInMainHand());
-        callListeners(event, manager);
+
+        callListenerForItem(player.getInventory().getItemInMainHand(), listener, event);
+        callListenerForItem(player.getInventory().getItemInOffHand(), listener, event);
     }
 
-    public void callForAllItems(Player player, EnchantmentEvent event) {
+    public void callForAllItems(Player player, EnchantmentEvent<?> event) {
         callForAllItems(player, listeners, event);
+    }
+
+    public void callListenerForItem(ItemStack item, ListenerManager<?> listener, EnchantmentEvent<?> event) {
+        if (item != null && item.getType() != Material.AIR) {
+            event.setItem(item);
+            callListeners(event, listener);
+        }
     }
 }

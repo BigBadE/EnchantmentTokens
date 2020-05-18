@@ -8,7 +8,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>software.bigbade.enchantmenttokens</groupId>
+        <groupId>software.bigbade</groupId>
         <artifactId>EnchantmentTokens</artifactId>
         <version>1.0</version>
     </parent>
@@ -25,13 +25,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>software.bigbade.enchantmenttokens</groupId>
-            <artifactId>EnchantmentTokensPublic</artifactId>
+            <groupId>software.bigbade</groupId>
+            <artifactId>EnchantmentTokensAPI</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>software.bigbade.enchantmenttokens</groupId>
-            <artifactId>Localization</artifactId>
+            <groupId>software.bigbade</groupId>
+            <artifactId>EnchantmentTokensLocalization</artifactId>
             <version>1.0</version>
         </dependency>
         <!--Used for interacting with Brigadier-->

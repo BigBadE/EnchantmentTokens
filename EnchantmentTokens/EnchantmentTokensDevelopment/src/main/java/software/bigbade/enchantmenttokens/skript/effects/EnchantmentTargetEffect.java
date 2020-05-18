@@ -18,6 +18,7 @@ import software.bigbade.enchantmenttokens.api.wrappers.MaterialTargetWrapper;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
 import software.bigbade.enchantmenttokens.utils.MaterialGroupUtils;
 
+import javax.annotation.Nonnull;
 import java.util.logging.Level;
 
 @Name("EnchantmentTarget")
@@ -34,7 +35,7 @@ public class EnchantmentTargetEffect extends Effect {
     private Expression<String> target;
 
     @Override
-    protected void execute(Event event) {
+    protected void execute(@Nonnull Event event) {
         String type = target.getSingle(event);
         try {
             enchantment.getSingle(event).setTarget(new MaterialTargetWrapper(MaterialGroupUtils.valueOf(type.toUpperCase().replace(" ", "_")).getMaterials()));
@@ -43,6 +44,7 @@ public class EnchantmentTargetEffect extends Effect {
         }
     }
 
+    @Nonnull
     @Override
     public String toString(Event event, boolean b) {
         return "Set material of " + enchantment.getSingle(event).getEnchantmentName() + " to " + target.getSingle(event);

@@ -12,12 +12,12 @@ import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
 public class RiptideListener extends BasicEnchantListener implements Listener {
-    public RiptideListener(ListenerManager listeners) {
+    public RiptideListener(ListenerManager<?> listeners) {
         super(listeners);
     }
 
     @EventHandler
     public void onRiptide(PlayerRiptideEvent event) {
-        callListeners(EventFactory.createEvent(ListenerType.RIPTIDE, event.getItem()).setUser(event.getPlayer()));
+        callListeners(new EventFactory<PlayerRiptideEvent>().createEvent(event, ListenerType.RIPTIDE, event.getItem(), event.getPlayer()));
     }
 }

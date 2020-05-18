@@ -14,16 +14,15 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class EnchantmentPlayerHandler implements PlayerHandler {
-    private List<EnchantmentPlayer> players = new ArrayList<>();
-    private CurrencyFactory currencyFactory;
+    private final List<EnchantmentPlayer> players = new ArrayList<>();
+    private final CurrencyFactory currencyFactory;
 
     public EnchantmentPlayerHandler(CurrencyFactory currencyFactory) {
         this.currencyFactory = currencyFactory;
     }
 
     public EnchantmentPlayer loadPlayer(Player player) {
-        EnchantmentPlayer enchantmentPlayer = new CustomEnchantmentPlayer(player);
-        enchantmentPlayer.setHandler(currencyFactory.newInstance(player));
+        EnchantmentPlayer enchantmentPlayer = new CustomEnchantmentPlayer(player, currencyFactory.newInstance(player));
         players.add(enchantmentPlayer);
         return enchantmentPlayer;
     }

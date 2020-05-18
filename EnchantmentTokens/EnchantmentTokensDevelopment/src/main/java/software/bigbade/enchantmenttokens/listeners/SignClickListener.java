@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
 
 public class SignClickListener implements Listener {
-    private EnchantUtils utils;
+    private final EnchantUtils utils;
 
     public SignClickListener(EnchantUtils utils) {
         this.utils = utils;

@@ -25,10 +25,10 @@ import java.util.Locale;
 import java.util.Set;
 
 public class CustomEnchantUtils extends EnchantUtils {
-    private EnchantmentHandler handler;
-    private EnchantmentPlayerHandler playerHandler;
-    private EnchantListenerHandler listenerHandler;
-    private Set<Location> signs;
+    private final EnchantmentHandler handler;
+    private final EnchantmentPlayerHandler playerHandler;
+    private final EnchantListenerHandler listenerHandler;
+    private final Set<Location> signs;
 
     public CustomEnchantUtils(EnchantmentHandler handler, EnchantmentPlayerHandler playerHandler, EnchantListenerHandler listenerHandler, Set<Location> signs) {
         setInstance(this);
@@ -44,6 +44,7 @@ public class CustomEnchantUtils extends EnchantUtils {
         for (EnchantmentBase base : handler.getAllEnchants()) {
             if (base.getEnchantmentName().equals(name) && base.canEnchantItem(itemStack)) {
                 enchantmentPlayer.addGems(-addEnchantmentBase(itemStack, base, enchantmentPlayer));
+                triggerOnEnchant(itemStack, base, player);
                 return;
             }
         }
@@ -74,9 +75,12 @@ public class CustomEnchantUtils extends EnchantUtils {
         meta.addEnchant(base.getEnchantment(), level, true);
         updateLore(meta, level, base);
         item.setItemMeta(meta);
-        listenerHandler.onEnchant(item, base, enchantmentPlayer.getPlayer());
         updateSigns(base, signs, enchantmentPlayer);
         return price;
+    }
+
+    public void triggerOnEnchant(ItemStack item, EnchantmentBase base, Player player) {
+        listenerHandler.onEnchant(item, base, player);
     }
 
     private void updateLore(ItemMeta meta, int level, EnchantmentBase base) {

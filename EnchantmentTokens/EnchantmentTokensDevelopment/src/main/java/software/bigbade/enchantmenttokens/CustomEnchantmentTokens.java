@@ -15,11 +15,13 @@ import software.bigbade.enchantmenttokens.commands.CommandManager;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationType;
 import software.bigbade.enchantmenttokens.currency.CurrencyFactory;
-import software.bigbade.enchantmenttokens.gui.EnchantmentMenuFactory;
+import software.bigbade.enchantmenttokens.gui.CustomButtonFactory;
+import software.bigbade.enchantmenttokens.gui.CustomMenuFactory;
 import software.bigbade.enchantmenttokens.gui.MenuFactory;
 import software.bigbade.enchantmenttokens.listeners.SignPacketHandler;
 import software.bigbade.enchantmenttokens.localization.LocaleManager;
 import software.bigbade.enchantmenttokens.skript.type.SkriptManager;
+import software.bigbade.enchantmenttokens.utils.ButtonFactory;
 import software.bigbade.enchantmenttokens.utils.MetricManager;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 import software.bigbade.enchantmenttokens.utils.SignHandler;
@@ -40,7 +42,9 @@ import java.io.File;
 import java.util.logging.Level;
 
 public class CustomEnchantmentTokens extends EnchantmentTokens {
-    private File enchantmentFolder = new File(getDataFolder().getPath() + "\\enchantments");
+    //Approx memory usage = 3256 bytes (not counting loaded classes)
+    //Addon main classes are 24 bytes, each enchant is 56 bytes
+    private final File enchantmentFolder = new File(getDataFolder().getPath() + "\\enchantments");
 
     private EnchantmentLoader loader;
 
@@ -68,6 +72,9 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
     @Override
     public void onEnable() {
         setLogger(getLogger());
+        ButtonFactory.setInstance(new CustomButtonFactory());
+        EnchantmentTokens.setup();
+
         version = Integer.parseInt(Bukkit.getVersion().split("\\.")[1]);
         scheduler = new SchedulerHandler(this);
 
@@ -85,7 +92,7 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
 
         utils = new CustomEnchantUtils(enchantmentHandler, playerHandler, listenerHandler, signHandler.getSigns());
 
-        factory = new EnchantmentMenuFactory(version, playerHandler, utils, enchantmentHandler);
+        factory = new CustomMenuFactory(version, playerHandler, utils, enchantmentHandler);
 
         CommandManager.registerCommands(this);
 

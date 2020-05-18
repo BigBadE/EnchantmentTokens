@@ -40,7 +40,7 @@ public class GemsTabCompleter implements TabCompleter, IEnchantTabCompleter {
             commandSender.getServer().getOnlinePlayers().forEach(player -> {
                 if (player.getName().startsWith(args[0])) players.add(player.getName());
             });
-            if (players.isEmpty())
+            if (players.isEmpty() && !checkLong(args[0], locale).isEmpty())
                 players.add(ChatColor.stripColor(new TranslatedStringMessage(locale, StringUtils.COMMAND_ERROR_NO_PLAYER).translate(args[0])));
             return players;
         } else {

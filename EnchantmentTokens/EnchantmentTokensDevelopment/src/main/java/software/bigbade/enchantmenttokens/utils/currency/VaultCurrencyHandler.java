@@ -10,14 +10,20 @@ import org.bukkit.entity.Player;
 import java.util.Locale;
 
 public class VaultCurrencyHandler extends EnchantCurrencyHandler {
-    private Player player;
-    private Economy economy;
-    private Locale locale = Locale.getDefault();
+    private final Player player;
+    private final Economy economy;
+    private Locale locale;
 
     public VaultCurrencyHandler(Player player, Economy economy) {
         super("vault");
         this.player = player;
         this.economy = economy;
+        try {
+            this.locale = Locale.forLanguageTag(player.getLocale());
+        } catch (NullPointerException e) {
+            //Some resource packs can mess this up
+            this.locale = Locale.getDefault();
+        }
     }
 
     @Override

@@ -12,16 +12,16 @@ import software.bigbade.enchantmenttokens.gui.EnchantmentGUI;
 import java.util.Locale;
 
 public class CustomEnchantmentPlayer implements EnchantmentPlayer {
-    private Player player;
+    private final Player player;
+    private final CurrencyHandler handler;
 
     private EnchantmentGUI currentGUI;
 
-    private CurrencyHandler handler;
-
     private long doubler = 1;
 
-    public CustomEnchantmentPlayer(Player player) {
+    public CustomEnchantmentPlayer(Player player, CurrencyHandler handler) {
         this.player = player;
+        this.handler = handler;
     }
 
     public void save(boolean async) {
@@ -62,10 +62,6 @@ public class CustomEnchantmentPlayer implements EnchantmentPlayer {
 
     public void setCurrentGUI(EnchantmentGUI currentGUI) {
         this.currentGUI = currentGUI;
-    }
-
-    public void setHandler(CurrencyHandler handler) {
-        this.handler = handler;
     }
 
     @Override

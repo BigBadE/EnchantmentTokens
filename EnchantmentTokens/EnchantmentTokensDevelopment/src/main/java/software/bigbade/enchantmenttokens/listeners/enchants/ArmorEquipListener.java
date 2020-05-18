@@ -14,8 +14,8 @@ import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
 public class ArmorEquipListener extends BasicEnchantListener implements Listener {
-    private ListenerManager oldArmorListeners;
-    private ListenerManager newArmorListeners;
+    private final ListenerManager oldArmorListeners;
+    private final ListenerManager newArmorListeners;
 
     public ArmorEquipListener(ListenerManager oldArmorListeners, ListenerManager newArmorListeners) {
         super(null);
@@ -27,12 +27,12 @@ public class ArmorEquipListener extends BasicEnchantListener implements Listener
     public void onArmorEquip(ArmorEquipEvent event) {
         ItemStack item = event.getOldArmorPiece();
         if(item != null) {
-            EnchantmentEvent enchantmentEvent = EventFactory.createEvent(ListenerType.UNEQUIP, item).setUser(event.getPlayer());
+            EnchantmentEvent<ArmorEquipEvent> enchantmentEvent = new EventFactory<ArmorEquipEvent>().createEvent(event, ListenerType.UNEQUIP, item, event.getPlayer());
             callListeners(enchantmentEvent, oldArmorListeners);
         }
         item = event.getNewArmorPiece();
         if(item != null) {
-            EnchantmentEvent enchantmentEvent = EventFactory.createEvent(ListenerType.EQUIP, item).setUser(event.getPlayer());
+            EnchantmentEvent<ArmorEquipEvent> enchantmentEvent = new EventFactory<ArmorEquipEvent>().createEvent(event, ListenerType.EQUIP, item, event.getPlayer());
             callListeners(enchantmentEvent, newArmorListeners);
         }
     }

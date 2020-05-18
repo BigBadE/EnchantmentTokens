@@ -32,8 +32,8 @@ import java.util.Set;
 import java.util.logging.Level;
 
 public class SignPacketHandler implements SignHandler {
-    private Set<Location> signs = new HashSet<>();
-    private EnchantmentTokens main;
+    private final Set<Location> signs = new HashSet<>();
+    private final EnchantmentTokens main;
 
     public SignPacketHandler(ProtocolManager manager, EnchantmentTokens main) {
         EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Registering sign listener");
@@ -99,7 +99,7 @@ public class SignPacketHandler implements SignHandler {
 }
 
 class SignPacketLoadAdapter extends PacketAdapter {
-    private SignPacketHandler handler;
+    private final SignPacketHandler handler;
 
     public SignPacketLoadAdapter(EnchantmentTokens main, SignPacketHandler handler) {
         super(main, ListenerPriority.NORMAL, PacketType.Play.Server.MAP_CHUNK);
@@ -120,7 +120,7 @@ class SignPacketLoadAdapter extends PacketAdapter {
 }
 
 class SignPacketUpdateAdapter extends PacketAdapter {
-    private SignPacketHandler handler;
+    private final SignPacketHandler handler;
 
     public SignPacketUpdateAdapter(EnchantmentTokens main, SignPacketHandler handler) {
         super(main, ListenerPriority.NORMAL, PacketType.Play.Server.TILE_ENTITY_DATA);

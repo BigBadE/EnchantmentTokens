@@ -24,7 +24,6 @@ public class BrigadierManager {
         Commodore commodore = CommodoreProvider.getCommodore(tokens);
         try (InputStream is = BrigadierManager.class.getResourceAsStream("/commodore/" + command.getName() + ".commodore")) {
             if(is == null) {
-                EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not load commodore file");
                 return;
             }
             LiteralCommandNode<?> commandNode = CommodoreFileFormat.parse(is);

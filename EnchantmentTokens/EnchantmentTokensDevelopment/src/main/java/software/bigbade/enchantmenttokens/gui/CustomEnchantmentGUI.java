@@ -6,19 +6,21 @@ package software.bigbade.enchantmenttokens.gui;
 
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
+import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CustomEnchantmentGUI implements EnchantmentGUI {
-    private EnchantmentPlayer opener;
     private ItemStack item;
-    private Inventory inventory;
-    private Map<Integer, EnchantButton> buttons = new HashMap<>();
+    private final Inventory inventory;
+    private final Map<Integer, EnchantButton> buttons = new HashMap<>();
+    private final List<EnchantmentBase> adding;
 
-    public CustomEnchantmentGUI(Inventory inventory) {
+    public CustomEnchantmentGUI(Inventory inventory, List<EnchantmentBase> enchantments) {
         this.inventory = inventory;
+        this.adding = enchantments;
     }
 
     public Inventory getInventory() {
@@ -42,11 +44,13 @@ public class CustomEnchantmentGUI implements EnchantmentGUI {
         this.item = item;
     }
 
-    public EnchantmentPlayer getOpener() {
-        return opener;
+    @Override
+    public List<EnchantmentBase> getAddedEnchants() {
+        return adding;
     }
 
-    public void setOpener(EnchantmentPlayer opener) {
-        this.opener = opener;
+    @Override
+    public void addEnchantment(EnchantmentBase base) {
+        adding.add(base);
     }
 }

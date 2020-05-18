@@ -30,6 +30,7 @@ public class PayGemsCmd implements CommandExecutor {
         Locale locale = CommandUtils.getLocale(commandSender, handler);
         if (args.length != 2) {
             commandSender.sendMessage(new TranslatedStringMessage(locale, StringUtils.COMMAND_PAY_USAGE).translate());
+            return true;
         }
         if (commandSender instanceof Player) {
             Player target = Bukkit.getPlayer(args[0]);
@@ -45,7 +46,7 @@ public class PayGemsCmd implements CommandExecutor {
         try {
             long gemsLong = Long.parseLong(gems);
             EnchantmentPlayer player = handler.getPlayer((Player) sender);
-            if (gemsLong == minTokens) {
+            if (gemsLong <= minTokens) {
                 sender.sendMessage(new TranslatedStringMessage(senderLocale, StringUtils.COMMAND_PAY_NOT_ENOUGH).translate(new TranslatedPriceMessage(senderLocale).translate(minTokens + "")));
                 return;
             }

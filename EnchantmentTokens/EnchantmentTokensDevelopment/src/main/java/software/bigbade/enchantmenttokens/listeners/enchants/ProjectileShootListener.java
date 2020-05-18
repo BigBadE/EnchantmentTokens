@@ -4,39 +4,43 @@
 
 package software.bigbade.enchantmenttokens.listeners.enchants;
 
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.metadata.FixedMetadataValue;
+import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EventFactory;
 import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
-public class ProjectileShootListener extends BasicEnchantListener implements Listener {
-    private ListenerManager crossbowShoot;
-    private ListenerManager tridentThrow;
-    private ListenerManager bowShoot;
-    private int version;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-    public ProjectileShootListener(int version, ListenerManager crossbowShoot, ListenerManager tridentThrow, ListenerManager bowShoot) {
-        this.version = version;
-        this.crossbowShoot = crossbowShoot;
-        this.tridentThrow = tridentThrow;
-        this.bowShoot = bowShoot;
-    }
+@RequiredArgsConstructor
+public class ProjectileShootListener extends BasicEnchantListener implements Listener {
+    private final EnchantmentTokens main;
+    @Nullable
+    private final ListenerManager<?> crossbowShoot;
+    @Nullable
+    private final ListenerManager<?> tridentThrow;
+    @Nonnull
+    private final ListenerManager<?> bowShoot;
 
     @EventHandler
     public void onProjectileShoot(ProjectileLaunchEvent event) {
-        if(event.getEntity().getShooter() instanceof Player) {
+        if (event.getEntity().getShooter() instanceof Player) {
             Player shooter = (Player) event.getEntity().getShooter();
-            if (version > 14 && event.getEntityType() == EntityType.TRIDENT) {
-                callListeners(EventFactory.createEvent(ListenerType.TRIDENT_THROW, null).setUser(shooter).setTargetEntity(event.getEntity()), tridentThrow);
-            } else if(version > 13 && shooter.getInventory().getItemInMainHand().getType() == Material.CROSSBOW){
-                callListeners(EventFactory.createEvent(ListenerType.CROSSBOW_SHOOT, shooter.getInventory().getItemInMainHand()).setUser(shooter).setTargetEntity(event.getEntity()), crossbowShoot);
+            event.getEntity().setMetadata("ce_firing_item", new FixedMetadataValue(main, shooter.getInventory().getItemInMainHand()));
+            if (main.getVersion() > 14 && event.getEntityType() == EntityType.TRIDENT) {
+                callListeners(new EventFactory<ProjectileLaunchEvent>().createEvent(event, ListenerType.TRIDENT_THROW, shooter.getInventory().getItemInMainHand(), shooter).setTargetEntity(event.getEntity()), tridentThrow);
+            } else if (main.getVersion() > 13 && shooter.getInventory().getItemInMainHand().getType() == Material.CROSSBOW) {
+                callListeners(new EventFactory<ProjectileLaunchEvent>().createEvent(event, ListenerType.CROSSBOW_SHOOT, shooter.getInventory().getItemInMainHand(), shooter).setTargetEntity(event.getEntity()), crossbowShoot);
             } else {
-                callListeners(EventFactory.createEvent(ListenerType.SHOOT, shooter.getInventory().getItemInMainHand()).setUser(shooter).setTargetEntity(event.getEntity()), bowShoot);
+                callListeners(new EventFactory<ProjectileLaunchEvent>().createEvent(event, ListenerType.BOW_SHOOT, shooter.getInventory().getItemInMainHand(), shooter).setTargetEntity(event.getEntity()), bowShoot);
             }
         }
     }

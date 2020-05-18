@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
 public class GemCurrencyHandler extends EnchantCurrencyHandler {
-    private FileLoader fileLoader;
+    private final FileLoader fileLoader;
 
     public GemCurrencyHandler(Player player, FileLoader fileLoader, SchedulerHandler scheduler) {
         super("gemsOld");

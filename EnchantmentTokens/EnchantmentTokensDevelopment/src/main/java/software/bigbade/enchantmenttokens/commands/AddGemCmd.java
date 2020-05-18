@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
 import java.util.Locale;
 
 public class AddGemCmd implements CommandExecutor {
-    private PlayerHandler handler;
+    private final PlayerHandler handler;
 
     public AddGemCmd(PlayerHandler handler) {
         this.handler = handler;
@@ -51,8 +51,11 @@ public class AddGemCmd implements CommandExecutor {
     private void addGems(String gems, Player target, CommandSender sender) {
         try {
             EnchantmentPlayer player = handler.getPlayer(target);
-            CurrencyAdditionHandler.addGems(player, Long.parseLong(gems));
-            target.sendMessage(new TranslatedStringMessage(player.getLanguage(), StringUtils.COMMAND_PAY_RECEIVE).translate(gems, sender.getName()));
+            long gemsLong = Long.parseLong(gems);
+            CurrencyAdditionHandler.addGems(player, gemsLong);
+            if (gemsLong > 0) {
+                target.sendMessage(new TranslatedStringMessage(player.getLanguage(), StringUtils.COMMAND_PAY_RECEIVE).translate(gems, sender.getName()));
+            }
         } catch (NumberFormatException e) {
             Locale locale = CommandUtils.getLocale(sender, handler);
             sender.sendMessage(new TranslatedStringMessage(locale, StringUtils.COMMAND_ERROR_NOT_NUMBER).translate(gems));

@@ -4,6 +4,7 @@
 
 package software.bigbade.enchantmenttokens.listeners.enchants;
 
+import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,25 +16,30 @@ import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
 import javax.annotation.Nullable;
 
+@RequiredArgsConstructor
 public class PlayerDamageListener extends BasicEnchantListener implements Listener {
-    private ListenerManager hit;
-    private ListenerManager block;
+    private final ListenerManager hit;
+    private final ListenerManager damage;
 
-    public PlayerDamageListener(ListenerManager hit, @Nullable ListenerManager block) {
-        this.hit = hit;
-        this.block = block;
-    }
+    //Not in 1.8, so can be null.
+    @Nullable
+    private final ListenerManager block;
 
     @EventHandler
     public void onEntityDamage(EntityDamageByEntityEvent event) {
-        if(event.getEntity() instanceof Player) {
+        if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
-            if(block != null && player.isBlocking()) {
-                EnchantmentEvent enchantmentEvent = EventFactory.createEvent(ListenerType.SHIELD_BLOCK, player.getInventory().getItemInMainHand()).setUser(player).setTargetEntity(event.getDamager());
+            if (block != null && player.isBlocking()) {
+                EnchantmentEvent<EntityDamageByEntityEvent> enchantmentEvent = new EventFactory<EntityDamageByEntityEvent>().createEvent(event, ListenerType.SHIELD_BLOCK, player.getInventory().getItemInMainHand(), player).setTargetEntity(event.getDamager());
                 callListeners(enchantmentEvent, block);
             }
-            EnchantmentEvent enchantmentEvent = EventFactory.createEvent(ListenerType.DAMAGE, player.getInventory().getItemInMainHand()).setUser(player).setTargetEntity(event.getDamager());
+            EnchantmentEvent<EntityDamageByEntityEvent> enchantmentEvent = new EventFactory<EntityDamageByEntityEvent>().createEvent(event, ListenerType.ON_DAMAGED, player.getInventory().getItemInMainHand(), player).setTargetEntity(event.getDamager());
             callListeners(enchantmentEvent, hit);
+        }
+        if (event.getDamager() instanceof Player) {
+            Player target = (Player) event.getDamager();
+            EnchantmentEvent<EntityDamageByEntityEvent> damageEvent = new EventFactory<EntityDamageByEntityEvent>().createEvent(event, ListenerType.ENTITY_DAMAGED, target.getInventory().getItemInMainHand(), target).setTargetEntity(event.getEntity());
+            callListeners(damageEvent, damage);
         }
     }
 }

@@ -13,10 +13,10 @@ import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
 public class PotionListener extends BasicEnchantListener implements Listener {
-    private ListenerManager potionAdd;
-    private ListenerManager potionRemove;
+    private final ListenerManager<?> potionAdd;
+    private final ListenerManager<?> potionRemove;
 
-    public PotionListener(ListenerManager potionAdd, ListenerManager potionRemove) {
+    public PotionListener(ListenerManager<?> potionAdd, ListenerManager<?> potionRemove) {
         super(null);
         this.potionAdd = potionAdd;
         this.potionRemove = potionRemove;
@@ -29,9 +29,9 @@ public class PotionListener extends BasicEnchantListener implements Listener {
         Player player = (Player) event.getEntity();
 
         if (event.getAction().equals(EntityPotionEffectEvent.Action.ADDED)) {
-            callForAllItems(player, potionAdd, EventFactory.createEvent(ListenerType.POTION_APPLY, null).setUser(player));
+            callForAllItems(player, potionAdd, new EventFactory<EntityPotionEffectEvent>().createEvent(event, ListenerType.POTION_APPLY, null, player));
         } else if (event.getAction().equals(EntityPotionEffectEvent.Action.REMOVED) || event.getAction().equals(EntityPotionEffectEvent.Action.CLEARED)) {
-            callForAllItems(player, potionRemove, EventFactory.createEvent(ListenerType.POTION_REMOVE, null).setUser(player));
+            callForAllItems(player, potionRemove, new EventFactory<EntityPotionEffectEvent>().createEvent(event, ListenerType.POTION_REMOVE, null, player));
         }
     }
 }

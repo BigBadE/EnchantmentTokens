@@ -10,11 +10,17 @@ import software.bigbade.enchantmenttokens.currency.CurrencyHandler;
 import java.util.Locale;
 
 public class ExperienceCurrencyHandler implements CurrencyHandler {
-    private Player player;
-    private Locale locale = Locale.getDefault();
+    private final Player player;
+    private Locale locale;
 
     public ExperienceCurrencyHandler(Player player) {
         this.player = player;
+        try {
+            this.locale = Locale.forLanguageTag(player.getLocale());
+        } catch (NullPointerException e) {
+            //Some resource packs can mess this up
+            this.locale = Locale.getDefault();
+        }
     }
 
     @Override

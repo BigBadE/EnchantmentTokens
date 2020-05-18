@@ -16,8 +16,8 @@ import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 import software.bigbade.enchantmenttokens.utils.players.PlayerHandler;
 
 public class EnchantmentGUIListener implements Listener {
-    private PlayerHandler handler;
-    private SchedulerHandler scheduler;
+    private final PlayerHandler handler;
+    private final SchedulerHandler scheduler;
 
     public EnchantmentGUIListener(PlayerHandler handler, SchedulerHandler scheduler) {
         this.handler = handler;
@@ -27,7 +27,7 @@ public class EnchantmentGUIListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         EnchantmentPlayer player = handler.getPlayer((Player) event.getWhoClicked());
-        if (event.getView().getTopInventory() == null || event.getCurrentItem() == null || player.getCurrentGUI() == null)
+        if (event.getSlot() == -1 || event.getCurrentItem() == null || player.getCurrentGUI() == null)
             return;
         event.setCancelled(true);
         EnchantButton button = player.getCurrentGUI().getButton(event.getSlot());

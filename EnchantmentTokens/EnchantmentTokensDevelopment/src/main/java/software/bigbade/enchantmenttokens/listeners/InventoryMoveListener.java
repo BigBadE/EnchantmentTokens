@@ -9,7 +9,9 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import software.bigbade.enchantmenttokens.api.EventFactory;
@@ -22,13 +24,13 @@ import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 import java.util.Set;
 
 public class InventoryMoveListener extends BasicEnchantListener implements Listener {
-    private Set<Location> signs;
-    private SchedulerHandler scheduler;
+    private final Set<Location> signs;
+    private final SchedulerHandler scheduler;
 
-    private ListenerManager swapOn;
-    private ListenerManager swapOff;
+    private final ListenerManager<?> swapOn;
+    private final ListenerManager<?> swapOff;
 
-    public InventoryMoveListener(ListenerManager swapOn, ListenerManager swapOff, Set<Location> signs, SchedulerHandler scheduler) {
+    public InventoryMoveListener(ListenerManager<?> swapOn, ListenerManager<?> swapOff, Set<Location> signs, SchedulerHandler scheduler) {
         super(null);
         this.scheduler = scheduler;
         this.signs = signs;
@@ -37,17 +39,38 @@ public class InventoryMoveListener extends BasicEnchantListener implements Liste
     }
 
     @EventHandler
+    public void onItemDrop(PlayerDropItemEvent event) {
+        EnchantmentEvent<PlayerDropItemEvent> enchantmentEvent = new EventFactory<PlayerDropItemEvent>().createEvent(event, ListenerType.HELD, event.getItemDrop().getItemStack(), event.getPlayer());
+        callListeners(enchantmentEvent, swapOff);
+    }
+
+    @EventHandler
+    public void onItemPickup(EntityPickupItemEvent event) {
+        if (event.getEntity() instanceof Player) {
+            //Seems that the item instance is copied/isn't destroyed in one tick so this should work.
+            scheduler.runTaskLater(() -> {
+                Player player = (Player) event.getEntity();
+                if (player.getInventory().getItemInMainHand().equals(event.getItem().getItemStack())) {
+                    EnchantmentEvent<EntityPickupItemEvent> enchantmentEvent = new EventFactory<EntityPickupItemEvent>().createEvent(event, ListenerType.HELD, player.getInventory().getItemInMainHand(), player);
+                    callListeners(enchantmentEvent, swapOn);
+                }
+            }, 0L);
+        }
+    }
+
+    @EventHandler
     public void onInventorySwap(InventoryClickEvent event) {
         if (event.getInventory().getHolder() != null && event.getInventory().getHolder().equals(event.getWhoClicked()) && event.getSlot() == event.getWhoClicked().getInventory().getHeldItemSlot()) {
-            updateSigns((Player) event.getWhoClicked());
+            Player player = (Player) event.getWhoClicked();
+            updateSigns(player);
             if (event.getCurrentItem() != null) {
-                EnchantmentEvent enchantmentEvent = EventFactory.createEvent(ListenerType.HELD, event.getCurrentItem()).setUser(event.getWhoClicked());
-                callListeners(enchantmentEvent, swapOn);
+                EnchantmentEvent<InventoryClickEvent> enchantmentEvent = new EventFactory<InventoryClickEvent>().createEvent(event, ListenerType.HELD, event.getCurrentItem(), event.getWhoClicked());
+                callListeners(enchantmentEvent, swapOff);
             }
 
-            if (event.getCursor() != null) {
-                EnchantmentEvent enchantmentEvent = EventFactory.createEvent(ListenerType.SWAPPED, event.getCursor()).setUser(event.getWhoClicked());
-                callListeners(enchantmentEvent, swapOff);
+            if (event.getCursor() != null && event.getSlot() == player.getInventory().getHeldItemSlot()) {
+                EnchantmentEvent<InventoryClickEvent> enchantmentEvent = new EventFactory<InventoryClickEvent>().createEvent(event, ListenerType.SWAPPED, event.getCursor(), event.getWhoClicked());
+                callListeners(enchantmentEvent, swapOn);
             }
         }
     }
@@ -70,13 +93,13 @@ public class InventoryMoveListener extends BasicEnchantListener implements Liste
 
         ItemStack item = event.getPlayer().getInventory().getItem(event.getPreviousSlot());
         if (item != null) {
-            EnchantmentEvent enchantmentEvent = EventFactory.createEvent(ListenerType.SWAPPED, item).setUser(event.getPlayer());
+            EnchantmentEvent<PlayerItemHeldEvent> enchantmentEvent = new EventFactory<PlayerItemHeldEvent>().createEvent(event, ListenerType.SWAPPED, item, event.getPlayer());
             callListeners(enchantmentEvent, swapOff);
         }
 
         item = event.getPlayer().getInventory().getItem(event.getNewSlot());
         if (item != null) {
-            EnchantmentEvent enchantmentEvent = EventFactory.createEvent(ListenerType.HELD, item).setUser(event.getPlayer());
+            EnchantmentEvent<PlayerItemHeldEvent> enchantmentEvent = new EventFactory<PlayerItemHeldEvent>().createEvent(event, ListenerType.HELD, item, event.getPlayer());
             callListeners(enchantmentEvent, swapOn);
         }
     }

@@ -21,7 +21,14 @@ public class LatestCurrencyHandler extends EnchantCurrencyHandler {
         this.locale = locale;
         PersistentDataContainer dataContainer = player.getPersistentDataContainer();
         setAmount(dataContainer.getOrDefault(gems, PersistentDataType.LONG, 0L));
-        setLocale(Locale.forLanguageTag(dataContainer.getOrDefault(locale, PersistentDataType.STRING, Locale.getDefault().toLanguageTag())));
+        Locale defaultLocale;
+        try {
+            defaultLocale = Locale.forLanguageTag(player.getLocale());
+        } catch (NullPointerException e) {
+            //Some resource packs can mess this up
+            defaultLocale = Locale.getDefault();
+        }
+        setLocale(Locale.forLanguageTag(dataContainer.getOrDefault(locale, PersistentDataType.STRING, defaultLocale.toLanguageTag())));
     }
 
     @Override

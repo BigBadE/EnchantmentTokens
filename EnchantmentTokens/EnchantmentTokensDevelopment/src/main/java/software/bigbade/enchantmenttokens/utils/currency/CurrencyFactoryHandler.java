@@ -25,8 +25,8 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 
 public class CurrencyFactoryHandler {
-    private EnchantmentTokens main;
-    private ConfigurationSection section;
+    private final EnchantmentTokens main;
+    private final ConfigurationSection section;
 
     public CurrencyFactoryHandler(EnchantmentTokens main) {
         this.main = main;
@@ -102,7 +102,7 @@ public class CurrencyFactoryHandler {
     private CurrencyFactory getFactory(List<Class<?>> classes) {
         for (Class<?> clazz : classes) {
             if (clazz.getInterfaces()[0].equals(CurrencyFactory.class))
-                return (CurrencyFactory) ReflectionManager.instantiate(clazz.getConstructors()[0], section);
+                return (CurrencyFactory) ReflectionManager.instantiate(clazz.getConstructors()[0], section, main.getScheduler());
         }
         return null;
     }

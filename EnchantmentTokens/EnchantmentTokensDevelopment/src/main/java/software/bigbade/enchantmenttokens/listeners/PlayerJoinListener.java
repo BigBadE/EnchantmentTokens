@@ -11,7 +11,7 @@ import software.bigbade.enchantmenttokens.utils.players.PlayerHandler;
 
 public class PlayerJoinListener implements Listener {
 
-    private PlayerHandler playerHandler;
+    private final PlayerHandler playerHandler;
 
     public PlayerJoinListener(PlayerHandler handler) {
         playerHandler = handler;
@@ -19,6 +19,6 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        playerHandler.getPlayer(event.getPlayer());
+        playerHandler.loadPlayer(event.getPlayer());
     }
 }

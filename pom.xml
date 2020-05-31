@@ -21,8 +21,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+<<<<<<< HEAD
     <groupId>software.bigbade</groupId>
     <artifactId>EnchantmentTokensMain</artifactId>
+=======
+    <groupId>software.bigbade.enchantmenttokens</groupId>
+    <artifactId>EnchantmentTokens</artifactId>
+>>>>>>> 3d705af96ebb617ac55d44878c2077b5e14535b9
     <packaging>pom</packaging>
     <version>1.0</version>
 
@@ -79,7 +84,7 @@
     <modules>
         <module>Localization</module>
         <module>EnchantmentTokensLibraries</module>
-        <module>EnchantmentTokens</module>
+        <module>EnchantmentTokensMain</module>
         <module>EnchantmentTokensCurrency</module>
     </modules>
 

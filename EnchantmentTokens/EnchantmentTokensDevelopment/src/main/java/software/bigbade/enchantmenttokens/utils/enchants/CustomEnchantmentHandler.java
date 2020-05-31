@@ -28,14 +28,14 @@ import java.util.Objects;
 import java.util.logging.Level;
 
 public class CustomEnchantmentHandler implements EnchantmentHandler {
-    private List<EnchantmentBase> enchantments = new ArrayList<>();
-    private List<VanillaEnchant> vanillaEnchants = new ArrayList<>();
-    private List<EnchantmentBase> skriptEnchantments = new ArrayList<>();
-    private List<EnchantmentBase> allEnchants = new ArrayList<>();
+    private final List<EnchantmentBase> enchantments = new ArrayList<>();
+    private final List<VanillaEnchant> vanillaEnchants = new ArrayList<>();
+    private final List<EnchantmentBase> skriptEnchantments = new ArrayList<>();
+    private final List<EnchantmentBase> allEnchants = new ArrayList<>();
 
-    private FileConfiguration config;
-    private FileConfiguration skriptConfiguration;
-    private String skriptPath;
+    private final FileConfiguration config;
+    private final FileConfiguration skriptConfiguration;
+    private final String skriptPath;
 
     public CustomEnchantmentHandler(FileConfiguration config, String skriptPath) {
         this.config = config;
@@ -102,7 +102,7 @@ public class CustomEnchantmentHandler implements EnchantmentHandler {
             enchantSection = section.createSection(enchantment.getKey().getKey());
 
         if (new ConfigurationType<>(true).getValue("enabled", enchantSection)) {
-            VanillaEnchant vanillaEnchant = new VanillaEnchant(enchantment);
+            VanillaEnchant vanillaEnchant = new VanillaEnchant(enchantment, false);
             vanillaEnchants.add(vanillaEnchant);
             for (Field field : CustomEnchantment.class.getDeclaredFields()) {
                 ConfigurationManager.loadConfigForField(field, enchantSection, vanillaEnchant);
@@ -133,6 +133,16 @@ public class CustomEnchantmentHandler implements EnchantmentHandler {
         enchantment.loadConfig();
         skriptEnchantments.add(enchantment);
         allEnchants.add(enchantment);
+    }
+
+    @Override
+    public boolean hasVanillaEnchant(Enchantment enchantment) {
+        for(EnchantmentBase base : vanillaEnchants) {
+            if(base.getKey().equals(enchantment.getKey())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<EnchantmentBase> getCustomEnchants() {

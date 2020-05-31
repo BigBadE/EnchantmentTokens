@@ -42,6 +42,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @PrepareForTest({ EnchantTabCompleter.class, NamespacedKey.class })
 public class EnchantTabCompleterTest {
 
+    @SuppressWarnings("SpellCheckingInspection")
     @Test
     public void testTabCompleter() {
         CommandSender commandSender = mock(CommandSender.class);
@@ -51,6 +52,7 @@ public class EnchantTabCompleterTest {
         EnchantmentHandler handler = mock(EnchantmentHandler.class);
         NamespacedKey key = mock(NamespacedKey.class);
         when(key.getNamespace()).thenReturn("namespace");
+        when(key.toString()).thenReturn("namespace:test");
         when(handler.getAllEnchants()).thenReturn(Collections.singletonList(new CustomEnchantment(key, null, "test") {
 
         }));

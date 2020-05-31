@@ -9,15 +9,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import software.bigbade.enchantmenttokens.api.EventFactory;
-import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
-public class ArmorEquipListener extends BasicEnchantListener implements Listener {
-    private final ListenerManager oldArmorListeners;
-    private final ListenerManager newArmorListeners;
+public class ArmorEquipListener extends BasicEnchantListener<ArmorEquipEvent> implements Listener {
+    private final ListenerManager<ArmorEquipEvent> oldArmorListeners;
+    private final ListenerManager<ArmorEquipEvent> newArmorListeners;
 
-    public ArmorEquipListener(ListenerManager oldArmorListeners, ListenerManager newArmorListeners) {
+    public ArmorEquipListener(ListenerManager<ArmorEquipEvent> oldArmorListeners, ListenerManager<ArmorEquipEvent> newArmorListeners) {
         super(null);
         this.oldArmorListeners = oldArmorListeners;
         this.newArmorListeners = newArmorListeners;
@@ -27,12 +26,12 @@ public class ArmorEquipListener extends BasicEnchantListener implements Listener
     public void onArmorEquip(ArmorEquipEvent event) {
         ItemStack item = event.getOldArmorPiece();
         if(item != null) {
-            EnchantmentEvent<ArmorEquipEvent> enchantmentEvent = new EventFactory<ArmorEquipEvent>().createEvent(event, ListenerType.UNEQUIP, item, event.getPlayer());
+            EnchantmentEvent<ArmorEquipEvent> enchantmentEvent = EventFactory.createEvent(event, item, event.getPlayer());
             callListeners(enchantmentEvent, oldArmorListeners);
         }
         item = event.getNewArmorPiece();
         if(item != null) {
-            EnchantmentEvent<ArmorEquipEvent> enchantmentEvent = new EventFactory<ArmorEquipEvent>().createEvent(event, ListenerType.EQUIP, item, event.getPlayer());
+            EnchantmentEvent<ArmorEquipEvent> enchantmentEvent = EventFactory.createEvent(event, item, event.getPlayer());
             callListeners(enchantmentEvent, newArmorListeners);
         }
     }

@@ -8,16 +8,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import software.bigbade.enchantmenttokens.api.EventFactory;
-import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
-public class PlayerDeathListener extends BasicEnchantListener implements Listener {
-    public PlayerDeathListener(ListenerManager<?> enchantListeners) {
-        super(enchantListeners);
+public class PlayerDeathListener extends BasicEnchantListener<PlayerDeathEvent> implements Listener {
+    public PlayerDeathListener(ListenerManager<PlayerDeathEvent> listeners) {
+        super(listeners);
     }
 
     @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent event) {
-        callForAllItems(event.getEntity(), new EventFactory<PlayerDeathEvent>().createEvent(event, ListenerType.DEATH, null, event.getEntity()));
+    public void onDeath(PlayerDeathEvent event) {
+        callForAllItems(EventFactory.createEvent(event, null, event.getEntity()).setTargetEntity(event.getEntity().getKiller()));
     }
 }

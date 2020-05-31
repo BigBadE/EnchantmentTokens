@@ -60,7 +60,7 @@ public class CurrencyFactoryHandler {
     }
 
     private CurrencyFactory loadGemFactory() {
-        if (main.getVersion() >= 14) {
+        if (ReflectionManager.VERSION >= 14) {
             boolean persistent = new ConfigurationType<>(true).getValue("usePersistentData", section);
             if (persistent)
                 return new LatestCurrencyFactory(new NamespacedKey(main, "gems"), new NamespacedKey(main, "locale"));

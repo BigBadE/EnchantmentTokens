@@ -30,8 +30,7 @@ public abstract class EnchantCurrencyHandler implements CurrencyHandler {
         gems += amount;
     }
 
-    public void savePlayer(Player player, boolean async) {
-    }
+    public void savePlayer(Player player, boolean async) { }
 
     @Override
     public Locale getLocale() {

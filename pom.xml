@@ -32,6 +32,11 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
+        <!--TaskChain-->
+        <repository>
+            <id>aikar</id>
+            <url>https://repo.aikar.co/content/groups/aikar/</url>
+        </repository>
         <!--Paper-->
         <repository>
             <id>papermc</id>
@@ -122,6 +127,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
                             <finalName>EnchantmentTokens-${project.version}</finalName>
                             <relocations>
                                 <relocation>
@@ -135,6 +141,10 @@
                                 <relocation>
                                     <pattern>com.codingforcookies.armorequip</pattern>
                                     <shadedPattern>software.bigbade.enchantmenttokens.armorequip</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>co.aikar.taskchain</pattern>
+                                    <shadedPattern>software.bigbade.enchantmenttokens.taskchain</shadedPattern>
                                 </relocation>
                             </relocations>
                             <minimizeJar>true</minimizeJar>

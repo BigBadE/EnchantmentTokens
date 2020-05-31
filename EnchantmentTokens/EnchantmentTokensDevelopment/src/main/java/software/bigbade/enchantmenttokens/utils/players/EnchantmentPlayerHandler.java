@@ -22,7 +22,8 @@ public class EnchantmentPlayerHandler implements PlayerHandler {
     }
 
     public EnchantmentPlayer loadPlayer(Player player) {
-        EnchantmentPlayer enchantmentPlayer = new CustomEnchantmentPlayer(player, currencyFactory.newInstance(player));
+        EnchantmentPlayer enchantmentPlayer = new CustomEnchantmentPlayer(player);
+        enchantmentPlayer.setCurrencyHandler(currencyFactory.newInstance(player));
         players.add(enchantmentPlayer);
         return enchantmentPlayer;
     }
@@ -42,12 +43,12 @@ public class EnchantmentPlayerHandler implements PlayerHandler {
         if (!players.isEmpty()) {
             AtomicInteger saving = new AtomicInteger(0);
             handler.runTaskRepeating(() -> {
-                if (saving.get() > players.size()) players.get(saving.getAndIncrement()).save(false);
+                if (saving.get() > players.size()) players.get(saving.getAndIncrement()).save(true);
             }, 0, 5);
         }
     }
 
     public void shutdown() {
-        players.forEach(player -> player.save(true));
+        players.forEach(player -> player.save(false));
     }
 }

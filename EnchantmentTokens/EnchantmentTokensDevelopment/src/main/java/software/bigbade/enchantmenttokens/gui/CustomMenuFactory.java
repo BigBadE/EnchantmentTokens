@@ -53,7 +53,7 @@ public class CustomMenuFactory implements MenuFactory {
         generateButtons();
     }
 
-    public void addButtons(List<EnchantButton> button) {
+    public synchronized void addButtons(List<EnchantButton> button) {
         buttons.addAll(button);
     }
 
@@ -134,8 +134,9 @@ public class CustomMenuFactory implements MenuFactory {
         ItemStack item = subInventory.getItem();
 
         for (EnchantmentBase enchantment : enchantmentHandler.getAllEnchants()) {
-            if (!enchantment.canEnchantItem(item))
+            if (!enchantment.canEnchantItem(item)) {
                 continue;
+            }
             EnchantButton button = updateItem(enchantment, item, player);
             subInventory.addButton(button, next);
             next = subInventory.getInventory().firstEmpty();
@@ -144,7 +145,7 @@ public class CustomMenuFactory implements MenuFactory {
 
     private EnchantButton updateItem(EnchantmentBase base, ItemStack stack, EnchantmentPlayer player) {
         ItemStack item = ItemUtils.createItem(base.getIcon(), ChatColor.GREEN + base.getEnchantmentName());
-        int level = utils.getNextLevel(stack, base);
+        int level = utils.getLevel(stack, base)+1;
         addLore(base, item, level, player.getLanguage());
         if (level <= base.getMaxLevel()) {
             return new CustomEnchantButton(item, enchantmentPlayer -> {

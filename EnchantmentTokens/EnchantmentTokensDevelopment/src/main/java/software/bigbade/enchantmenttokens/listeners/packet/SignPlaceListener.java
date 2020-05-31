@@ -2,10 +2,12 @@
  * Copyright (c) 2020 BigBadE, All rights reserved
  */
 
-package software.bigbade.enchantmenttokens.listeners;
+package software.bigbade.enchantmenttokens.listeners.packet;
 
 import lombok.RequiredArgsConstructor;
+import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
@@ -21,10 +23,10 @@ public class SignPlaceListener implements Listener {
     private final EnchantmentHandler handler;
     private final PlayerHandler playerHandler;
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onSignChange(SignChangeEvent event) {
         Locale locale = playerHandler.getPlayer(event.getPlayer()).getLanguage();
-        if (("[" + new TranslatedStringMessage(locale, StringUtils.ENCHANTMENT).translate() + "]").equalsIgnoreCase(event.getLine(0)) && event.getLine(1) != null) {
+        if (("[" + new TranslatedStringMessage(locale, StringUtils.ENCHANTMENT).translate() + "]").equalsIgnoreCase(ChatColor.stripColor(event.getLine(0))) && event.getLine(1) != null) {
             String name = event.getLine(1);
             assert name != null;
             for (EnchantmentBase base : handler.getAllEnchants()) {

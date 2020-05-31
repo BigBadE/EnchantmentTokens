@@ -2,7 +2,7 @@
  * Copyright (c) 2020 BigBadE, All rights reserved
  */
 
-package software.bigbade.enchantmenttokens.listeners;
+package software.bigbade.enchantmenttokens.listeners.packet;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolManager;
@@ -91,7 +91,7 @@ public class SignPacketHandler implements SignHandler {
         String price = new TranslatedStringMessage(locale, StringUtils.NOT_APPLICABLE).translate();
         ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
         if (base.canEnchantItem(itemStack)) {
-            int level = EnchantUtils.getInstance().getNextLevel(itemStack, base);
+            int level = EnchantUtils.getInstance().getLevel(itemStack, base)+1;
             price = new TranslatedStringMessage(locale, StringUtils.PRICE).translate(new TranslatedPriceMessage(locale).translate("" + base.getDefaultPrice(level)));
         }
         compound.put("Text3", "{\"extra\":[{\"text\":\"Price: " + price + "\"}],\"text\":\"\"}");

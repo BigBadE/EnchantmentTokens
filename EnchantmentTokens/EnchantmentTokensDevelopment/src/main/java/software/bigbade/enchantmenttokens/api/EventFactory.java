@@ -4,13 +4,15 @@
 
 package software.bigbade.enchantmenttokens.api;
 
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 
-public class EventFactory<T extends Event> {
-    public EnchantmentEvent<T> createEvent(T event, ListenerType type, ItemStack item, Entity user) {
-        return new CustomEnchantmentEvent<>(event, type, item, user);
+public final class EventFactory {
+    private EventFactory() {}
+
+    public static <T extends Event> EnchantmentEvent<T> createEvent(T event, ItemStack item, Player user) {
+        return new CustomEnchantmentEvent<>(event, item, user);
     }
 }

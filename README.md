@@ -23,7 +23,7 @@ Current features:
     - Signs
     
 - Currently supported events:
-    - See [Events.md](development/Events.md)
+    - Check the wiki
     
 - Supported Currencies:
     - Gems (custom currency)

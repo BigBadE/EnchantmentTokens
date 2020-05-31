@@ -13,15 +13,18 @@ import java.util.Locale;
 
 public class CustomEnchantmentPlayer implements EnchantmentPlayer {
     private final Player player;
-    private final CurrencyHandler handler;
+    private CurrencyHandler handler;
 
     private EnchantmentGUI currentGUI;
 
     private long doubler = 1;
 
-    public CustomEnchantmentPlayer(Player player, CurrencyHandler handler) {
+    public CustomEnchantmentPlayer(Player player) {
         this.player = player;
-        this.handler = handler;
+    }
+
+    public void setCurrencyHandler(CurrencyHandler hander) {
+        this.handler = hander;
     }
 
     public void save(boolean async) {

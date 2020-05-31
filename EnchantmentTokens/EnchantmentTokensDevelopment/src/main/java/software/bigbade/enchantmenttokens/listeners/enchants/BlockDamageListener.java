@@ -14,9 +14,9 @@ import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
-public class BlockDamageListener extends BasicEnchantListener implements Listener {
+public class BlockDamageListener extends BasicEnchantListener<BlockDamageEvent> implements Listener {
 
-    public BlockDamageListener(ListenerManager<?> eventListeners) {
+    public BlockDamageListener(ListenerManager<BlockDamageEvent> eventListeners) {
         super(eventListeners);
     }
 
@@ -24,7 +24,7 @@ public class BlockDamageListener extends BasicEnchantListener implements Listene
     public void blockBreakStart(BlockDamageEvent event) {
         ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
         if(item.getType() != Material.AIR) {
-            EnchantmentEvent<BlockDamageEvent> enchantmentEvent = new EventFactory<BlockDamageEvent>().createEvent(event, ListenerType.BLOCK_DAMAGED, item, event.getPlayer()).setTargetBlock(event.getBlock());
+            EnchantmentEvent<BlockDamageEvent> enchantmentEvent = EventFactory.createEvent(event, item, event.getPlayer()).setTargetBlock(event.getBlock());
             callListeners(enchantmentEvent);
         }
     }

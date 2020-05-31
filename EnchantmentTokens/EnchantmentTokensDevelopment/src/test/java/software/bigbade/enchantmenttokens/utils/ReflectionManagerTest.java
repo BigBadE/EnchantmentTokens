@@ -18,21 +18,29 @@
 
 package software.bigbade.enchantmenttokens.utils;
 
+import org.bukkit.Bukkit;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.lang.reflect.Field;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
 
-@PrepareForTest({ ReflectionManager.class })
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ ReflectionManager.class, Bukkit.class })
 public class ReflectionManagerTest {
     private boolean worked = false;
 
     @Test
     public void testReflectionManager() {
+        mockStatic(Bukkit.class);
+        when(Bukkit.getVersion()).thenReturn("1.15.2");
         ReflectionManagerTest test = (ReflectionManagerTest) ReflectionManager.instantiate(getClass());
         assertNotNull(test);
         Field field = ReflectionManager.getField(getClass(), "worked");

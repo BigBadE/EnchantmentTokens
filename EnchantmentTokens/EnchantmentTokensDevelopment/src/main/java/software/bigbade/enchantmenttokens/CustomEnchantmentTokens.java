@@ -6,6 +6,7 @@ package software.bigbade.enchantmenttokens;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
+import co.aikar.taskchain.BukkitTaskChainFactory;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import org.bukkit.Bukkit;
@@ -18,11 +19,13 @@ import software.bigbade.enchantmenttokens.currency.CurrencyFactory;
 import software.bigbade.enchantmenttokens.gui.CustomButtonFactory;
 import software.bigbade.enchantmenttokens.gui.CustomMenuFactory;
 import software.bigbade.enchantmenttokens.gui.MenuFactory;
-import software.bigbade.enchantmenttokens.listeners.SignPacketHandler;
+import software.bigbade.enchantmenttokens.listeners.packet.EnchantmentTablePacketHandler;
+import software.bigbade.enchantmenttokens.listeners.packet.SignPacketHandler;
 import software.bigbade.enchantmenttokens.localization.LocaleManager;
 import software.bigbade.enchantmenttokens.skript.type.SkriptManager;
 import software.bigbade.enchantmenttokens.utils.ButtonFactory;
 import software.bigbade.enchantmenttokens.utils.MetricManager;
+import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 import software.bigbade.enchantmenttokens.utils.SignHandler;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyAdditionHandler;
@@ -43,15 +46,12 @@ import java.util.logging.Level;
 
 public class CustomEnchantmentTokens extends EnchantmentTokens {
     //Approx memory usage = 3256 bytes (not counting loaded classes)
-    //Addon main classes are 24 bytes, each enchant is 56 bytes
+    //Addon main classes are ~24 bytes, each enchant is ~56 bytes
     private final File enchantmentFolder = new File(getDataFolder().getPath() + "\\enchantments");
 
     private EnchantmentLoader loader;
 
     private SignPacketHandler signHandler;
-
-    //Minecraft version
-    private int version;
 
     private EnchantmentHandler enchantmentHandler;
     private EnchantListenerHandler listenerHandler;
@@ -66,6 +66,8 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
 
     private SchedulerHandler scheduler;
 
+    private boolean overridingEnchantTables = false;
+
     /**
      * Everything is set up here
      */
@@ -73,9 +75,11 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
     public void onEnable() {
         setLogger(getLogger());
         ButtonFactory.setInstance(new CustomButtonFactory());
+
+        EnchantmentTokens.setTaskChainFactory(BukkitTaskChainFactory.create(this));
+
         EnchantmentTokens.setup();
 
-        version = Integer.parseInt(Bukkit.getVersion().split("\\.")[1]);
         scheduler = new SchedulerHandler(this);
 
         setupConfiguration();
@@ -92,7 +96,7 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
 
         utils = new CustomEnchantUtils(enchantmentHandler, playerHandler, listenerHandler, signHandler.getSigns());
 
-        factory = new CustomMenuFactory(version, playerHandler, utils, enchantmentHandler);
+        factory = new CustomMenuFactory(ReflectionManager.VERSION, playerHandler, utils, enchantmentHandler);
 
         CommandManager.registerCommands(this);
 
@@ -106,6 +110,11 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
     private void setupProtocolManager() {
         ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
         signHandler = new SignPacketHandler(protocolManager, this);
+        overridingEnchantTables = new ConfigurationType<>(false).getValue("override-enchantment-table", getConfig());
+        if(overridingEnchantTables) {
+            EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Enchantment Table overriding is enabled, this is a BETA feature, be careful!");
+            protocolManager.addPacketListener(new EnchantmentTablePacketHandler(this));
+        }
     }
 
     private void setupSkript() {
@@ -152,8 +161,12 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
 
     @Override
     public void onDisable() {
-        loader.getAddons().forEach(Plugin::onDisable);
-        enchantmentHandler.getAllEnchants().forEach(EnchantmentBase::onDisable);
+        if(loader != null) {
+            loader.getAddons().forEach(Plugin::onDisable);
+        }
+        if(enchantmentHandler != null) {
+            enchantmentHandler.getAllEnchants().forEach(EnchantmentBase::onDisable);
+        }
         playerHandler.shutdown();
         currencyFactory.shutdown();
         saveConfig();
@@ -192,11 +205,6 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
     }
 
     @Override
-    public int getVersion() {
-        return version;
-    }
-
-    @Override
     public SignHandler getSignHandler() {
         return signHandler;
     }
@@ -218,4 +226,9 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
 
     @Override
     public File getEnchantmentFolder() { return enchantmentFolder; }
+
+    @Override
+    public boolean getOverridingEnchantTables() {
+        return overridingEnchantTables;
+    }
 }

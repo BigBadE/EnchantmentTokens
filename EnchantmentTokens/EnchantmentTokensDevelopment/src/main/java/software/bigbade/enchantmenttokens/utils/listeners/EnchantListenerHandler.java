@@ -4,6 +4,7 @@
 
 package software.bigbade.enchantmenttokens.utils.listeners;
 
+import co.aikar.taskchain.TaskChain;
 import com.codingforcookies.armorequip.ArmorListener;
 import com.codingforcookies.armorequip.DispenserArmorListener;
 import org.bukkit.Bukkit;
@@ -12,6 +13,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantListener;
@@ -24,12 +26,12 @@ import software.bigbade.enchantmenttokens.configuration.ConfigurationType;
 import software.bigbade.enchantmenttokens.events.EnchantmentApplyEvent;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import software.bigbade.enchantmenttokens.listeners.ChunkUnloadListener;
+import software.bigbade.enchantmenttokens.listeners.EnchantTableListener;
 import software.bigbade.enchantmenttokens.listeners.GemFindListener;
 import software.bigbade.enchantmenttokens.listeners.InventoryMoveListener;
 import software.bigbade.enchantmenttokens.listeners.PlayerJoinListener;
 import software.bigbade.enchantmenttokens.listeners.PlayerLeaveListener;
 import software.bigbade.enchantmenttokens.listeners.SignClickListener;
-import software.bigbade.enchantmenttokens.listeners.SignPlaceListener;
 import software.bigbade.enchantmenttokens.listeners.enchants.ArmorEquipListener;
 import software.bigbade.enchantmenttokens.listeners.enchants.BlockBreakListener;
 import software.bigbade.enchantmenttokens.listeners.enchants.BlockDamageListener;
@@ -40,6 +42,7 @@ import software.bigbade.enchantmenttokens.listeners.enchants.ProjectileHitListen
 import software.bigbade.enchantmenttokens.listeners.enchants.ProjectileShootListener;
 import software.bigbade.enchantmenttokens.listeners.enchants.RiptideListener;
 import software.bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
+import software.bigbade.enchantmenttokens.listeners.packet.SignPlaceListener;
 import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 import software.bigbade.enchantmenttokens.utils.currency.VaultCurrencyFactory;
 
@@ -50,34 +53,30 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 
 public class EnchantListenerHandler implements ListenerHandler {
-    private final Map<ListenerType, ListenerManager<?>> enchantListeners = new ConcurrentHashMap<>();
-    private final EnchantmentTokens main;
-
-    private ListenerManager<EnchantmentApplyEvent> enchantListener;
-
     private static final String FOLDER = "\\enchantments\\";
+    private final TypedListenerHandler enchantListeners = new TypedListenerHandler();
+    private final EnchantmentTokens main;
+    private ListenerManager<EnchantmentApplyEvent> enchantListener;
 
     public EnchantListenerHandler(EnchantmentTokens main) {
         EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Looking for enchantments");
         for (ListenerType type : ListenerType.values()) {
-            enchantListeners.put(type, new ListenerManager<>());
+            enchantListeners.register(type, new ListenerManager<>());
         }
         this.main = main;
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public void registerListeners() {
-        enchantListener = (ListenerManager<EnchantmentApplyEvent>) enchantListeners.get(ListenerType.ENCHANT);
+        enchantListener = enchantListeners.getManager(ListenerType.ENCHANT);
 
         Bukkit.getPluginManager().registerEvents(new ArmorListener(new ArrayList<>()), main);
         Bukkit.getPluginManager().registerEvents(new DispenserArmorListener(), main);
@@ -91,46 +90,51 @@ public class EnchantListenerHandler implements ListenerHandler {
         Bukkit.getPluginManager().registerEvents(new PlayerLeaveListener(main.getPlayerHandler()), main);
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(main.getPlayerHandler()), main);
 
-        if (main.getVersion() >= 13)
-            Bukkit.getPluginManager().registerEvents(new RiptideListener(enchantListeners.get(ListenerType.RIPTIDE)), main);
-        Bukkit.getPluginManager().registerEvents(new ProjectileHitListener(main.getVersion(), enchantListeners.get(ListenerType.TRIDENT_HIT), enchantListeners.get(ListenerType.ARROW_HIT)), main);
-        Bukkit.getPluginManager().registerEvents(new ProjectileShootListener(main, enchantListeners.get(ListenerType.TRIDENT_THROW), enchantListeners.get(ListenerType.BOW_SHOOT), enchantListeners.get(ListenerType.CROSSBOW_SHOOT)), main);
-        Bukkit.getPluginManager().registerEvents(new PlayerDamageListener(enchantListeners.get(ListenerType.ON_DAMAGED), enchantListeners.get(ListenerType.ENTITY_DAMAGED), enchantListeners.get(ListenerType.SHIELD_BLOCK)), main);
-        Bukkit.getPluginManager().registerEvents(new PotionListener(enchantListeners.get(ListenerType.POTION_APPLY), enchantListeners.get(ListenerType.POTION_REMOVE)), main);
+        if (main.getOverridingEnchantTables()) {
+            Bukkit.getPluginManager().registerEvents(new EnchantTableListener(main.getEnchantmentHandler(), main.getPlayerHandler(), ConfigurationManager.getSectionOrCreate(main.getConfig(), "enchantment-table")), main);
+        }
 
-        registerBlockBreak();
-        Bukkit.getPluginManager().registerEvents(new PlayerDeathListener(enchantListeners.get(ListenerType.DEATH)), main);
-        Bukkit.getPluginManager().registerEvents(new ArmorEquipListener(enchantListeners.get(ListenerType.EQUIP), enchantListeners.get(ListenerType.UNEQUIP)), main);
-        Bukkit.getPluginManager().registerEvents(new BlockDamageListener(enchantListeners.get(ListenerType.BLOCK_DAMAGED)), main);
-        Bukkit.getPluginManager().registerEvents(new InventoryMoveListener(enchantListeners.get(ListenerType.HELD), enchantListeners.get(ListenerType.SWAPPED), main.getSignHandler().getSigns(), main.getScheduler()), main);
+        if (ReflectionManager.VERSION >= 13)
+            Bukkit.getPluginManager().registerEvents(new RiptideListener(enchantListeners.getManager(ListenerType.RIPTIDE)), main);
+        Bukkit.getPluginManager().registerEvents(new PlayerDeathListener(enchantListeners.getManager(ListenerType.DEATH_AFTER)), main);
+        Bukkit.getPluginManager().registerEvents(new ProjectileHitListener(enchantListeners.getManager(ListenerType.TRIDENT_HIT), enchantListeners.getManager(ListenerType.ARROW_HIT)), main);
+        Bukkit.getPluginManager().registerEvents(new ProjectileShootListener(main, enchantListeners.getManager(ListenerType.TRIDENT_THROW), enchantListeners.getManager(ListenerType.BOW_SHOOT), enchantListeners.getManager(ListenerType.CROSSBOW_SHOOT)), main);
+        Bukkit.getPluginManager().registerEvents(new PlayerDamageListener(enchantListeners.getManager(ListenerType.ON_DAMAGED), enchantListeners.getManager(ListenerType.ENTITY_DAMAGED), enchantListeners.getManager(ListenerType.SHIELD_BLOCK), enchantListeners.getManager(ListenerType.SWORD_BLOCK), enchantListeners.getManager(ListenerType.DEATH_BEFORE)), main);
+        Bukkit.getPluginManager().registerEvents(new PotionListener(enchantListeners.getManager(ListenerType.POTION_APPLY), enchantListeners.getManager(ListenerType.POTION_REMOVE)), main);
+
+        registerGemListener();
+        Bukkit.getPluginManager().registerEvents(new BlockBreakListener(enchantListeners.getManager(ListenerType.BLOCK_BREAK), main.getSignHandler()), main);
+        Bukkit.getPluginManager().registerEvents(new ArmorEquipListener(enchantListeners.getManager(ListenerType.EQUIP), enchantListeners.getManager(ListenerType.UNEQUIP)), main);
+        Bukkit.getPluginManager().registerEvents(new BlockDamageListener(enchantListeners.getManager(ListenerType.BLOCK_DAMAGED)), main);
+        Bukkit.getPluginManager().registerEvents(new InventoryMoveListener(enchantListeners.getManager(ListenerType.HELD), enchantListeners.getManager(ListenerType.SWAPPED), main.getSignHandler().getSigns(), main.getScheduler()), main);
     }
 
-    private void registerBlockBreak() {
-        Bukkit.getPluginManager().registerEvents(new BlockBreakListener(enchantListeners.get(ListenerType.BLOCK_BREAK), main.getSignHandler()), main);
+    private void registerGemListener() {
         if (!(main.getCurrencyHandler() instanceof VaultCurrencyFactory)) {
             Bukkit.getPluginManager().registerEvents(new GemFindListener(main.getConfig().getConfigurationSection("currency"), main.getPlayerHandler()), main);
         }
     }
 
+    @Override
     public void onEnchant(ItemStack item, EnchantmentBase base, Player player) {
         EnchantmentApplyEvent event = new EnchantmentApplyEvent(item, player, base);
-        EnchantmentEvent<EnchantmentApplyEvent> enchantmentEvent = new EventFactory<EnchantmentApplyEvent>().createEvent(event, ListenerType.ENCHANT, item, player);
+        EnchantmentEvent<EnchantmentApplyEvent> enchantmentEvent = EventFactory.createEvent(event, item, player);
         enchantListener.callEvent(enchantmentEvent, base.getEnchantment());
     }
 
-    public void loadAddons(Collection<EnchantmentAddon> addons) {
-        for (EnchantmentAddon addon : addons) {
-            FileConfiguration configuration = ConfigurationManager.loadConfigurationFile(new File(main.getDataFolder().getAbsolutePath() + FOLDER + addon.getName() + ".yml"));
+    @Override
+    public void loadAddon(EnchantmentAddon addon) {
+        FileConfiguration configuration = ConfigurationManager.loadConfigurationFile(new File(main.getDataFolder().getAbsolutePath() + FOLDER + addon.getName() + ".yml"));
 
-            for (Field field : addon.getClass().getDeclaredFields()) {
-                ConfigurationManager.loadConfigForField(field, configuration, addon);
-            }
-
-            addon.onEnable();
-            main.getMenuFactory().addButtons(addon.getButtons());
+        for (Field field : addon.getClass().getDeclaredFields()) {
+            ConfigurationManager.loadConfigForField(field, configuration, addon);
         }
+
+        addon.onEnable();
+        main.getMenuFactory().addButtons(addon.getButtons());
     }
 
+    @Override
     public void loadEnchantments(Map<EnchantmentAddon, Set<Class<EnchantmentBase>>> enchants) {
         long startTime = System.currentTimeMillis();
         ConcurrentLinkedQueue<EnchantmentBase> enchantments = new ConcurrentLinkedQueue<>();
@@ -139,21 +143,27 @@ public class EnchantListenerHandler implements ListenerHandler {
 
         enchants.keySet().forEach(addon -> configs.put(addon, ConfigurationManager.loadConfigurationFile(new File(main.getDataFolder().getAbsolutePath() + FOLDER + addon.getName() + ".yml"))));
 
-        enchants.forEach((addon, classes) -> {
+        TaskChain<?> chain = EnchantmentTokens.newChain();
+
+        enchants.forEach((addon, classes) -> chain.async(() -> {
             for (Class<EnchantmentBase> clazz : classes) {
                 EnchantmentBase enchant = loadClass(clazz, configs.get(addon), addon);
-                if (enchant == null) continue;
+                if (enchant == null) {
+                    continue;
+                }
                 enchant.loadConfig();
                 enchantments.add(enchant);
                 checkMethods(enchant, clazz);
             }
-        });
+        }));
 
-        Bukkit.getScheduler().runTask(main, () -> {
-            registerListeners();
+        chain.sync(() -> {
             main.getEnchantmentHandler().registerEnchants(enchantments);
+            registerListeners();
             main.saveConfig();
         });
+
+        chain.execute();
 
         for (Map.Entry<EnchantmentAddon, FileConfiguration> configuration : configs.entrySet()) {
             ConfigurationManager.saveConfiguration(new File(main.getDataFolder().getAbsolutePath() + FOLDER + configuration.getKey().getName() + ".yml"), configuration.getValue());
@@ -161,8 +171,9 @@ public class EnchantListenerHandler implements ListenerHandler {
         EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Finishing loading enchantments in {0} milliseconds", System.currentTimeMillis() - startTime);
     }
 
-    public ListenerManager<?> getListenerManager(ListenerType type) {
-        return enchantListeners.get(type);
+    @Override
+    public <T extends Event> ListenerManager<T> getListenerManager(ListenerType type) {
+        return enchantListeners.getManager(type);
     }
 
     private void checkMethods(@Nonnull EnchantmentBase enchant, Class<?> clazz) {
@@ -171,13 +182,13 @@ public class EnchantListenerHandler implements ListenerHandler {
                 continue;
             ListenerType type = method.getAnnotation(EnchantListener.class).type();
             if (canEnchant(enchant, type)) {
-                enchantListeners.get(type).add(event -> ReflectionManager.invoke(method, enchant, event), enchant.getEnchantment());
+                enchantListeners.getManager(type).add(event -> ReflectionManager.invoke(method, enchant, event), enchant.getEnchantment());
             }
         }
     }
 
     private boolean canEnchant(EnchantmentBase enchant, ListenerType type) {
-        if(enchant.getTarget() == null) {
+        if (enchant.getTarget() == null) {
             EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "No target set for enchantment {0}", enchant.getEnchantmentName());
             return false;
         }

@@ -27,25 +27,25 @@ public class EnchantmentMinLevelEffect extends Effect {
     }
 
     private Expression<SkriptEnchantment> enchantment;
-    private Expression<Number> level;
+    private Expression<Number> minLevel;
 
     @Override
     protected void execute(@Nonnull Event event) {
-        int minLevel = level.getSingle(event).intValue();
-        enchantment.getSingle(event).setMaxLevel(minLevel);
+        int minLevel = this.minLevel.getSingle(event).intValue();
+        enchantment.getSingle(event).setStartLevel(minLevel);
     }
 
     @Nonnull
     @Override
     public String toString(Event event, boolean b) {
-        return "Set min level of " + enchantment.getSingle(event).getEnchantmentName() + " to " + level.getSingle(event);
+        return "Set min level of " + enchantment.getSingle(event).getEnchantmentName() + " to " + minLevel.getSingle(event);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public boolean init(Expression<?>[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
         enchantment = (Expression<SkriptEnchantment>) expressions[0];
-        level = (Expression<Number>) expressions[1];
+        minLevel = (Expression<Number>) expressions[1];
         return true;
     }
 }

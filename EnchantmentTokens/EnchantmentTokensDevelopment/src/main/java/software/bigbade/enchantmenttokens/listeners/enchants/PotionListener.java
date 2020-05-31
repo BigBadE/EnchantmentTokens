@@ -4,6 +4,7 @@
 
 package software.bigbade.enchantmenttokens.listeners.enchants;
 
+import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,15 +13,10 @@ import software.bigbade.enchantmenttokens.api.EventFactory;
 import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
-public class PotionListener extends BasicEnchantListener implements Listener {
-    private final ListenerManager<?> potionAdd;
-    private final ListenerManager<?> potionRemove;
-
-    public PotionListener(ListenerManager<?> potionAdd, ListenerManager<?> potionRemove) {
-        super(null);
-        this.potionAdd = potionAdd;
-        this.potionRemove = potionRemove;
-    }
+@RequiredArgsConstructor
+public class PotionListener extends BasicEnchantListener<EntityPotionEffectEvent> implements Listener {
+    private final ListenerManager<EntityPotionEffectEvent> potionAdd;
+    private final ListenerManager<EntityPotionEffectEvent> potionRemove;
 
     @EventHandler
     public void onPotionApply(EntityPotionEffectEvent event) {
@@ -29,9 +25,9 @@ public class PotionListener extends BasicEnchantListener implements Listener {
         Player player = (Player) event.getEntity();
 
         if (event.getAction().equals(EntityPotionEffectEvent.Action.ADDED)) {
-            callForAllItems(player, potionAdd, new EventFactory<EntityPotionEffectEvent>().createEvent(event, ListenerType.POTION_APPLY, null, player));
+            callForAllItems(potionAdd, EventFactory.createEvent(event, null, player));
         } else if (event.getAction().equals(EntityPotionEffectEvent.Action.REMOVED) || event.getAction().equals(EntityPotionEffectEvent.Action.CLEARED)) {
-            callForAllItems(player, potionRemove, new EventFactory<EntityPotionEffectEvent>().createEvent(event, ListenerType.POTION_REMOVE, null, player));
+            callForAllItems(potionRemove, EventFactory.createEvent(event, null, player));
         }
     }
 }

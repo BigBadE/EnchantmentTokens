@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.StringUtils;
+import software.bigbade.enchantmenttokens.api.VanillaEnchant;
 import software.bigbade.enchantmenttokens.commands.CommandUtils;
 import software.bigbade.enchantmenttokens.localization.TranslatedStringMessage;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
@@ -54,10 +55,13 @@ public class EnchantTabCompleter implements TabCompleter, IEnchantTabCompleter {
     public List<String> getKeys(String name) {
         List<String> suggestions = new ArrayList<>();
         for (EnchantmentBase base : handler.getAllEnchants()) {
-            String key = base.getKey().getNamespace() + ":" + base.getEnchantmentName();
+            if(base instanceof VanillaEnchant) {
+                continue;
+            }
+            String key = base.getKey().toString();
             if (key.startsWith(name) || base.getEnchantmentName().startsWith(name)) {
                 suggestions.add(key);
-                if(suggestions.size() > 5)
+                if(suggestions.size() > 10)
                     break;
             }
         }

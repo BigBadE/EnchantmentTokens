@@ -37,7 +37,7 @@ public class EnchantmentListenerEvent extends SelfRegisteringSkriptEvent {
             @Nonnull
             @Override
             public Player get(@Nonnull final CustomEnchantmentEvent e) {
-                return (Player) e.getUser();
+                return e.getUser();
             }
         }, 0);
     }

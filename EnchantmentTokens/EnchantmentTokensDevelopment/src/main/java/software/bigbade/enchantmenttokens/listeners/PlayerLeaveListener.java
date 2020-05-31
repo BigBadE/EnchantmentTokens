@@ -31,7 +31,7 @@ public class PlayerLeaveListener implements Listener {
 
     private void savePlayer(Player player) {
         EnchantmentPlayer enchantmentPlayer = playerHandler.getPlayer(player);
-        enchantmentPlayer.save(false);
+        enchantmentPlayer.save(true);
         playerHandler.removePlayer(enchantmentPlayer);
     }
 }

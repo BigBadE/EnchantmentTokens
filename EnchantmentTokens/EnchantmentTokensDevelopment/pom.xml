@@ -34,6 +34,13 @@
             <artifactId>EnchantmentTokensLocalization</artifactId>
             <version>1.0</version>
         </dependency>
+        <!--TaskChain-->
+        <dependency>
+            <groupId>co.aikar</groupId>
+            <artifactId>taskchain-bukkit</artifactId>
+            <version>3.7.2</version>
+            <scope>compile</scope>
+        </dependency>
         <!--Used for interacting with Brigadier-->
         <dependency>
             <groupId>me.lucko</groupId>

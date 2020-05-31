@@ -7,6 +7,7 @@ package software.bigbade.enchantmenttokens.api;
 import lombok.Getter;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
@@ -21,11 +22,8 @@ public class CustomEnchantmentEvent<T extends Event> extends Event implements En
     @Getter
     @Nonnull
     private final T event;
-
     @Nonnull
-    private final ListenerType type;
-    @Nonnull
-    private Entity user;
+    private final Player user;
     @Nullable
     private Entity targetEntity;
     @Nullable
@@ -33,8 +31,7 @@ public class CustomEnchantmentEvent<T extends Event> extends Event implements En
 
     private ItemStack item = null;
 
-    public CustomEnchantmentEvent(@Nonnull T event, @Nonnull ListenerType type, @Nullable ItemStack item, @Nonnull Entity user) {
-        this.type = type;
+    public CustomEnchantmentEvent(@Nonnull T event, @Nullable ItemStack item, @Nonnull Player user) {
         if (item != null) {
             this.item = item;
         }
@@ -46,13 +43,6 @@ public class CustomEnchantmentEvent<T extends Event> extends Event implements En
     @SuppressWarnings("unused")
     public static HandlerList getHandlerList() {
         return handlers;
-    }
-
-    @Nonnull
-    @Override
-    public EnchantmentEvent<T> setUser(Entity user) {
-        this.user = user;
-        return this;
     }
 
     @Nonnull

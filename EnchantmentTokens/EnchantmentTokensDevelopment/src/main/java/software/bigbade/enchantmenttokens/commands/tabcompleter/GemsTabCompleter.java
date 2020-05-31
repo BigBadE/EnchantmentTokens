@@ -44,6 +44,9 @@ public class GemsTabCompleter implements TabCompleter, IEnchantTabCompleter {
                 players.add(ChatColor.stripColor(new TranslatedStringMessage(locale, StringUtils.COMMAND_ERROR_NO_PLAYER).translate(args[0])));
             return players;
         } else {
+            if(args[1].isEmpty()) {
+                return Collections.emptyList();
+            }
             return checkLong(args[1], locale);
         }
     }

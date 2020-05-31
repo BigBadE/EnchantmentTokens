@@ -14,13 +14,13 @@ import software.bigbade.enchantmenttokens.commands.tabcompleter.GenericTabComple
 import software.bigbade.enchantmenttokens.commands.tabcompleter.IEnchantTabCompleter;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationType;
 import software.bigbade.enchantmenttokens.utils.BrigadierManager;
+import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 
 import java.util.Objects;
 
 public class CommandManager {
     //Private constructor to hide implicit public one.
-    private CommandManager() {
-    }
+    private CommandManager() { }
 
     public static void registerCommands(EnchantmentTokens main) {
         EnchantMenuCmd menuCmd = new EnchantMenuCmd(main.getMenuFactory(), main.getPlayerHandler());
@@ -36,7 +36,7 @@ public class CommandManager {
 
     private static void registerCommand(EnchantmentTokens main, String name, TabCompleter tabCompleter, CommandExecutor executor) {
         Objects.requireNonNull(main.getCommand(name)).setExecutor(executor);
-        if (main.getVersion() >= 13 && tabCompleter != null) {
+        if (ReflectionManager.VERSION >= 13 && tabCompleter != null) {
             Objects.requireNonNull(main.getCommand(name)).setTabCompleter(tabCompleter);
             BrigadierManager.register(main, Objects.requireNonNull(main.getCommand(name)), ((IEnchantTabCompleter) tabCompleter).getPermission());
         }

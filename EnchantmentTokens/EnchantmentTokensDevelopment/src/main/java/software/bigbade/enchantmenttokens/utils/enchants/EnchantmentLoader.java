@@ -30,13 +30,17 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 
 public class EnchantmentLoader {
-    private Map<EnchantmentAddon, Set<Class<EnchantmentBase>>> enchantments = new ConcurrentHashMap<>();
-    private Collection<EnchantmentAddon> addons = new ConcurrentLinkedQueue<>();
+    private final Map<EnchantmentAddon, Set<Class<EnchantmentBase>>> enchantments = new ConcurrentHashMap<>();
+    private final Collection<EnchantmentAddon> addons = new ConcurrentLinkedQueue<>();
+
+    private final ExecutorService executor = Executors.newCachedThreadPool();
 
     public EnchantmentLoader(File folder, EnchantmentTokens main) {
         main.getScheduler().runTaskAsync(() -> {
@@ -50,9 +54,6 @@ public class EnchantmentLoader {
             }
 
             loadEnchantmentClasses(jars, main);
-
-            main.getListenerHandler().loadAddons(addons);
-            main.getListenerHandler().loadEnchantments(enchantments);
         });
     }
 
@@ -65,30 +66,6 @@ public class EnchantmentLoader {
             EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not load storage jar", e);
         }
         return classes;
-    }
-
-    @SuppressWarnings("unchecked")
-    public void loadEnchantmentClasses(List<File> files, EnchantmentTokens main) {
-        URL[] urls = getUrls(files);
-        try (URLClassLoader cl = new URLClassLoader(urls, EnchantmentLoader.class.getClassLoader())) {
-            for (File file : files) {
-                List<Class<?>> classes = loadClassesForFile(file, cl);
-                Set<Class<EnchantmentBase>> enchantClasses = new HashSet<>();
-
-                for (Class<?> clazz : classes)
-                    if (CustomEnchantment.class.isAssignableFrom(clazz))
-                        enchantClasses.add((Class<EnchantmentBase>) clazz);
-                EnchantmentAddon addon = loadAddon(file, main, cl);
-                if (addon != null) {
-                    addons.add(addon);
-                    enchantments.put(addon, enchantClasses);
-                } else {
-                    EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Jar " + file.getName() + " has a bugged/no EnchantmentAddon class, skipping loading enchants");
-                }
-            }
-        } catch (IOException e) {
-            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Problem loading jar URLs", e);
-        }
     }
 
     private static List<Class<?>> loadClassesForFile(File file, ClassLoader cl) {
@@ -128,7 +105,7 @@ public class EnchantmentLoader {
             addon.setup(main, descriptionFile);
             return addon;
         } catch (IOException | InvalidDescriptionException | ClassNotFoundException e) {
-            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Problem loading addon " + file.getName(), e);
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, e, () -> "Problem loading addon " + file.getName());
         }
         return null;
     }
@@ -137,6 +114,39 @@ public class EnchantmentLoader {
         String className = jar.getName().substring(0, jar.getName().length() - 6);
         className = className.replace('/', '.');
         return loader.loadClass(className);
+    }
+
+    public void loadEnchantmentClasses(List<File> files, EnchantmentTokens main) {
+        URL[] urls = getUrls(files);
+        try (URLClassLoader cl = new URLClassLoader(urls, EnchantmentLoader.class.getClassLoader())) {
+            for (File file : files) {
+                loadJar(file, main, cl);
+            }
+            for (EnchantmentAddon addon : addons) {
+                executor.submit(() -> main.getListenerHandler().loadAddon(addon));
+            }
+            executor.shutdown();
+            main.getListenerHandler().loadEnchantments(enchantments);
+        } catch (IOException e) {
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Problem loading jar URLs", e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void loadJar(File file, EnchantmentTokens main, ClassLoader cl) {
+        List<Class<?>> classes = loadClassesForFile(file, cl);
+        Set<Class<EnchantmentBase>> enchantClasses = new HashSet<>();
+
+        for (Class<?> clazz : classes)
+            if (CustomEnchantment.class.isAssignableFrom(clazz))
+                enchantClasses.add((Class<EnchantmentBase>) clazz);
+        EnchantmentAddon addon = loadAddon(file, main, cl);
+        if (addon != null) {
+            addons.add(addon);
+            enchantments.put(addon, enchantClasses);
+        } else {
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Jar {0} has a bugged/has no EnchantmentAddon class, skipping loading enchants", file.getName());
+        }
     }
 
     public Collection<EnchantmentAddon> getAddons() {

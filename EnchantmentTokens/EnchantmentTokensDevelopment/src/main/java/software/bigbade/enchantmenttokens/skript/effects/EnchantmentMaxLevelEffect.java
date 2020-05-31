@@ -27,25 +27,25 @@ public class EnchantmentMaxLevelEffect extends Effect {
     }
 
     private Expression<SkriptEnchantment> enchantment;
-    private Expression<Number> level;
+    private Expression<Number> maxLevel;
 
     @Override
     protected void execute(@Nonnull Event event) {
-        int maxLevel = level.getSingle(event).intValue();
-        enchantment.getSingle(event).setMaxLevel(maxLevel);
+        int minLevel = this.maxLevel.getSingle(event).intValue();
+        enchantment.getSingle(event).setMaxLevel(minLevel);
     }
 
     @Nonnull
     @Override
     public String toString(Event event, boolean b) {
-        return "Set max level of " + enchantment.getSingle(event).getEnchantmentName() + " to " + level.getSingle(event);
+        return "Set max level of " + enchantment.getSingle(event).getEnchantmentName() + " to " + maxLevel.getSingle(event);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public boolean init(Expression<?>[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
         enchantment = (Expression<SkriptEnchantment>) expressions[0];
-        level = (Expression<Number>) expressions[1];
+        maxLevel = (Expression<Number>) expressions[1];
         return true;
     }
 }

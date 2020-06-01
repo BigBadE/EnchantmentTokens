@@ -1,4 +1,4 @@
-EnchantmentTokens is a plugin allowing for easy addition of custom enchantments into Minecraft.
+EnchantmentTokens is a plugin allowing for easy addition of customized enchantments into Minecraft.
 
 Latest Build: 
 [![Latest Build](https://travis-ci.com/BigBadE/EnchantmentTokens.svg?branch=master)](https://travis-ci.com/BigBadE/EnchantmentTokens)

@@ -26,20 +26,7 @@ public class PlayerDamageListener extends BasicEnchantListener<EntityDamageByEnt
     private final ListenerManager<EntityDamageByEntityEvent> swordBlock;
     private final ListenerManager<EntityDamageByEntityEvent> death;
 
-<<<<<<< HEAD:EnchantmentTokens/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/listeners/enchants/PlayerDamageListener.java
     @EventHandler(priority = EventPriority.HIGHEST)
-=======
-public class PlayerDamageListener extends BasicEnchantListener implements Listener {
-    private final ListenerManager hit;
-    private final ListenerManager block;
-
-    public PlayerDamageListener(ListenerManager hit, @Nullable ListenerManager block) {
-        this.hit = hit;
-        this.block = block;
-    }
-
-    @EventHandler
->>>>>>> 3d705af96ebb617ac55d44878c2077b5e14535b9:EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/listeners/enchants/PlayerDamageListener.java
     public void onEntityDamage(EntityDamageByEntityEvent event) {
         if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();

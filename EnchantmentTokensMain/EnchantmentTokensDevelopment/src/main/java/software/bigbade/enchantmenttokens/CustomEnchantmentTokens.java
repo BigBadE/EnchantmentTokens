@@ -18,14 +18,13 @@ import software.bigbade.enchantmenttokens.configuration.ConfigurationType;
 import software.bigbade.enchantmenttokens.currency.CurrencyFactory;
 import software.bigbade.enchantmenttokens.gui.CustomButtonFactory;
 import software.bigbade.enchantmenttokens.gui.CustomMenuFactory;
-import software.bigbade.enchantmenttokens.gui.MenuFactory;
+import software.bigbade.enchantmenttokens.gui.EnchantmentMenuFactory;
 import software.bigbade.enchantmenttokens.listeners.packet.EnchantmentTablePacketHandler;
 import software.bigbade.enchantmenttokens.listeners.packet.SignPacketHandler;
 import software.bigbade.enchantmenttokens.localization.LocaleManager;
 import software.bigbade.enchantmenttokens.skript.type.SkriptManager;
 import software.bigbade.enchantmenttokens.utils.ButtonFactory;
 import software.bigbade.enchantmenttokens.utils.MetricManager;
-import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 import software.bigbade.enchantmenttokens.utils.SignHandler;
 import software.bigbade.enchantmenttokens.utils.currency.CurrencyAdditionHandler;
@@ -45,11 +44,6 @@ import java.io.File;
 import java.util.logging.Level;
 
 public class CustomEnchantmentTokens extends EnchantmentTokens {
-<<<<<<< HEAD:EnchantmentTokens/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/CustomEnchantmentTokens.java
-    //Approx memory usage = 3256 bytes (not counting loaded classes)
-    //Addon main classes are ~24 bytes, each enchant is ~56 bytes
-=======
->>>>>>> 3d705af96ebb617ac55d44878c2077b5e14535b9:EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/CustomEnchantmentTokens.java
     private final File enchantmentFolder = new File(getDataFolder().getPath() + "\\enchantments");
 
     private EnchantmentLoader loader;
@@ -65,7 +59,7 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
 
     private EnchantUtils utils;
 
-    private MenuFactory factory;
+    private EnchantmentMenuFactory factory;
 
     private SchedulerHandler scheduler;
 
@@ -99,7 +93,7 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
 
         utils = new CustomEnchantUtils(enchantmentHandler, playerHandler, listenerHandler, signHandler.getSigns());
 
-        factory = new CustomMenuFactory(ReflectionManager.VERSION, playerHandler, utils, enchantmentHandler);
+        factory = new CustomMenuFactory(playerHandler, utils, enchantmentHandler);
 
         CommandManager.registerCommands(this);
 
@@ -218,7 +212,7 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
     }
 
     @Override
-    public MenuFactory getMenuFactory() {
+    public EnchantmentMenuFactory getMenuFactory() {
         return factory;
     }
 

@@ -12,11 +12,7 @@ import java.util.Locale;
 public class VaultCurrencyHandler extends EnchantCurrencyHandler {
     private final Player player;
     private final Economy economy;
-<<<<<<< HEAD:EnchantmentTokens/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/utils/currency/VaultCurrencyHandler.java
     private Locale locale;
-=======
-    private Locale locale = Locale.getDefault();
->>>>>>> 3d705af96ebb617ac55d44878c2077b5e14535b9:EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/utils/currency/VaultCurrencyHandler.java
 
     public VaultCurrencyHandler(Player player, Economy economy) {
         super("vault");

@@ -16,10 +16,7 @@ public class CustomEnchantmentGUI implements EnchantmentGUI {
     private ItemStack item;
     private final Inventory inventory;
     private final Map<Integer, EnchantButton> buttons = new HashMap<>();
-<<<<<<< HEAD:EnchantmentTokens/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/gui/CustomEnchantmentGUI.java
     private final List<EnchantmentBase> adding;
-=======
->>>>>>> 3d705af96ebb617ac55d44878c2077b5e14535b9:EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/gui/CustomEnchantmentGUI.java
 
     public CustomEnchantmentGUI(Inventory inventory, List<EnchantmentBase> enchantments) {
         this.inventory = inventory;

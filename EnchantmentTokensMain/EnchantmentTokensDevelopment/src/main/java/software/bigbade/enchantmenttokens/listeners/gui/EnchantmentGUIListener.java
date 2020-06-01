@@ -27,11 +27,7 @@ public class EnchantmentGUIListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         EnchantmentPlayer player = handler.getPlayer((Player) event.getWhoClicked());
-<<<<<<< HEAD:EnchantmentTokens/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/listeners/gui/EnchantmentGUIListener.java
-        if (event.getSlot() == -1 || event.getCurrentItem() == null || player.getCurrentGUI() == null)
-=======
         if (event.getCurrentItem() == null || player.getCurrentGUI() == null)
->>>>>>> 3d705af96ebb617ac55d44878c2077b5e14535b9:EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/listeners/gui/EnchantmentGUIListener.java
             return;
         event.setCancelled(true);
         EnchantButton button = player.getCurrentGUI().getButton(event.getSlot());

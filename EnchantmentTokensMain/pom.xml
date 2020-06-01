@@ -24,13 +24,8 @@
     <packaging>pom</packaging>
 
     <parent>
-<<<<<<< HEAD:EnchantmentTokens/pom.xml
-        <artifactId>EnchantmentTokensMain</artifactId>
-        <groupId>software.bigbade</groupId>
-=======
         <artifactId>EnchantmentTokens</artifactId>
-        <groupId>software.bigbade.enchantmenttokens</groupId>
->>>>>>> 3d705af96ebb617ac55d44878c2077b5e14535b9:EnchantmentTokensMain/pom.xml
+        <groupId>software.bigbade</groupId>
         <version>1.0</version>
     </parent>
 

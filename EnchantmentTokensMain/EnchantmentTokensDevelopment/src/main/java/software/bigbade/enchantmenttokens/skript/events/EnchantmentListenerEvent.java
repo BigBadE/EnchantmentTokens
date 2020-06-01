@@ -37,11 +37,7 @@ public class EnchantmentListenerEvent extends SelfRegisteringSkriptEvent {
             @Nonnull
             @Override
             public Player get(@Nonnull final CustomEnchantmentEvent e) {
-<<<<<<< HEAD:EnchantmentTokens/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/skript/events/EnchantmentListenerEvent.java
                 return e.getUser();
-=======
-                return (Player) e.getUser();
->>>>>>> 3d705af96ebb617ac55d44878c2077b5e14535b9:EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/skript/events/EnchantmentListenerEvent.java
             }
         }, 0);
     }
@@ -86,7 +82,6 @@ public class EnchantmentListenerEvent extends SelfRegisteringSkriptEvent {
 
     @Nonnull
     @Override
-    @Nonnull
     public String toString(Event event, boolean b) {
         SkriptEnchantment enchantment = this.enchantmentExpression.getSingle(event);
         Objects.requireNonNull(enchantment);

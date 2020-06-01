@@ -14,19 +14,10 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EventFactory;
-import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
-<<<<<<< HEAD:EnchantmentTokens/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/listeners/enchants/ProjectileShootListener.java
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-=======
-public class ProjectileShootListener extends BasicEnchantListener implements Listener {
-    private final ListenerManager crossbowShoot;
-    private final ListenerManager tridentThrow;
-    private final ListenerManager bowShoot;
-    private final int version;
->>>>>>> 3d705af96ebb617ac55d44878c2077b5e14535b9:EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/listeners/enchants/ProjectileShootListener.java
 
 @RequiredArgsConstructor
 public class ProjectileShootListener extends BasicEnchantListener<ProjectileLaunchEvent> implements Listener {

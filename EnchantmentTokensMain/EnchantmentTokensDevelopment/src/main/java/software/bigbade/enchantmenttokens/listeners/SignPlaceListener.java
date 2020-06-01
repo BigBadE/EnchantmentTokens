@@ -2,7 +2,7 @@
  * Copyright (c) 2020 BigBadE, All rights reserved
  */
 
-package software.bigbade.enchantmenttokens.listeners.packet;
+package software.bigbade.enchantmenttokens.listeners;
 
 import lombok.RequiredArgsConstructor;
 import org.bukkit.ChatColor;

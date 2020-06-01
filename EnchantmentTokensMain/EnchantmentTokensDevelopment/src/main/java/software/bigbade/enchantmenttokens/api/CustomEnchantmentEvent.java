@@ -28,20 +28,11 @@ public class CustomEnchantmentEvent<T extends Event> extends Event implements En
     private Entity targetEntity;
     @Nullable
     private Block targetBlock;
-<<<<<<< HEAD:EnchantmentTokens/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/api/CustomEnchantmentEvent.java
 
-    private ItemStack item = null;
-=======
     private ItemStack item;
-    private final ListenerType type;
-
-    private static final HandlerList handlers = new HandlerList();
->>>>>>> 3d705af96ebb617ac55d44878c2077b5e14535b9:EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/api/CustomEnchantmentEvent.java
 
     public CustomEnchantmentEvent(@Nonnull T event, @Nullable ItemStack item, @Nonnull Player user) {
-        if (item != null) {
-            this.item = item;
-        }
+        this.item = item;
         this.user = user;
         this.event = event;
     }

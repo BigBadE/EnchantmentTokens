@@ -39,11 +39,7 @@ import java.util.logging.Level;
 public class EnchantmentLoader {
     private final Map<EnchantmentAddon, Set<Class<EnchantmentBase>>> enchantments = new ConcurrentHashMap<>();
     private final Collection<EnchantmentAddon> addons = new ConcurrentLinkedQueue<>();
-<<<<<<< HEAD:EnchantmentTokens/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/utils/enchants/EnchantmentLoader.java
-
     private final ExecutorService executor = Executors.newCachedThreadPool();
-=======
->>>>>>> 3d705af96ebb617ac55d44878c2077b5e14535b9:EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/utils/enchants/EnchantmentLoader.java
 
     public EnchantmentLoader(File folder, EnchantmentTokens main) {
         main.getScheduler().runTaskAsync(() -> {

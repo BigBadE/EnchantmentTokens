@@ -13,10 +13,7 @@ import java.util.Locale;
 
 public class CustomEnchantmentPlayer implements EnchantmentPlayer {
     private final Player player;
-<<<<<<< HEAD:EnchantmentTokens/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/utils/players/CustomEnchantmentPlayer.java
     private CurrencyHandler handler;
-=======
->>>>>>> 3d705af96ebb617ac55d44878c2077b5e14535b9:EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/utils/players/CustomEnchantmentPlayer.java
 
     private EnchantmentGUI currentGUI;
 

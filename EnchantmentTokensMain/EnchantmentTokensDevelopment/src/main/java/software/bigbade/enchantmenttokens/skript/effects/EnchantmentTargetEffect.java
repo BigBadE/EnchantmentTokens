@@ -19,10 +19,7 @@ import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
 import software.bigbade.enchantmenttokens.utils.MaterialGroupUtils;
 
 import javax.annotation.Nonnull;
-<<<<<<< HEAD:EnchantmentTokens/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/skript/effects/EnchantmentTargetEffect.java
-=======
 import java.util.Objects;
->>>>>>> 3d705af96ebb617ac55d44878c2077b5e14535b9:EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/skript/effects/EnchantmentTargetEffect.java
 import java.util.logging.Level;
 
 @Name("EnchantmentTarget")
@@ -53,7 +50,6 @@ public class EnchantmentTargetEffect extends Effect {
 
     @Nonnull
     @Override
-    @Nonnull
     public String toString(Event event, boolean b) {
         String type = target.getSingle(event);
         SkriptEnchantment enchantment = enchantmentExpression.getSingle(event);

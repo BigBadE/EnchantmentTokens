@@ -9,7 +9,7 @@
 
     <parent>
         <groupId>software.bigbade</groupId>
-        <artifactId>EnchantmentTokens</artifactId>
+        <artifactId>EnchantmentTokensMain</artifactId>
         <version>1.0</version>
     </parent>
 
@@ -31,16 +31,10 @@
         </dependency>
         <!--Spigot-->
         <dependency>
-<<<<<<< HEAD:EnchantmentTokens/EnchantmentTokensDevelopment/pom.xml
-            <groupId>software.bigbade</groupId>
-            <artifactId>EnchantmentTokensLocalization</artifactId>
-            <version>1.0</version>
-=======
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.15.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
->>>>>>> 3d705af96ebb617ac55d44878c2077b5e14535b9:EnchantmentTokensMain/EnchantmentTokensDevelopment/pom.xml
         </dependency>
         <!--TaskChain-->
         <dependency>

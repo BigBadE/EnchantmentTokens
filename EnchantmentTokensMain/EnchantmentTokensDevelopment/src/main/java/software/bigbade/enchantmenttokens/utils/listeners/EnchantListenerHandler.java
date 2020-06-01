@@ -32,6 +32,7 @@ import software.bigbade.enchantmenttokens.listeners.InventoryMoveListener;
 import software.bigbade.enchantmenttokens.listeners.PlayerJoinListener;
 import software.bigbade.enchantmenttokens.listeners.PlayerLeaveListener;
 import software.bigbade.enchantmenttokens.listeners.SignClickListener;
+import software.bigbade.enchantmenttokens.listeners.SignPlaceListener;
 import software.bigbade.enchantmenttokens.listeners.enchants.ArmorEquipListener;
 import software.bigbade.enchantmenttokens.listeners.enchants.BlockBreakListener;
 import software.bigbade.enchantmenttokens.listeners.enchants.BlockDamageListener;
@@ -42,7 +43,6 @@ import software.bigbade.enchantmenttokens.listeners.enchants.ProjectileHitListen
 import software.bigbade.enchantmenttokens.listeners.enchants.ProjectileShootListener;
 import software.bigbade.enchantmenttokens.listeners.enchants.RiptideListener;
 import software.bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
-import software.bigbade.enchantmenttokens.listeners.packet.SignPlaceListener;
 import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 import software.bigbade.enchantmenttokens.utils.currency.VaultCurrencyFactory;
 
@@ -61,14 +61,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 
 public class EnchantListenerHandler implements ListenerHandler {
-<<<<<<< HEAD:EnchantmentTokens/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/utils/listeners/EnchantListenerHandler.java
-=======
-    private final Map<ListenerType, ListenerManager> enchantListeners = new ConcurrentHashMap<>();
-    private final EnchantmentTokens main;
-
-    private ListenerManager enchantListener;
-
->>>>>>> 3d705af96ebb617ac55d44878c2077b5e14535b9:EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/utils/listeners/EnchantListenerHandler.java
     private static final String FOLDER = "\\enchantments\\";
     private final TypedListenerHandler enchantListeners = new TypedListenerHandler();
     private final EnchantmentTokens main;
@@ -125,7 +117,7 @@ public class EnchantListenerHandler implements ListenerHandler {
 
     @Override
     public void onEnchant(ItemStack item, EnchantmentBase base, Player player) {
-        EnchantmentApplyEvent event = new EnchantmentApplyEvent(item, player, base);
+        EnchantmentApplyEvent event = new EnchantmentApplyEvent(item, player);
         EnchantmentEvent<EnchantmentApplyEvent> enchantmentEvent = EventFactory.createEvent(event, item, player);
         enchantListener.callEvent(enchantmentEvent, base.getEnchantment());
     }

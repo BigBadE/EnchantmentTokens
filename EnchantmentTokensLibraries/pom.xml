@@ -27,7 +27,7 @@
 
     <parent>
         <groupId>software.bigbade</groupId>
-        <artifactId>EnchantmentTokensMain</artifactId>
+        <artifactId>EnchantmentTokens</artifactId>
         <version>1.0</version>
     </parent>
 

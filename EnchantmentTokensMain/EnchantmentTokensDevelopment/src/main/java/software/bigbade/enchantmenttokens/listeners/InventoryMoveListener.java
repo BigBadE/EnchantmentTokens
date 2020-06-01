@@ -23,21 +23,12 @@ import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
 import java.util.Set;
 
-<<<<<<< HEAD:EnchantmentTokens/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/listeners/InventoryMoveListener.java
 public class InventoryMoveListener extends BasicEnchantListener<Event> implements Listener {
     private final Set<Location> signs;
     private final SchedulerHandler scheduler;
 
     private final ListenerManager<Event> swapOn;
     private final ListenerManager<Event> swapOff;
-=======
-public class InventoryMoveListener extends BasicEnchantListener implements Listener {
-    private final Set<Location> signs;
-    private final SchedulerHandler scheduler;
-
-    private final ListenerManager swapOn;
-    private final ListenerManager swapOff;
->>>>>>> 3d705af96ebb617ac55d44878c2077b5e14535b9:EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/listeners/InventoryMoveListener.java
 
     public InventoryMoveListener(ListenerManager<Event> swapOn, ListenerManager<Event> swapOff, Set<Location> signs, SchedulerHandler scheduler) {
         super(null);

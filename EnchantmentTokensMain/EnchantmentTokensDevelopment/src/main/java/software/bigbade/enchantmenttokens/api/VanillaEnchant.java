@@ -17,10 +17,7 @@ import java.lang.reflect.Method;
 public class VanillaEnchant extends CustomEnchantment {
     private final Enchantment enchantment;
     private final EnchantmentTarget target;
-<<<<<<< HEAD:EnchantmentTokens/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/api/VanillaEnchant.java
     private final boolean enchantShell;
-=======
->>>>>>> 3d705af96ebb617ac55d44878c2077b5e14535b9:EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/api/VanillaEnchant.java
 
     @Nullable
     private final Object rawEnchantment;

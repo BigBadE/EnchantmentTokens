@@ -36,4 +36,4 @@ Current features:
     - Flat files
     - MySQL
     - MongoDB
-    - Any more can be added
+    - Any others can be added, the save API is open source.

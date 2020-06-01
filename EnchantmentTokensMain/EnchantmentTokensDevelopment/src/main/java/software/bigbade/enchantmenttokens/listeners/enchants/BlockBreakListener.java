@@ -19,16 +19,8 @@ import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
 import java.util.Locale;
 
-<<<<<<< HEAD:EnchantmentTokens/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/listeners/enchants/BlockBreakListener.java
 public class BlockBreakListener extends BasicEnchantListener<BlockBreakEvent> implements Listener {
     private final SignHandler handler;
-=======
-public class BlockBreakListener extends BasicEnchantListener implements Listener {
-    private final SignHandler handler;
-    private final ConfigurationSection section;
-    private final Random random = new Random();
-    private final PlayerHandler playerHandler;
->>>>>>> 3d705af96ebb617ac55d44878c2077b5e14535b9:EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/listeners/enchants/BlockBreakListener.java
 
     public BlockBreakListener(ListenerManager<BlockBreakEvent> enchantListeners, SignHandler handler) {
         super(enchantListeners);

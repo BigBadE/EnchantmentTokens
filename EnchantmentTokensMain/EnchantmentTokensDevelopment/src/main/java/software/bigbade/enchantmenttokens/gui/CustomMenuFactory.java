@@ -21,6 +21,7 @@ import software.bigbade.enchantmenttokens.api.VanillaEnchant;
 import software.bigbade.enchantmenttokens.localization.TranslatedPriceMessage;
 import software.bigbade.enchantmenttokens.localization.TranslatedStringMessage;
 import software.bigbade.enchantmenttokens.utils.ItemUtils;
+import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
@@ -33,27 +34,17 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-<<<<<<< HEAD:EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/gui/CustomMenuFactory.java
-public class CustomMenuFactory implements MenuFactory {
-=======
-public class EnchantmentMenuFactory implements MenuFactory {
->>>>>>> 3d705af96ebb617ac55d44878c2077b5e14535b9:EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/gui/EnchantmentMenuFactory.java
+public class CustomMenuFactory implements EnchantmentMenuFactory {
     private final ItemStack glassPane = ItemUtils.createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
-    private final int version;
     private final EnchantmentPlayerHandler handler;
     private final EnchantmentHandler enchantmentHandler;
     private final EnchantUtils utils;
 
     private final List<EnchantButton> buttons = new ArrayList<>();
 
-<<<<<<< HEAD:EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/gui/CustomMenuFactory.java
     private static final Pattern REMOVE_LETTERS = Pattern.compile("[^\\d.]");
-=======
-    private final List<EnchantButton> buttons = new ArrayList<>();
->>>>>>> 3d705af96ebb617ac55d44878c2077b5e14535b9:EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/gui/EnchantmentMenuFactory.java
 
-    public CustomMenuFactory(int version, EnchantmentPlayerHandler handler, EnchantUtils utils, EnchantmentHandler enchantmentHandler) {
-        this.version = version;
+    public CustomMenuFactory(EnchantmentPlayerHandler handler, EnchantUtils utils, EnchantmentHandler enchantmentHandler) {
         this.handler = handler;
         this.utils = utils;
         this.enchantmentHandler = enchantmentHandler;
@@ -79,7 +70,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
      */
     private void generateButtons() {
         addHeaderButtons();
-        if (version == 13 || version < 8)
+        if (ReflectionManager.VERSION == 13 || ReflectionManager.VERSION < 8)
             generateButton(EnchantmentTarget.FISHING_ROD, Material.FISHING_ROD, StringUtils.TOOL_FISHING_ROD);
         generateButton(EnchantmentTarget.ARMOR, Material.DIAMOND_CHESTPLATE, StringUtils.TOOL_ARMOR);
         generateButton(EnchantmentTarget.BOW, Material.BOW, StringUtils.TOOL_BOW);
@@ -87,22 +78,22 @@ public class EnchantmentMenuFactory implements MenuFactory {
     }
 
     private void addHeaderButtons() {
-        if (version >= 14)
+        if (ReflectionManager.VERSION >= 14)
             generateButton(EnchantmentTarget.CROSSBOW, Material.CROSSBOW, StringUtils.TOOL_CROSSBOW);
-        if (version >= 13)
+        if (ReflectionManager.VERSION >= 13)
             generateButton(EnchantmentTarget.TRIDENT, Material.TRIDENT, StringUtils.TOOL_TRIDENT);
-        else if (version >= 9)
+        else if (ReflectionManager.VERSION >= 9)
             generateButton(EnchantmentTarget.FISHING_ROD, Material.FISHING_ROD, StringUtils.TOOL_FISHING_ROD);
         generateButton(EnchantmentTarget.TOOL, Material.DIAMOND_PICKAXE, StringUtils.TOOL_TOOLS);
         generateButton(EnchantmentTarget.WEAPON, Material.DIAMOND_SWORD, StringUtils.TOOL_SWORD);
     }
 
     private void addFooterButtons() {
-        if (version >= 14)
+        if (ReflectionManager.VERSION >= 14)
             generateButton(EnchantmentTarget.FISHING_ROD, Material.FISHING_ROD, StringUtils.TOOL_FISHING_ROD);
-        else if (version >= 9)
+        else if (ReflectionManager.VERSION >= 9)
             generateButton(null, Material.SHIELD, StringUtils.TOOL_SHIELD);
-        if (version >= 14) {
+        if (ReflectionManager.VERSION >= 14) {
             for (int i = 0; i < 3; i++)
                 buttons.add(EnchantmentTokens.getEmptyButton());
             generateButton(null, Material.SHIELD, StringUtils.TOOL_SHIELD);
@@ -300,13 +291,7 @@ public class EnchantmentMenuFactory implements MenuFactory {
             return;
         }
         ItemStack item = ItemUtils.createItem(button.getItem().getType(), new TranslatedStringMessage(locale, name).translate());
-<<<<<<< HEAD:EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/gui/CustomMenuFactory.java
         button.setItem(item);
-=======
-        EnchantButton newButton = button.cloneButton();
-        newButton.setItem(item);
-        return newButton;
->>>>>>> 3d705af96ebb617ac55d44878c2077b5e14535b9:EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/gui/EnchantmentMenuFactory.java
     }
 
     private void removePriceLine(ItemStack item, EnchantmentPlayer player) {

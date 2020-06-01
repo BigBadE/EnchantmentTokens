@@ -11,7 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import software.bigbade.enchantmenttokens.api.StringUtils;
 import software.bigbade.enchantmenttokens.gui.EnchantmentGUI;
-import software.bigbade.enchantmenttokens.gui.MenuFactory;
+import software.bigbade.enchantmenttokens.gui.EnchantmentMenuFactory;
 import software.bigbade.enchantmenttokens.localization.TranslatedStringMessage;
 import software.bigbade.enchantmenttokens.utils.players.PlayerHandler;
 
@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
 
 @RequiredArgsConstructor
 public class EnchantMenuCmd implements CommandExecutor {
-    private final MenuFactory factory;
+    private final EnchantmentMenuFactory factory;
     private final PlayerHandler handler;
 
     @Override

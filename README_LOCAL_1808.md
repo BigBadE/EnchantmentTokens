@@ -33,5 +33,6 @@ Current features:
 - Save methods:
     - PersistentData
     - Flat files
-    - MySQL
-    - MongoDB
+    - Planned save methods:
+        - MySQL
+        - MongoDB

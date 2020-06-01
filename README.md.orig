@@ -27,8 +27,13 @@ Current features:
     
 - Supported Currencies:
     - Gems (custom currency)
+<<<<<<< HEAD
     - Experience levels
     - Vault
+=======
+    - Vault
+    - Experience
+>>>>>>> 0cd085a7a21709e04668ef0b1a166c07349dd54e
 
 - Save methods:
     - PersistentData

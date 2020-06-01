@@ -8,7 +8,7 @@ Latest Build:
 [![codecov](https://codecov.io/gh/BigBadE/EnchantmentTokens/branch/master/graph/badge.svg?token=1hsnZMVMJQ)](https://codecov.io/gh/BigBadE/EnchantmentTokens)
 
 Current features:
-- Add enchantments to items. Currently, it supports:
+- Add enchantments to items. Currently supports:
     - Armor
     - Swords
     - Bows
@@ -22,16 +22,17 @@ Current features:
     - Command GUI
     - Signs
     
-- Currently, it supported events:
+- Currently supported events:
     - Check the wiki
     
 - Supported Currencies:
     - Gems (custom currency)
-    - Experience levels
-    - Vault
+    - Planned:
+        - Vault
 
 - Save methods:
     - PersistentData
     - Flat files
-    - MySQL
-    - MongoDB
+    - Planned save methods:
+        - MySQL
+        - MongoDB

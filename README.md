@@ -21,6 +21,7 @@ Current features:
 - Allows for enchantments to be bought through:
     - Command GUI
     - Signs
+    - Enchantment Table (beta)
     
 - Currently supported events:
     - Check the wiki

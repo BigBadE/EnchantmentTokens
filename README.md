@@ -27,12 +27,11 @@ Current features:
     
 - Supported Currencies:
     - Gems (custom currency)
-    - Planned:
-        - Vault
+    - Vault
+    - Experience
 
 - Save methods:
     - PersistentData
     - Flat files
-    - Planned save methods:
-        - MySQL
-        - MongoDB
+    - MySQL
+    - MongoDB

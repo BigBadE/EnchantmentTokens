@@ -33,37 +33,9 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-<<<<<<< HEAD:EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/gui/CustomMenuFactory.java
-public class CustomMenuFactory implements MenuFactory {
-=======
-public class EnchantmentMenuFactory implements MenuFactory {
->>>>>>> 3d705af96ebb617ac55d44878c2077b5e14535b9:EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/gui/EnchantmentMenuFactory.java
-    private final ItemStack glassPane = ItemUtils.createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
-    private final int version;
-    private final EnchantmentPlayerHandler handler;
-    private final EnchantmentHandler enchantmentHandler;
-    private final EnchantUtils utils;
+public interface EnchantmentMenuFactory {
 
-    private final List<EnchantButton> buttons = new ArrayList<>();
-
-<<<<<<< HEAD:EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/gui/CustomMenuFactory.java
-    private static final Pattern REMOVE_LETTERS = Pattern.compile("[^\\d.]");
-=======
-    private final List<EnchantButton> buttons = new ArrayList<>();
->>>>>>> 3d705af96ebb617ac55d44878c2077b5e14535b9:EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java/software/bigbade/enchantmenttokens/gui/EnchantmentMenuFactory.java
-
-    public CustomMenuFactory(int version, EnchantmentPlayerHandler handler, EnchantUtils utils, EnchantmentHandler enchantmentHandler) {
-        this.version = version;
-        this.handler = handler;
-        this.utils = utils;
-        this.enchantmentHandler = enchantmentHandler;
-
-        generateButtons();
-    }
-
-    public synchronized void addButtons(List<EnchantButton> button) {
-        buttons.addAll(button);
-    }
+    void addButtons(List<EnchantButton> button);
 
     /*
     Order:

@@ -9,7 +9,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 import software.bigbade.enchantmenttokens.api.EventFactory;
-import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
 @RequiredArgsConstructor
@@ -20,6 +19,6 @@ public class FishingCatchEvent extends BasicEnchantListener<PlayerFishEvent> imp
 
     @EventHandler
     public void onPlayerCatch(PlayerFishEvent event) {
-        callListeners(EventFactory.createEvent(event, event.getPlayer().getInventory().getItemInMainHand(), event.getPlayer()).setTargetEntity(event.getCaught()));
+        callListeners(EventFactory.createCancellableEvent(event, event.getPlayer().getInventory().getItemInMainHand(), event.getPlayer()).setTargetEntity(event.getCaught()));
     }
 }

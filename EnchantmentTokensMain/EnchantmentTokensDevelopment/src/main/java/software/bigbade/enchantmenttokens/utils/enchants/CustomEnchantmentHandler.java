@@ -37,6 +37,12 @@ public class CustomEnchantmentHandler implements EnchantmentHandler {
     private final FileConfiguration skriptConfiguration;
     private final String skriptPath;
 
+
+    @SuppressWarnings("unchecked")
+    private static final Map<NamespacedKey, Enchantment> KEY_ENCHANTMENT_MAP = (Map<NamespacedKey, Enchantment>) ReflectionManager.getValue(ReflectionManager.getField(Enchantment.class, "byKey"), null);
+    @SuppressWarnings("unchecked")
+    private static final Map<String, Enchantment> NAME_ENCHANTMENT_MAP = (Map<String, Enchantment>) ReflectionManager.getValue(ReflectionManager.getField(Enchantment.class, "byName"), null);
+
     public CustomEnchantmentHandler(FileConfiguration config, String skriptPath) {
         this.config = config;
         this.skriptPath = skriptPath;
@@ -63,6 +69,12 @@ public class CustomEnchantmentHandler implements EnchantmentHandler {
         EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Registered enchantments");
     }
 
+    public void registerEnchant(EnchantmentBase base) {
+        enchantments.add(base);
+        allEnchants.add(base);
+        registerBaseToMaps(base);
+    }
+
     private void registerVanillaEnchantment(String name, ConfigurationSection section) {
         Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(name.toLowerCase().replace(" ", "_")));
         if (enchantment != null) loadVanillaConfig(enchantment, section);
@@ -70,29 +82,25 @@ public class CustomEnchantmentHandler implements EnchantmentHandler {
             EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not find an enchantment by the name {0}", name);
     }
 
-    @SuppressWarnings("unchecked")
     private void registerEnchantments(Collection<EnchantmentBase> enchantments) {
-        Map<NamespacedKey, Enchantment> keyEnchantmentMap = ((Map<NamespacedKey, Enchantment>) ReflectionManager.getValue(ReflectionManager.getField(Enchantment.class, "byKey"), null));
-        Map<String, Enchantment> nameEnchantmentMap = ((Map<String, Enchantment>) ReflectionManager.getValue(ReflectionManager.getField(Enchantment.class, "byName"), null));
-
         for (EnchantmentBase base : enchantments) {
-            registerBaseToMaps(base, keyEnchantmentMap, nameEnchantmentMap);
+            registerBaseToMaps(base);
         }
     }
 
-    private void registerBaseToMaps(EnchantmentBase base, Map<NamespacedKey, Enchantment> keys, Map<String, Enchantment> names) {
-        Objects.requireNonNull(keys);
-        if (keys.containsKey(base.getKey())) {
+    private void registerBaseToMaps(EnchantmentBase base) {
+        Objects.requireNonNull(CustomEnchantmentHandler.KEY_ENCHANTMENT_MAP);
+        if (CustomEnchantmentHandler.KEY_ENCHANTMENT_MAP.containsKey(base.getKey())) {
             EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Duplicate key {0} found, make sure the same addon jar is not copy pasted!", base.getKey());
         } else {
-            Objects.requireNonNull(names);
-            if (names.containsKey(base.getEnchantmentName())) {
-                NamespacedKey old = names.get(base.getEnchantmentName()).getKey();
+            Objects.requireNonNull(CustomEnchantmentHandler.NAME_ENCHANTMENT_MAP);
+            if (CustomEnchantmentHandler.NAME_ENCHANTMENT_MAP.containsKey(base.getEnchantmentName())) {
+                NamespacedKey old = CustomEnchantmentHandler.NAME_ENCHANTMENT_MAP.get(base.getEnchantmentName()).getKey();
                 EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Duplicate enchantment names {0} and {1}, skipping (WILL CAUSE ERRORS)", new Object[]{base.getKey(), old});
                 return;
             }
-            keys.put(base.getKey(), base.getEnchantment());
-            names.put(base.getEnchantmentName(), base.getEnchantment());
+            CustomEnchantmentHandler.KEY_ENCHANTMENT_MAP.put(base.getKey(), base.getEnchantment());
+            CustomEnchantmentHandler.NAME_ENCHANTMENT_MAP.put(base.getEnchantmentName(), base.getEnchantment());
         }
     }
 

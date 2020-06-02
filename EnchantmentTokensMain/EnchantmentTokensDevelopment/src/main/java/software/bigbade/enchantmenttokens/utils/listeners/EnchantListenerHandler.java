@@ -15,7 +15,9 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
+import software.bigbade.enchantmenttokens.api.CustomEnchantmentEvent;
 import software.bigbade.enchantmenttokens.api.EnchantListener;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
@@ -172,15 +174,32 @@ public class EnchantListenerHandler implements ListenerHandler {
     }
 
     @Override
+    public void loadEnchantment(Plugin plugin, Class<? extends EnchantmentBase> clazz) {
+        EnchantmentBase enchant = loadClass(clazz, plugin.getConfig(), plugin);
+        if(enchant == null) {
+            return;
+        }
+        enchant.loadConfig();
+        checkMethods(enchant, clazz);
+        main.getEnchantmentHandler().registerEnchant(enchant);
+    }
+
+    @Override
     public <T extends Event> ListenerManager<T> getListenerManager(ListenerType type) {
         return enchantListeners.getManager(type);
     }
 
     private void checkMethods(@Nonnull EnchantmentBase enchant, Class<?> clazz) {
         for (Method method : clazz.getMethods()) {
-            if (!method.isAnnotationPresent(EnchantListener.class))
+            if (!method.isAnnotationPresent(EnchantListener.class)) {
                 continue;
+            }
             ListenerType type = method.getAnnotation(EnchantListener.class).type();
+            Class<?>[] params = method.getParameterTypes();
+            if(params.length != 1 || !EnchantmentEvent.class.isAssignableFrom(params[0])) {
+                EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Enchantment {0} has an invalid listener {1}", new Object[] { enchant.getEnchantmentName(), method.getName() });
+                continue;
+            }
             if (canEnchant(enchant, type)) {
                 enchantListeners.getManager(type).add(event -> ReflectionManager.invoke(method, enchant, event), enchant.getEnchantment());
             }
@@ -196,7 +215,7 @@ public class EnchantListenerHandler implements ListenerHandler {
     }
 
     @Nullable
-    private EnchantmentBase loadClass(Class<? extends EnchantmentBase> clazz, FileConfiguration configuration, EnchantmentAddon addon) {
+    private EnchantmentBase loadClass(Class<? extends EnchantmentBase> clazz, FileConfiguration configuration, Plugin addon) {
         assert configuration != null;
         ConfigurationSection section = ConfigurationManager.getSectionOrCreate(configuration, "enchants");
 

@@ -33,7 +33,7 @@ public class PlayerDamageListener extends BasicEnchantListener<EntityDamageByEnt
             if (player.isBlocking()) {
                 onPlayerBlock(player, event);
             }
-            EnchantmentEvent<EntityDamageByEntityEvent> enchantmentEvent = EventFactory.createEvent(event, player.getInventory().getItemInMainHand(), player).setTargetEntity(event.getDamager());
+            EnchantmentEvent<EntityDamageByEntityEvent> enchantmentEvent = EventFactory.createCancellableEvent(event, player.getInventory().getItemInMainHand(), player).setTargetEntity(event.getDamager());
             callListeners(enchantmentEvent, hit);
             if(((LivingEntity) event.getEntity()).getHealth() - event.getFinalDamage() <= 0) {
                 callForAllItems(death, enchantmentEvent);
@@ -41,7 +41,7 @@ public class PlayerDamageListener extends BasicEnchantListener<EntityDamageByEnt
         }
         if (event.getDamager() instanceof Player) {
             Player target = (Player) event.getDamager();
-            EnchantmentEvent<EntityDamageByEntityEvent> damageEvent = EventFactory.createEvent(event, target.getInventory().getItemInMainHand(), target).setTargetEntity(event.getEntity());
+            EnchantmentEvent<EntityDamageByEntityEvent> damageEvent = EventFactory.createCancellableEvent(event, target.getInventory().getItemInMainHand(), target).setTargetEntity(event.getEntity());
             callListeners(damageEvent, damage);
         }
     }
@@ -54,11 +54,11 @@ public class PlayerDamageListener extends BasicEnchantListener<EntityDamageByEnt
             } else if(player.getInventory().getItemInOffHand().getType() == Material.SHIELD) {
                 blocking = player.getInventory().getItemInOffHand();
             }
-            EnchantmentEvent<EntityDamageByEntityEvent> enchantmentEvent = EventFactory.createEvent(event, blocking, player).setTargetEntity(event.getDamager());
+            EnchantmentEvent<EntityDamageByEntityEvent> enchantmentEvent = EventFactory.createCancellableEvent(event, blocking, player).setTargetEntity(event.getDamager());
             callListeners(enchantmentEvent, block);
         } else {
             blocking = player.getInventory().getItemInMainHand();
-            EnchantmentEvent<EntityDamageByEntityEvent> enchantmentEvent = EventFactory.createEvent(event, blocking, player).setTargetEntity(event.getDamager());
+            EnchantmentEvent<EntityDamageByEntityEvent> enchantmentEvent = EventFactory.createCancellableEvent(event, blocking, player).setTargetEntity(event.getDamager());
             callListeners(enchantmentEvent, swordBlock);
         }
     }

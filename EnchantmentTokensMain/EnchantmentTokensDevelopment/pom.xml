@@ -29,6 +29,11 @@
             <artifactId>EnchantmentTokensAPI</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>software.bigbade</groupId>
+            <artifactId>EnchantmentTokensLocalization</artifactId>
+            <version>1.0</version>
+        </dependency>
         <!--Spigot-->
         <dependency>
             <groupId>org.spigotmc</groupId>

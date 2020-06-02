@@ -162,12 +162,10 @@ public class CustomEnchantUtils extends EnchantUtils {
         if (base instanceof VanillaEnchant)
             return item.getEnchantmentLevel(base.getEnchantment());
         if (item.getItemMeta() == null || !item.getItemMeta().hasEnchants()) return base.getStartLevel()-1;
-        System.out.println("Has enchants");
         if (!item.getItemMeta().hasEnchant(base.getEnchantment())) {
             return base.getStartLevel()-1;
         }
-        System.out.println("Has the right one");
-        return item.getItemMeta().getEnchants().get(base.getEnchantment())-1;
+        return item.getItemMeta().getEnchants().get(base.getEnchantment());
     }
 
     private void updateSigns(EnchantmentBase base, Set<Location> signs, Player player) {

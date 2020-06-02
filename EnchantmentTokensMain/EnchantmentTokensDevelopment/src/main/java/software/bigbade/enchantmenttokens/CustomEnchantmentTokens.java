@@ -11,7 +11,9 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
+import software.bigbade.enchantmenttokens.api.CustomStandaloneEnchantHandler;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
+import software.bigbade.enchantmenttokens.api.StandaloneEnchantHandler;
 import software.bigbade.enchantmenttokens.commands.CommandManager;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationType;
@@ -85,6 +87,7 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
 
         setupProtocolManager();
 
+        StandaloneEnchantHandler.setInstance(new CustomStandaloneEnchantHandler(listenerHandler));
         registerEnchants();
 
         setupSkript();

@@ -35,8 +35,8 @@
     </properties>
 
     <parent>
-        <groupId>software.bigbade.enchantmenttokens</groupId>
-        <artifactId>EnchantmentTokensMain</artifactId>
+        <groupId>software.bigbade</groupId>
+        <artifactId>EnchantmentTokens</artifactId>
         <version>1.0</version>
     </parent>
 </project>

@@ -24,9 +24,9 @@ public class PotionListener extends BasicEnchantListener<EntityPotionEffectEvent
         Player player = (Player) event.getEntity();
 
         if (event.getAction().equals(EntityPotionEffectEvent.Action.ADDED)) {
-            callForAllItems(potionAdd, EventFactory.createEvent(event, null, player));
+            callForAllItems(potionAdd, EventFactory.createCancellableEvent(event, null, player));
         } else if (event.getAction().equals(EntityPotionEffectEvent.Action.REMOVED) || event.getAction().equals(EntityPotionEffectEvent.Action.CLEARED)) {
-            callForAllItems(potionRemove, EventFactory.createEvent(event, null, player));
+            callForAllItems(potionRemove, EventFactory.createCancellableEvent(event, null, player));
         }
     }
 }

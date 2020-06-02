@@ -35,11 +35,11 @@ public class ProjectileShootListener extends BasicEnchantListener<ProjectileLaun
             Player shooter = (Player) event.getEntity().getShooter();
             event.getEntity().setMetadata("ce_firing_item", new FixedMetadataValue(main, shooter.getInventory().getItemInMainHand()));
             if (tridentThrow != null && event.getEntityType() == EntityType.TRIDENT) {
-                callListeners(EventFactory.createEvent(event, shooter.getInventory().getItemInMainHand(), shooter).setTargetEntity(event.getEntity()), tridentThrow);
+                callListeners(EventFactory.createCancellableEvent(event, shooter.getInventory().getItemInMainHand(), shooter).setTargetEntity(event.getEntity()), tridentThrow);
             } else if (crossbowShoot != null && shooter.getInventory().getItemInMainHand().getType() == Material.CROSSBOW) {
-                callListeners(EventFactory.createEvent(event, shooter.getInventory().getItemInMainHand(), shooter).setTargetEntity(event.getEntity()), crossbowShoot);
+                callListeners(EventFactory.createCancellableEvent(event, shooter.getInventory().getItemInMainHand(), shooter).setTargetEntity(event.getEntity()), crossbowShoot);
             } else {
-                callListeners(EventFactory.createEvent(event, shooter.getInventory().getItemInMainHand(), shooter).setTargetEntity(event.getEntity()), bowShoot);
+                callListeners(EventFactory.createCancellableEvent(event, shooter.getInventory().getItemInMainHand(), shooter).setTargetEntity(event.getEntity()), bowShoot);
             }
         }
     }

@@ -18,6 +18,6 @@ public class ElytraGlideListener extends BasicEnchantListener<EntityToggleGlideE
 
     @EventHandler
     public void onPlayerDeath(EntityToggleGlideEvent event) {
-        callListeners(EventFactory.createEvent(event, null, (Player) event.getEntity()));
+        callListeners(EventFactory.createCancellableEvent(event, null, (Player) event.getEntity()));
     }
 }

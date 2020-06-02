@@ -272,8 +272,9 @@ public class CustomMenuFactory implements EnchantmentMenuFactory {
             PlayerInventory playerInventory = player.getInventory();
             removePriceLine(enchantmentPlayer.getCurrentGUI().getItem(), enchantmentPlayer);
             playerInventory.setItem(playerInventory.getHeldItemSlot(), enchantmentPlayer.getCurrentGUI().getItem());
-            for (EnchantmentBase base : enchantmentPlayer.getCurrentGUI().getAddedEnchants())
+            for (EnchantmentBase base : enchantmentPlayer.getCurrentGUI().getAddedEnchants()) {
                 utils.triggerOnEnchant(enchantmentPlayer.getCurrentGUI().getItem(), base, enchantmentPlayer.getPlayer());
+            }
             return null;
         }), rows * 9 - 6);
 

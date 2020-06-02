@@ -26,12 +26,12 @@ public class ArmorEquipListener extends BasicEnchantListener<ArmorEquipEvent> im
     public void onArmorEquip(ArmorEquipEvent event) {
         ItemStack item = event.getOldArmorPiece();
         if(item != null) {
-            EnchantmentEvent<ArmorEquipEvent> enchantmentEvent = EventFactory.createEvent(event, item, event.getPlayer());
+            EnchantmentEvent<ArmorEquipEvent> enchantmentEvent = EventFactory.createCancellableEvent(event, item, event.getPlayer());
             callListeners(enchantmentEvent, oldArmorListeners);
         }
         item = event.getNewArmorPiece();
         if(item != null) {
-            EnchantmentEvent<ArmorEquipEvent> enchantmentEvent = EventFactory.createEvent(event, item, event.getPlayer());
+            EnchantmentEvent<ArmorEquipEvent> enchantmentEvent = EventFactory.createCancellableEvent(event, item, event.getPlayer());
             callListeners(enchantmentEvent, newArmorListeners);
         }
     }

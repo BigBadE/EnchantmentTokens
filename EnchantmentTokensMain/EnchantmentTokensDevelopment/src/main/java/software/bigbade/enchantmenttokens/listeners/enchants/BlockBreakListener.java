@@ -13,11 +13,8 @@ import org.bukkit.inventory.ItemStack;
 import software.bigbade.enchantmenttokens.api.EventFactory;
 import software.bigbade.enchantmenttokens.api.StringUtils;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
-import software.bigbade.enchantmenttokens.localization.TranslatedStringMessage;
 import software.bigbade.enchantmenttokens.utils.SignHandler;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
-
-import java.util.Locale;
 
 public class BlockBreakListener extends BasicEnchantListener<BlockBreakEvent> implements Listener {
     private final SignHandler handler;
@@ -30,7 +27,7 @@ public class BlockBreakListener extends BasicEnchantListener<BlockBreakEvent> im
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
-        EnchantmentEvent<BlockBreakEvent> enchantmentEvent = EventFactory.createEvent(event, item, event.getPlayer()).setTargetBlock(event.getBlock());
+        EnchantmentEvent<BlockBreakEvent> enchantmentEvent = EventFactory.createCancellableEvent(event, item, event.getPlayer()).setTargetBlock(event.getBlock());
         callListeners(enchantmentEvent);
 
         if (event.getBlock().getState() instanceof Sign) {

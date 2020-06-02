@@ -14,7 +14,13 @@ public abstract class EnchantCurrencyHandler implements CurrencyHandler {
     private final String name;
     private Locale locale;
 
-    public EnchantCurrencyHandler(String name) {
+    public EnchantCurrencyHandler(Player player, String name) {
+        try {
+            this.locale = Locale.forLanguageTag(player.getLocale());
+        } catch (NullPointerException e) {
+            //Some resource packs can mess this up
+            this.locale = Locale.getDefault();
+        }
         this.name = name;
     }
 

@@ -14,7 +14,7 @@ import software.bigbade.enchantmenttokens.configuration.ConfigurationType;
 import software.bigbade.enchantmenttokens.currency.CurrencyFactory;
 import software.bigbade.enchantmenttokens.utils.FileHelper;
 import software.bigbade.enchantmenttokens.utils.ReflectionManager;
-import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentLoader;
+import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentFileLoader;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,20 +41,21 @@ public class CurrencyFactoryHandler {
         } else if ("vault".equalsIgnoreCase(type)) {
             return new VaultCurrencyFactory(Bukkit.getServer());
         } else {
-            return loadExternalFactory(type);
+            return loadExternalFactory();
         }
     }
 
-    private CurrencyFactory loadExternalFactory(String type) {
-        CurrencyFactory factory = loadExternalJar(type);
+    private CurrencyFactory loadExternalFactory() {
+        CurrencyFactory factory = loadExternalJar();
         if (factory != null && factory.loaded())
             return factory;
         else {
             if (factory == null) {
-                EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not find type {0}, defaulted to gems", type);
+                EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not find currency factory, defaulted to gems");
                 section.set("type", "gems");
+            } else {
+                EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not load currency factory");
             }
-            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not load currency factory");
             return loadGemFactory();
         }
     }
@@ -70,10 +71,11 @@ public class CurrencyFactoryHandler {
             return new GemCurrencyFactory(main.getScheduler(), main.getDataFolder().getAbsolutePath());
     }
 
-    private CurrencyFactory loadExternalJar(String type) {
+    private CurrencyFactory loadExternalJar() {
         File found = ConfigurationManager.getFolder(main.getDataFolder().getAbsolutePath() + "\\storage");
         if (found.listFiles() == null)
             return null;
+        String type = new ConfigurationType<>("gems").getValue("type", section);
         for (File subfile : Objects.requireNonNull(found.listFiles())) {
             if (!subfile.getName().endsWith(".jar"))
                 continue;
@@ -88,10 +90,11 @@ public class CurrencyFactoryHandler {
         try (JarFile jarFile = FileHelper.getJarFile(file.getAbsolutePath()); InputStream stream = FileHelper.getJarStream(jarFile, "config.yml")) {
             FileConfiguration configuration = ConfigurationManager.loadConfigurationStream(stream);
 
-            if (!new ConfigurationType<>("gems").getValue("name", configuration).equals(type))
+            if (!new ConfigurationType<>("gems").getValue("name", configuration).equalsIgnoreCase(type)) {
                 return null;
+            }
 
-            List<Class<?>> classes = EnchantmentLoader.loadClasses(file);
+            List<Class<?>> classes = EnchantmentFileLoader.loadClasses(file);
             return getFactory(classes);
         } catch (IOException e) {
             EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not load currency handler (is it valid?)", e);

@@ -9,7 +9,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.StringUtils;
 import software.bigbade.enchantmenttokens.api.VanillaEnchant;
 import software.bigbade.enchantmenttokens.commands.CommandUtils;
@@ -54,17 +53,10 @@ public class EnchantTabCompleter implements TabCompleter, IEnchantTabCompleter {
 
     public List<String> getKeys(String name) {
         List<String> suggestions = new ArrayList<>();
-        for (EnchantmentBase base : handler.getAllEnchants()) {
-            if(base instanceof VanillaEnchant) {
-                continue;
-            }
-            String key = base.getKey().toString();
-            if (key.startsWith(name) || base.getEnchantmentName().startsWith(name)) {
-                suggestions.add(key);
-                if(suggestions.size() > 10)
-                    break;
-            }
-        }
+        handler.getAllEnchants().stream()
+                .filter(base -> !(base instanceof VanillaEnchant) && base.getKey().toString().startsWith(name) || base.getEnchantmentName().startsWith(name))
+                .limit(10)
+                .forEach(base -> suggestions.add(base.getKey().toString()));
         return suggestions;
     }
 

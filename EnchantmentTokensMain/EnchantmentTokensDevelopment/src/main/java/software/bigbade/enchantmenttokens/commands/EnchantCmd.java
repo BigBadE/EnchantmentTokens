@@ -38,8 +38,6 @@ public class EnchantCmd implements CommandExecutor {
             return true;
         }
 
-        ItemStack item = ((Player) sender).getInventory().getItemInMainHand();
-
         try {
             Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
@@ -47,16 +45,21 @@ public class EnchantCmd implements CommandExecutor {
             return true;
         }
 
+        addEnchantment(sender, locale, args[0]);
+        return true;
+    }
+
+    private void addEnchantment(CommandSender sender, Locale locale, String arg) {
         for (EnchantmentBase enchantment : handler.getAllEnchants()) {
             if (enchantment instanceof VanillaEnchant)
                 continue;
-            if (enchantment.getKey().toString().startsWith(args[0]) || enchantment.getEnchantmentName().startsWith(args[0])) {
+            if (enchantment.getKey().toString().startsWith(arg) || enchantment.getEnchantmentName().startsWith(arg)) {
+                ItemStack item = ((Player) sender).getInventory().getItemInMainHand();
                 EnchantUtils.getInstance().addEnchantmentBaseNoMessages(item, enchantment, (Player) sender);
                 sender.sendMessage(new TranslatedStringMessage(locale, StringUtils.COMMAND_ADD).translate(enchantment.getEnchantmentName()));
-                return true;
+                return;
             }
         }
-        sender.sendMessage(new TranslatedStringMessage(locale, StringUtils.COMMAND_ERROR_NO_ENCHANTMENT).translate(args[0]));
-        return true;
+        sender.sendMessage(new TranslatedStringMessage(locale, StringUtils.COMMAND_ERROR_NO_ENCHANTMENT).translate(arg));
     }
 }

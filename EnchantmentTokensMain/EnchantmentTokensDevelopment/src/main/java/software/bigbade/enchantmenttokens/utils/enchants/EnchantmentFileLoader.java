@@ -36,12 +36,12 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 
-public class EnchantmentLoader {
+public class EnchantmentFileLoader {
     private final Map<EnchantmentAddon, Set<Class<EnchantmentBase>>> enchantments = new ConcurrentHashMap<>();
     private final Collection<EnchantmentAddon> addons = new ConcurrentLinkedQueue<>();
     private final ExecutorService executor = Executors.newCachedThreadPool();
 
-    public EnchantmentLoader(File folder, EnchantmentTokens main) {
+    public EnchantmentFileLoader(File folder, EnchantmentTokens main) {
         main.getScheduler().runTaskAsync(() -> {
             if (folder.listFiles() == null) {
                 return;
@@ -59,7 +59,7 @@ public class EnchantmentLoader {
     public static List<Class<?>> loadClasses(File file) {
         List<Class<?>> classes = new ArrayList<>();
         URL[] urls = getUrls(Collections.singletonList(file));
-        try (URLClassLoader cl = new URLClassLoader(urls, EnchantmentLoader.class.getClassLoader())) {
+        try (URLClassLoader cl = new URLClassLoader(urls, EnchantmentFileLoader.class.getClassLoader())) {
             classes = loadClassesForFile(file, cl);
         } catch (IOException e) {
             EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not load storage jar", e);
@@ -117,15 +117,15 @@ public class EnchantmentLoader {
 
     public void loadEnchantmentClasses(List<File> files, EnchantmentTokens main) {
         URL[] urls = getUrls(files);
-        try (URLClassLoader cl = new URLClassLoader(urls, EnchantmentLoader.class.getClassLoader())) {
+        try (URLClassLoader cl = new URLClassLoader(urls, EnchantmentFileLoader.class.getClassLoader())) {
             for (File file : files) {
                 loadJar(file, main, cl);
             }
             for (EnchantmentAddon addon : addons) {
-                executor.submit(() -> main.getListenerHandler().loadAddon(addon));
+                executor.submit(() -> main.getEnchantmentLoader().loadAddon(addon));
             }
             executor.shutdown();
-            main.getListenerHandler().loadEnchantments(enchantments);
+            main.getEnchantmentLoader().loadEnchantments(enchantments);
         } catch (IOException e) {
             EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Problem loading jar URLs", e);
         }

@@ -27,7 +27,7 @@ public class GemCurrencyHandler extends EnchantCurrencyHandler {
     private final FileLoader fileLoader;
 
     public GemCurrencyHandler(Player player, FileLoader fileLoader, SchedulerHandler scheduler) {
-        super("gemsOld");
+        super(player, "gemsOld");
         this.fileLoader = fileLoader;
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Callable<Pair<Long, Locale>> callable = () -> fileLoader.getData(player);

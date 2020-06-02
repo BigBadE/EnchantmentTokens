@@ -16,7 +16,7 @@ public class LatestCurrencyHandler extends EnchantCurrencyHandler {
     private final NamespacedKey locale;
 
     public LatestCurrencyHandler(Player player, NamespacedKey gems, NamespacedKey locale) {
-        super("gemsNew");
+        super(player, "gemsNew");
         this.gems = gems;
         this.locale = locale;
         PersistentDataContainer dataContainer = player.getPersistentDataContainer();

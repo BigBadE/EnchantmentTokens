@@ -68,17 +68,7 @@ public class CustomEnchantUtils extends EnchantUtils {
             return 0;
         }
         enchantmentPlayer.getPlayer().sendMessage(new TranslatedStringMessage(enchantmentPlayer.getLanguage(), StringUtils.ENCHANTMENT_BOUGHT_SUCCESS).translate(base.getEnchantmentName(), "" + level));
-        if (base instanceof VanillaEnchant) {
-            item.addEnchantment(base.getEnchantment(), level);
-            updateSigns(base, signs, enchantmentPlayer.getPlayer());
-            return price;
-        }
-        ItemMeta meta = item.getItemMeta();
-        Objects.requireNonNull(meta);
-        meta.addEnchant(base.getEnchantment(), level, true);
-        updateLore(meta, level, base);
-        item.setItemMeta(meta);
-        updateSigns(base, signs, enchantmentPlayer.getPlayer());
+        addEnchantmentBase(item, base, enchantmentPlayer.getPlayer(), level);
         return price;
     }
 
@@ -88,18 +78,7 @@ public class CustomEnchantUtils extends EnchantUtils {
         if (level > base.getMaxLevel()) {
             return;
         }
-        if (base instanceof VanillaEnchant) {
-            item.addEnchantment(base.getEnchantment(), level);
-            return;
-        }
-        ItemMeta meta = item.getItemMeta();
-        assert meta != null;
-        meta.addEnchant(base.getEnchantment(), level, true);
-        updateLore(meta, level, base);
-        item.setItemMeta(meta);
-        if(player.getInventory().getItemInMainHand().equals(item)) {
-            updateSigns(base, signs, player.getPlayer());
-        }
+        addEnchantmentBase(item, base, player, level);
     }
 
     @Override
@@ -120,10 +99,10 @@ public class CustomEnchantUtils extends EnchantUtils {
         }
     }
 
-    public void addEnchantmentBase(ItemStack item, EnchantmentBase base, EnchantmentPlayer player, int level) {
+    public void addEnchantmentBase(ItemStack item, EnchantmentBase base, Player player, int level) {
         if (base instanceof VanillaEnchant) {
             item.addEnchantment(base.getEnchantment(), level);
-            updateSigns(base, signs, player.getPlayer());
+            updateSigns(base, signs, player);
             return;
         }
         ItemMeta meta = item.getItemMeta();
@@ -131,7 +110,7 @@ public class CustomEnchantUtils extends EnchantUtils {
         meta.addEnchant(base.getEnchantment(), level, true);
         updateLore(meta, level, base);
         item.setItemMeta(meta);
-        updateSigns(base, signs, player.getPlayer());
+        updateSigns(base, signs, player);
     }
 
     public void triggerOnEnchant(ItemStack item, EnchantmentBase base, Player player) {

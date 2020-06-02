@@ -76,7 +76,7 @@ public class EnchantTableListener implements Listener {
         for (EnchantmentBase enchantment : possible) {
             for (int level = enchantment.getMaxTableLevel(); level > enchantment.getStartLevel(); --level) {
                 if (event.getExpLevelCost() >= enchantment.getMinCost(level) && event.getExpLevelCost() <= enchantment.getMaxCost(level)) {
-                    EnchantUtils.getInstance().addEnchantmentBase(event.getItem(), enchantment, player, level);
+                    EnchantUtils.getInstance().addEnchantmentBase(event.getItem(), enchantment, player.getPlayer(), level);
                     break;
                 }
             }

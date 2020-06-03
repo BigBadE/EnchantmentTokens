@@ -93,7 +93,7 @@ public class VanillaEnchant extends CustomEnchantment {
     @Override
     public int getMinCost(int level) {
         if (enchantShell) {
-            return (int) ReflectionManager.invoke(GET_MIN_COST, rawEnchantment, level);
+            return ReflectionManager.invoke(GET_MIN_COST, rawEnchantment, level);
         } else {
             return super.getMinCost(level);
         }
@@ -103,7 +103,7 @@ public class VanillaEnchant extends CustomEnchantment {
     @Override
     public int getMaxCost(int level) {
         if (enchantShell) {
-            return (int) ReflectionManager.invoke(GET_MAX_COST, rawEnchantment, level);
+            return ReflectionManager.invoke(GET_MAX_COST, rawEnchantment, level);
         } else {
             return super.getMaxCost(level);
         }

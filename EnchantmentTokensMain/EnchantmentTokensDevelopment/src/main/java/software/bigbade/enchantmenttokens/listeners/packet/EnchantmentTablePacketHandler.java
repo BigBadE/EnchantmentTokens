@@ -31,7 +31,7 @@ public class EnchantmentTablePacketHandler extends PacketAdapter {
 
     @SuppressWarnings("ConstantConditions")
     public static int getSeed(Player player) {
-        return (int) ReflectionManager.invoke(SEED_METHOD, ReflectionManager.invoke(HANDLE_METHOD, player));
+        return ReflectionManager.invoke(SEED_METHOD, ReflectionManager.invoke(HANDLE_METHOD, player));
     }
 
     public static void onEnchant(Player player, ItemStack item, int level) {

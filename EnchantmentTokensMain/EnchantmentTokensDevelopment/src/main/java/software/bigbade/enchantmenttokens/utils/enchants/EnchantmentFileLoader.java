@@ -8,7 +8,6 @@ import lombok.SneakyThrows;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.PluginDescriptionFile;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
-import software.bigbade.enchantmenttokens.api.CustomEnchantment;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.utils.ReflectionManager;
@@ -56,19 +55,20 @@ public class EnchantmentFileLoader {
         });
     }
 
-    public static List<Class<?>> loadClasses(File file) {
-        List<Class<?>> classes = new ArrayList<>();
+    public static <T> Set<Class<T>> loadClasses(File file, Class<T> clazz) {
+        Set<Class<T>> classes = new HashSet<>();
         URL[] urls = getUrls(Collections.singletonList(file));
         try (URLClassLoader cl = new URLClassLoader(urls, EnchantmentFileLoader.class.getClassLoader())) {
-            classes = loadClassesForFile(file, cl);
+            classes = loadClassesForFile(file, cl, clazz);
         } catch (IOException e) {
             EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not load storage jar", e);
         }
         return classes;
     }
 
-    private static List<Class<?>> loadClassesForFile(File file, ClassLoader cl) {
-        List<Class<?>> classes = new ArrayList<>();
+    @SuppressWarnings("unchecked")
+    private static <T> Set<Class<T>> loadClassesForFile(File file, ClassLoader cl, Class<? extends T> clazz) {
+        Set<Class<T>> enchantments = new HashSet<>();
         try (JarFile jarFile = new JarFile(file.getAbsolutePath())) {
             Enumeration<JarEntry> enumerator = jarFile.entries();
             while (enumerator.hasMoreElements()) {
@@ -78,13 +78,14 @@ public class EnchantmentFileLoader {
                 }
 
                 Class<?> loaded = loadClass(jar, cl);
-                if (loaded != null)
-                    classes.add(loaded);
+                if (loaded != null && clazz.isAssignableFrom(loaded)) {
+                    enchantments.add((Class<T>) loaded);
+                }
             }
         } catch (IOException | ClassNotFoundException e) {
             EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not load external jar file", e);
         }
-        return classes;
+        return enchantments;
     }
 
     @SneakyThrows
@@ -131,18 +132,13 @@ public class EnchantmentFileLoader {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void loadJar(File file, EnchantmentTokens main, ClassLoader cl) {
-        List<Class<?>> classes = loadClassesForFile(file, cl);
-        Set<Class<EnchantmentBase>> enchantClasses = new HashSet<>();
+        Set<Class<EnchantmentBase>> classes = loadClassesForFile(file, cl, EnchantmentBase.class);
 
-        for (Class<?> clazz : classes)
-            if (CustomEnchantment.class.isAssignableFrom(clazz))
-                enchantClasses.add((Class<EnchantmentBase>) clazz);
         EnchantmentAddon addon = loadAddon(file, main, cl);
         if (addon != null) {
             addons.add(addon);
-            enchantments.put(addon, enchantClasses);
+            enchantments.put(addon, classes);
         } else {
             EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Jar {0} has a bugged/has no EnchantmentAddon class, skipping loading enchants", file.getName());
         }

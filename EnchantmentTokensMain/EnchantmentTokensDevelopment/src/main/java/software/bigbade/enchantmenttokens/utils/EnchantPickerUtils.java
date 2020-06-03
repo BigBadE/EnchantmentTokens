@@ -31,7 +31,7 @@ public final class EnchantPickerUtils {
 
     @SuppressWarnings("ConstantConditions")
     private static int getEnchantability(ItemStack item) {
-        return (int) ReflectionManager.invoke(GET_ENCHANTABILITY, ReflectionManager.invoke(GET_ITEM, getNMSItemStack(item)));
+        return ReflectionManager.invoke(GET_ENCHANTABILITY, ReflectionManager.invoke(GET_ITEM, getNMSItemStack(item)));
     }
 
     public static int getRequiredExperience(Random random, int slot, int bookshelves, int maxLevel, ItemStack itemstack) {

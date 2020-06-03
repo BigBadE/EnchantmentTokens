@@ -122,14 +122,14 @@ public class CustomEnchantmentLoader implements EnchantmentLoader {
         assert configuration != null;
         ConfigurationSection section = ConfigurationManager.getSectionOrCreate(configuration, "enchants");
 
-        Constructor<?> constructor;
+        Constructor<? extends EnchantmentBase> constructor;
         try {
             constructor = clazz.getConstructor(NamespacedKey.class);
         } catch (NoSuchMethodException e) {
             EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "No constructor found for enchant {0}", clazz.getSimpleName());
             return null;
         }
-        final EnchantmentBase enchant = (EnchantmentBase) ReflectionManager.instantiate(constructor, new NamespacedKey(addon, clazz.getSimpleName()));
+        final EnchantmentBase enchant = ReflectionManager.instantiate(constructor, new NamespacedKey(addon, clazz.getSimpleName()));
 
         Objects.requireNonNull(enchant);
 

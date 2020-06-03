@@ -19,8 +19,9 @@ import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentFileLoader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Objects;
+import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 
@@ -94,19 +95,18 @@ public class CurrencyFactoryHandler {
                 return null;
             }
 
-            List<Class<?>> classes = EnchantmentFileLoader.loadClasses(file);
-            return getFactory(classes);
+            Set<Class<CurrencyFactory>> classes = EnchantmentFileLoader.loadClasses(file, CurrencyFactory.class);
+            Iterator<Class<CurrencyFactory>> iterator = classes.iterator();
+            if (iterator.hasNext()) {
+                return getFactory(iterator.next());
+            }
         } catch (IOException e) {
             EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not load currency handler (is it valid?)", e);
         }
         return null;
     }
 
-    private CurrencyFactory getFactory(List<Class<?>> classes) {
-        for (Class<?> clazz : classes) {
-            if (clazz.getInterfaces()[0].equals(CurrencyFactory.class))
-                return (CurrencyFactory) ReflectionManager.instantiate(clazz.getConstructors()[0], section, main.getScheduler());
-        }
-        return null;
+    private CurrencyFactory getFactory(Class<CurrencyFactory> clazz) {
+        return (CurrencyFactory) ReflectionManager.instantiate(clazz.getConstructors()[0], section, main.getScheduler());
     }
 }

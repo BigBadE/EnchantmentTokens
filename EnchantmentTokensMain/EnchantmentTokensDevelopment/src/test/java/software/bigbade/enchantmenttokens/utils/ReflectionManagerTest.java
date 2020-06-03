@@ -42,7 +42,7 @@ public class ReflectionManagerTest {
     public void testReflectionManager() {
         mockStatic(Bukkit.class);
         when(Bukkit.getVersion()).thenReturn("1.15.2");
-        ReflectionManagerTest test = (ReflectionManagerTest) ReflectionManager.instantiate(getClass());
+        ReflectionManagerTest test = ReflectionManager.instantiate(getClass());
         assertNotNull(test);
         Field field = ReflectionManager.getField(getClass(), "worked");
         assertNotNull(field);

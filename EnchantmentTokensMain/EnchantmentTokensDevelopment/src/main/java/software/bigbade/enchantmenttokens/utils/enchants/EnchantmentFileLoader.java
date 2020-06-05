@@ -39,23 +39,27 @@ public class EnchantmentFileLoader {
     private final Collection<EnchantmentAddon> addons = new ConcurrentLinkedQueue<>();
     private final ExecutorService executor = Executors.newCachedThreadPool();
     private final EnchantmentTokens main;
+    private final File folder;
 
     public EnchantmentFileLoader(File folder, EnchantmentTokens main) {
         this.main = main;
+        this.folder = folder;
         TaskChain<?> chain = EnchantmentTokens.newChain();
-        chain.async(() -> {
-            if (folder.listFiles() == null) {
-                return;
-            }
-            List<File> jars = new ArrayList<>();
-            for (File enchants : Objects.requireNonNull(folder.listFiles())) {
-                if (enchants.getName().endsWith(".jar")) {
-                    jars.add(enchants);
-                }
-            }
-            loadEnchantmentClasses(jars);
-        });
+        chain.async(this::loadJars);
         chain.execute();
+    }
+
+    public void loadJars() {
+        if (folder.listFiles() == null) {
+            return;
+        }
+        List<File> jars = new ArrayList<>();
+        for (File enchants : Objects.requireNonNull(folder.listFiles())) {
+            if (enchants.getName().endsWith(".jar")) {
+                jars.add(enchants);
+            }
+        }
+        loadEnchantmentClasses(jars);
     }
 
     private void loadEnchantmentClasses(List<File> jars) {
@@ -89,6 +93,7 @@ public class EnchantmentFileLoader {
             }
             main.getListenerHandler().registerListeners();
             main.saveConfig();
+            Thread.currentThread().setName("Enchantment-Loader");
             EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Loaded enchantments in {0}ms", System.currentTimeMillis() - start);
             executor.shutdown();
         });

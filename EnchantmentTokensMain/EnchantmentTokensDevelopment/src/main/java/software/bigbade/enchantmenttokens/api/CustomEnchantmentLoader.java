@@ -1,6 +1,5 @@
 package software.bigbade.enchantmenttokens.api;
 
-import co.aikar.taskchain.TaskChain;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
@@ -12,6 +11,7 @@ import software.bigbade.enchantmenttokens.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationType;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import software.bigbade.enchantmenttokens.utils.ReflectionManager;
+import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentLoader;
 
 import javax.annotation.Nonnull;
@@ -20,11 +20,8 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 
 @RequiredArgsConstructor
@@ -33,40 +30,31 @@ public class CustomEnchantmentLoader implements EnchantmentLoader {
     private final EnchantmentTokens main;
 
     @Override
-    public void loadEnchantments(Map<EnchantmentAddon, Set<Class<EnchantmentBase>>> enchants) {
-        long startTime = System.currentTimeMillis();
-        ConcurrentLinkedQueue<EnchantmentBase> enchantments = new ConcurrentLinkedQueue<>();
-
-        Map<EnchantmentAddon, FileConfiguration> configs = new HashMap<>();
-
-        enchants.keySet().forEach(addon -> configs.put(addon, ConfigurationManager.loadConfigurationFile(new File(main.getDataFolder().getAbsolutePath() + FOLDER + addon.getName() + ".yml"))));
-
-        TaskChain<?> chain = EnchantmentTokens.newChain();
-
-        enchants.forEach((addon, classes) -> chain.async(() -> {
-            for (Class<EnchantmentBase> clazz : classes) {
-                EnchantmentBase enchant = loadClass(clazz, configs.get(addon), addon);
-                if (enchant == null) {
-                    continue;
-                }
-                enchant.loadConfig();
-                enchantments.add(enchant);
-                checkMethods(enchant, clazz);
+    public void loadEnchantments(EnchantmentAddon addon, EnchantmentHandler handler, Set<Class<EnchantmentBase>> enchants) {
+        File configFile = new File(main.getDataFolder().getAbsolutePath() + FOLDER + addon.getName() + ".yml");
+        FileConfiguration configuration = ConfigurationManager.loadConfigurationFile(configFile);
+        for(Class<EnchantmentBase> enchantClass : enchants) {
+            EnchantmentBase enchant = loadClass(enchantClass, configuration, addon);
+            if (enchant == null) {
+                continue;
             }
-        }));
-
-        chain.sync(() -> {
-            main.getEnchantmentHandler().registerEnchants(enchantments);
-            main.getListenerHandler().registerListeners();
-            main.saveConfig();
-        });
-
-        chain.execute();
-
-        for (Map.Entry<EnchantmentAddon, FileConfiguration> configuration : configs.entrySet()) {
-            ConfigurationManager.saveConfiguration(new File(main.getDataFolder().getAbsolutePath() + FOLDER + configuration.getKey().getName() + ".yml"), configuration.getValue());
+            enchant.loadConfig();
+            checkMethods(enchant, enchantClass);
+            handler.registerEnchant(enchant);
         }
-        EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Finishing loading enchantments in {0} milliseconds", System.currentTimeMillis() - startTime);
+
+        ConfigurationManager.saveConfiguration(configFile, configuration);
+    }
+
+    @Override
+    public void loadEnchantment(Plugin plugin, Class<? extends EnchantmentBase> clazz) {
+        EnchantmentBase enchant = loadClass(clazz, plugin.getConfig(), plugin);
+        if(enchant == null) {
+            return;
+        }
+        enchant.loadConfig();
+        checkMethods(enchant, clazz);
+        main.getEnchantmentHandler().registerEnchant(enchant);
     }
 
     @Override
@@ -79,17 +67,6 @@ public class CustomEnchantmentLoader implements EnchantmentLoader {
 
         addon.onEnable();
         main.getMenuFactory().addButtons(addon.getButtons());
-    }
-
-    @Override
-    public void loadEnchantment(Plugin plugin, Class<? extends EnchantmentBase> clazz) {
-        EnchantmentBase enchant = loadClass(clazz, plugin.getConfig(), plugin);
-        if(enchant == null) {
-            return;
-        }
-        enchant.loadConfig();
-        checkMethods(enchant, clazz);
-        main.getEnchantmentHandler().registerEnchant(enchant);
     }
 
     private void checkMethods(@Nonnull EnchantmentBase enchant, Class<?> clazz) {

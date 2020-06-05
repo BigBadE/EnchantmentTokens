@@ -95,7 +95,7 @@ public class CurrencyFactoryHandler {
                 return null;
             }
 
-            Set<Class<CurrencyFactory>> classes = EnchantmentFileLoader.loadClasses(file, CurrencyFactory.class);
+            Set<Class<CurrencyFactory>> classes = EnchantmentFileLoader.loadClassesForFile(file, getClass().getClassLoader(), CurrencyFactory.class);
             Iterator<Class<CurrencyFactory>> iterator = classes.iterator();
             if (iterator.hasNext()) {
                 return getFactory(iterator.next());

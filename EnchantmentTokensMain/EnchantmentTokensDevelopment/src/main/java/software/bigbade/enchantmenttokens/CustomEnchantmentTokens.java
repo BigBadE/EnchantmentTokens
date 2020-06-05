@@ -12,6 +12,7 @@ import com.comphenix.protocol.ProtocolManager;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
+import software.bigbade.enchantmenttokens.api.CustomEnchantmentLoader;
 import software.bigbade.enchantmenttokens.api.CustomStandaloneEnchantHandler;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.StandaloneEnchantHandler;
@@ -78,7 +79,7 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
     private boolean overridingEnchantTables = false;
 
     @Getter
-    private EnchantmentLoader enchantmentLoader;
+    private final EnchantmentLoader enchantmentLoader = new CustomEnchantmentLoader(this);
 
     /**
      * Everything is set up here
@@ -88,12 +89,18 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
         setLogger(getLogger());
         ButtonFactory.setInstance(new CustomButtonFactory());
         EnchantmentTokens.setTaskChainFactory(BukkitTaskChainFactory.create(this));
+        //Sets static fields like the empty button
         EnchantmentTokens.setup();
 
         setupConfiguration();
         setupCurrency();
         setupProtocolManager();
 
+        menuFactory = new CustomMenuFactory(playerHandler, utils, enchantmentHandler);
+        //Must be setup after sign handler
+        utils = new CustomEnchantUtils(enchantmentHandler, playerHandler, listenerHandler, signHandler.getSigns());
+
+        //Must be called after the menu factory is set, so all registered addons can add buttons
         StandaloneEnchantHandler.setInstance(new CustomStandaloneEnchantHandler(enchantmentLoader));
         registerEnchants();
 
@@ -101,13 +108,11 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
 
         LocaleManager.updateLocale(getConfig(), loader.getAddons());
 
-        utils = new CustomEnchantUtils(enchantmentHandler, playerHandler, listenerHandler, signHandler.getSigns());
-        menuFactory = new CustomMenuFactory(playerHandler, utils, enchantmentHandler);
-
         CommandManager.registerCommands(this);
         setupAutosave();
 
         EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Successfully enabled EnchantmentTokens");
+        //Must be done last, obviously
         saveConfig();
     }
 

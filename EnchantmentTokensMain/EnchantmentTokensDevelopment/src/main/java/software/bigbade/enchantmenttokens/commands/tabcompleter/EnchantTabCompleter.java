@@ -6,9 +6,11 @@ package software.bigbade.enchantmenttokens.commands.tabcompleter;
 
 import lombok.RequiredArgsConstructor;
 import org.bukkit.ChatColor;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.StringUtils;
 import software.bigbade.enchantmenttokens.api.VanillaEnchant;
 import software.bigbade.enchantmenttokens.commands.CommandUtils;
@@ -17,10 +19,10 @@ import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 import software.bigbade.enchantmenttokens.utils.players.PlayerHandler;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class EnchantTabCompleter implements TabCompleter, IEnchantTabCompleter {
@@ -52,12 +54,12 @@ public class EnchantTabCompleter implements TabCompleter, IEnchantTabCompleter {
     }
 
     public List<String> getKeys(String name) {
-        List<String> suggestions = new ArrayList<>();
-        handler.getAllEnchants().stream()
+        return handler.getAllEnchants().stream()
                 .filter(base -> !(base instanceof VanillaEnchant) && base.getKey().toString().startsWith(name) || base.getEnchantmentName().startsWith(name))
                 .limit(10)
-                .forEach(base -> suggestions.add(base.getKey().toString()));
-        return suggestions;
+                .map(EnchantmentBase::getKey)
+                .map(NamespacedKey::toString)
+                .collect(Collectors.toList());
     }
 
     @Override

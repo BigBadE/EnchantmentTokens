@@ -49,8 +49,9 @@ public class EnchantmentFileLoader {
             }
             List<File> jars = new ArrayList<>();
             for (File enchants : Objects.requireNonNull(folder.listFiles())) {
-                if (enchants.getName().endsWith(".jar"))
+                if (enchants.getName().endsWith(".jar")) {
                     jars.add(enchants);
+                }
             }
             loadEnchantmentClasses(jars);
         });

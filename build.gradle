@@ -68,10 +68,6 @@ subprojects {
         }
     }
 
-    dependencies {
-        implementation fileTree(dir: 'lib', include: '*.jar')
-    }
-
     test.useTestNG()
 }
 

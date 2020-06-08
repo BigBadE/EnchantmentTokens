@@ -7,10 +7,12 @@ env:
 jdk:
   - openjdk8
 
-before_install:
-  - mvn -U clean
+before_script:
+  - chmod +x gradlew
 
-script: "mvn cobertura:cobertura"
+script:
+  - ./gradlew check
+  - ./gradlew codeCoverageReport
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

@@ -13,6 +13,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
+import org.mockito.internal.verification.AtMost;
+import org.mockito.verification.VerificationMode;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -143,6 +145,9 @@ public class EnchantmentFileLoaderTest {
         addonOptional.orElseThrow(() -> new RuntimeException("Stream didn't find the addon"));
         addonOptional.ifPresent((foundAddon) ->
                 Assert.assertEquals(addon, foundAddon));
+
+        when(file.listFiles()).thenReturn(null);
+        loader.loadJars();
     }
 }
 

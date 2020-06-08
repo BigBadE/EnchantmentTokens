@@ -18,34 +18,33 @@
 
 package software.bigbade.enchantmenttokens.utils;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
+
+import java.lang.reflect.Field;
 import org.bukkit.Bukkit;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.lang.reflect.Field;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
-
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ ReflectionManager.class, Bukkit.class })
+@PrepareForTest({ReflectionManager.class, Bukkit.class})
 public class ReflectionManagerTest {
-    @SuppressWarnings({"FieldMayBeFinal", "unused"})
-    private boolean worked = false;
+  @SuppressWarnings({"FieldMayBeFinal", "unused"})
+  private boolean worked = false;
 
-    @Test
-    public void testReflectionManager() {
-        mockStatic(Bukkit.class);
-        when(Bukkit.getVersion()).thenReturn("1.15.2");
-        ReflectionManagerTest test = ReflectionManager.instantiate(getClass());
-        assertNotNull(test);
-        Field field = ReflectionManager.getField(getClass(), "worked");
-        assertNotNull(field);
-        ReflectionManager.setValue(field, true, test);
-        assertTrue((boolean) ReflectionManager.getValue(field, test));
-    }
+  @Test
+  public void testReflectionManager() {
+    mockStatic(Bukkit.class);
+    when(Bukkit.getVersion()).thenReturn("1.15.2");
+    ReflectionManagerTest test = ReflectionManager.instantiate(getClass());
+    assertNotNull(test);
+    Field field = ReflectionManager.getField(getClass(), "worked");
+    assertNotNull(field);
+    ReflectionManager.setValue(field, true, test);
+    assertTrue((boolean)ReflectionManager.getValue(field, test));
+  }
 }

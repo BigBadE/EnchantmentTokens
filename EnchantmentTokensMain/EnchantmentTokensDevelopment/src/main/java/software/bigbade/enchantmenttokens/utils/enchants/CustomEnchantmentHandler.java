@@ -52,7 +52,7 @@ public class CustomEnchantmentHandler implements EnchantmentHandler {
     public void registerEnchants(Collection<EnchantmentBase> enchantments) {
         ConfigurationSection section = ConfigurationManager.getSectionOrCreate(config, "enchants");
 
-        for (String name : new ConfigurationType<>(Collections.singletonList("Fortune")).getValue("vanillaEnchants", section)) {
+        for (String name : new ConfigurationType<>(Collections.singletonList("Fortune")).getValue("vanilla-enchants", section)) {
             registerVanillaEnchantment(name, section);
         }
 

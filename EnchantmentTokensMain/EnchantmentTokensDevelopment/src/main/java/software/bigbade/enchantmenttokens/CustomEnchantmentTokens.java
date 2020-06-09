@@ -37,8 +37,8 @@ import software.bigbade.enchantmenttokens.utils.currency.VaultCurrencyFactory;
 import software.bigbade.enchantmenttokens.utils.enchants.CustomEnchantUtils;
 import software.bigbade.enchantmenttokens.utils.enchants.CustomEnchantmentHandler;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantUtils;
-import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentFileLoader;
+import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentLoader;
 import software.bigbade.enchantmenttokens.utils.listeners.EnchantListenerHandler;
 import software.bigbade.enchantmenttokens.utils.players.EnchantmentPlayerHandler;
@@ -91,6 +91,7 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
         EnchantmentTokens.setTaskChainFactory(BukkitTaskChainFactory.create(this));
         //Sets static fields like the empty button
         EnchantmentTokens.setup();
+        saveDefaultConfig();
 
         setupConfiguration();
         setupCurrency();

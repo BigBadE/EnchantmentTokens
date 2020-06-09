@@ -109,6 +109,6 @@ shadowJar {
     }
 
     minimize {
-        exclude('software.bigbade')
+        exclude(project(':development'))
     }
 }

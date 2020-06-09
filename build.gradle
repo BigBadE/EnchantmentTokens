@@ -10,7 +10,6 @@ allprojects {
     apply plugin: 'java'
     apply plugin: 'jacoco'
 
-    tasks.jar.enabled = false
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 
@@ -26,6 +25,20 @@ allprojects {
 
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
+    }
+
+    configurations {
+        resolveImplementation
+        resolveImplementation.extendsFrom(implementation)
+    }
+
+    sourceSets {
+        test {
+            compileClasspath += configurations.resolveImplementation
+            compileClasspath += configurations.compileOnly
+            runtimeClasspath += configurations.resolveImplementation
+            runtimeClasspath += configurations.compileOnly
+        }
     }
 }
 
@@ -108,7 +121,11 @@ shadowJar {
         include 'commodore/*.commodore'
     }
 
+    from('resources') {
+        include '*'
+    }
+
     minimize {
-        exclude(project(':development'))
+        exclude('software.bigbade.enchantmenttokens')
     }
 }

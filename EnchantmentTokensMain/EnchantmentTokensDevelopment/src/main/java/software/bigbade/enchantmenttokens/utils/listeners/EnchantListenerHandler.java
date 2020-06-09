@@ -7,6 +7,7 @@ package software.bigbade.enchantmenttokens.utils.listeners;
 import com.codingforcookies.armorequip.ArmorListener;
 import com.codingforcookies.armorequip.DispenserArmorListener;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
@@ -15,6 +16,7 @@ import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.EventFactory;
 import software.bigbade.enchantmenttokens.api.ListenerType;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationManager;
+import software.bigbade.enchantmenttokens.configuration.ConfigurationType;
 import software.bigbade.enchantmenttokens.events.EnchantmentApplyEvent;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import software.bigbade.enchantmenttokens.listeners.ChunkUnloadListener;
@@ -91,7 +93,11 @@ public class EnchantListenerHandler implements ListenerHandler {
 
     private void registerGemListener() {
         if (!(main.getCurrencyHandler() instanceof VaultCurrencyFactory)) {
-            Bukkit.getPluginManager().registerEvents(new GemFindListener(main.getConfig().getConfigurationSection("currency"), main.getPlayerHandler()), main);
+            ConfigurationSection section = ConfigurationManager.getSectionOrCreate(main.getConfig(), "currency");
+            double chance = new ConfigurationType<>(0.05).getValue("chance", section);
+            if (chance > 0) {
+                Bukkit.getPluginManager().registerEvents(new GemFindListener(main.getPlayerHandler(), chance, section), main);
+            }
         }
     }
 

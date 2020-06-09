@@ -21,13 +21,22 @@ import java.util.Random;
 @RequiredArgsConstructor
 @Nonnull
 public class GemFindListener implements Listener {
-    private final ConfigurationSection section;
     private final PlayerHandler playerHandler;
     private final Random random = new Random();
+    private final double chance;
+    private final double doubler;
+    private final double min;
+
+    public GemFindListener(PlayerHandler playerHandler, double chance, ConfigurationSection section) {
+        this.playerHandler = playerHandler;
+        this.chance = chance;
+        doubler = new ConfigurationType<>(1D).getValue("doubler", section);
+        min = new ConfigurationType<>(1).getValue("minimum", section);
+    }
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
-        if (section != null && random.nextDouble() <= new ConfigurationType<>(0.05).getValue("chance", section)) {
+        if (random.nextDouble() <= chance) {
             assert playerHandler != null;
             EnchantmentPlayer player = playerHandler.getPlayer(event.getPlayer());
             long gems = getRandomGems(player);
@@ -37,6 +46,6 @@ public class GemFindListener implements Listener {
     }
 
     private long getRandomGems(EnchantmentPlayer player) {
-        return (long) (Math.abs(random.nextGaussian()) * new ConfigurationType<>(1).getValue("doubler", section) + new ConfigurationType<>(1).getValue("minimum", section)) * player.getDoubler();
+        return (long) (Math.abs(random.nextGaussian()) * doubler + min) * player.getDoubler();
     }
 }

@@ -34,6 +34,6 @@ Current features:
 - Save methods:
     - PersistentData
     - Flat files
-    - MySQL
-    - MongoDB
-    - Any others can be added, the save API is open source.
+    - MySQL (https://github.com/BigBadE/EnchantmentTokensMySQL)
+    - MongoDB  (https://github.com/BigBadE/EnchantmentTokensMongo)
+    - Any others can be added, feel free to use MySQL/MongoDB as an example.

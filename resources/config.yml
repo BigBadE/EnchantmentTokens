@@ -1,22 +1,47 @@
-# Add all vanilla enchantments used in here!
-# Check ConfigurationGuide.txt for names/versions.
+# Configuration for EnchantmentTokens
 metrics: true
+# Currency type. Currently supports: gems, vault, experience, MySQL/Mongo (With extension, check the GitHub for the link)
 currency:
   type: gems
+  # Gem type can use persistent data, which saves it to the player.dat file (1.14+)
   usePersistentData: true
+  # Chance of gems being mined, 0 to disable
+  chance: 0.05
+  # Multiplies mined gems by this
+  doubler: 1.0
+  # Minimum number of gems mined
+  minimum: 1
+# Default server language, this will overwrite the JVM default. If the language is not found, defaults to US
 country-language: US
+# Minimum amount of gems that can be paid, to prevent spam
+minimumPay: 1
+# Time between autosaves. This will not lag the server, but can cause high read-write
 autosaveTime: 15
 enchants:
-  vanillaEnchants:
+  # List of vanilla enchants
+  # Check ConfigurationGuide.txt for names/versions.
+  vanilla-enchants:
     - Fortune
+  # A vanilla enchant, all custom ones will either be in skript.yml or in the enchantments folder.
   fortune:
-    icon: Bedrock
     enabled: true
-    name: Fortune
     maxLevel: 3
-    minLevel: 1
+    startLevel: 1
     price:
+      # The way prices are determined, you can use custom (set all prices yourself), linear, or algebraic (algebraic equation, where x is the level and y is the price).
       type: custom
       '1': 10
       '2': 20
       '3': 30
+    # Rarity of the enchantment, higher rarity = more rare
+    rarity: 1
+    # Max level in the enchantment level
+    max-table-level: 3
+# If the plugin should override the vanilla enchantment table. BETA FEATURE, MIGHT NOT WORK (ESPECIALLY ON OLD VERSIONS).
+# Any bugs found with this feature should be reported on the github
+override-enchantment-table: true
+enchantment-table:
+  # Max experience level in the table, feel free to go higher
+  max-level: 30
+  # Whether to include all vanilla enchantments in the table, instead of just the ones specified in vanilla-enchants
+  include-vanilla-enchants: true

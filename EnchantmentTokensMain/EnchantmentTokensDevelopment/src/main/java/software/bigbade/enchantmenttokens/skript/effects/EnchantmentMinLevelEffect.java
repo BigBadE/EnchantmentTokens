@@ -31,8 +31,8 @@ public class EnchantmentMinLevelEffect extends Effect {
 
     @Override
     protected void execute(@Nonnull Event event) {
-        int minLevel = this.minLevel.getSingle(event).intValue();
-        enchantment.getSingle(event).setStartLevel(minLevel);
+        int newLevel = this.minLevel.getSingle(event).intValue();
+        enchantment.getSingle(event).setStartLevel(newLevel);
     }
 
     @Nonnull

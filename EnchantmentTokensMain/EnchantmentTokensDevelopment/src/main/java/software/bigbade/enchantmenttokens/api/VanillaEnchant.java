@@ -114,7 +114,11 @@ public class VanillaEnchant extends CustomEnchantment {
         return enchantment.isTreasure();
     }
 
-    @SuppressWarnings("deprecation")
+    /**
+     * @return If the enchant is cursed
+     * @deprecated
+     */
+    @Deprecated
     @Override
     public boolean isCursed() {
         return enchantment.isCursed();

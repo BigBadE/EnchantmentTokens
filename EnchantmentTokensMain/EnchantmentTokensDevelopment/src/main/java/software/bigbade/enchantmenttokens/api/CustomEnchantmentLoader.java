@@ -33,13 +33,15 @@ public class CustomEnchantmentLoader implements EnchantmentLoader {
     public void loadEnchantments(EnchantmentAddon addon, EnchantmentHandler handler, Set<Class<EnchantmentBase>> enchants) {
         File configFile = new File(main.getDataFolder().getAbsolutePath() + FOLDER + addon.getName() + ".yml");
         FileConfiguration configuration = ConfigurationManager.loadConfigurationFile(configFile);
-        for(Class<EnchantmentBase> enchantClass : enchants) {
+        for (Class<EnchantmentBase> enchantClass : enchants) {
             EnchantmentBase enchant = loadClass(enchantClass, configuration, addon);
             if (enchant == null) {
                 continue;
             }
             enchant.loadConfig();
-            checkMethods(enchant, enchantClass);
+            for (Method method : enchantClass.getMethods()) {
+                checkMethod(enchant, method);
+            }
             handler.registerEnchant(enchant);
         }
 
@@ -49,11 +51,13 @@ public class CustomEnchantmentLoader implements EnchantmentLoader {
     @Override
     public void loadEnchantment(Plugin plugin, Class<? extends EnchantmentBase> clazz) {
         EnchantmentBase enchant = loadClass(clazz, plugin.getConfig(), plugin);
-        if(enchant == null) {
+        if (enchant == null) {
             return;
         }
         enchant.loadConfig();
-        checkMethods(enchant, clazz);
+        for (Method method : clazz.getMethods()) {
+            checkMethod(enchant, method);
+        }
         main.getEnchantmentHandler().registerEnchant(enchant);
     }
 
@@ -69,20 +73,18 @@ public class CustomEnchantmentLoader implements EnchantmentLoader {
         main.getMenuFactory().addButtons(addon.getButtons());
     }
 
-    private void checkMethods(@Nonnull EnchantmentBase enchant, Class<?> clazz) {
-        for (Method method : clazz.getMethods()) {
-            if (!method.isAnnotationPresent(EnchantListener.class)) {
-                continue;
-            }
-            ListenerType type = method.getAnnotation(EnchantListener.class).type();
-            Class<?>[] params = method.getParameterTypes();
-            if(params.length != 1 || !EnchantmentEvent.class.isAssignableFrom(params[0])) {
-                EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Enchantment {0} has an invalid listener {1}", new Object[] { enchant.getEnchantmentName(), method.getName() });
-                continue;
-            }
-            if (canEnchant(enchant, type)) {
-                main.getListenerHandler().getListenerManager(type).add(event -> ReflectionManager.invoke(method, enchant, event), enchant.getEnchantment());
-            }
+    private void checkMethod(@Nonnull EnchantmentBase enchant, Method method) {
+        if (!method.isAnnotationPresent(EnchantListener.class)) {
+            return;
+        }
+        ListenerType type = method.getAnnotation(EnchantListener.class).type();
+        Class<?>[] params = method.getParameterTypes();
+        if (params.length != 1 || !EnchantmentEvent.class.isAssignableFrom(params[0])) {
+            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Enchantment {0} has an invalid listener {1}", new Object[]{enchant.getEnchantmentName(), method.getName()});
+            return;
+        }
+        if (canEnchant(enchant, type)) {
+            main.getListenerHandler().getListenerManager(type).add(event -> ReflectionManager.invoke(method, enchant, event), enchant.getEnchantment());
         }
     }
 

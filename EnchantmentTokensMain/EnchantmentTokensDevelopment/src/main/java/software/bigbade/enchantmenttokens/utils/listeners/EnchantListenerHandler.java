@@ -76,8 +76,10 @@ public class EnchantListenerHandler implements ListenerHandler {
             Bukkit.getPluginManager().registerEvents(new EnchantTableListener(main.getEnchantmentHandler(), main.getPlayerHandler(), ConfigurationManager.getSectionOrCreate(main.getConfig(), "enchantment-table")), main);
         }
 
-        if (ReflectionManager.VERSION >= 13)
+        if (ReflectionManager.VERSION >= 13) {
             Bukkit.getPluginManager().registerEvents(new RiptideListener(enchantListeners.getManager(ListenerType.RIPTIDE)), main);
+        }
+
         Bukkit.getPluginManager().registerEvents(new PlayerDeathListener(enchantListeners.getManager(ListenerType.DEATH_AFTER)), main);
         Bukkit.getPluginManager().registerEvents(new ProjectileHitListener(enchantListeners.getManager(ListenerType.TRIDENT_HIT), enchantListeners.getManager(ListenerType.ARROW_HIT)), main);
         Bukkit.getPluginManager().registerEvents(new ProjectileShootListener(main, enchantListeners.getManager(ListenerType.TRIDENT_THROW), enchantListeners.getManager(ListenerType.BOW_SHOOT), enchantListeners.getManager(ListenerType.CROSSBOW_SHOOT)), main);

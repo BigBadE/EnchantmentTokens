@@ -126,6 +126,7 @@ shadowJar {
     }
 
     minimize {
-        exclude('software.bigbade.enchantmenttokens')
+        exclude(project(':development'))
+        include(dependency('com.codingforcookies:ArmorEquipEvent:1.7.3'))
     }
 }

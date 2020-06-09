@@ -8,12 +8,12 @@ dependencies {
         exclude module: 'brigadier'
     }
 
-    compileOnly 'org.spigotmc:spigot-api:1.15.2-R0.1-SNAPSHOT'
-    compileOnly 'com.comphenix.protocol:ProtocolLib:4.5.1'
-    compileOnly 'net.milkbowl.vault:VaultAPI:1.7'
-    compileOnly 'com.github.SkriptLang:Skript:2.4.1'
-    compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
-    compileOnly 'com.mojang:brigadier:1.0.17'
+    shadow 'org.spigotmc:spigot-api:1.15.2-R0.1-SNAPSHOT'
+    shadow 'com.comphenix.protocol:ProtocolLib:4.5.1'
+    shadow 'net.milkbowl.vault:VaultAPI:1.7'
+    shadow 'com.github.SkriptLang:Skript:2.4.1'
+    shadow 'com.google.code.findbugs:jsr305:3.0.2'
+    shadow 'com.mojang:brigadier:1.0.17'
 
     testImplementation 'junit:junit:4.13'
     testImplementation 'org.mockito:mockito-core:3.3.3'

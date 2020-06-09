@@ -8,6 +8,7 @@ allprojects {
     version = '1.0'
 
     apply plugin: 'java'
+    apply plugin: 'com.github.johnrengelman.shadow'
     apply plugin: 'jacoco'
 
     sourceCompatibility = 1.8
@@ -35,9 +36,9 @@ allprojects {
     sourceSets {
         test {
             compileClasspath += configurations.resolveImplementation
-            compileClasspath += configurations.compileOnly
+            compileClasspath += configurations.shadow
             runtimeClasspath += configurations.resolveImplementation
-            runtimeClasspath += configurations.compileOnly
+            runtimeClasspath += configurations.shadow
         }
     }
 }

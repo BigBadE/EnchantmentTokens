@@ -95,7 +95,7 @@ codeCoverageReport.dependsOn {
 }
 
 shadowJar {
-    archivesBaseName = 'EnchantmentTokens-' + project.version
+    classifier = ''
     relocate 'co.aikar', 'software.bigbade'
     relocate 'com.codingforcookies', 'software.bigbade'
     relocate 'me.lucko', 'software.bigbade'

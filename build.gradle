@@ -124,9 +124,4 @@ shadowJar {
     from('resources') {
         include '*'
     }
-
-    minimize {
-        exclude(project(':development'))
-        include(dependency('com.codingforcookies:ArmorEquipEvent:1.7.3'))
-    }
 }

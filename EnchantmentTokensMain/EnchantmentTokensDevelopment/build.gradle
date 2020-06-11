@@ -20,7 +20,7 @@ dependencies {
     testImplementation 'org.powermock:powermock-module-junit4:2.0.7'
     testImplementation 'org.powermock:powermock-api-mockito2:2.0.7'
 
-    compileOnly 'org.projectlombok:lombok:1.18.12'
+    shadow 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
 
     testCompileOnly 'org.projectlombok:lombok:1.18.12'

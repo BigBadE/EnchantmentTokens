@@ -1,6 +1,6 @@
 [submodule "wiki"]
 	path = wiki
-	url = https://github.com/BigBadE/EnchantmentTokens.wiki.git
+	url = https://github.com/BigBadE/EnchantmentTokensPublic.wiki.git
 	update = rebase
 [submodule "EnchantmentTokensCurrency/EnchantmentTokensMongo"]
 	path = EnchantmentTokensCurrency/EnchantmentTokensMongo

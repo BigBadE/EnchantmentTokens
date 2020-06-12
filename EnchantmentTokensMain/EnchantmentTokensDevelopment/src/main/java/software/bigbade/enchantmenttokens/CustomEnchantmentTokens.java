@@ -6,7 +6,6 @@ package software.bigbade.enchantmenttokens;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
-import co.aikar.taskchain.BukkitTaskChainFactory;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import lombok.Getter;
@@ -88,9 +87,8 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
     public void onEnable() {
         setLogger(getLogger());
         ButtonFactory.setInstance(new CustomButtonFactory());
-        EnchantmentTokens.setTaskChainFactory(BukkitTaskChainFactory.create(this));
         //Sets static fields like the empty button
-        EnchantmentTokens.setup();
+        EnchantmentTokens.setup(this);
         saveDefaultConfig();
 
         setupConfiguration();

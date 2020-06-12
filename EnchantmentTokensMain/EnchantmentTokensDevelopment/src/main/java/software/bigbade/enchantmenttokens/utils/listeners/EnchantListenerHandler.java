@@ -4,13 +4,13 @@
 
 package software.bigbade.enchantmenttokens.utils.listeners;
 
-import com.codingforcookies.armorequip.ArmorListener;
-import com.codingforcookies.armorequip.DispenserArmorListener;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
+import software.bigbade.armorequip.ArmorListener;
+import software.bigbade.armorequip.DispenserArmorListener;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.EventFactory;

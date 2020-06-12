@@ -4,13 +4,13 @@
 
 package software.bigbade.enchantmenttokens.utils.enchants;
 
-import co.aikar.taskchain.TaskChain;
 import lombok.SneakyThrows;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.PluginDescriptionFile;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
+import software.bigbade.enchantmenttokens.api.wrappers.EnchantmentChain;
 import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 
 import javax.annotation.Nullable;
@@ -44,7 +44,7 @@ public class EnchantmentFileLoader {
     public EnchantmentFileLoader(File folder, EnchantmentTokens main) {
         this.main = main;
         this.folder = folder;
-        TaskChain<?> chain = EnchantmentTokens.newChain();
+        EnchantmentChain chain = new EnchantmentChain();
         chain.async(this::loadJars);
         chain.execute();
     }

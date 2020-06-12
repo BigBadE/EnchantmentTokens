@@ -4,10 +4,10 @@
 
 package software.bigbade.enchantmenttokens.listeners.enchants;
 
-import com.codingforcookies.armorequip.ArmorEquipEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import software.bigbade.armorequip.ArmorEquipEvent;
 import software.bigbade.enchantmenttokens.api.EventFactory;
 import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;

@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
+import software.bigbade.enchantmenttokens.api.wrappers.EnchantmentChain;
 import software.bigbade.enchantmenttokens.utils.players.PlayerHandler;
 
 public class PlayerLeaveListener implements Listener {
@@ -30,8 +31,10 @@ public class PlayerLeaveListener implements Listener {
     }
 
     private void savePlayer(Player player) {
-        EnchantmentPlayer enchantmentPlayer = playerHandler.getPlayer(player);
-        enchantmentPlayer.save(true);
-        playerHandler.removePlayer(enchantmentPlayer);
+        new EnchantmentChain(player.getUniqueId().toString()).async(() -> {
+            EnchantmentPlayer enchantmentPlayer = playerHandler.getPlayer(player);
+            enchantmentPlayer.save();
+            playerHandler.removePlayer(enchantmentPlayer);
+        }).execute();
     }
 }

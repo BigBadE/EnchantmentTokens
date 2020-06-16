@@ -45,8 +45,17 @@ public class CustomEnchantUtils extends EnchantUtils {
         EnchantmentPlayer enchantmentPlayer = playerHandler.getPlayer(player);
         for (EnchantmentBase base : handler.getAllEnchants()) {
             if (base.getEnchantmentName().equals(name) && base.canEnchantItem(itemStack)) {
-                enchantmentPlayer.addGems(-addEnchantmentBase(itemStack, base, enchantmentPlayer));
-                triggerOnEnchant(itemStack, base, player);
+                enchantmentPlayer.getGems().thenAccept(gems -> {
+                    int level = getLevel(itemStack, base) + 1;
+                    long price = base.getDefaultPrice(level);
+                    if (gems < price) {
+                        enchantmentPlayer.getPlayer().sendMessage(new TranslatedStringMessage(enchantmentPlayer.getLanguage(), StringUtils.ENCHANTMENT_BOUGHT_FAIL).translate(new TranslatedPriceMessage(enchantmentPlayer.getLanguage()).translate("" + base.getDefaultPrice(level))));
+                    } else {
+                        addEnchantmentBase(itemStack, base, enchantmentPlayer);
+                        enchantmentPlayer.addGems(-price);
+                        triggerOnEnchant(itemStack, base, player);
+                    }
+                });
                 return;
             }
         }
@@ -54,27 +63,20 @@ public class CustomEnchantUtils extends EnchantUtils {
     }
 
     @Override
-    public long addEnchantmentBase(ItemStack item, EnchantmentBase base, EnchantmentPlayer enchantmentPlayer) {
-        int level = getLevel(item, base)+1;
+    public void addEnchantmentBase(ItemStack item, EnchantmentBase base, EnchantmentPlayer enchantmentPlayer) {
+        int level = getLevel(item, base) + 1;
         if (level > base.getMaxLevel()) {
             enchantmentPlayer.getPlayer().sendMessage(new TranslatedStringMessage(enchantmentPlayer.getLanguage(), StringUtils.MAXED_MESSAGE).translate());
-            return 0;
+            return;
         }
 
-        long price = base.getDefaultPrice(level);
-
-        if (enchantmentPlayer.getGems() < price) {
-            enchantmentPlayer.getPlayer().sendMessage(new TranslatedStringMessage(enchantmentPlayer.getLanguage(), StringUtils.ENCHANTMENT_BOUGHT_FAIL).translate(new TranslatedPriceMessage(enchantmentPlayer.getLanguage()).translate("" + base.getDefaultPrice(level))));
-            return 0;
-        }
         enchantmentPlayer.getPlayer().sendMessage(new TranslatedStringMessage(enchantmentPlayer.getLanguage(), StringUtils.ENCHANTMENT_BOUGHT_SUCCESS).translate(base.getEnchantmentName(), "" + level));
         addEnchantmentBase(item, base, enchantmentPlayer.getPlayer(), level);
-        return price;
     }
 
     @Override
     public void addEnchantmentBaseNoMessages(ItemStack item, EnchantmentBase base, Player player) {
-        int level = getLevel(item, base)+1;
+        int level = getLevel(item, base) + 1;
         if (level > base.getMaxLevel()) {
             return;
         }
@@ -83,7 +85,7 @@ public class CustomEnchantUtils extends EnchantUtils {
 
     @Override
     public void removeEnchantmentBase(ItemStack item, EnchantmentBase base) {
-        int level = getLevel(item, base)-1;
+        int level = getLevel(item, base) - 1;
         Objects.requireNonNull(item.getItemMeta()).removeEnchant(base.getEnchantment());
         if (base instanceof VanillaEnchant) {
             return;
@@ -140,9 +142,9 @@ public class CustomEnchantUtils extends EnchantUtils {
     public int getLevel(ItemStack item, EnchantmentBase base) {
         if (base instanceof VanillaEnchant)
             return item.getEnchantmentLevel(base.getEnchantment());
-        if (item.getItemMeta() == null || !item.getItemMeta().hasEnchants()) return base.getStartLevel()-1;
+        if (item.getItemMeta() == null || !item.getItemMeta().hasEnchants()) return base.getStartLevel() - 1;
         if (!item.getItemMeta().hasEnchant(base.getEnchantment())) {
-            return base.getStartLevel()-1;
+            return base.getStartLevel() - 1;
         }
         return item.getItemMeta().getEnchants().get(base.getEnchantment());
     }

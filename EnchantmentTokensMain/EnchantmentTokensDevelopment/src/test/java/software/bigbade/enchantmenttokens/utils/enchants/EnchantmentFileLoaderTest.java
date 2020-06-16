@@ -1,7 +1,5 @@
 package software.bigbade.enchantmenttokens.utils.enchants;
 
-import co.aikar.taskchain.TaskChain;
-import co.aikar.taskchain.TaskChainTasks;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
@@ -18,6 +16,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
+import software.bigbade.enchantmenttokens.api.wrappers.EnchantmentChain;
 import software.bigbade.enchantmenttokens.utils.ItemUtils;
 import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerHandler;
@@ -56,7 +55,7 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
                 PluginDescriptionFile.class, Bukkit.class, ReflectionManager.class})
 public class EnchantmentFileLoaderTest {
     private final File file = mock(File.class);
-    private final TaskChain<?> chain = mock(TaskChain.class);
+    private final EnchantmentChain chain = mock(EnchantmentChain.class);
     private final ExecutorService executor = new FakeExecutorService();
     private final ListenerHandler handler = mock(ListenerHandler.class);
     private final EnchantmentLoader enchantmentLoader =
@@ -109,10 +108,9 @@ public class EnchantmentFileLoaderTest {
 
         when(Executors.newCachedThreadPool()).thenReturn(executor);
 
-        PowerMockito.<TaskChain<?>>when(EnchantmentTokens.newChain()).thenReturn(chain);
-        when(chain.async(ArgumentMatchers.any(TaskChainTasks.GenericTask.class))).then(invocationOnMock -> {
-            ((TaskChainTasks.GenericTask) invocationOnMock.getArgument(0))
-                    .runGeneric();
+        whenNew(EnchantmentChain.class).withNoArguments().thenReturn(chain);
+        when(chain.async(ArgumentMatchers.any(Runnable.class))).then(invocationOnMock -> {
+            ((Runnable) invocationOnMock.getArgument(0)).run();
             return null;
         });
 

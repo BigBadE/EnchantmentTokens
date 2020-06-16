@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import software.bigbade.enchantmenttokens.currency.CurrencyHandler;
 
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class EnchantCurrencyHandler implements CurrencyHandler {
     private long gems = -1;
@@ -24,7 +25,7 @@ public abstract class EnchantCurrencyHandler implements CurrencyHandler {
         this.name = name;
     }
 
-    public long getAmount() {
+    public long getGems() {
         return gems;
     }
 
@@ -36,7 +37,13 @@ public abstract class EnchantCurrencyHandler implements CurrencyHandler {
         gems += amount;
     }
 
-    public void savePlayer(Player player, boolean async) { }
+    public void savePlayer(Player player) {
+    }
+
+    @Override
+    public CompletableFuture<Long> getAmount() {
+        return CompletableFuture.completedFuture(gems);
+    }
 
     @Override
     public Locale getLocale() {

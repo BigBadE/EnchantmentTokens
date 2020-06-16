@@ -43,12 +43,12 @@ public class EnchantmentPlayerHandler implements PlayerHandler {
         if (!players.isEmpty()) {
             AtomicInteger saving = new AtomicInteger(0);
             handler.runTaskRepeating(() -> {
-                if (saving.get() > players.size()) players.get(saving.getAndIncrement()).save(true);
+                if (saving.get() > players.size()) players.get(saving.getAndIncrement()).save();
             }, 0, 5);
         }
     }
 
     public void shutdown() {
-        players.forEach(player -> player.save(false));
+        players.forEach(EnchantmentPlayer::save);
     }
 }

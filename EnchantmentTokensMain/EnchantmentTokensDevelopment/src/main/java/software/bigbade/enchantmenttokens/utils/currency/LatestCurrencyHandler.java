@@ -32,8 +32,8 @@ public class LatestCurrencyHandler extends EnchantCurrencyHandler {
     }
 
     @Override
-    public void savePlayer(Player player, boolean async) {
-        player.getPersistentDataContainer().set(gems, PersistentDataType.LONG, getAmount());
+    public void savePlayer(Player player) {
+        player.getPersistentDataContainer().set(gems, PersistentDataType.LONG, getGems());
         player.getPersistentDataContainer().set(locale, PersistentDataType.STRING, getLocale().toLanguageTag());
     }
 }

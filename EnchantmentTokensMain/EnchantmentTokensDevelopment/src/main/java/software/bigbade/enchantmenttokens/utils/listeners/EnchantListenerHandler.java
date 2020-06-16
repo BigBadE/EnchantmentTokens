@@ -41,7 +41,6 @@ import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 import software.bigbade.enchantmenttokens.utils.currency.VaultCurrencyFactory;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 public class EnchantListenerHandler implements ListenerHandler {
     private final TypedListenerHandler enchantListeners = new TypedListenerHandler();
@@ -49,7 +48,6 @@ public class EnchantListenerHandler implements ListenerHandler {
     private ListenerManager<EnchantmentApplyEvent> enchantListener;
 
     public EnchantListenerHandler(EnchantmentTokens main) {
-        EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Looking for enchantments");
         for (ListenerType type : ListenerType.values()) {
             enchantListeners.register(type, new ListenerManager<>());
         }

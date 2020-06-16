@@ -55,11 +55,6 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
     private SignPacketHandler signHandler;
 
     @Getter
-    private EnchantmentHandler enchantmentHandler;
-    @Getter
-    private EnchantListenerHandler listenerHandler;
-
-    @Getter
     private CurrencyFactory currencyHandler;
 
     @Getter
@@ -72,7 +67,13 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
     private EnchantmentMenuFactory menuFactory;
 
     @Getter
+    private final EnchantListenerHandler listenerHandler = new EnchantListenerHandler(this);
+
+    @Getter
     private final SchedulerHandler scheduler = new SchedulerHandler(this);
+
+    @Getter
+    private final EnchantmentHandler enchantmentHandler = new CustomEnchantmentHandler(getConfig(), getDataFolder().getAbsolutePath() + "\\skript.yml");
 
     @Getter
     private boolean overridingEnchantTables = false;
@@ -95,9 +96,10 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
         setupCurrency();
         setupProtocolManager();
 
-        menuFactory = new CustomMenuFactory(playerHandler, utils, enchantmentHandler);
         //Must be setup after sign handler
         utils = new CustomEnchantUtils(enchantmentHandler, playerHandler, listenerHandler, signHandler.getSigns());
+        //Needs to be after utils
+        menuFactory = new CustomMenuFactory(playerHandler, utils, enchantmentHandler);
 
         //Must be called after the menu factory is set, so all registered addons can add buttons
         StandaloneEnchantHandler.setInstance(new CustomStandaloneEnchantHandler(enchantmentLoader));
@@ -172,9 +174,7 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
         if(loader != null) {
             loader.getAddons().forEach(Plugin::onDisable);
         }
-        if(enchantmentHandler != null) {
-            enchantmentHandler.getAllEnchants().forEach(EnchantmentBase::onDisable);
-        }
+        enchantmentHandler.getAllEnchants().forEach(EnchantmentBase::onDisable);
         playerHandler.shutdown();
         currencyHandler.shutdown();
         saveConfig();
@@ -187,8 +187,6 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
 
     @Override
     public void registerEnchants() {
-        listenerHandler = new EnchantListenerHandler(this);
-        enchantmentHandler = new CustomEnchantmentHandler(getConfig(), getDataFolder().getAbsolutePath() + "\\skript.yml");
         loader = new EnchantmentFileLoader(enchantmentFolder, this);
     }
 }

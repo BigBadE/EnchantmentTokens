@@ -10,6 +10,7 @@ import software.bigbade.enchantmenttokens.currency.CurrencyHandler;
 import software.bigbade.enchantmenttokens.gui.EnchantmentGUI;
 
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
 
 public class CustomEnchantmentPlayer implements EnchantmentPlayer {
     private final Player player;
@@ -27,15 +28,15 @@ public class CustomEnchantmentPlayer implements EnchantmentPlayer {
         this.handler = hander;
     }
 
-    public void save(boolean async) {
-        handler.savePlayer(player, async);
+    public void save() {
+        handler.savePlayer(player);
     }
 
     public Player getPlayer() {
         return player;
     }
 
-    public long getGems() {
+    public CompletableFuture<Long> getGems() {
         return handler.getAmount();
     }
 

@@ -42,11 +42,11 @@ public class EnchantmentFileLoader {
     private final File folder;
 
     public EnchantmentFileLoader(File folder, EnchantmentTokens main) {
+        EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Looking for enchantments");
         this.main = main;
         this.folder = folder;
         EnchantmentChain chain = new EnchantmentChain();
-        chain.async(this::loadJars);
-        chain.execute();
+        chain.async(this::loadJars).execute();
     }
 
     public void loadJars() {
@@ -91,10 +91,12 @@ public class EnchantmentFileLoader {
                     EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Error waiting for enchants to load", e);
                 }
             }
+            EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Loaded enchantments in {0}ms", System.currentTimeMillis() - start);
+            long loadListeners = System.currentTimeMillis();
             main.getListenerHandler().registerListeners();
             main.saveConfig();
             Thread.currentThread().setName("Enchantment-Loader");
-            EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Loaded enchantments in {0}ms", System.currentTimeMillis() - start);
+            EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Loaded listeners in {0}ms", System.currentTimeMillis() - loadListeners);
             executor.shutdown();
         });
     }

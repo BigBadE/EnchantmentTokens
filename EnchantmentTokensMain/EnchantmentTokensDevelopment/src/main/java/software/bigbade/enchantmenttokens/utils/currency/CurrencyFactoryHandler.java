@@ -107,6 +107,6 @@ public class CurrencyFactoryHandler {
     }
 
     private CurrencyFactory getFactory(Class<CurrencyFactory> clazz) {
-        return (CurrencyFactory) ReflectionManager.instantiate(clazz.getConstructors()[0], section, main.getScheduler());
+        return (CurrencyFactory) ReflectionManager.instantiate(clazz.getConstructors()[0], section);
     }
 }

@@ -6,6 +6,8 @@ package software.bigbade.enchantmenttokens.utils.currency;
 
 import org.bukkit.entity.Player;
 
+import java.util.concurrent.CompletableFuture;
+
 public class ExperienceCurrencyHandler extends EnchantCurrencyHandler {
     private final Player player;
 
@@ -15,8 +17,8 @@ public class ExperienceCurrencyHandler extends EnchantCurrencyHandler {
     }
 
     @Override
-    public long getAmount() {
-        return player.getLevel();
+    public CompletableFuture<Long> getAmount() {
+        return CompletableFuture.completedFuture((long) player.getLevel());
     }
 
     @Override

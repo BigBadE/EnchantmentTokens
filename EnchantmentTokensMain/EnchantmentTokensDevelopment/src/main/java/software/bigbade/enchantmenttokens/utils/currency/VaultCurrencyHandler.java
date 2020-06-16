@@ -7,6 +7,8 @@ package software.bigbade.enchantmenttokens.utils.currency;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.entity.Player;
 
+import java.util.concurrent.CompletableFuture;
+
 public class VaultCurrencyHandler extends EnchantCurrencyHandler {
     private final Player player;
     private final Economy economy;
@@ -18,18 +20,22 @@ public class VaultCurrencyHandler extends EnchantCurrencyHandler {
     }
 
     @Override
-    public long getAmount() {
-        return (long) economy.getBalance(player);
+    public CompletableFuture<Long> getAmount() {
+        return CompletableFuture.completedFuture((long) economy.getBalance(player));
     }
 
     @Override
     public void setAmount(long amount) {
-        economy.withdrawPlayer(player, getAmount());
+        economy.withdrawPlayer(player, getGems());
         economy.depositPlayer(player, amount);
     }
 
     @Override
     public void addAmount(long amount) {
-        economy.depositPlayer(player, amount);
+        if (amount < 0) {
+            economy.withdrawPlayer(player, -amount);
+        } else {
+            economy.depositPlayer(player, amount);
+        }
     }
 }

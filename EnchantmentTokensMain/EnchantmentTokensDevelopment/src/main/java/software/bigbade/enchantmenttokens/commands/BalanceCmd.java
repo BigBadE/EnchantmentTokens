@@ -27,7 +27,8 @@ public class BalanceCmd implements CommandExecutor {
     public boolean onCommand(@Nonnull CommandSender commandSender, @Nonnull Command command, @Nonnull String s, @Nonnull String[] strings) {
         if(commandSender instanceof Player) {
             EnchantmentPlayer player = handler.getPlayer((Player) commandSender);
-            commandSender.sendMessage(new TranslatedStringMessage(player.getLanguage(), StringUtils.COMMAND_BALANCE).translate(CurrencyAdditionHandler.formatMoney(player.getLanguage(), player.getGems())));
+            player.getGems().thenAccept((gems) -> commandSender.sendMessage(new TranslatedStringMessage(player.getLanguage(), StringUtils.COMMAND_BALANCE).translate(CurrencyAdditionHandler.formatMoney(player.getLanguage(), gems))));
+
         }
         return true;
     }

@@ -35,14 +35,12 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class CustomMenuFactory implements EnchantmentMenuFactory {
+    private static final Pattern REMOVE_LETTERS = Pattern.compile("(§[0-9a-fk-or])?([^\\d])+");
     private final ItemStack glassPane = ItemUtils.createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
     private final EnchantmentPlayerHandler handler;
     private final EnchantmentHandler enchantmentHandler;
     private final EnchantUtils utils;
-
     private final List<EnchantButton> buttons = new ArrayList<>();
-
-    private static final Pattern REMOVE_LETTERS = Pattern.compile("[^\\d.]");
 
     public CustomMenuFactory(EnchantmentPlayerHandler handler, EnchantUtils utils, EnchantmentHandler enchantmentHandler) {
         this.handler = handler;
@@ -144,18 +142,26 @@ public class CustomMenuFactory implements EnchantmentMenuFactory {
 
     private EnchantButton updateItem(EnchantmentBase base, ItemStack stack, EnchantmentPlayer player) {
         ItemStack item = ItemUtils.createItem(base.getIcon(), ChatColor.GREEN + base.getEnchantmentName());
-        int level = utils.getLevel(stack, base)+1;
+        int level = utils.getLevel(stack, base) + 1;
         addLore(base, item, level, player.getLanguage());
         if (level <= base.getMaxLevel()) {
             return new CustomEnchantButton(item, enchantmentPlayer -> {
                 ItemStack itemStack = enchantmentPlayer.getCurrentGUI().getItem();
-                long price = utils.addEnchantmentBase(itemStack, base, player);
-                player.getCurrentGUI().addEnchantment(base);
-                if (price == 0)
-                    return generateGUI(itemStack, player);
-                if (!(base instanceof VanillaEnchant))
-                    swapLines(itemStack);
-                updatePriceStr(price, itemStack);
+                long price = base.getDefaultPrice(level);
+                enchantmentPlayer.getGems().thenAccept(gems -> {
+                    if (gems < price) {
+                        enchantmentPlayer.getPlayer().sendMessage(new TranslatedStringMessage(enchantmentPlayer.getLanguage(), StringUtils.ENCHANTMENT_BOUGHT_FAIL).translate(new TranslatedPriceMessage(enchantmentPlayer.getLanguage()).translate("" + base.getDefaultPrice(level))));
+                        return;
+                    }
+                    utils.addEnchantmentBase(itemStack, base, player);
+                    player.getCurrentGUI().addEnchantment(base);
+                    if (!(base instanceof VanillaEnchant)) {
+                        swapLines(itemStack);
+                    }
+                    if (price != 0) {
+                        updatePriceStr(price, itemStack);
+                    }
+                });
                 return generateGUI(itemStack, player);
             });
         } else {
@@ -166,9 +172,9 @@ public class CustomMenuFactory implements EnchantmentMenuFactory {
 
     private void swapLines(ItemStack itemStack) {
         ItemMeta meta = itemStack.getItemMeta();
-        assert meta != null;
+        Objects.requireNonNull(meta);
         List<String> lore = meta.getLore();
-        assert lore != null;
+        Objects.requireNonNull(lore);
         String temp = lore.get(lore.size() - 2);
         lore.set(lore.size() - 2, lore.get(lore.size() - 1));
         lore.set(lore.size() - 1, temp);
@@ -195,14 +201,14 @@ public class CustomMenuFactory implements EnchantmentMenuFactory {
     }
 
     private void updatePriceStr(long price, ItemStack item) {
-        assert item.getItemMeta() != null;
+        Objects.requireNonNull(item.getItemMeta());
         List<String> lore = item.getItemMeta().getLore();
-        assert lore != null;
-        String priceStr = ChatColor.stripColor(lore.get(lore.size() - 1));
+        Objects.requireNonNull(lore);
+        String priceStr = lore.get(lore.size() - 1);
         long oldPrice = Long.parseLong(REMOVE_LETTERS.matcher(priceStr).replaceAll(""));
         long newPrice = price + oldPrice;
         priceStr = priceStr.replace("" + oldPrice, "" + newPrice);
-        lore.set(lore.size() - 1, ChatColor.GRAY + priceStr);
+        lore.set(lore.size() - 1, priceStr);
         ItemMeta meta = item.getItemMeta();
         meta.setLore(lore);
         item.setItemMeta(meta);

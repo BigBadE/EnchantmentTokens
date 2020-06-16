@@ -10,7 +10,6 @@ import software.bigbade.enchantmenttokens.loader.Pair;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 
 import java.util.Locale;
-import java.util.concurrent.CompletableFuture;
 
 public class GemCurrencyHandler extends EnchantCurrencyHandler {
     private final FileLoader fileLoader;
@@ -25,10 +24,7 @@ public class GemCurrencyHandler extends EnchantCurrencyHandler {
     }
 
     @Override
-    public void savePlayer(Player player, boolean async) {
-        if (async)
-            CompletableFuture.runAsync(() -> fileLoader.removePlayer(player, getAmount(), getLocale()));
-        else
-            fileLoader.removePlayer(player, getAmount(), getLocale());
+    public void savePlayer(Player player) {
+        fileLoader.removePlayer(player, getGems(), getLocale());
     }
 }

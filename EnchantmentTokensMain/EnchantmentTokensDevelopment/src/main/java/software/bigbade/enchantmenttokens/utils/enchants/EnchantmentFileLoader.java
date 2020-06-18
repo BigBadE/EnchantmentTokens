@@ -114,11 +114,9 @@ public class EnchantmentFileLoader {
         }
         LocaleManager.updateLocale(main.getConfig(), addons);
         EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Loaded enchantments in {0}ms", System.currentTimeMillis() - start);
-        long loadListeners = System.currentTimeMillis();
         main.getListenerHandler().registerListeners();
         main.saveConfig();
         Thread.currentThread().setName("Enchantment-Loader");
-        EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Loaded listeners in {0}ms", System.currentTimeMillis() - loadListeners);
         executor.shutdown();
     }
 

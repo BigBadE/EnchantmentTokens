@@ -126,7 +126,7 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
 
     private void setupSkript() {
         if (Bukkit.getPluginManager().isPluginEnabled("Skript")) {
-            SkriptAddon addon = Skript.registerAddon(this);
+            SkriptAddon addon = Skript.registerAddon(this).setLanguageFileDirectory("lang");
             new SkriptManager(addon);
         }
     }

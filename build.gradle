@@ -122,6 +122,6 @@ shadowJar {
     }
 
     from('resources') {
-        include '*'
+        include '**'
     }
 }

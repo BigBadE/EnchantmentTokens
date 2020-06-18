@@ -1,5 +1,5 @@
 dependencies {
-    implementation 'software.bigbade:EnchantmentTokensAPI:1.0'
+    implementation files('../EnchantmentTokensPublic/build/libs/EnchantmentTokensAPI-' + project.version + ".jar")
     implementation 'org.bstats:bstats-bukkit:1.7'
 
     implementation('me.lucko:commodore:1.8') {

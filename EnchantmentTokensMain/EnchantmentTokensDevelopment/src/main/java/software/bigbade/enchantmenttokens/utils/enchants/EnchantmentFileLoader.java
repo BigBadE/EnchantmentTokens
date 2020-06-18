@@ -4,6 +4,7 @@
 
 package software.bigbade.enchantmenttokens.utils.enchants;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -11,6 +12,9 @@ import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.wrappers.EnchantmentChain;
+import software.bigbade.enchantmenttokens.exceptions.AddonLoadingException;
+import software.bigbade.enchantmenttokens.localization.LocaleManager;
+import software.bigbade.enchantmenttokens.logging.UnwrappedErrorLogger;
 import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 
 import javax.annotation.Nullable;
@@ -20,13 +24,11 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -36,10 +38,12 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 
 public class EnchantmentFileLoader {
-    private final Collection<EnchantmentAddon> addons = new ConcurrentLinkedQueue<>();
     private final ExecutorService executor = Executors.newCachedThreadPool();
     private final EnchantmentTokens main;
     private final File folder;
+
+    @Getter
+    private final List<EnchantmentAddon> addons = new ArrayList<>();
 
     public EnchantmentFileLoader(File folder, EnchantmentTokens main) {
         EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Looking for enchantments");
@@ -65,40 +69,57 @@ public class EnchantmentFileLoader {
     private void loadEnchantmentClasses(List<File> jars) {
         long start = System.currentTimeMillis();
         URL[] urls = getUrls(jars);
-        Set<Future<?>> futures = new HashSet<>();
-        for (File jar : jars) {
-            futures.add(executor.submit(() -> {
-                try (URLClassLoader loader = new URLClassLoader(urls, getClass().getClassLoader())) {
-                    Thread.currentThread().setContextClassLoader(loader);
-                    Set<Class<EnchantmentBase>> classes = loadClassesForFile(jar, loader, EnchantmentBase.class);
-                    EnchantmentAddon addon = loadAddon(jar, loader);
-                    if (addon != null) {
-                        addons.add(addon);
-                        main.getEnchantmentLoader().loadEnchantments(addon, main.getEnchantmentHandler(), classes);
-                    }
-                } catch (IOException e) {
-                    EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Error loading enchantments", e);
-                }
-            }));
+        Future<?>[] futures = new Future[jars.size()];
+
+        for (int i = 0; i < jars.size(); i++) {
+            File jar = jars.get(i);
+            futures[i] = loadJarFile(jar, urls[i]);
         }
-        executor.submit(() -> {
-            for (Future<?> future : futures) {
-                try {
-                    future.get();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                } catch (ExecutionException e) {
-                    EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Error waiting for enchants to load", e);
+        executor.submit(() -> finishLoading(jars, futures, start));
+    }
+
+    private Future<?> loadJarFile(File jar, URL url) {
+        return executor.submit(() -> {
+            try (URLClassLoader loader = new URLClassLoader(new URL[]{url}, getClass().getClassLoader())) {
+                Thread.currentThread().setContextClassLoader(loader);
+                EnchantmentAddon addon = loadAddon(jar, loader);
+                Set<Class<EnchantmentBase>> classes = loadClassesForFile(jar, loader, EnchantmentBase.class);
+                if (addon != null) {
+                    addons.add(addon);
+                    main.getEnchantmentLoader().loadEnchantments(addon, main.getEnchantmentHandler(), classes);
+                }
+            } catch (IOException e) {
+                EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Error loading enchantments", e);
+            }
+        });
+    }
+
+    private void finishLoading(List<File> jars, Future<?>[] futures, long start) {
+        for (int i = 0; i < futures.length; i++) {
+            try {
+                futures[i].get();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            } catch (ExecutionException e) {
+                EnchantmentAddon addon = null;
+                if (addons.size() > i) {
+                    addon = addons.get(i);
+                }
+                if (addon == null) {
+                    UnwrappedErrorLogger.logFileError(jars.get(i), e);
+                } else {
+                    UnwrappedErrorLogger.logAddonError(addon, e);
                 }
             }
-            EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Loaded enchantments in {0}ms", System.currentTimeMillis() - start);
-            long loadListeners = System.currentTimeMillis();
-            main.getListenerHandler().registerListeners();
-            main.saveConfig();
-            Thread.currentThread().setName("Enchantment-Loader");
-            EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Loaded listeners in {0}ms", System.currentTimeMillis() - loadListeners);
-            executor.shutdown();
-        });
+        }
+        LocaleManager.updateLocale(main.getConfig(), addons);
+        EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Loaded enchantments in {0}ms", System.currentTimeMillis() - start);
+        long loadListeners = System.currentTimeMillis();
+        main.getListenerHandler().registerListeners();
+        main.saveConfig();
+        Thread.currentThread().setName("Enchantment-Loader");
+        EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Loaded listeners in {0}ms", System.currentTimeMillis() - loadListeners);
+        executor.shutdown();
     }
 
     @Nullable
@@ -108,18 +129,32 @@ public class EnchantmentFileLoader {
                 throw new InvalidDescriptionException("Found no addon file for " + file.getName());
             }
             PluginDescriptionFile descriptionFile = new PluginDescriptionFile(stream);
-            Class<?> addonClass = cl.loadClass(descriptionFile.getMain());
-            if (addonClass == null || !EnchantmentAddon.class.isAssignableFrom(addonClass)) {
-                throw new ClassNotFoundException("No/Invalid EnchantmentAddon class.");
+            EnchantmentAddon addon = instanceAddonClass(cl, descriptionFile);
+            if (addon == null) {
+                return null;
             }
-            EnchantmentAddon addon = (EnchantmentAddon) ReflectionManager.instantiate(addonClass);
+
             addon.setup(main, descriptionFile);
             main.getEnchantmentLoader().loadAddon(addon);
             return addon;
-        } catch (IOException | InvalidDescriptionException | ClassNotFoundException e) {
-            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, e, () -> "Problem loading addon " + file.getName());
+        } catch (IOException | InvalidDescriptionException e) {
+            throw new AddonLoadingException("Problem loading addon " + file.getName(), e);
         }
-        return null;
+    }
+
+    @Nullable
+    private EnchantmentAddon instanceAddonClass(ClassLoader cl, PluginDescriptionFile descriptionFile) throws InvalidDescriptionException {
+        Class<?> addonClass;
+        try {
+            addonClass = cl.loadClass(descriptionFile.getMain());
+        } catch (ClassNotFoundException e) {
+            throw new InvalidDescriptionException("Main attribute " + descriptionFile.getMain() + " does not point to a valid addon.");
+        }
+        if (addonClass == null || !EnchantmentAddon.class.isAssignableFrom(addonClass)) {
+            return null;
+        }
+
+        return (EnchantmentAddon) ReflectionManager.instantiate(addonClass);
     }
 
     @SuppressWarnings("unchecked")
@@ -148,10 +183,6 @@ public class EnchantmentFileLoader {
         String className = jar.getName().substring(0, jar.getName().length() - 6);
         className = className.replace('/', '.');
         return loader.loadClass(className);
-    }
-
-    public Collection<EnchantmentAddon> getAddons() {
-        return addons;
     }
 
     @SneakyThrows

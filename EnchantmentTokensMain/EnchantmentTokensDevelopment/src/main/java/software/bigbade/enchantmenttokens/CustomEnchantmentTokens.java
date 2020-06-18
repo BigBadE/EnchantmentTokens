@@ -24,7 +24,6 @@ import software.bigbade.enchantmenttokens.gui.CustomMenuFactory;
 import software.bigbade.enchantmenttokens.gui.EnchantmentMenuFactory;
 import software.bigbade.enchantmenttokens.listeners.packet.EnchantmentTablePacketHandler;
 import software.bigbade.enchantmenttokens.listeners.packet.SignPacketHandler;
-import software.bigbade.enchantmenttokens.localization.LocaleManager;
 import software.bigbade.enchantmenttokens.skript.type.SkriptManager;
 import software.bigbade.enchantmenttokens.utils.ButtonFactory;
 import software.bigbade.enchantmenttokens.utils.MetricManager;
@@ -106,8 +105,6 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
         registerEnchants();
 
         setupSkript();
-
-        LocaleManager.updateLocale(getConfig(), loader.getAddons());
 
         CommandManager.registerCommands(this);
         setupAutosave();

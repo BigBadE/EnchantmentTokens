@@ -1,6 +1,6 @@
 plugins {
     id "org.sonarqube" version "3.0"
-    id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id 'com.github.johnrengelman.shadow' version '6.0.0'
     id 'java'
 }
 
@@ -111,8 +111,6 @@ codeCoverageReport.dependsOn {
 
 shadowJar {
     classifier = ''
-    relocate 'co.aikar', 'software.bigbade'
-    relocate 'com.codingforcookies', 'software.bigbade'
     relocate 'me.lucko', 'software.bigbade'
     relocate 'org.bstats', 'software.bigbade'
 

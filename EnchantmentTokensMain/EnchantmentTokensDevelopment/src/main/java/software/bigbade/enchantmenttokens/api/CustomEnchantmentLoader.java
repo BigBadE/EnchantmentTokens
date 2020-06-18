@@ -17,7 +17,6 @@ import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentLoader;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Objects;
@@ -101,14 +100,7 @@ public class CustomEnchantmentLoader implements EnchantmentLoader {
         assert configuration != null;
         ConfigurationSection section = ConfigurationManager.getSectionOrCreate(configuration, "enchants");
 
-        Constructor<? extends EnchantmentBase> constructor;
-        try {
-            constructor = clazz.getConstructor(NamespacedKey.class);
-        } catch (NoSuchMethodException e) {
-            EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "No constructor found for enchant {0}", clazz.getSimpleName());
-            return null;
-        }
-        final EnchantmentBase enchant = ReflectionManager.instantiate(constructor, new NamespacedKey(addon, clazz.getSimpleName()));
+        EnchantmentBase enchant = ReflectionManager.instantiate(Objects.requireNonNull(ReflectionManager.getConstructor(clazz, NamespacedKey.class)), new NamespacedKey(addon, clazz.getSimpleName()));
 
         Objects.requireNonNull(enchant);
 

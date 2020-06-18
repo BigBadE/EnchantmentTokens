@@ -75,11 +75,8 @@ public class CustomEnchantUtils extends EnchantUtils {
     }
 
     @Override
-    public void addEnchantmentBaseNoMessages(ItemStack item, EnchantmentBase base, Player player) {
-        int level = getLevel(item, base) + 1;
-        if (level > base.getMaxLevel()) {
-            return;
-        }
+    public void addEnchantmentBaseNoMessages(ItemStack item, EnchantmentBase base, Player player, int level) {
+        level = Math.min(base.getMaxLevel(), Math.max(level + 1, base.getStartLevel()));
         addEnchantmentBase(item, base, player, level);
     }
 
@@ -104,7 +101,7 @@ public class CustomEnchantUtils extends EnchantUtils {
     public void addEnchantmentBase(ItemStack item, EnchantmentBase base, Player player, int level) {
         if (base instanceof VanillaEnchant) {
             item.addEnchantment(base.getEnchantment(), level);
-            updateSigns(base, signs, player);
+            updateSigns(signs, player);
             return;
         }
         ItemMeta meta = item.getItemMeta();
@@ -112,7 +109,8 @@ public class CustomEnchantUtils extends EnchantUtils {
         meta.addEnchant(base.getEnchantment(), level, true);
         updateLore(meta, level, base);
         item.setItemMeta(meta);
-        updateSigns(base, signs, player);
+        updateSigns(signs, player);
+        triggerOnEnchant(item, base, player);
     }
 
     public void triggerOnEnchant(ItemStack item, EnchantmentBase base, Player player) {
@@ -125,10 +123,11 @@ public class CustomEnchantUtils extends EnchantUtils {
             lore = new ArrayList<>();
         }
         if (level != 0) {
-            if (level - 1 == 1 && ReflectionManager.VERSION >= 9) {
-                lore.remove(ChatColor.GRAY + base.getEnchantmentName());
-            } else {
-                lore.remove(ChatColor.GRAY + base.getEnchantmentName() + " " + RomanNumeralConverter.getRomanNumeral(level - 1));
+            for (String line : lore) {
+                if (line.startsWith(ChatColor.GRAY + base.getEnchantmentName())) {
+                    lore.remove(line);
+                    break;
+                }
             }
         }
         if (level == 1 && ReflectionManager.VERSION >= 9) {
@@ -149,10 +148,10 @@ public class CustomEnchantUtils extends EnchantUtils {
         return item.getItemMeta().getEnchants().get(base.getEnchantment());
     }
 
-    private void updateSigns(EnchantmentBase base, Set<Location> signs, Player player) {
+    private void updateSigns(Set<Location> signs, Player player) {
         for (Location location : signs) {
             Sign sign = (Sign) location.getBlock().getState();
-            player.sendSignChange(location, new String[]{sign.getLine(0), base.getEnchantmentName(), "", ""});
+            player.sendSignChange(location, new String[]{sign.getLine(0), sign.getLine(1), "", ""});
         }
     }
 }

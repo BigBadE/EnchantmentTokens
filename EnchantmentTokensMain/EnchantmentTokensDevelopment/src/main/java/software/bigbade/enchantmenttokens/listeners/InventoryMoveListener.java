@@ -76,24 +76,19 @@ public class InventoryMoveListener extends BasicEnchantListener<Event> implement
     }
 
     private void updateSigns(Player player) {
-        for (Location location : signs)
-            if (location.getWorld() == player.getWorld())
+        for (Location location : signs) {
+            if (location.getWorld() == player.getWorld()) {
                 scheduler.runTaskLater(() -> {
                     Sign sign = (Sign) location.getBlock().getState();
                     player.sendSignChange(location, new String[]{sign.getLine(0), sign.getLine(1), "", ""});
                 }, 0L);
+            }
+        }
     }
 
     @EventHandler
     public void onHandSwap(PlayerItemHeldEvent event) {
-        for (Location location : signs) {
-            if (location.getChunk().isLoaded() && location.getWorld() == event.getPlayer().getWorld()) {
-                scheduler.runTaskLater(() -> {
-                    Sign sign = (Sign) location.getBlock().getState();
-                    event.getPlayer().sendSignChange(location, new String[]{sign.getLine(0), sign.getLine(1), "", ""});
-                }, 0L);
-            }
-        }
+        updateSigns(event.getPlayer());
 
         ItemStack item = event.getPlayer().getInventory().getItem(event.getPreviousSlot());
         if (item != null) {

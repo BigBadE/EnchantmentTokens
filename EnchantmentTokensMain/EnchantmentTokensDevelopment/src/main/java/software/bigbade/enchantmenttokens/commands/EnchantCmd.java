@@ -39,27 +39,31 @@ public class EnchantCmd implements CommandExecutor {
         }
 
         try {
-            Integer.parseInt(args[1]);
+            addEnchantment(sender, locale, args[0], Integer.parseInt(args[1]));
         } catch (NumberFormatException e) {
             sender.sendMessage(new TranslatedStringMessage(locale, StringUtils.COMMAND_ENCHANT_USAGE).translate());
             return true;
         }
 
-        addEnchantment(sender, locale, args[0]);
+
         return true;
     }
 
-    private void addEnchantment(CommandSender sender, Locale locale, String arg) {
+    private void addEnchantment(CommandSender sender, Locale locale, String input, int level) {
         for (EnchantmentBase enchantment : handler.getAllEnchants()) {
             if (enchantment instanceof VanillaEnchant)
                 continue;
-            if (enchantment.getKey().toString().startsWith(arg) || enchantment.getEnchantmentName().startsWith(arg)) {
+            if (enchantment.getKey().toString().startsWith(input) || enchantment.getEnchantmentName().toLowerCase().startsWith(input.toLowerCase())) {
+                if (level < enchantment.getStartLevel() || level > enchantment.getMaxLevel()) {
+                    sender.sendMessage(new TranslatedStringMessage(locale, StringUtils.COMMAND_ERROR_BAD_LEVEL).translate(input));
+                    return;
+                }
                 ItemStack item = ((Player) sender).getInventory().getItemInMainHand();
-                EnchantUtils.getInstance().addEnchantmentBaseNoMessages(item, enchantment, (Player) sender);
+                EnchantUtils.getInstance().addEnchantmentBaseNoMessages(item, enchantment, (Player) sender, level - 1);
                 sender.sendMessage(new TranslatedStringMessage(locale, StringUtils.COMMAND_ADD).translate(enchantment.getEnchantmentName()));
                 return;
             }
         }
-        sender.sendMessage(new TranslatedStringMessage(locale, StringUtils.COMMAND_ERROR_NO_ENCHANTMENT).translate(arg));
+        sender.sendMessage(new TranslatedStringMessage(locale, StringUtils.COMMAND_ERROR_NO_ENCHANTMENT).translate(input));
     }
 }

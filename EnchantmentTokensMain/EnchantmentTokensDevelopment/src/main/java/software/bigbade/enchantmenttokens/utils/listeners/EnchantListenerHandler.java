@@ -61,7 +61,7 @@ public class EnchantListenerHandler implements ListenerHandler {
         Bukkit.getPluginManager().registerEvents(new ArmorListener(new ArrayList<>()), main);
         Bukkit.getPluginManager().registerEvents(new DispenserArmorListener(), main);
 
-        Bukkit.getPluginManager().registerEvents(new SignPlaceListener(main.getEnchantmentHandler(), main.getPlayerHandler()), main);
+        Bukkit.getPluginManager().registerEvents(new SignPlaceListener(main.getEnchantmentHandler(), main.getPlayerHandler(), main.getSignHandler()), main);
         Bukkit.getPluginManager().registerEvents(new SignClickListener(main.getUtils()), main);
 
         Bukkit.getPluginManager().registerEvents(new EnchantmentGUIListener(main.getPlayerHandler(), main.getScheduler()), main);

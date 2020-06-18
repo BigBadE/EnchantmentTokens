@@ -13,6 +13,7 @@ import org.bukkit.event.block.SignChangeEvent;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.StringUtils;
 import software.bigbade.enchantmenttokens.localization.TranslatedStringMessage;
+import software.bigbade.enchantmenttokens.utils.SignHandler;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 import software.bigbade.enchantmenttokens.utils.players.PlayerHandler;
 
@@ -22,6 +23,7 @@ import java.util.Locale;
 public class SignPlaceListener implements Listener {
     private final EnchantmentHandler handler;
     private final PlayerHandler playerHandler;
+    private final SignHandler packetHandler;
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onSignChange(SignChangeEvent event) {
@@ -31,6 +33,7 @@ public class SignPlaceListener implements Listener {
             assert name != null;
             for (EnchantmentBase base : handler.getAllEnchants()) {
                 if (name.equalsIgnoreCase(base.getEnchantmentName())) {
+                    packetHandler.addSign(event.getBlock().getLocation());
                     updateSign(base, event, locale);
                     return;
                 }
@@ -40,9 +43,8 @@ public class SignPlaceListener implements Listener {
     }
 
     private void updateSign(EnchantmentBase base, SignChangeEvent event, Locale locale) {
-
         event.getPlayer().sendMessage(new TranslatedStringMessage(locale, StringUtils.ENCHANTMENT_ADD).translate(base.getEnchantmentName()));
-        event.setLine(0, "[" + StringUtils.ENCHANTMENT + "]");
+        event.setLine(0, "[" + new TranslatedStringMessage(locale, StringUtils.ENCHANTMENT).translate() + "]");
         event.setLine(1, base.getEnchantmentName());
     }
 }

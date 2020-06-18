@@ -12,10 +12,12 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.nbt.NbtBase;
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
+import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import software.bigbade.enchantmenttokens.api.StringUtils;
 import software.bigbade.enchantmenttokens.localization.TranslatedPriceMessage;
 import software.bigbade.enchantmenttokens.localization.TranslatedStringMessage;
@@ -56,10 +58,11 @@ public class SignPacketHandler implements SignHandler {
     }
 
     void handlePacket(NbtCompound compound, PacketEvent event) {
+        EnchantmentPlayer enchantmentPlayer = main.getPlayerHandler().getPlayer(event.getPlayer());
         List<String> text = getText(compound);
         if (text.isEmpty())
             return;
-        if (!text.get(0).equals("[" + new TranslatedStringMessage(Locale.getDefault(), StringUtils.ENCHANTMENT) + "]"))
+        if (!text.get(0).equals("[" + new TranslatedStringMessage(enchantmentPlayer.getLanguage(), StringUtils.ENCHANTMENT).translate() + "]"))
             return;
         main.getEnchantmentHandler().getAllEnchants().stream()
                 .filter(base -> base.getEnchantmentName().equalsIgnoreCase(text.get(1)))
@@ -88,13 +91,19 @@ public class SignPacketHandler implements SignHandler {
 
     private void updateSign(EnchantmentBase base, NbtCompound compound, PacketEvent event) {
         Locale locale = main.getPlayerHandler().getPlayer(event.getPlayer()).getLanguage();
-        String price = new TranslatedStringMessage(locale, StringUtils.NOT_APPLICABLE).translate();
+        String price;
         ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
         if (base.canEnchantItem(itemStack)) {
-            int level = EnchantUtils.getInstance().getLevel(itemStack, base)+1;
-            price = new TranslatedStringMessage(locale, StringUtils.PRICE).translate(new TranslatedPriceMessage(locale).translate("" + base.getDefaultPrice(level)));
+            int level = EnchantUtils.getInstance().getLevel(itemStack, base) + 1;
+            if (level <= base.getMaxLevel()) {
+                price = new TranslatedPriceMessage(locale).translate("" + base.getDefaultPrice(level));
+            } else {
+                price = new TranslatedStringMessage(locale, StringUtils.MAXED).translate();
+            }
+        } else {
+            price = new TranslatedStringMessage(locale, StringUtils.NOT_APPLICABLE).translate();
         }
-        compound.put("Text3", "{\"extra\":[{\"text\":\"Price: " + price + "\"}],\"text\":\"\"}");
+        compound.put("Text3", "{\"extra\":[{\"text\":\"" + ChatColor.stripColor(new TranslatedStringMessage(locale, StringUtils.PRICE).translate(price)) + "\"}],\"text\":\"\"}");
     }
 }
 

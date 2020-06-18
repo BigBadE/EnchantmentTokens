@@ -7,6 +7,10 @@ env:
 jdk:
   - openjdk8
 
+before_script:
+  - cd "EnchantmentTokensMain/EnchantmentTokensPublic"
+  - ./gradlew build test publishToMavenLocal
+
 script:
   - ./gradlew check
   - ./gradlew codeCoverageReport

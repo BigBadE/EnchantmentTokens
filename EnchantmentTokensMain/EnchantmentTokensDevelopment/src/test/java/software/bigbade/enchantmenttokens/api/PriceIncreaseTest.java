@@ -37,7 +37,7 @@ public class PriceIncreaseTest {
     public void testPriceIncreases() {
         ConfigurationSection section = mock(ConfigurationSection.class);
         when(section.getInt("0")).thenReturn(100);
-        when(section.getInt("increase")).thenReturn(10);
+        when(section.getObject("increase", Integer.class, 10)).thenReturn(10);
         Assert.assertEquals(100, PriceIncreaseTypes.CUSTOM.getPrice(0, section));
         Assert.assertEquals(30, PriceIncreaseTypes.LINEAR.getPrice(3, section));
     }

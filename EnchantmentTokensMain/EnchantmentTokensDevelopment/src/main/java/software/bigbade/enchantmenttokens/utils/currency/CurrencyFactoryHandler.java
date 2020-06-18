@@ -52,8 +52,7 @@ public class CurrencyFactoryHandler {
             return factory;
         else {
             if (factory == null) {
-                EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not find currency factory, defaulted to gems");
-                section.set("type", "gems");
+                EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not find currency factory");
             } else {
                 EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not load currency factory");
             }

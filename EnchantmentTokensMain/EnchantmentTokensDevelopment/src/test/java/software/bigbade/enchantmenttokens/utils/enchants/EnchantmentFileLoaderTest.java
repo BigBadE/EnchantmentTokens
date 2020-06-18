@@ -17,6 +17,7 @@ import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.wrappers.EnchantmentChain;
+import software.bigbade.enchantmenttokens.localization.LocaleManager;
 import software.bigbade.enchantmenttokens.utils.ItemUtils;
 import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerHandler;
@@ -52,7 +53,7 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 @PrepareForTest(
         {EnchantmentFileLoader.class, File.class, EnchantmentTokens.class,
                 ItemUtils.class, Executors.class, Thread.class, JarFile.class, Class.class,
-                PluginDescriptionFile.class, Bukkit.class, ReflectionManager.class})
+                PluginDescriptionFile.class, Bukkit.class, ReflectionManager.class, LocaleManager.class})
 public class EnchantmentFileLoaderTest {
     private final File file = mock(File.class);
     private final EnchantmentChain chain = mock(EnchantmentChain.class);
@@ -83,6 +84,7 @@ public class EnchantmentFileLoaderTest {
     public void setupTest() {
         mockStatic(ItemUtils.class);
         mockStatic(Bukkit.class);
+        mockStatic(LocaleManager.class);
         when(ItemUtils.createItem(Material.BLACK_STAINED_GLASS_PANE, " "))
                 .thenReturn(null);
         when(Bukkit.getVersion()).thenReturn("v1.15.2");
@@ -111,7 +113,7 @@ public class EnchantmentFileLoaderTest {
         whenNew(EnchantmentChain.class).withNoArguments().thenReturn(chain);
         when(chain.async(ArgumentMatchers.any(Runnable.class))).then(invocationOnMock -> {
             ((Runnable) invocationOnMock.getArgument(0)).run();
-            return null;
+            return chain;
         });
 
         when(file.listFiles()).thenReturn(new File[]{file});
@@ -134,6 +136,7 @@ public class EnchantmentFileLoaderTest {
         when(correctClass.getName()).thenReturn("my/package/TestEnchant.class");
         PowerMockito.<Class<?>>when(classLoader.loadClass("my.package.TestEnchant"))
                 .thenReturn(EnchantmentBase.class);
+        when(main.getConfig()).thenReturn(null);
     }
 
     @Test

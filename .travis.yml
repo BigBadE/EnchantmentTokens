@@ -7,13 +7,17 @@ env:
 jdk:
   - openjdk8
 
-before_script:
-  - cd "EnchantmentTokensMain/EnchantmentTokensPublic"
-  - ./gradlew build test publishToMavenLocal
-
-script:
-  - ./gradlew check
-  - ./gradlew codeCoverageReport
-
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+jobs:
+  include:
+    - name: EnchantmentTokensAPI
+      language: java
+      os: linux
+      before_script: cd EnchantmentTokensMain/EnchantmentTokensPublic
+    - name: EnchantmentTokens
+      language: java
+      os: linux
+      script:
+        ./gradlew check
+        ./gradlew codeCoverageReport
+      after_success:
+        bash <(curl -s https://codecov.io/bash)

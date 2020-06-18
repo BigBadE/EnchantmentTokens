@@ -110,7 +110,7 @@ codeCoverageReport.dependsOn {
 }
 
 shadowJar {
-    classifier = ''
+    archiveClassifier.set('')
     relocate 'me.lucko', 'software.bigbade'
     relocate 'org.bstats', 'software.bigbade'
 

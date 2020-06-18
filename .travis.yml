@@ -12,7 +12,10 @@ jobs:
     - name: EnchantmentTokensAPI
       language: java
       os: linux
-      before_script: cd EnchantmentTokensMain/EnchantmentTokensPublic
+      before_install:
+        cd EnchantmentTokensMain/EnchantmentTokensPublic
+      script:
+        ./gradlew shadowJar test
     - name: EnchantmentTokens
       language: java
       os: linux

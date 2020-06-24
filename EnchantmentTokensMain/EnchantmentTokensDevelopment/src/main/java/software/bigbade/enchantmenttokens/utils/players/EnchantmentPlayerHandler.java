@@ -44,8 +44,10 @@ public class EnchantmentPlayerHandler implements PlayerHandler {
     }
 
     public void removePlayer(EnchantmentPlayer player) {
-        new EnchantmentChain().async(() -> players.get(player.getPlayer().getUniqueId()).save()).execute();
-        players.remove(player.getPlayer().getUniqueId());
+        if (players.containsKey(player.getPlayer().getUniqueId())) {
+            new EnchantmentChain(player.getPlayer().getUniqueId().toString()).async(player::save).execute();
+            players.remove(player.getPlayer().getUniqueId());
+        }
     }
 
     public void autosave(SchedulerHandler handler) {
@@ -54,7 +56,9 @@ public class EnchantmentPlayerHandler implements PlayerHandler {
             AtomicInteger saving = new AtomicInteger(0);
             taskId = handler.runTaskAsyncRepeating(() -> {
                 if (saving.get() < players.size()) {
-                    entryList.get(saving.getAndIncrement()).save();
+                    EnchantmentPlayer player = entryList.get(saving.getAndIncrement());
+                    player.save();
+                    removePlayer(player);
                 } else {
                     handler.cancel(taskId);
                 }

@@ -33,7 +33,6 @@ public class PlayerLeaveListener implements Listener {
     private void savePlayer(Player player) {
         new EnchantmentChain(player.getUniqueId().toString()).async(() -> {
             EnchantmentPlayer enchantmentPlayer = playerHandler.getPlayer(player);
-            enchantmentPlayer.save();
             playerHandler.removePlayer(enchantmentPlayer);
         }).execute();
     }

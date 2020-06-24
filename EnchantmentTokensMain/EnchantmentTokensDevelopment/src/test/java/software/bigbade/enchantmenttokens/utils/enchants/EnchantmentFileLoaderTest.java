@@ -17,6 +17,7 @@ import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.wrappers.EnchantmentChain;
+import software.bigbade.enchantmenttokens.api.wrappers.EnchantmentTasks;
 import software.bigbade.enchantmenttokens.localization.LocaleManager;
 import software.bigbade.enchantmenttokens.utils.ItemUtils;
 import software.bigbade.enchantmenttokens.utils.ReflectionManager;
@@ -111,8 +112,8 @@ public class EnchantmentFileLoaderTest {
         when(Executors.newCachedThreadPool()).thenReturn(executor);
 
         whenNew(EnchantmentChain.class).withNoArguments().thenReturn(chain);
-        when(chain.async(ArgumentMatchers.any(Runnable.class))).then(invocationOnMock -> {
-            ((Runnable) invocationOnMock.getArgument(0)).run();
+        when(chain.async(ArgumentMatchers.any(EnchantmentTasks.EnchantmentTask.class))).then(invocationOnMock -> {
+            ((EnchantmentTasks.EnchantmentTask) invocationOnMock.getArgument(0)).runGeneric();
             return chain;
         });
 

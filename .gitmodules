@@ -1,6 +1,6 @@
-[submodule "wiki"]
-	path = wiki
-	url = https://github.com/BigBadE/EnchantmentTokensPublic.wiki.git
+[submodule "EnchantmentTokensMain/EnchantmentTokensAPI"]
+	path = EnchantmentTokensMain/EnchantmentTokensAPI
+	url = https://github.com/BigBadE/EnchantmentTokensAPI
 	update = rebase
 [submodule "EnchantmentTokensCurrency/EnchantmentTokensMongo"]
 	path = EnchantmentTokensCurrency/EnchantmentTokensMongo
@@ -14,7 +14,11 @@
 	path = Localization
 	url = https://github.com/BigBadE/EnchantmentTokensLocalization
 	update = rebase
-[submodule "EnchantmentTokensMain/EnchantmentTokensPublic"]
-	path = EnchantmentTokensMain/EnchantmentTokensPublic
-	url = https://github.com/BigBadE/EnchantmentTokensPublic
+[submodule "wiki-api"]
+	path = wiki-api
+	url = https://github.com/BigBadE/EnchantmentTokensPublic.wiki.git
+	update = rebase
+[submodule "wiki-core"]
+	path = wiki-core
+	url = https://github.com/BigBadE/EnchantmentTokens.wiki.git
 	update = rebase

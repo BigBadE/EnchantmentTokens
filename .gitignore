@@ -1,5 +1,14 @@
 # Intellij
-.idea/
+.idea/workspace.xml
+.idea/dictionaries
+.idea/misc.xml
+.idea/libraries
+.idea/compiler.xml
+.idea/kotlinc.xml
+.idea/modules.xml
+.idea/sonarlint
+.idea/jarRepositories.xml
+.idea/gradle.xml
 *.iml
 *.iws
 dependency-reduced-pom.xml

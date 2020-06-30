@@ -29,7 +29,10 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public class ByteUtilsTest {
     @Test
     public void testByteUtils() {
-        ByteUtils utils = new ByteUtils();
-        Assert.assertEquals(5, utils.bytesToLong(utils.longToBytes(5)));
+        Assert.assertEquals(5, ByteUtils.bytesToLong(ByteUtils.longToBytes(5)));
+        Assert.assertEquals(5, ByteUtils.bytesToInt(ByteUtils.intToBytes(5)));
+        Assert.assertEquals(5, ByteUtils.bytesToInt(ByteUtils.intToBytes(5)));
+        Assert.assertEquals(5, ByteUtils.bytesToInt(ByteUtils.intToBytes(5)));
+        Assert.assertEquals(5, ByteUtils.bytesToInt(ByteUtils.intToBytes(5)));
     }
 }

@@ -1,5 +1,19 @@
 /*
- * Copyright (c) 2020 BigBadE, All rights reserved
+ * Addons for the Custom Enchantment API in Minecraft
+ * Copyright (C) 2020 BigBadE
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package software.bigbade.enchantmenttokens.utils.enchants;
@@ -43,7 +57,7 @@ public class EnchantmentFileLoader {
         EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Looking for enchantments");
         this.main = main;
         this.folder = folder;
-        new EnchantmentChain().async(this::loadJars).execute();
+        new EnchantmentChain<>().async(this::loadJars).execute();
     }
 
     @SuppressWarnings("unchecked")
@@ -99,7 +113,7 @@ public class EnchantmentFileLoader {
     private void loadEnchantmentClasses(List<File> jars) {
         long start = System.currentTimeMillis();
         URL[] urls = getUrls(jars);
-        EnchantmentChain chain = new EnchantmentChain().split();
+        EnchantmentChain chain = new EnchantmentChain<>().split();
         for (int i = 0; i < jars.size(); i++) {
             File jar = jars.get(i);
             URL url = urls[i];
@@ -126,7 +140,7 @@ public class EnchantmentFileLoader {
         LocaleManager.updateLocale(main.getConfig(), addons);
         EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Loaded enchantments in {0}ms", System.currentTimeMillis() - start);
         main.getListenerHandler().registerListeners();
-        main.saveConfig();
+        //main.saveConfig();
     }
 
     @Nullable

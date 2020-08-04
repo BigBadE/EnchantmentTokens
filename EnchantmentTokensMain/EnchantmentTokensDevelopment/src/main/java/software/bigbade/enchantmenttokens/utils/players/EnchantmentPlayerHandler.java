@@ -25,14 +25,14 @@ import software.bigbade.enchantmenttokens.currency.CurrencyFactory;
 import software.bigbade.enchantmenttokens.utils.SchedulerHandler;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class EnchantmentPlayerHandler implements PlayerHandler {
-    private final Map<UUID, EnchantmentPlayer> players = new HashMap<>();
+    private final Map<UUID, EnchantmentPlayer> players = new WeakHashMap<>();
     private final CurrencyFactory currencyFactory;
 
     private int taskId;

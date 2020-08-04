@@ -4,12 +4,12 @@
     <file url="file://$PROJECT_DIR$/../CustomEnchantments/PrisonEnchantments/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../CustomEnchantments/PrisonEnchantments/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/EnchantmentTokensCurrency/EnchantmentTokensMongo/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/EnchantmentTokensCurrency/EnchantmentTokensMongo/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/EnchantmentTokensCurrency/EnchantmentTokensMySQL/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/EnchantmentTokensCurrency/EnchantmentTokensMySQL/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/EnchantmentTokensMain/EnchantmentTokensDevelopment/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/EnchantmentTokensDevelopment/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/EnchantmentTokensDevelopment/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/EnchantmentTokensMain/EnchantmentTokensPublic/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/currency/EnchantmentTokensMongo/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/currency/EnchantmentTokensMongo/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/currency/EnchantmentTokensMySQL/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/currency/EnchantmentTokensMySQL/src/main/resources" charset="UTF-8" />
   </component>
 </project>

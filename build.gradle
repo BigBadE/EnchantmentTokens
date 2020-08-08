@@ -1,6 +1,5 @@
 plugins {
     id "org.sonarqube" version "3.0"
-    id 'com.github.johnrengelman.shadow' version '6.0.0'
     id 'java'
 }
 
@@ -8,7 +7,6 @@ allprojects {
     group = 'software.bigbade'
     version = '1.0'
 
-    apply plugin: 'com.github.johnrengelman.shadow'
     apply plugin: 'java'
     apply plugin: 'jacoco'
 
@@ -27,20 +25,6 @@ allprojects {
 
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
-    }
-
-    configurations {
-        resolveImplementation
-        resolveImplementation.extendsFrom(implementation)
-    }
-
-    sourceSets {
-        test {
-            compileClasspath += configurations.resolveImplementation
-            compileClasspath += configurations.shadow
-            runtimeClasspath += configurations.resolveImplementation
-            runtimeClasspath += configurations.shadow
-        }
     }
 }
 
@@ -107,21 +91,4 @@ task codeCoverageReport(type: JacocoReport) {
 
 codeCoverageReport.dependsOn {
     subprojects*.test
-}
-
-shadowJar {
-    archiveClassifier.set('')
-    relocate 'me.lucko', 'software.bigbade'
-    relocate 'org.bstats', 'software.bigbade'
-
-    exclude 'META-INF/**'
-
-    from('.') {
-        include 'localization/*.properties'
-        include 'commodore/*.commodore'
-    }
-
-    from('resources') {
-        include '**'
-    }
 }

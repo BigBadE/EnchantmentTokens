@@ -16,6 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+plugins {
+    id 'com.github.johnrengelman.shadow' version '6.0.0'
+}
+
+configurations {
+    resolveImplementation
+    resolveImplementation.extendsFrom(implementation)
+}
+
+sourceSets {
+    test {
+        compileClasspath += configurations.resolveImplementation
+        compileClasspath += configurations.shadow
+        runtimeClasspath += configurations.resolveImplementation
+        runtimeClasspath += configurations.shadow
+    }
+}
+
 dependencies {
     implementation 'software.bigbade:EnchantmentTokensAPI:1.0'
     implementation 'org.bstats:bstats-bukkit:1.7'
@@ -47,4 +65,20 @@ dependencies {
 
     testCompileOnly 'org.projectlombok:lombok:1.18.12'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
+}
+
+shadowJar {
+    archiveClassifier.set('')
+    relocate 'me.lucko', 'software.bigbade'
+    relocate 'org.bstats', 'software.bigbade'
+    relocate 'com.codingforcookies', 'software.bigbade'
+    relocate 'co.aikar', 'software.bigbade'
+
+    exclude 'META-INF/**'
+
+    from('../') {
+        include 'localization/*.properties'
+        include 'commodore/*.commodore'
+        include 'resources/**'
+    }
 }

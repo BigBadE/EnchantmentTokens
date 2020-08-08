@@ -1,3 +1,5 @@
 rootProject.name = 'EnchantmentTokens'
 include(':development')
-project(':development').projectDir = file('EnchantmentTokensMain/EnchantmentTokensDevelopment')
+project(':development').projectDir = file('development')
+include(':api')
+project(':api').projectDir = file('api')

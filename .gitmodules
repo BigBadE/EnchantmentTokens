@@ -1,1 +1,24 @@
-
+[submodule "api"]
+	path = api
+	url = https://github.com/BigBadE/EnchantmentTokensAPI
+	update = rebase
+[submodule "mongo"]
+	path = mongo
+	url = https://github.com/BigBadE/EnchantmentTokensMongo
+	update = rebase
+[submodule "mysql"]
+	path = mysql
+	url = https://github.com/BigBadE/EnchantmentTokensMySQL
+	update = rebase
+[submodule "localization"]
+	path = localization
+	url = https://github.com/BigBadE/EnchantmentTokensLocalization
+	update = rebase
+[submodule "wiki/api-wiki"]
+	path = wiki/api-wiki
+	url = https://github.com/BigBadE/EnchantmentTokensPublic.wiki.git
+	update = rebase
+[submodule "wiki/main-wiki"]
+	path = wiki/main-wiki
+	url = https://github.com/BigBadE/EnchantmentTokens.wiki.git
+	update = rebase

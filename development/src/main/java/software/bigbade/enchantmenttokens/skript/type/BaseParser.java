@@ -8,11 +8,6 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Parser;
 import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.util.EnchantmentType;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.regex.Pattern;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -21,14 +16,20 @@ import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
 import software.bigbade.enchantmenttokens.utils.enchants.EnchantmentHandler;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.regex.Pattern;
+
 public class BaseParser extends Parser<SkriptEnchantment> {
   private static final Pattern NAME_PATTERN = Pattern.compile("[a-z0-9/._-]+");
 
   private final EnchantmentTokens main;
 
   public BaseParser() {
-    main = (EnchantmentTokens)Objects.requireNonNull(
-        Bukkit.getPluginManager().getPlugin("EnchantmentTokens"));
+    main = (EnchantmentTokens) Objects.requireNonNull(
+            Bukkit.getPluginManager().getPlugin("EnchantmentTokens"));
   }
 
   @Override

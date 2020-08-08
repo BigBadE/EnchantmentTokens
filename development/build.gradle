@@ -72,14 +72,19 @@ dependencies {
 
 shadowJar {
     archiveClassifier.set('')
+    archiveBaseName.set('EnchantmentTokens')
     relocate 'me.lucko', 'software.bigbade'
     relocate 'org.bstats', 'software.bigbade'
+    relocate 'co.aikar', 'software.bigbade'
 
     exclude 'META-INF/**'
 
     from('../') {
         include 'localization/*.properties'
         include 'commodore/*.commodore'
-        include 'resources/**'
+    }
+
+    from('../resources') {
+        include '**'
     }
 }

@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 
 import java.lang.reflect.Method;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -59,8 +59,8 @@ public final class EnchantPickerUtils {
         }
     }
 
-    public static Set<EnchantmentBase> rollEnchantments(List<EnchantmentBase> enchantments, Random random, ItemStack itemstack, int cost, boolean flag) {
-        Set<EnchantmentBase> list = new HashSet<>();
+    public static Map<EnchantmentBase, Integer> rollEnchantments(List<EnchantmentBase> enchantments, Random random, ItemStack itemstack, int cost, boolean flag) {
+        Map<EnchantmentBase, Integer> list = new HashMap<>();
         int enchantability = getEnchantability(itemstack);
 
         cost += 1 + random.nextInt(enchantability / 4 + 1) + random.nextInt(enchantability / 4 + 1);
@@ -70,9 +70,10 @@ public final class EnchantPickerUtils {
         Map<EnchantmentBase, Integer> list1 = getEnchantments(enchantments, cost, itemstack, flag);
 
         if (!list1.isEmpty()) {
-            list.add(getWeightedElement(random, list1.keySet()));
+            EnchantmentBase found = getWeightedElement(random, list1.keySet());
+            list.put(found, list1.get(found));
             while (random.nextInt(50) <= cost) {
-                for(EnchantmentBase base : list) {
+                for (EnchantmentBase base : list.keySet()) {
                     removeConflicts(list1.keySet(), base);
                 }
 
@@ -80,7 +81,8 @@ public final class EnchantPickerUtils {
                     break;
                 }
 
-                list.add(getWeightedElement(random, list1.keySet()));
+                found = getWeightedElement(random, list1.keySet());
+                list.put(found, list1.get(found));
                 cost /= 2;
             }
         }
@@ -88,22 +90,22 @@ public final class EnchantPickerUtils {
         return list;
     }
 
-    public static void removeConflicts(Set<EnchantmentBase> list, EnchantmentBase weightedrandomenchant) {
-        list.removeIf(enchantmentBase -> !weightedrandomenchant.conflictsWith(enchantmentBase.getEnchantment()));
+    public static void removeConflicts(Set<EnchantmentBase> list, EnchantmentBase weightedRandomEnchant) {
+        list.removeIf(enchantmentBase -> !weightedRandomEnchant.conflictsWith(enchantmentBase.getEnchantment()));
     }
 
     public static EnchantmentBase getWeightedElement(Random random, Set<EnchantmentBase> enchants) {
         int maxRarity = 0;
-        for(EnchantmentBase base : enchants) {
+        for (EnchantmentBase base : enchants) {
             maxRarity += base.getRarity();
         }
         int index = random.nextInt(maxRarity);
         int current = 0;
-        for(EnchantmentBase base : enchants) {
+        for (EnchantmentBase base : enchants) {
+            current += base.getRarity();
             if(index <= current) {
                 return base;
             }
-            current += 1;
         }
         return null;
     }
@@ -111,10 +113,10 @@ public final class EnchantPickerUtils {
     public static Map<EnchantmentBase, Integer> getEnchantments(List<EnchantmentBase> enchantments, int cost, ItemStack itemstack, boolean flag) {
         Map<EnchantmentBase, Integer> list = Maps.newHashMap();
         Material item = itemstack.getType();
-        boolean flag1 = item == Material.BOOK;
+        boolean isBook = (item == Material.BOOK);
 
         for (EnchantmentBase enchantment : enchantments) {
-            if ((!enchantment.isTreasure() || flag) && (enchantment.canEnchantItem(itemstack) || flag1)) {
+            if ((!enchantment.isTreasure() || flag) && (enchantment.canEnchantItem(itemstack) || isBook)) {
                 for (int level = enchantment.getMaxTableLevel(); level > enchantment.getStartLevel() - 1; --level) {
                     if (cost >= enchantment.getMinCost(level) && cost <= enchantment.getMaxCost(level)) {
                         list.put(enchantment, level);

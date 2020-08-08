@@ -33,7 +33,7 @@ public class CustomEnchantmentLoader implements EnchantmentLoader {
         File configFile = new File(main.getDataFolder().getAbsolutePath() + FOLDER + addon.getName() + ".yml");
         FileConfiguration configuration = ConfigurationManager.loadConfigurationFile(configFile);
         for (Class<EnchantmentBase> enchantClass : enchants) {
-            EnchantmentBase enchant = loadClass(enchantClass, configuration, addon);
+            EnchantmentBase enchant = CustomEnchantmentLoader.loadClass(enchantClass, configuration, addon);
             if (enchant == null) {
                 continue;
             }
@@ -49,7 +49,7 @@ public class CustomEnchantmentLoader implements EnchantmentLoader {
 
     @Override
     public void loadEnchantment(Plugin plugin, Class<? extends EnchantmentBase> clazz) {
-        EnchantmentBase enchant = loadClass(clazz, plugin.getConfig(), plugin);
+        EnchantmentBase enchant = CustomEnchantmentLoader.loadClass(clazz, plugin.getConfig(), plugin);
         if (enchant == null) {
             return;
         }
@@ -58,16 +58,20 @@ public class CustomEnchantmentLoader implements EnchantmentLoader {
             checkMethod(enchant, method);
         }
         main.getEnchantmentHandler().registerEnchant(enchant);
+
+        plugin.saveConfig();
     }
 
     @Override
     public void loadAddon(EnchantmentAddon addon) {
-        FileConfiguration configuration = ConfigurationManager.loadConfigurationFile(new File(main.getDataFolder().getAbsolutePath() + FOLDER + addon.getName() + ".yml"));
+        File file = new File(main.getDataFolder().getAbsolutePath() + FOLDER + addon.getName() + ".yml");
+        FileConfiguration configuration = ConfigurationManager.loadConfigurationFile(file);
 
         for (Field field : addon.getClass().getDeclaredFields()) {
             ConfigurationManager.loadConfigForField(field, configuration, addon);
         }
 
+        ConfigurationManager.saveConfiguration(file, configuration);
         addon.onEnable();
         main.getMenuFactory().addButtons(addon.getButtons());
     }
@@ -82,12 +86,12 @@ public class CustomEnchantmentLoader implements EnchantmentLoader {
             EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Enchantment {0} has an invalid listener {1}", new Object[]{enchant.getEnchantmentName(), method.getName()});
             return;
         }
-        if (canEnchant(enchant, type)) {
+        if (CustomEnchantmentLoader.canEnchant(enchant, type)) {
             main.getListenerHandler().getListenerManager(type).add(event -> ReflectionManager.invoke(method, enchant, event), enchant.getEnchantment());
         }
     }
 
-    private boolean canEnchant(EnchantmentBase enchant, ListenerType type) {
+    private static boolean canEnchant(EnchantmentBase enchant, ListenerType type) {
         if (enchant.getTarget() == null) {
             EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "No target set for enchantment {0}", enchant.getEnchantmentName());
             return false;
@@ -96,7 +100,7 @@ public class CustomEnchantmentLoader implements EnchantmentLoader {
     }
 
     @Nullable
-    private EnchantmentBase loadClass(Class<? extends EnchantmentBase> clazz, FileConfiguration configuration, Plugin addon) {
+    private static EnchantmentBase loadClass(Class<? extends EnchantmentBase> clazz, FileConfiguration configuration, Plugin addon) {
         assert configuration != null;
         ConfigurationSection section = ConfigurationManager.getSectionOrCreate(configuration, "enchants");
 
@@ -104,9 +108,9 @@ public class CustomEnchantmentLoader implements EnchantmentLoader {
 
         Objects.requireNonNull(enchant);
 
-        ConfigurationSection enchantSection = ConfigurationManager.getSectionOrCreate(section, enchant.getKey().getKey());
+        ConfigurationSection enchantSection = ConfigurationManager.getSectionOrCreate(section, enchant.getEnchantmentName());
 
-        loadConfiguration(enchantSection, (Enchantment) enchant);
+        CustomEnchantmentLoader.loadConfiguration(enchantSection, (Enchantment) enchant);
 
         boolean enabled = new ConfigurationType<>(true).getValue("enabled", enchantSection);
 
@@ -114,7 +118,7 @@ public class CustomEnchantmentLoader implements EnchantmentLoader {
     }
 
     @SuppressWarnings("unchecked")
-    private void loadConfiguration(ConfigurationSection section, Enchantment base) {
+    private static void loadConfiguration(ConfigurationSection section, Enchantment base) {
         Class<? extends Enchantment> currentClass = base.getClass();
         while (currentClass != Enchantment.class) {
             for (Field field : currentClass.getDeclaredFields()) {

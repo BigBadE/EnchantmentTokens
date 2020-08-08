@@ -28,8 +28,9 @@ import software.bigbade.enchantmenttokens.utils.players.PlayerHandler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
-import java.util.Set;
 
 @RequiredArgsConstructor
 public class EnchantTableListener implements Listener {
@@ -70,21 +71,16 @@ public class EnchantTableListener implements Listener {
         seed = (seed * 76790647859193L + 25707281917278L) % 281474976710656L;
 
         Random random = new Random(seed);
-        Set<EnchantmentBase> possible = EnchantPickerUtils.rollEnchantments(enchantments, random, event.getItem(), event.getExpLevelCost(), false);
+        Map<EnchantmentBase, Integer> possible = EnchantPickerUtils.rollEnchantments(enchantments, random, event.getItem(), event.getExpLevelCost(), false);
         event.getEnchantsToAdd().clear();
         EnchantmentPlayer player = playerHandler.getPlayer(event.getEnchanter());
-        for (EnchantmentBase enchantment : possible) {
-            for (int level = enchantment.getMaxTableLevel(); level > enchantment.getStartLevel(); --level) {
-                if (event.getExpLevelCost() >= enchantment.getMinCost(level) && event.getExpLevelCost() <= enchantment.getMaxCost(level)) {
-                    EnchantUtils.getInstance().addEnchantmentBase(event.getItem(), enchantment, player.getPlayer(), level);
-                    break;
-                }
-            }
+        for (Map.Entry<EnchantmentBase, Integer> entry : possible.entrySet()) {
+            EnchantUtils.getInstance().addEnchantmentBase(event.getItem(), entry.getKey(), player.getPlayer(), entry.getValue());
         }
-        EnchantmentTablePacketHandler.onEnchant(event.getEnchanter(), event.getItem(), event.getExpLevelCost());
+        EnchantmentTablePacketHandler.onEnchant(event.getEnchanter(), event.getItem(), event.whichButton() + 1);
         EnchantingInventory inventory = (EnchantingInventory) event.getEnchanter().getOpenInventory().getTopInventory();
         if (ReflectionManager.VERSION >= 8 && event.getEnchanter().getGameMode() != GameMode.CREATIVE) {
-            inventory.getSecondary().setAmount(inventory.getSecondary().getAmount() - event.whichButton());
+            Objects.requireNonNull(inventory.getSecondary()).setAmount(inventory.getSecondary().getAmount() - event.whichButton());
         }
     }
 }

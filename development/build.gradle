@@ -36,11 +36,14 @@ sourceSets {
 
 dependencies {
     implementation project(':api')
-    implementation 'org.bstats:bstats-bukkit:1.7'
+    //fileTree doesn't work as a transitive dependency for some reason.
+    implementation fileTree(dir: '../api/lib', include: '*.jar')
 
     implementation('me.lucko:commodore:1.8') {
         exclude module: 'brigadier'
     }
+
+    implementation 'org.bstats:bstats-bukkit:1.7'
 
     shadow 'org.spigotmc:spigot-api:1.15.2-R0.1-SNAPSHOT'
     shadow 'com.comphenix.protocol:ProtocolLib:4.5.1'
@@ -71,8 +74,6 @@ shadowJar {
     archiveClassifier.set('')
     relocate 'me.lucko', 'software.bigbade'
     relocate 'org.bstats', 'software.bigbade'
-    relocate 'com.codingforcookies', 'software.bigbade'
-    relocate 'co.aikar', 'software.bigbade'
 
     exclude 'META-INF/**'
 

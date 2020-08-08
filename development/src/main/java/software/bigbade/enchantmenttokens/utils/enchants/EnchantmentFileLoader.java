@@ -26,7 +26,6 @@ import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantmentAddon;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.wrappers.EnchantmentChain;
-import software.bigbade.enchantmenttokens.exceptions.AddonLoadingException;
 import software.bigbade.enchantmenttokens.localization.LocaleManager;
 import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 
@@ -113,7 +112,7 @@ public class EnchantmentFileLoader {
     private void loadEnchantmentClasses(List<File> jars) {
         long start = System.currentTimeMillis();
         URL[] urls = getUrls(jars);
-        EnchantmentChain chain = new EnchantmentChain<>().split();
+        EnchantmentChain<?> chain = new EnchantmentChain<>().split();
         for (int i = 0; i < jars.size(); i++) {
             File jar = jars.get(i);
             URL url = urls[i];
@@ -140,17 +139,16 @@ public class EnchantmentFileLoader {
         LocaleManager.updateLocale(main.getConfig(), addons);
         EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Loaded enchantments in {0}ms", System.currentTimeMillis() - start);
         main.getListenerHandler().registerListeners();
-        //main.saveConfig();
     }
 
     @Nullable
     private EnchantmentAddon loadAddon(File file, ClassLoader cl) {
         try (JarFile jarFile = new JarFile(file.getAbsolutePath()); InputStream stream = jarFile.getInputStream(jarFile.getEntry("addon.yml"))) {
             if (stream == null) {
-                throw new InvalidDescriptionException("Found no addon file for " + file.getName());
+                throw new IllegalStateException("Found no addon file for " + file.getName());
             }
             PluginDescriptionFile descriptionFile = new PluginDescriptionFile(stream);
-            EnchantmentAddon addon = instanceAddonClass(cl, descriptionFile);
+            EnchantmentAddon addon = EnchantmentFileLoader.instanceAddonClass(cl, descriptionFile);
             if (addon == null) {
                 return null;
             }
@@ -159,17 +157,17 @@ public class EnchantmentFileLoader {
             main.getEnchantmentLoader().loadAddon(addon);
             return addon;
         } catch (IOException | InvalidDescriptionException e) {
-            throw new AddonLoadingException("Problem loading addon " + file.getName(), e);
+            throw new IllegalStateException("Problem loading addon " + file.getName(), e);
         }
     }
 
     @Nullable
-    private EnchantmentAddon instanceAddonClass(ClassLoader cl, PluginDescriptionFile descriptionFile) throws InvalidDescriptionException {
+    private static EnchantmentAddon instanceAddonClass(ClassLoader cl, PluginDescriptionFile descriptionFile) {
         Class<?> addonClass;
         try {
             addonClass = cl.loadClass(descriptionFile.getMain());
         } catch (ClassNotFoundException e) {
-            throw new InvalidDescriptionException("Main attribute " + descriptionFile.getMain() + " does not point to a valid addon.");
+            throw new IllegalStateException("Main attribute " + descriptionFile.getMain() + " does not point to a valid addon.");
         }
         if (addonClass == null || !EnchantmentAddon.class.isAssignableFrom(addonClass)) {
             return null;

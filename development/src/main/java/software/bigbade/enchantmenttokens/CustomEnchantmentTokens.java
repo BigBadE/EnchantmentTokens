@@ -124,8 +124,6 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
         setupAutosave();
 
         EnchantmentTokens.getEnchantLogger().log(Level.INFO, "Successfully enabled EnchantmentTokens");
-        //Must be done last, obviously
-        //saveConfig();
     }
 
     private void setupProtocolManager() {
@@ -165,8 +163,6 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
     private void setupConfiguration() {
         boolean metrics = new ConfigurationType<>(true).getValue("metrics", getConfig());
 
-        //saveConfig();
-
         if (metrics) {
             new MetricManager(this);
         }
@@ -186,7 +182,6 @@ public class CustomEnchantmentTokens extends EnchantmentTokens {
         enchantmentHandler.getAllEnchants().forEach(EnchantmentBase::onDisable);
         playerHandler.shutdown();
         currencyHandler.shutdown();
-        //saveConfig();
     }
 
     @Override

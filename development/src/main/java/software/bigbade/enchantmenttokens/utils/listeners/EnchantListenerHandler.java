@@ -9,8 +9,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
-import software.bigbade.armorequip.ArmorListener;
-import software.bigbade.armorequip.DispenserArmorListener;
 import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.api.EnchantmentBase;
 import software.bigbade.enchantmenttokens.api.EventFactory;
@@ -40,8 +38,6 @@ import software.bigbade.enchantmenttokens.listeners.gui.EnchantmentGUIListener;
 import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 import software.bigbade.enchantmenttokens.utils.currency.VaultCurrencyFactory;
 
-import java.util.ArrayList;
-
 public class EnchantListenerHandler implements ListenerHandler {
     private final TypedListenerHandler enchantListeners = new TypedListenerHandler();
     private final EnchantmentTokens main;
@@ -57,9 +53,6 @@ public class EnchantListenerHandler implements ListenerHandler {
     @Override
     public void registerListeners() {
         enchantListener = enchantListeners.getManager(ListenerType.ENCHANT);
-
-        Bukkit.getPluginManager().registerEvents(new ArmorListener(new ArrayList<>()), main);
-        Bukkit.getPluginManager().registerEvents(new DispenserArmorListener(), main);
 
         Bukkit.getPluginManager().registerEvents(new SignPlaceListener(main.getEnchantmentHandler(), main.getPlayerHandler(), main.getSignHandler()), main);
         Bukkit.getPluginManager().registerEvents(new SignClickListener(main.getUtils()), main);

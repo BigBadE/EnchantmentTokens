@@ -4,7 +4,6 @@
 
 package software.bigbade.enchantmenttokens.listeners.enchants;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -13,28 +12,27 @@ import software.bigbade.enchantmenttokens.events.EnchantmentEvent;
 import software.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
 
 public class BasicEnchantListener<T extends Event> {
-    private ListenerManager<T> listeners;
+    private ListenerManager<T> listener;
 
-    public BasicEnchantListener() {}
+    public BasicEnchantListener() {
+    }
 
     public BasicEnchantListener(ListenerManager<T> listeners) {
-        this.listeners = listeners;
+        this.listener = listeners;
     }
 
     public void callListeners(EnchantmentEvent<T> event) {
-        listeners.callEvent(event);
-        Bukkit.getPluginManager().callEvent(event.getSelfEvent());
+        listener.callEvent(event);
     }
 
-    public void callListeners(EnchantmentEvent<T> event, ListenerManager<T> listeners) {
-        listeners.callEvent(event);
-        Bukkit.getPluginManager().callEvent(event.getSelfEvent());
+    public void callListeners(EnchantmentEvent<T> event, ListenerManager<T> targetListener) {
+        targetListener.callEvent(event);
     }
 
     public void callForAllItems(ListenerManager<T> listener, EnchantmentEvent<T> event) {
         Player player = event.getUser();
         for (ItemStack item : player.getInventory().getArmorContents()) {
-            if(item != null) {
+            if (item != null) {
                 callListenerForItem(item, listener, event);
             }
         }
@@ -44,7 +42,7 @@ public class BasicEnchantListener<T extends Event> {
     }
 
     public void callForAllItems(EnchantmentEvent<T> event) {
-        callForAllItems(listeners, event);
+        callForAllItems(listener, event);
     }
 
     public void callListenerForItem(ItemStack item, ListenerManager<T> listener, EnchantmentEvent<T> event) {

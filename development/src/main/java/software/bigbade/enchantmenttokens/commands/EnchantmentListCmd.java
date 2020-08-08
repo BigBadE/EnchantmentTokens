@@ -29,8 +29,9 @@ public class EnchantmentListCmd implements CommandExecutor {
         } else {
             StringBuilder builder = new StringBuilder();
             handler.getAllEnchants().forEach(enchant -> builder.append(enchant.getEnchantmentName()).append(", "));
-            if (builder.length() > 0)
+            if (builder.length() > 0) {
                 builder.setLength(builder.length() - 2);
+            }
             sender.sendMessage(new TranslatedStringMessage(locale, StringUtils.COMMAND_LIST).translate(builder.toString()));
         }
         return true;

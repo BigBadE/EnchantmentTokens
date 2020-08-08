@@ -31,6 +31,7 @@ import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 @Name("EnchantmentConflict")
 @Description("Sets the enchantment conflict, two conflicting enchantments cannot both be added to the same item. Ex: Infinity and Mending")
@@ -47,7 +48,7 @@ public class EnchantmentConflictEffect extends Effect {
     @Override
     protected void execute(@Nonnull Event event) {
         SkriptEnchantment conflictEnchant = conflict.getSingle(event);
-        enchantment.getSingle(event).addConflict(conflictEnchant);
+        Objects.requireNonNull(enchantment.getSingle(event)).addConflict(conflictEnchant);
     }
 
     @Nonnull
@@ -56,12 +57,12 @@ public class EnchantmentConflictEffect extends Effect {
         if(event == null) {
             return "Set conflict of enchantment";
         }
-        return "Set conflict of " + enchantment.getSingle(event).getEnchantmentName() + " to " + conflict.getSingle(event).getEnchantmentName();
+        return "Set conflict of " + Objects.requireNonNull(enchantment.getSingle(event)).getEnchantmentName() + " to " + Objects.requireNonNull(conflict.getSingle(event)).getEnchantmentName();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] expressions, int i, @Nonnull Kleenean kleenean, @Nonnull SkriptParser.ParseResult parseResult) {
+    public boolean init(@Nonnull Expression<?>[] expressions, int i, @Nonnull Kleenean kleenean, @Nonnull SkriptParser.ParseResult parseResult) {
         enchantment = (Expression<SkriptEnchantment>) expressions[0];
         conflict = (Expression<SkriptEnchantment>) expressions[1];
         return true;

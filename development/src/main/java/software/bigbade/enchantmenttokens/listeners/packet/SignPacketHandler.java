@@ -60,30 +60,34 @@ public class SignPacketHandler implements SignHandler {
     void handlePacket(NbtCompound compound, PacketEvent event) {
         EnchantmentPlayer enchantmentPlayer = main.getPlayerHandler().getPlayer(event.getPlayer());
         List<String> text = getText(compound);
-        if (text.isEmpty())
+        if (text.isEmpty()) {
             return;
-        if (!text.get(0).equals("[" + new TranslatedStringMessage(enchantmentPlayer.getLanguage(), StringUtils.ENCHANTMENT).translate() + "]"))
+        }
+        if (!text.get(0).equals("[" + new TranslatedStringMessage(enchantmentPlayer.getLanguage(), StringUtils.ENCHANTMENT).translate() + "]")) {
             return;
+        }
         main.getEnchantmentHandler().getAllEnchants().stream()
                 .filter(base -> base.getEnchantmentName().equalsIgnoreCase(text.get(1)))
                 .forEach(base -> {
-                    if (event.getPacketType() == PacketType.Play.Server.MAP_CHUNK)
+                    if (event.getPacketType() == PacketType.Play.Server.MAP_CHUNK) {
                         signs.add(new Location(event.getPlayer().getWorld(), compound.getInteger("x"), compound.getInteger("y"), compound.getInteger("z")));
+                    }
                     updateSign(base, compound, event);
                 });
     }
 
     @Nonnull
-    private List<String> getText(NbtCompound compound) {
+    private static List<String> getText(NbtCompound compound) {
         List<String> text = new ArrayList<>();
         for (int i = 1; i < 5; i++) {
             try {
                 text.add(compound.getString("Text" + i).split("text\":\"")[1].split("\"}")[0]);
             } catch (ArrayIndexOutOfBoundsException | IllegalArgumentException ignored) {
-                if (i != 3)
+                if (i != 3) {
                     return Collections.emptyList();
-                else
+                } else {
                     break;
+                }
             }
         }
         return text;

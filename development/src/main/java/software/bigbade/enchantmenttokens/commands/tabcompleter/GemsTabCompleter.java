@@ -30,28 +30,33 @@ public class GemsTabCompleter implements TabCompleter, IEnchantTabCompleter {
     @Override
     public List<String> onTabComplete(@Nonnull CommandSender commandSender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
         Locale locale = CommandUtils.getLocale(commandSender, playerHandler);
-        if (admin && !commandSender.hasPermission("enchanttoken.admin") && !commandSender.isOp())
+        if (admin && !commandSender.hasPermission("enchanttoken.admin") && !commandSender.isOp()) {
             return Collections.singletonList(ChatColor.stripColor(new TranslatedStringMessage(locale, StringUtils.COMMAND_ERROR_PERMISSION).translate()));
-        if (args.length > 2)
+        }
+        if (args.length > 2) {
             return Collections.singletonList(ChatColor.stripColor(new TranslatedStringMessage(locale, StringUtils.COMMAND_ERROR_TOO_MANY_ARGUMENTS).translate()));
+        }
         if (args.length == 1) {
             //Return player names
             List<String> players = new ArrayList<>();
             commandSender.getServer().getOnlinePlayers().forEach(player -> {
-                if (player.getName().startsWith(args[0])) players.add(player.getName());
+                if (player.getName().startsWith(args[0])) {
+                    players.add(player.getName());
+                }
             });
-            if (players.isEmpty() && !checkLong(args[0], locale).isEmpty())
+            if (players.isEmpty() && !checkLong(args[0], locale).isEmpty()) {
                 players.add(ChatColor.stripColor(new TranslatedStringMessage(locale, StringUtils.COMMAND_ERROR_NO_PLAYER).translate(args[0])));
+            }
             return players;
         } else {
-            if(args[1].isEmpty()) {
+            if (args[1].isEmpty()) {
                 return Collections.emptyList();
             }
             return checkLong(args[1], locale);
         }
     }
 
-    private List<String> checkLong(String number, Locale locale) {
+    private static List<String> checkLong(String number, Locale locale) {
         try {
             Long.parseLong(number);
             return Collections.emptyList();

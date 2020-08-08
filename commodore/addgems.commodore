@@ -1,0 +1,6 @@
+addgems {
+    player brigadier:string single_word {
+        amount brigadier:integer;
+    }
+    amount brigadier:integer;
+}

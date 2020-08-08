@@ -75,7 +75,7 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
                 PluginDescriptionFile.class, Bukkit.class, ReflectionManager.class, LocaleManager.class})
 public class EnchantmentFileLoaderTest {
     private final File file = mock(File.class);
-    private final EnchantmentChain chain = mock(EnchantmentChain.class);
+    private final EnchantmentChain<?> chain = mock(EnchantmentChain.class);
     private final ExecutorService executor = new FakeExecutorService();
     private final ListenerHandler handler = mock(ListenerHandler.class);
     private final EnchantmentLoader enchantmentLoader =

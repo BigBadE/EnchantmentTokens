@@ -42,7 +42,7 @@ public class SignPlaceListener implements Listener {
         }
     }
 
-    private void updateSign(EnchantmentBase base, SignChangeEvent event, Locale locale) {
+    private static void updateSign(EnchantmentBase base, SignChangeEvent event, Locale locale) {
         event.getPlayer().sendMessage(new TranslatedStringMessage(locale, StringUtils.ENCHANTMENT_ADD).translate(base.getEnchantmentName()));
         event.setLine(0, "[" + new TranslatedStringMessage(locale, StringUtils.ENCHANTMENT).translate() + "]");
         event.setLine(1, base.getEnchantmentName());

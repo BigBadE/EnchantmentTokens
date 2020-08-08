@@ -40,6 +40,13 @@ public class CustomEnchantUtils extends EnchantUtils {
         this.signs = signs;
     }
 
+    private static void updateSigns(Set<Location> signs, Player player) {
+        for (Location location : signs) {
+            Sign sign = (Sign) location.getBlock().getState();
+            player.sendSignChange(location, new String[]{sign.getLine(0), sign.getLine(1), "", ""});
+        }
+    }
+
     @Override
     public void addEnchantment(ItemStack itemStack, String name, Player player) {
         EnchantmentPlayer enchantmentPlayer = playerHandler.getPlayer(player);
@@ -101,15 +108,15 @@ public class CustomEnchantUtils extends EnchantUtils {
     public void addEnchantmentBase(ItemStack item, EnchantmentBase base, Player player, int level) {
         if (base instanceof VanillaEnchant) {
             item.addEnchantment(base.getEnchantment(), level);
-            updateSigns(signs, player);
+            CustomEnchantUtils.updateSigns(signs, player);
             return;
         }
         ItemMeta meta = item.getItemMeta();
         assert meta != null;
         meta.addEnchant(base.getEnchantment(), level, true);
-        updateLore(meta, level, base);
+        CustomEnchantUtils.updateLore(meta, level, base);
         item.setItemMeta(meta);
-        updateSigns(signs, player);
+        CustomEnchantUtils.updateSigns(signs, player);
         triggerOnEnchant(item, base, player);
     }
 
@@ -117,7 +124,7 @@ public class CustomEnchantUtils extends EnchantUtils {
         listenerHandler.onEnchant(item, base, player);
     }
 
-    private void updateLore(ItemMeta meta, int level, EnchantmentBase base) {
+    private static void updateLore(ItemMeta meta, int level, EnchantmentBase base) {
         List<String> lore = meta.getLore();
         if (lore == null) {
             lore = new ArrayList<>();
@@ -139,19 +146,15 @@ public class CustomEnchantUtils extends EnchantUtils {
     }
 
     public int getLevel(ItemStack item, EnchantmentBase base) {
-        if (base instanceof VanillaEnchant)
+        if (base instanceof VanillaEnchant) {
             return item.getEnchantmentLevel(base.getEnchantment());
-        if (item.getItemMeta() == null || !item.getItemMeta().hasEnchants()) return base.getStartLevel() - 1;
+        }
+        if (item.getItemMeta() == null || !item.getItemMeta().hasEnchants()) {
+            return base.getStartLevel() - 1;
+        }
         if (!item.getItemMeta().hasEnchant(base.getEnchantment())) {
             return base.getStartLevel() - 1;
         }
         return item.getItemMeta().getEnchants().get(base.getEnchantment());
-    }
-
-    private void updateSigns(Set<Location> signs, Player player) {
-        for (Location location : signs) {
-            Sign sign = (Sign) location.getBlock().getState();
-            player.sendSignChange(location, new String[]{sign.getLine(0), sign.getLine(1), "", ""});
-        }
     }
 }

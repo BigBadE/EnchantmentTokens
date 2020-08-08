@@ -48,9 +48,9 @@ public class CurrencyFactoryHandler {
 
     private CurrencyFactory loadExternalFactory() {
         CurrencyFactory factory = loadExternalJar();
-        if (factory != null && factory.loaded())
+        if (factory != null && factory.loaded()) {
             return factory;
-        else {
+        } else {
             if (factory == null) {
                 EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Could not find currency factory");
             } else {
@@ -63,25 +63,30 @@ public class CurrencyFactoryHandler {
     private CurrencyFactory loadGemFactory() {
         if (ReflectionManager.VERSION >= 14) {
             boolean persistent = new ConfigurationType<>(true).getValue("usePersistentData", section);
-            if (persistent)
+            if (persistent) {
                 return new LatestCurrencyFactory(new NamespacedKey(main, "gems"), new NamespacedKey(main, "locale"));
-            else
+            } else {
                 return new GemCurrencyFactory(main.getScheduler(), main.getDataFolder().getAbsolutePath());
-        } else
+            }
+        } else {
             return new GemCurrencyFactory(main.getScheduler(), main.getDataFolder().getAbsolutePath());
+        }
     }
 
     private CurrencyFactory loadExternalJar() {
         File found = ConfigurationManager.getFolder(main.getDataFolder().getAbsolutePath() + "\\storage");
-        if (found.listFiles() == null)
+        if (found.listFiles() == null) {
             return null;
+        }
         String type = new ConfigurationType<>("gems").getValue("type", section);
         for (File subfile : Objects.requireNonNull(found.listFiles())) {
-            if (!subfile.getName().endsWith(".jar"))
+            if (!subfile.getName().endsWith(".jar")) {
                 continue;
+            }
             CurrencyFactory factory = loadFactory(type, subfile);
-            if (factory != null)
+            if (factory != null) {
                 return factory;
+            }
         }
         return null;
     }

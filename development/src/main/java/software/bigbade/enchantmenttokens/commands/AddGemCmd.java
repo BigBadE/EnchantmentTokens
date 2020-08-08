@@ -34,8 +34,9 @@ public class AddGemCmd implements CommandExecutor {
         }
 
         if (args.length == 1) {
-            if (sender instanceof Player)
+            if (sender instanceof Player) {
                 addGems(args[0], (Player) sender, sender);
+            }
         } else if (args.length == 2) {
             Player target = Bukkit.getPlayer(args[0]);
             if (target != null) {

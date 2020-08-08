@@ -24,11 +24,13 @@ import software.bigbade.enchantmenttokens.api.EnchantmentPlayer;
 import software.bigbade.enchantmenttokens.configuration.ConfigurationManager;
 import software.bigbade.enchantmenttokens.utils.ByteUtils;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
@@ -89,26 +91,25 @@ public class FileLoader {
         }
     }
 
-    private void writeData(GemCurrencyHandler currencyHandler, long gems, int index, FileOutputStream output) throws IOException {
+    private static void writeData(GemCurrencyHandler currencyHandler, long gems, int index, FileOutputStream output) throws IOException {
         output.write(ByteUtils.longToBytes(gems), index, 8);
         index += 8;
-        output.write(currencyHandler.getLocale().toLanguageTag().getBytes(), index, currencyHandler.getLocale().toLanguageTag().length());
+        output.write(currencyHandler.getLocale().toLanguageTag().getBytes(StandardCharsets.UTF_8), index, currencyHandler.getLocale().toLanguageTag().length());
         for (Map.Entry<String, String> entries : currencyHandler.getStoredData().entrySet()) {
             String key = entries.getKey();
             output.write(ByteUtils.intToBytes(key.length()), index, Integer.BYTES);
             index += Integer.BYTES;
-            output.write(key.getBytes(), index, key.length());
+            output.write(key.getBytes(StandardCharsets.UTF_8), index, key.length());
             index += key.length();
             String value = entries.getValue();
             output.write(ByteUtils.intToBytes(value.length()), index, Integer.BYTES);
             index += Integer.BYTES;
-            output.write(value.getBytes());
+            output.write(value.getBytes(StandardCharsets.UTF_8));
         }
         output.write(0);
     }
 
-    private int getOffset(InputStream stream, UUID id) {
-
+    private static int getOffset(InputStream stream, UUID id) {
         int passed = 0;
         try {
             while (true) {
@@ -138,35 +139,35 @@ public class FileLoader {
         }
     }
 
-    private long safeReadLong(InputStream stream) throws IOException {
+    private static long safeReadLong(InputStream stream) throws IOException {
         byte[] temp = new byte[Long.BYTES];
         if (stream.read(temp) != Long.BYTES) {
-            throw new IOException(EOF_ERROR);
+            throw new EOFException(EOF_ERROR);
         }
         return ByteUtils.bytesToLong(temp);
     }
 
-    private int safeReadInteger(InputStream stream) throws IOException {
+    private static int safeReadInteger(InputStream stream) throws IOException {
         byte[] temp = new byte[Integer.BYTES];
         if (stream.read(temp) != Integer.BYTES) {
-            throw new IOException(EOF_ERROR);
+            throw new EOFException(EOF_ERROR);
         }
         return ByteUtils.bytesToInt(temp);
     }
 
-    private String safeReadString(InputStream stream, int length) throws IOException {
+    private static String safeReadString(InputStream stream, int length) throws IOException {
         byte[] temp = new byte[length];
         if (stream.read(temp) != length) {
-            throw new IOException(EOF_ERROR);
+            throw new EOFException(EOF_ERROR);
         }
-        return new String(temp);
+        return new String(temp, StandardCharsets.UTF_8);
     }
 
-    private Locale safeReadLocale(InputStream stream) throws IOException {
+    private static Locale safeReadLocale(InputStream stream) throws IOException {
         byte[] temp = new byte[5];
         if (stream.read(temp) != 5) {
-            throw new IOException(EOF_ERROR);
+            throw new EOFException(EOF_ERROR);
         }
-        return Locale.forLanguageTag(new String(temp));
+        return Locale.forLanguageTag(new String(temp, StandardCharsets.UTF_8));
     }
 }

@@ -29,27 +29,29 @@ public class EnchantTabCompleter implements TabCompleter, IEnchantTabCompleter {
     private final EnchantmentHandler handler;
     private final PlayerHandler playerHandler;
 
-    @Override
-    public List<String> onTabComplete(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
-        Locale locale = CommandUtils.getLocale(sender, playerHandler);
-        if (!sender.hasPermission(StringUtils.PERMISSION_ADMIN) && !sender.isOp())
-            return Collections.singletonList(ChatColor.stripColor(new TranslatedStringMessage(locale, StringUtils.COMMAND_ERROR_PERMISSION).translate()));
-        if (args.length == 1) {
-            return getKeys(args[0]);
-        } else if (args.length == 2) {
-            return checkInt(args[1], locale);
-        } else {
-            return Collections.singletonList(ChatColor.stripColor(new TranslatedStringMessage(locale, StringUtils.COMMAND_ERROR_TOO_MANY_ARGUMENTS).translate()));
-        }
-    }
-
-    private List<String> checkInt(String number, Locale locale) {
+    private static List<String> checkInt(String number, Locale locale) {
         try {
-            if (number.trim().length() > 0)
+            if (number.trim().length() > 0) {
                 Integer.parseInt(number);
+            }
             return Collections.emptyList();
         } catch (NumberFormatException e) {
             return Collections.singletonList(ChatColor.stripColor(new TranslatedStringMessage(locale, StringUtils.COMMAND_ERROR_NOT_NUMBER).translate(number)));
+        }
+    }
+
+    @Override
+    public List<String> onTabComplete(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
+        Locale locale = CommandUtils.getLocale(sender, playerHandler);
+        if (!sender.hasPermission(StringUtils.PERMISSION_ADMIN) && !sender.isOp()) {
+            return Collections.singletonList(ChatColor.stripColor(new TranslatedStringMessage(locale, StringUtils.COMMAND_ERROR_PERMISSION).translate()));
+        }
+        if (args.length == 1) {
+            return getKeys(args[0]);
+        } else if (args.length == 2) {
+            return EnchantTabCompleter.checkInt(args[1], locale);
+        } else {
+            return Collections.singletonList(ChatColor.stripColor(new TranslatedStringMessage(locale, StringUtils.COMMAND_ERROR_TOO_MANY_ARGUMENTS).translate()));
         }
     }
 

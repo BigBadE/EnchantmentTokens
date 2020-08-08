@@ -17,13 +17,14 @@ import software.bigbade.enchantmenttokens.EnchantmentTokens;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 @Name("EnchantmentTarget")
 @Description({"Sets the enchantment target, two conflicting enchantments cannot both be added to the same item", "Ex: Infinity and Mending.", "The string should be the key of the enchantment", "it should be namespace:enchantname", "vanilla enchants have the namespace 'minecraft', Skript enchantments are 'skript'"})
 @Examples({"on Skript start:",
-        "	set the conflict of Test to minecraft:myenchant"})
+        "\u0009set the conflict of Test to minecraft:myenchant"})
 public class EnchantmentConflictStringEffect extends Effect {
     static {
         Skript.registerEffect(EnchantmentConflictEffect.class, "set [the] conflict of %customenchant% to %string%");
@@ -39,6 +40,7 @@ public class EnchantmentConflictStringEffect extends Effect {
         String conflictEnchant = conflict.getSingle(event);
         String[] split = splitPattern.split(conflictEnchant);
         SkriptEnchantment skriptEnchantment = enchantment.getSingle(event);
+        assert skriptEnchantment != null;
         if (split.length != 2) {
             EnchantmentTokens.getEnchantLogger().log(Level.SEVERE, "Enchantment {0} has incorrect conflict {1}", new Object[]{skriptEnchantment.getEnchantmentName(), conflictEnchant});
         }
@@ -48,12 +50,12 @@ public class EnchantmentConflictStringEffect extends Effect {
     @Nonnull
     @Override
     public String toString(Event event, boolean b) {
-        return "Set conflict of " + enchantment.getSingle(event).getEnchantmentName() + " to " + conflict.getSingle(event);
+        return "Set conflict of " + Objects.requireNonNull(enchantment.getSingle(event)).getEnchantmentName() + " to " + conflict.getSingle(event);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+    public boolean init(@Nonnull Expression<?>[] expressions, int i, @Nonnull Kleenean kleenean, @Nonnull SkriptParser.ParseResult parseResult) {
         enchantment = (Expression<SkriptEnchantment>) expressions[0];
         conflict = (Expression<String>) expressions[1];
         return true;

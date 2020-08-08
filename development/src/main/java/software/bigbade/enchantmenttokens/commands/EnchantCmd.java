@@ -51,8 +51,9 @@ public class EnchantCmd implements CommandExecutor {
 
     private void addEnchantment(CommandSender sender, Locale locale, String input, int level) {
         for (EnchantmentBase enchantment : handler.getAllEnchants()) {
-            if (enchantment instanceof VanillaEnchant)
+            if (enchantment instanceof VanillaEnchant) {
                 continue;
+            }
             if (enchantment.getKey().toString().startsWith(input) || enchantment.getEnchantmentName().toLowerCase().startsWith(input.toLowerCase())) {
                 if (level < enchantment.getStartLevel() || level > enchantment.getMaxLevel()) {
                     sender.sendMessage(new TranslatedStringMessage(locale, StringUtils.COMMAND_ERROR_BAD_LEVEL).translate(input));

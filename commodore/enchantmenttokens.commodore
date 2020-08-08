@@ -1,0 +1,6 @@
+customenchantments {
+    version;
+    language brigadier:string single_word {
+        name
+    }
+}

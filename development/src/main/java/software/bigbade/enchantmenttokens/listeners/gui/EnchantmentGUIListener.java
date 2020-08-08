@@ -27,11 +27,14 @@ public class EnchantmentGUIListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         EnchantmentPlayer player = handler.getPlayer((Player) event.getWhoClicked());
-        if (event.getCurrentItem() == null || player.getCurrentGUI() == null)
+        if (event.getCurrentItem() == null || player.getCurrentGUI() == null) {
             return;
+        }
         event.setCancelled(true);
         EnchantButton button = player.getCurrentGUI().getButton(event.getSlot());
-        if(button == null) return;
+        if (button == null) {
+            return;
+        }
         EnchantmentGUI inventory = button.click(player);
         player.setCurrentGUI(null);
         if (inventory == null) {

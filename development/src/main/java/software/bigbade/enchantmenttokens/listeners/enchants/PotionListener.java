@@ -19,8 +19,9 @@ public class PotionListener extends BasicEnchantListener<EntityPotionEffectEvent
 
     @EventHandler
     public void onPotionApply(EntityPotionEffectEvent event) {
-        if (!(event.getEntity() instanceof Player))
+        if (!(event.getEntity() instanceof Player)) {
             return;
+        }
         Player player = (Player) event.getEntity();
 
         if (event.getAction().equals(EntityPotionEffectEvent.Action.ADDED)) {

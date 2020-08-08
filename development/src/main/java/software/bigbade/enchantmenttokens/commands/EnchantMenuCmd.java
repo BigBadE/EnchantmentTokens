@@ -26,8 +26,9 @@ public class EnchantMenuCmd implements CommandExecutor {
     public boolean onCommand(@Nonnull CommandSender commandSender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
         if (commandSender instanceof Player) {
             EnchantmentGUI inv = factory.genInventory((Player) commandSender);
-            if (inv == null)
+            if (inv == null) {
                 commandSender.sendMessage(new TranslatedStringMessage(handler.getPlayer((Player) commandSender).getLanguage(), StringUtils.COMMAND_ENCHANT_HELD).translate());
+            }
         }
         return true;
     }

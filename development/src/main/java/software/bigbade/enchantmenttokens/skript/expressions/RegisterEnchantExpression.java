@@ -27,7 +27,7 @@ import java.util.Objects;
 @Name("Register enchantment")
 @Description("Registers an enchantment with given name.")
 @Examples({"on Skript start:",
-        "	create a new custom enchant named \"Test\" with an icon of command block "})
+        "\u0009create a new custom enchant named \"Test\" with an icon of command block "})
 public class RegisterEnchantExpression extends SimpleExpression<SkriptEnchantment> {
     private Expression<String> name;
     private Expression<ItemType> iconExpression;
@@ -46,7 +46,7 @@ public class RegisterEnchantExpression extends SimpleExpression<SkriptEnchantmen
 
     @Override
     @SuppressWarnings("unchecked")
-    public boolean init(Expression<?>[] expressions, int i, @Nonnull Kleenean kleenean, @Nonnull SkriptParser.ParseResult parseResult) {
+    public boolean init(@Nonnull Expression<?>[] expressions, int i, @Nonnull Kleenean kleenean, @Nonnull SkriptParser.ParseResult parseResult) {
         name = (Expression<String>) expressions[0];
         iconExpression = (Expression<ItemType>) expressions[1];
         main = (EnchantmentTokens) Bukkit.getPluginManager().getPlugin("EnchantmentTokens");

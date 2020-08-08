@@ -1,8 +1,8 @@
 name: EnchantmentTokens
 description: Add custom enchantments to your server!
 author: Big_Bad_E
-version: 1.0
-api-version: 1.15
+version: "1.0"
+api-version: "1.15"
 main: software.bigbade.enchantmenttokens.CustomEnchantmentTokens
 depend: [ProtocolLib]
 softdepend:
@@ -15,7 +15,7 @@ commands:
   adminenchant:
     description: Enchant an item. (Admin only)
     usage: /adminenchant (enchant) (level)
-  tokenenchant:
+  customenchant:
     description: Enchant an item using gems.
     usage: /customenchant
     aliases: [customenchants, tokenenchant, tokenenchants, ce, te, et, enchanttoken, enchanttokens]

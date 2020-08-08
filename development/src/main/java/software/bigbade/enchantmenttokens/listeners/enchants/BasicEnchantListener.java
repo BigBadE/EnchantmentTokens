@@ -29,6 +29,7 @@ public class BasicEnchantListener<T extends Event> {
         targetListener.callEvent(event);
     }
 
+    @SuppressWarnings("ConstantConditions")
     public void callForAllItems(ListenerManager<T> listener, EnchantmentEvent<T> event) {
         Player player = event.getUser();
         for (ItemStack item : player.getInventory().getArmorContents()) {

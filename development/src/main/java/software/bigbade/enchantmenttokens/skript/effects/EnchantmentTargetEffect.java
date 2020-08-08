@@ -26,7 +26,7 @@ import java.util.logging.Level;
 @Description("Allows you to set the item target of an enchantment, required to be functional in game. " +
         "Types: Tools, Armor, Boots, Leggings, Chestplates, Helmets, Weapon, Bow, Fishing rod, Wearable, Trident, Crossbow")
 @Examples({"on Skript start:",
-        "	set the target of Test to \"Pickaxe\""})
+        "\u0009set the target of Test to \"Pickaxe\""})
 public class EnchantmentTargetEffect extends Effect {
     static {
         Skript.registerEffect(EnchantmentTargetEffect.class, "Set [the] target of %customenchant% to %string%");
@@ -60,7 +60,7 @@ public class EnchantmentTargetEffect extends Effect {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] expressions, int i, @Nonnull Kleenean kleenean, @Nonnull SkriptParser.ParseResult parseResult) {
+    public boolean init(@Nonnull Expression<?>[] expressions, int i, @Nonnull Kleenean kleenean, @Nonnull SkriptParser.ParseResult parseResult) {
         enchantmentExpression = (Expression<SkriptEnchantment>) expressions[0];
         target = (Expression<String>) expressions[1];
         return true;

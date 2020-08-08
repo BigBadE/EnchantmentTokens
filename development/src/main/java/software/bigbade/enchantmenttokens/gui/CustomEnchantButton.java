@@ -32,8 +32,9 @@ public class CustomEnchantButton implements EnchantButton {
 
     @Nullable
     public EnchantmentGUI click(@Nonnull EnchantmentPlayer player) {
-        if (callable == null)
+        if (callable == null) {
             return player.getCurrentGUI();
+        }
         return callable.apply(player);
     }
 

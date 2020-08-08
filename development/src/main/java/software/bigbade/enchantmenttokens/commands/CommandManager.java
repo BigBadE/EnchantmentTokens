@@ -18,9 +18,10 @@ import software.bigbade.enchantmenttokens.utils.ReflectionManager;
 
 import java.util.Objects;
 
-public class CommandManager {
+public final class CommandManager {
     //Private constructor to hide implicit public one.
-    private CommandManager() { }
+    private CommandManager() {
+    }
 
     public static void registerCommands(EnchantmentTokens main) {
         EnchantMenuCmd menuCmd = new EnchantMenuCmd(main.getMenuFactory(), main.getPlayerHandler());

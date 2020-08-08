@@ -16,11 +16,12 @@ import org.bukkit.event.Event;
 import software.bigbade.enchantmenttokens.skript.SkriptEnchantment;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 @Name("EnchantmentMaxLevel")
 @Description("Allows you to set the default max level of the enchantment")
 @Examples({"on Skript start:",
-        "	set the max level of Test to 5"})
+        "\u0009set the max level of Test to 5"})
 public class EnchantmentMaxLevelEffect extends Effect {
     static {
         Skript.registerEffect(EnchantmentMaxLevelEffect.class, "Set [the] [max][maximum] level of %customenchant% to %number%");
@@ -31,19 +32,19 @@ public class EnchantmentMaxLevelEffect extends Effect {
 
     @Override
     protected void execute(@Nonnull Event event) {
-        int minLevel = this.maxLevel.getSingle(event).intValue();
-        enchantment.getSingle(event).setMaxLevel(minLevel);
+        int minLevel = Objects.requireNonNull(this.maxLevel.getSingle(event)).intValue();
+        Objects.requireNonNull(enchantment.getSingle(event)).setMaxLevel(minLevel);
     }
 
     @Nonnull
     @Override
     public String toString(Event event, boolean b) {
-        return "Set max level of " + enchantment.getSingle(event).getEnchantmentName() + " to " + maxLevel.getSingle(event);
+        return "Set max level of " + Objects.requireNonNull(enchantment.getSingle(event)).getEnchantmentName() + " to " + maxLevel.getSingle(event);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+    public boolean init(@Nonnull Expression<?>[] expressions, int i, @Nonnull Kleenean kleenean, @Nonnull SkriptParser.ParseResult parseResult) {
         enchantment = (Expression<SkriptEnchantment>) expressions[0];
         maxLevel = (Expression<Number>) expressions[1];
         return true;

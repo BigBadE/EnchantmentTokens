@@ -23,7 +23,7 @@ import java.util.Objects;
 @Name("EnchantmentTarget")
 @Description("Allows you to set the item target of an enchantment, required to be functional in game.")
 @Examples({"on Skript start:",
-        "	set target of Test to a shield"})
+        "\u0009set target of Test to a shield"})
 public class EnchantmentTargetMaterialEffect extends Effect {
     static {
         Skript.registerEffect(EnchantmentTargetMaterialEffect.class, "Set target of %customenchant% to [a] %itemtypes%");
@@ -36,8 +36,9 @@ public class EnchantmentTargetMaterialEffect extends Effect {
     protected void execute(@Nonnull Event event) {
         SkriptEnchantment skriptEnchantment = enchantmentExpression.getSingle(event);
         Objects.requireNonNull(skriptEnchantment);
-        for (ItemType type : itemType.getAll(event))
+        for (ItemType type : itemType.getAll(event)) {
             skriptEnchantment.setTarget(new MaterialTargetWrapper(type.getMaterial()));
+        }
     }
 
     @Override
@@ -52,7 +53,7 @@ public class EnchantmentTargetMaterialEffect extends Effect {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?>[] expressions, int i, @Nonnull Kleenean kleenean, @Nonnull SkriptParser.ParseResult parseResult) {
+    public boolean init(@Nonnull Expression<?>[] expressions, int i, @Nonnull Kleenean kleenean, @Nonnull SkriptParser.ParseResult parseResult) {
         enchantmentExpression = (Expression<SkriptEnchantment>) expressions[0];
         itemType = (Expression<ItemType>) expressions[1];
         return true;

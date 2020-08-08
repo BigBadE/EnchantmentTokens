@@ -32,10 +32,12 @@ public class GenericTabCompleter implements TabCompleter, IEnchantTabCompleter {
     @Override
     public List<String> onTabComplete(@Nonnull CommandSender commandSender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
         Locale locale = CommandUtils.getLocale(commandSender, handler);
-        if (permission != null && !commandSender.hasPermission(permission) && !commandSender.isOp())
+        if (permission != null && !commandSender.hasPermission(permission) && !commandSender.isOp()) {
             return Collections.singletonList(ChatColor.stripColor(new TranslatedStringMessage(locale, StringUtils.COMMAND_ERROR_PERMISSION).translate()));
-        if (args.length > this.args)
+        }
+        if (args.length > this.args) {
             return Collections.singletonList(ChatColor.stripColor(new TranslatedStringMessage(locale, StringUtils.COMMAND_ERROR_TOO_MANY_ARGUMENTS).translate()));
+        }
         return Collections.emptyList();
     }
 }

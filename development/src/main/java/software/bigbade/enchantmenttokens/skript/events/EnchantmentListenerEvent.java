@@ -29,7 +29,7 @@ import java.util.Objects;
 @Name("Register an enchantment listener")
 @Description("Listens for the given event on the given enchantment. See https://raw.githubusercontent.com/wiki/BigBadE/EnchantmentTokens/development/Events.md for events.")
 @Examples({"on \"block break\" for Test:",
-        "	send \"Test\" to event-player"})
+        "\u0009send \"Test\" to event-player"})
 public class EnchantmentListenerEvent extends SelfRegisteringSkriptEvent {
     static {
         Skript.registerEvent("enchantmentevent", EnchantmentListenerEvent.class, CustomEnchantmentEvent.class, "%string% for %customenchant%");
@@ -51,7 +51,7 @@ public class EnchantmentListenerEvent extends SelfRegisteringSkriptEvent {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Literal<?>[] literals, int i, @Nonnull SkriptParser.ParseResult parseResult) {
+    public boolean init(@Nonnull Literal<?>[] literals, int i, @Nonnull SkriptParser.ParseResult parseResult) {
         type = (Literal<String>) literals[0];
         enchantmentExpression = (Literal<SkriptEnchantment>) literals[1];
         main = (EnchantmentTokens) Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("EnchantmentTokens"));

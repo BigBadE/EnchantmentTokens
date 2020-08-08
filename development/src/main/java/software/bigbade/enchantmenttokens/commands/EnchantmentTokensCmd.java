@@ -28,19 +28,19 @@ public class EnchantmentTokensCmd implements CommandExecutor {
             if (args[0].equalsIgnoreCase("language") && commandSender instanceof Player) {
                 commandSender.sendMessage(translateString((Player) commandSender, StringUtils.COMMAND_ENCHANTMENT_TOKENS_LANGUAGES));
             } else if (args[0].equalsIgnoreCase("version")) {
-                commandSender.sendMessage("EnchantmentTokens v1.0");
+                commandSender.sendMessage("EnchantmentTokens v1.0.0-Alpha");
             }
         } else if (args.length == 2) {
             if (commandSender instanceof Player) {
-                playerHandler.getPlayer((Player) commandSender).setLanguage(getLocale(args[1]));
+                playerHandler.getPlayer((Player) commandSender).setLanguage(EnchantmentTokensCmd.getLocale(args[1]));
             } else if (commandSender.isOp()) {
-                Locale.setDefault(getLocale(args[1]));
+                Locale.setDefault(EnchantmentTokensCmd.getLocale(args[1]));
             }
         }
         return true;
     }
 
-    private Locale getLocale(String name) {
+    private static Locale getLocale(String name) {
         Locale locale = Locale.getDefault();
         for (Locale found : Locale.getAvailableLocales()) {
             if (found.getCountry().equalsIgnoreCase(name)) {

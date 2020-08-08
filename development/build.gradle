@@ -35,7 +35,7 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'software.bigbade:EnchantmentTokensAPI:1.0'
+    implementation project(':api')
     implementation 'org.bstats:bstats-bukkit:1.7'
 
     implementation('me.lucko:commodore:1.8') {

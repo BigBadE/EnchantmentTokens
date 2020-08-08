@@ -3,7 +3,10 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/api" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/localization" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/mongo" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/mysql" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/wiki/api-wiki" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/wiki/main-wiki" vcs="Git" />
   </component>
 </project>

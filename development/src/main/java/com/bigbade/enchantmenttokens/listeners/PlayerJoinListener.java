@@ -16,12 +16,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = 'enchantmenttokens'
-include(':development')
-project(':development').projectDir = file('development')
-include(':api')
-project(':api').projectDir = file('api')
-include(':mysql')
-project(':mysql').projectDir = file('mysql')
-include(':mongo')
-project(':mongo').projectDir = file('mongo')
+package com.bigbade.enchantmenttokens.listeners;
+
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import com.bigbade.enchantmenttokens.utils.players.PlayerHandler;
+
+public class PlayerJoinListener implements Listener {
+
+    private final PlayerHandler playerHandler;
+
+    public PlayerJoinListener(PlayerHandler handler) {
+        playerHandler = handler;
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        playerHandler.loadPlayer(event.getPlayer());
+    }
+}

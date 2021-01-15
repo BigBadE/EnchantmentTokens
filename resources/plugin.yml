@@ -1,9 +1,9 @@
 name: EnchantmentTokens
 description: Add custom enchantments to your server!
 author: Big_Bad_E
-version: "1.0"
+version: "1.1-Alpha"
 api-version: "1.15"
-main: software.bigbade.enchantmenttokens.CustomEnchantmentTokens
+main: com.bigbade.enchantmenttokens.CustomEnchantmentTokens
 depend: [ProtocolLib]
 softdepend:
   - Vault

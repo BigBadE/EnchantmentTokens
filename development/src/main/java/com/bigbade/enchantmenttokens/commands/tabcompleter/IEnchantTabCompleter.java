@@ -16,12 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = 'enchantmenttokens'
-include(':development')
-project(':development').projectDir = file('development')
-include(':api')
-project(':api').projectDir = file('api')
-include(':mysql')
-project(':mysql').projectDir = file('mysql')
-include(':mongo')
-project(':mongo').projectDir = file('mongo')
+package com.bigbade.enchantmenttokens.commands.tabcompleter;
+
+public interface IEnchantTabCompleter {
+    String getPermission();
+}

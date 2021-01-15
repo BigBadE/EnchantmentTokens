@@ -16,12 +16,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = 'enchantmenttokens'
-include(':development')
-project(':development').projectDir = file('development')
-include(':api')
-project(':api').projectDir = file('api')
-include(':mysql')
-project(':mysql').projectDir = file('mysql')
-include(':mongo')
-project(':mongo').projectDir = file('mongo')
+package com.bigbade.enchantmenttokens.utils.currency;
+
+import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
+
+public class LatestCurrencyFactory extends EnchantCurrencyFactory {
+    private final NamespacedKey gems;
+    private final NamespacedKey locale;
+
+    public LatestCurrencyFactory(NamespacedKey gems, NamespacedKey locale) {
+        super("gems");
+        this.gems = gems;
+        this.locale = locale;
+    }
+
+    @Override
+    public EnchantCurrencyHandler newInstance(Player player) {
+        return new LatestCurrencyHandler(player, gems, locale);
+    }
+
+    @Override
+    public boolean loaded() {
+        return true;
+    }
+}

@@ -16,12 +16,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = 'enchantmenttokens'
-include(':development')
-project(':development').projectDir = file('development')
-include(':api')
-project(':api').projectDir = file('api')
-include(':mysql')
-project(':mysql').projectDir = file('mysql')
-include(':mongo')
-project(':mongo').projectDir = file('mongo')
+package com.bigbade.enchantmenttokens.listeners;
+
+import org.bukkit.Location;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.world.ChunkUnloadEvent;
+
+import java.util.Set;
+
+public class ChunkUnloadListener implements Listener {
+    private final Set<Location> signs;
+
+    public ChunkUnloadListener(Set<Location> signs) {
+        this.signs = signs;
+    }
+
+    @EventHandler
+    public void onChunkUnload(ChunkUnloadEvent event) {
+        signs.removeIf(location -> ((int) location.getX()) << 4 == event.getChunk().getX()
+                && ((int) location.getZ()) << 4 == event.getChunk().getZ());
+    }
+}

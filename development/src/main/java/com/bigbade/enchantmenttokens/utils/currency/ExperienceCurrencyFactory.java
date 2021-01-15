@@ -16,12 +16,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = 'enchantmenttokens'
-include(':development')
-project(':development').projectDir = file('development')
-include(':api')
-project(':api').projectDir = file('api')
-include(':mysql')
-project(':mysql').projectDir = file('mysql')
-include(':mongo')
-project(':mongo').projectDir = file('mongo')
+package com.bigbade.enchantmenttokens.utils.currency;
+
+import org.bukkit.entity.Player;
+import com.bigbade.enchantmenttokens.currency.CurrencyFactory;
+import com.bigbade.enchantmenttokens.currency.CurrencyHandler;
+
+public class ExperienceCurrencyFactory implements CurrencyFactory {
+    @Override
+    public CurrencyHandler newInstance(Player player) {
+        return new ExperienceCurrencyHandler(player);
+    }
+
+    @Override
+    public String name() {
+        return "experience";
+    }
+
+    @Override
+    public void shutdown() {
+        //Not used since Bukkit handles it
+    }
+
+    @Override
+    public boolean loaded() {
+        return true;
+    }
+}

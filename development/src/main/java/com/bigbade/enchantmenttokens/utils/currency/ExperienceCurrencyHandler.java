@@ -16,12 +16,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = 'enchantmenttokens'
-include(':development')
-project(':development').projectDir = file('development')
-include(':api')
-project(':api').projectDir = file('api')
-include(':mysql')
-project(':mysql').projectDir = file('mysql')
-include(':mongo')
-project(':mongo').projectDir = file('mongo')
+package com.bigbade.enchantmenttokens.utils.currency;
+
+import org.bukkit.entity.Player;
+
+import java.util.concurrent.CompletableFuture;
+
+public class ExperienceCurrencyHandler extends EnchantCurrencyHandler {
+    private final Player player;
+
+    public ExperienceCurrencyHandler(Player player) {
+        super(player, "experience");
+        this.player = player;
+    }
+
+    @Override
+    public CompletableFuture<Long> getAmount() {
+        return CompletableFuture.completedFuture((long) player.getLevel());
+    }
+
+    @Override
+    public void setAmount(long amount) {
+        player.setLevel((int) amount);
+    }
+
+    @Override
+    public void addAmount(long amount) {
+        player.giveExpLevels((int) amount);
+    }
+}

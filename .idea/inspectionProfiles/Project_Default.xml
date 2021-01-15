@@ -5,7 +5,7 @@
       <option name="EXCLUDE_ANNOS">
         <value>
           <list size="1">
-            <item index="0" class="java.lang.String" itemvalue="software.bigbade.enchantmenttokens.api.ConfigurationField" />
+            <item index="0" class="java.lang.String" itemvalue="com.bigbade.enchantmenttokens.api.ConfigurationField" />
           </list>
         </value>
       </option>

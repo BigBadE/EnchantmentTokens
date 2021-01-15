@@ -16,12 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = 'enchantmenttokens'
-include(':development')
-project(':development').projectDir = file('development')
-include(':api')
-project(':api').projectDir = file('api')
-include(':mysql')
-project(':mysql').projectDir = file('mysql')
-include(':mongo')
-project(':mongo').projectDir = file('mongo')
+package com.bigbade.enchantmenttokens.skript;
+
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import com.bigbade.enchantmenttokens.api.CustomEnchantment;
+
+public class SkriptEnchantment extends CustomEnchantment {
+    public SkriptEnchantment(NamespacedKey key, String name, Material icon) {
+        super(key, icon, name);
+    }
+}

@@ -16,12 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = 'enchantmenttokens'
-include(':development')
-project(':development').projectDir = file('development')
-include(':api')
-project(':api').projectDir = file('api')
-include(':mysql')
-project(':mysql').projectDir = file('mysql')
-include(':mongo')
-project(':mongo').projectDir = file('mongo')
+package com.bigbade.enchantmenttokens.listeners.enchants;
+
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerRiptideEvent;
+import com.bigbade.enchantmenttokens.api.EventFactory;
+import com.bigbade.enchantmenttokens.utils.listeners.ListenerManager;
+
+public class RiptideListener extends BasicEnchantListener<PlayerRiptideEvent> implements Listener {
+    public RiptideListener(ListenerManager<PlayerRiptideEvent> listeners) {
+        super(listeners);
+    }
+
+    @EventHandler
+    public void onRiptide(PlayerRiptideEvent event) {
+        callListeners(EventFactory.createEvent(event, event.getItem(), event.getPlayer()));
+    }
+}

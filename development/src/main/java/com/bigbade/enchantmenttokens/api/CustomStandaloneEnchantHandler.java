@@ -16,12 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = 'enchantmenttokens'
-include(':development')
-project(':development').projectDir = file('development')
-include(':api')
-project(':api').projectDir = file('api')
-include(':mysql')
-project(':mysql').projectDir = file('mysql')
-include(':mongo')
-project(':mongo').projectDir = file('mongo')
+package com.bigbade.enchantmenttokens.api;
+
+import lombok.RequiredArgsConstructor;
+import org.bukkit.plugin.Plugin;
+import com.bigbade.enchantmenttokens.utils.enchants.EnchantmentLoader;
+
+@RequiredArgsConstructor
+public class CustomStandaloneEnchantHandler extends StandaloneEnchantHandler {
+    private final EnchantmentLoader enchantmentLoader;
+
+    @Override
+    public void createEnchantment(Plugin plugin, Class<? extends EnchantmentBase> clazz) {
+        enchantmentLoader.loadEnchantment(plugin, clazz);
+    }
+}

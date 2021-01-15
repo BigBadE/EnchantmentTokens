@@ -16,12 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = 'enchantmenttokens'
-include(':development')
-project(':development').projectDir = file('development')
-include(':api')
-project(':api').projectDir = file('api')
-include(':mysql')
-project(':mysql').projectDir = file('mysql')
-include(':mongo')
-project(':mongo').projectDir = file('mongo')
+package com.bigbade.enchantmenttokens.commands;
+
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import com.bigbade.enchantmenttokens.utils.players.PlayerHandler;
+
+import java.util.Locale;
+
+public final class CommandUtils {
+    //Private constructor to hide implicit public one.
+    private CommandUtils() {
+    }
+
+    public static Locale getLocale(CommandSender sender, PlayerHandler playerHandler) {
+        if (sender instanceof Player) {
+            return playerHandler.getPlayer((Player) sender).getLanguage();
+        } else {
+            return Locale.getDefault();
+        }
+    }
+}

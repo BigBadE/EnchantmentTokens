@@ -16,12 +16,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = 'enchantmenttokens'
-include(':development')
-project(':development').projectDir = file('development')
-include(':api')
-project(':api').projectDir = file('api')
-include(':mysql')
-project(':mysql').projectDir = file('mysql')
-include(':mongo')
-project(':mongo').projectDir = file('mongo')
+package com.bigbade.enchantmenttokens.utils;
+
+import org.bstats.bukkit.Metrics;
+import com.bigbade.enchantmenttokens.EnchantmentTokens;
+
+public class MetricManager {
+    public MetricManager(EnchantmentTokens main) {
+        Metrics metrics = new Metrics(main, 6283);
+        metrics.addCustomChart(new Metrics.SimplePie("currency_methods", () -> main.getCurrencyHandler().name()));
+        metrics.addCustomChart(new Metrics.SimplePie("language", () -> main.getConfig().getString("country-language")));
+    }
+}

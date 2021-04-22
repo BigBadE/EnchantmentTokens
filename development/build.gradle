@@ -43,7 +43,7 @@ dependencies {
         exclude module: 'brigadier'
     }
 
-    implementation 'org.bstats:bstats-bukkit:1.+'
+    implementation 'org.bstats:bstats-bukkit:2.+'
 
     shadow 'org.spigotmc:spigot-api:1.15.+'
     shadow 'com.comphenix.protocol:ProtocolLib:4.+'
